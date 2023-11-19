@@ -50,18 +50,32 @@ $ttl_mp_bulan = 0;
 							<td class="text-right"><?= number_format(($gaji_pokok->gaji_pokok), 2) ?></td>
 							<td></td>
 						</tr>
-						<?php $x = 2;
+						<tr>
+							<td class="text-center">2</td>
+							<td>THR</td>
+							<td>Rp</td>
+							<td class="text-right"><?= number_format(($gaji_pokok->gaji_pokok / 12), 2) ?></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td class="text-center">3</td>
+							<td>Cuti + Sakit</td>
+							<td>Rp</td>
+							<td class="text-right"><?= number_format(($gaji_pokok->gaji_pokok / 12), 2) ?></td>
+							<td></td>
+						</tr>
+						<?php $x = 4;
 						foreach ($komp_sdmp as $list_sdmp) : ?>
 							<tr>
 								<td class="text-center"><?= $x ?></td>
 								<td><?= $list_sdmp->nm_komp ?></td>
 								<td>Rp</td>
-								<td class="text-right"><?= number_format(($gaji_pokok->gaji_pokok * ($list_sdmp->std_val / 100)), 2) ?></td>
+								<td class="text-right"><?= number_format($list_sdmp->nominal, 2) ?></td>
 								<td><?= $list_sdmp->keterangan ?></td>
 							</tr>
 							<?php
 							$x++;
-							$ttl_mp_bulan += ($gaji_pokok->gaji_pokok * ($list_sdmp->std_val / 100));
+							$ttl_mp_bulan += (($gaji_pokok->gaji_pokok / 12) * 2) + $list_sdmp->nominal;
 							?>
 						<?php endforeach; ?>
 					</tbody>
@@ -84,12 +98,12 @@ $ttl_mp_bulan = 0;
 								<td class="text-center"><?= $x ?></td>
 								<td><?= $list_bpjs->nm_komp ?></td>
 								<td>Rp</td>
-								<td class="text-right"><?= number_format(($gaji_pokok->gaji_pokok * ($list_bpjs->std_val / 100)), 2) ?></td>
+								<td class="text-right"><?= number_format($list_bpjs->nominal, 2) ?></td>
 								<td><?= $list_bpjs->keterangan ?></td>
 							</tr>
 							<?php
 							$x++;
-							$ttl_mp_bulan += ($gaji_pokok->gaji_pokok * ($list_bpjs->std_val / 100));
+							$ttl_mp_bulan += ($list_bpjs->nominal);
 							?>
 						<?php endforeach; ?>
 					</tbody>
@@ -111,13 +125,13 @@ $ttl_mp_bulan = 0;
 								<td class="text-center"><?= $x ?></td>
 								<td><?= $list_bll->nm_komp ?></td>
 								<td>Rp</td>
-								<td class="text-right"><?= number_format(($list_bll->harga_pcs * $list_bll->std_val / $list_bll->periode_bulan), 2) ?></td>
+								<td class="text-right"><?= number_format($list_bll->nominal, 2) ?></td>
 								<td><?= $list_bll->keterangan ?></td>
 								<td class="text-right"><?= number_format($list_bll->harga_pcs, 2) ?></td>
 							</tr>
 							<?php
 							$x++;
-							$ttl_mp_bulan += ($list_bll->harga_pcs * $list_bll->std_val / $list_bll->periode_bulan);
+							$ttl_mp_bulan += ($list_bll->nominal);
 							?>
 						<?php endforeach; ?>
 					</tbody>

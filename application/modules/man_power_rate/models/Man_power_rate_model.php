@@ -161,10 +161,9 @@ class Man_power_rate_model extends BF_Model{
 
 	public function get_choose_komp_with_komp($tipe){
 		$query = $this->db->query("
-			SELECT a.*, b.std_val
+			SELECT a.*
 			FROM
 				ms_choose_komp_man_power_rate a
-				LEFT JOIN ms_komp_man_power_rate b ON b.id = a.id_komp
 			WHERE
 				a.tipe = '".$tipe."'
 		");
@@ -172,24 +171,24 @@ class Man_power_rate_model extends BF_Model{
 		return $query->result();
 	}
 
-	public function list_komp_man_power_rate($tipe){
-		$getAllKomp = $this->db->get_where('ms_komp_man_power_rate',['tipe' => $tipe])->result();
-		$data = array();
-		foreach($getAllKomp as $listAllKomp){
-			$getChooseKomp = $this->db->get_where('ms_choose_komp_man_power_rate',['id_komp' => $listAllKomp->id])->num_rows();
-			if($getChooseKomp < 1){
+	// public function list_komp_man_power_rate($tipe){
+	// 	$getAllKomp = $this->db->get_where('ms_komp_man_power_rate',['tipe' => $tipe])->result();
+	// 	$data = array();
+	// 	foreach($getAllKomp as $listAllKomp){
+	// 		$getChooseKomp = $this->db->get_where('ms_choose_komp_man_power_rate',['id_komp' => $listAllKomp->id])->num_rows();
+	// 		if($getChooseKomp < 1){
 
-				$data[] = [
-					'id' => $listAllKomp->id,
-					'nm_komp' => $listAllKomp->nm_komp
-				];
-			}
-		}
+	// 			$data[] = [
+	// 				'id' => $listAllKomp->id,
+	// 				'nm_komp' => $listAllKomp->nm_komp
+	// 			];
+	// 		}
+	// 	}
 
-		// print_r($data);
-		// exit;
-		return $data;
-	}
+	// 	// print_r($data);
+	// 	// exit;
+	// 	return $data;
+	// }
 
 
 	

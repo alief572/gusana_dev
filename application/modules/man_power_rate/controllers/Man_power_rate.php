@@ -57,9 +57,6 @@ class Man_power_rate extends Admin_Controller
 	{
 		$data = [
 			'gaji_pokok' => $this->db->get_where('ms_gaji_pokok', ['id' => 1])->row(),
-			'list_komp_sdmp' => $this->Man_power_rate_model->list_komp_man_power_rate('1'),
-			'list_komp_bpjs' => $this->Man_power_rate_model->list_komp_man_power_rate('2'),
-			'list_komp_bll' => $this->Man_power_rate_model->list_komp_man_power_rate('3'),
 			'komp_sdmp' => $this->Man_power_rate_model->get_choose_komp_with_komp('1'),
 			'komp_bpjs' =>$this->Man_power_rate_model->get_choose_komp_with_komp('2') ,
 			'komp_bll' => $this->Man_power_rate_model->get_choose_komp_with_komp('3')
@@ -691,18 +688,21 @@ class Man_power_rate extends Admin_Controller
 	{
 		$tipe = $this->input->post('tipe');
 		$gaji_pokok = $this->input->post('gaji_pokok');
+		$standar = $this->input->post('standar');
+		$nominal = $this->input->post('nominal');
 		$nm_komp = $this->input->post('nm_komp');
 		$keterangan = $this->input->post('keterangan');
 		$harga_pcs = $this->input->post('harga_pcs');
 		$periode_bulan = $this->input->post('periode_bulan');
 
-		$get_data_komp = $this->Man_power_rate_model->get_data_komp_by_id($nm_komp);
+		// $get_data_komp = $this->Man_power_rate_model->get_data_komp_by_id($nm_komp);
 
 		$this->db->trans_begin();
 
 		$this->db->insert('ms_choose_komp_man_power_rate', [
-			'id_komp' => $nm_komp,
-			'nm_komp' => $get_data_komp->nm_komp,
+			'nm_komp' => $nm_komp,
+			'standar' => $standar,
+			'nominal' => $nominal,
 			'keterangan' => $keterangan,
 			'periode_bulan' => $periode_bulan,
 			'harga_pcs' => $harga_pcs,
@@ -724,19 +724,14 @@ class Man_power_rate extends Admin_Controller
 		$no = 1;
 		foreach ($get_data as $list) {
 
-			$get_komp = $this->Man_power_rate_model->get_data_komp_by_id($list->id_komp);
-
-			$nominal = 0;
-			if (isset($gaji_pokok) && $gaji_pokok > 0) {
-				$nominal = ($gaji_pokok * ($get_komp->std_val / 100));
-			}
+			// $get_komp = $this->Man_power_rate_model->get_data_komp_by_id($list->id_komp);
 
 			$hasil = $hasil . '
 				<tr>
 					<td class="text-center">' . $no . '</td>
 					<td class="text-center">' . $list->nm_komp . '</td>
-					<td class="text-center">' . $get_komp->std_val . '</td>
-					<td class="text-center">' . number_format($nominal, 2) . '</td>
+					<td class="text-center">' . $list->standar . '</td>
+					<td class="text-center">' . number_format($list->nominal, 2) . '</td>
 					<td>' . $list->keterangan . '</td>
 				</tr>
 			';

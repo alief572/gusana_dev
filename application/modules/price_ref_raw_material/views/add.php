@@ -80,7 +80,7 @@ $expired12 = (!empty($listData[0]->price_ref_new_expired) and $listData[0]->pric
 					<input type="text" class="form-control form-control-sm autoNumeric" id="price_ref" name="price_ref" value='<?= $price_ref; ?>' placeholder="Lower Price Before" readonly>
 				</div>
 				<div class="col-md-5">
-					<input type="text" class="form-control form-control-sm autoNumeric" id="price_ref_high" name="price_ref_high" value='<?= $price_ref_high; ?>' placeholder="Lower Pricee After" readonly>
+					<input type="text" class="form-control form-control-sm autoNumeric" id="price_ref_high" name="price_ref_high" value='<?= $price_ref_new; ?>' placeholder="Lower Pricee After" readonly>
 				</div>
 			</div>
 			<div class="form-group row">
@@ -88,7 +88,7 @@ $expired12 = (!empty($listData[0]->price_ref_new_expired) and $listData[0]->pric
 					<label>Higher Price</label>
 				</div>
 				<div class="col-md-5">
-					<input type="text" class="form-control form-control-sm autoNumeric" id="price_ref_new" name="price_ref_new" value='<?= $price_ref_new; ?>' placeholder="Higher Before" readonly>
+					<input type="text" class="form-control form-control-sm autoNumeric" id="price_ref_new" name="price_ref_new" value='<?= $price_ref_high; ?>' placeholder="Higher Before" readonly>
 				</div>
 				<div class="col-md-5">
 					<input type="text" class="form-control form-control-sm autoNumeric" id="price_ref_high_new" name="price_ref_high_new" value='<?= $price_ref_high_new; ?>' placeholder="Higher After" readonly>

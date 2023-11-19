@@ -33,115 +33,113 @@ function get_supplier($id = false)
 
     return $result->group_produk;
 }
-function getColsChar($colums){
-	// Palleng by jester
+function getColsChar($colums)
+{
+    // Palleng by jester
 
-	if($colums>26)
-	{
-		$modCols = floor($colums/26);
-		$ExCols = $modCols*26;
-		$totCols = $colums-$ExCols;
+    if ($colums > 26) {
+        $modCols = floor($colums / 26);
+        $ExCols = $modCols * 26;
+        $totCols = $colums - $ExCols;
 
-		if($totCols==0)
-		{
-			$modCols=$modCols-1;
-			$totCols+=26;
-		}
+        if ($totCols == 0) {
+            $modCols = $modCols - 1;
+            $totCols += 26;
+        }
 
-		$lets1 = getLetColsLetter($modCols);
-		$lets2 = getLetColsLetter($totCols);
-		return $letsi = $lets1.$lets2;
-	}
-	else
-	{
-		$lets = getLetColsLetter($colums);
-		return $letsi = $lets;
-	}
+        $lets1 = getLetColsLetter($modCols);
+        $lets2 = getLetColsLetter($totCols);
+        return $letsi = $lets1 . $lets2;
+    } else {
+        $lets = getLetColsLetter($colums);
+        return $letsi = $lets;
+    }
 }
-function getLetColsLetter($numbs){
-// Palleng by jester
-	switch($numbs){
-		case 1:
-		$Chars = 'A';
-		break;
-		case 2:
-		$Chars = 'B';
-		break;
-		case 3:
-		$Chars = 'C';
-		break;
-		case 4:
-		$Chars = 'D';
-		break;
-		case 5:
-		$Chars = 'E';
-		break;
-		case 6:
-		$Chars = 'F';
-		break;
-		case 7:
-		$Chars = 'G';
-		break;
-		case 8:
-		$Chars = 'H';
-		break;
-		case 9:
-		$Chars = 'I';
-		break;
-		case 10:
-		$Chars = 'J';
-		break;
-		case 11:
-		$Chars = 'K';
-		break;
-		case 12:
-		$Chars = 'L';
-		break;
-		case 13:
-		$Chars = 'M';
-		break;
-		case 14:
-		$Chars = 'N';
-		break;
-		case 15:
-		$Chars = 'O';
-		break;
-		case 16:
-		$Chars = 'P';
-		break;
-		case 17:
-		$Chars = 'Q';
-		break;
-		case 18:
-		$Chars = 'R';
-		break;
-		case 19:
-		$Chars = 'S';
-		break;
-		case 20:
-		$Chars = 'T';
-		break;
-		case 21:
-		$Chars = 'U';
-		break;
-		case 22:
-		$Chars = 'V';
-		break;
-		case 23:
-		$Chars = 'W';
-		break;
-		case 24:
-		$Chars = 'X';
-		break;
-		case 25:
-		$Chars = 'Y';
-		break;
-		case 26:
-		$Chars = 'Z';
-		break;
-	}
+function getLetColsLetter($numbs)
+{
+    // Palleng by jester
+    switch ($numbs) {
+        case 1:
+            $Chars = 'A';
+            break;
+        case 2:
+            $Chars = 'B';
+            break;
+        case 3:
+            $Chars = 'C';
+            break;
+        case 4:
+            $Chars = 'D';
+            break;
+        case 5:
+            $Chars = 'E';
+            break;
+        case 6:
+            $Chars = 'F';
+            break;
+        case 7:
+            $Chars = 'G';
+            break;
+        case 8:
+            $Chars = 'H';
+            break;
+        case 9:
+            $Chars = 'I';
+            break;
+        case 10:
+            $Chars = 'J';
+            break;
+        case 11:
+            $Chars = 'K';
+            break;
+        case 12:
+            $Chars = 'L';
+            break;
+        case 13:
+            $Chars = 'M';
+            break;
+        case 14:
+            $Chars = 'N';
+            break;
+        case 15:
+            $Chars = 'O';
+            break;
+        case 16:
+            $Chars = 'P';
+            break;
+        case 17:
+            $Chars = 'Q';
+            break;
+        case 18:
+            $Chars = 'R';
+            break;
+        case 19:
+            $Chars = 'S';
+            break;
+        case 20:
+            $Chars = 'T';
+            break;
+        case 21:
+            $Chars = 'U';
+            break;
+        case 22:
+            $Chars = 'V';
+            break;
+        case 23:
+            $Chars = 'W';
+            break;
+        case 24:
+            $Chars = 'X';
+            break;
+        case 25:
+            $Chars = 'Y';
+            break;
+        case 26:
+            $Chars = 'Z';
+            break;
+    }
 
-	return $Chars;
+    return $Chars;
 }
 function get_invoice($id = false)
 {
@@ -219,9 +217,9 @@ function gen_primary($kode_tambahan = '')
     $letter1 = chr(mt_rand(65, 90));
     $letter2 = chr(mt_rand(65, 90));
 
-    $kode_primary = $tahun.$bulan.$hari.$jam.$menit.$detik.$letter1.$kode_rand.$letter2;
+    $kode_primary = $tahun . $bulan . $hari . $jam . $menit . $detik . $letter1 . $kode_rand . $letter2;
 
-    return $kode_tambahan.$kode_primary;
+    return $kode_tambahan . $kode_primary;
 }
 
 if (!function_exists('gen_idcustomer')) {
@@ -381,7 +379,7 @@ if (!function_exists('simpan_alurkas')) {
 if (!function_exists('buatrp')) {
     function buatrp($angka)
     {
-        $jadi = 'Rp '.number_format($angka, 0, ',', '.');
+        $jadi = 'Rp ' . number_format($angka, 0, ',', '.');
 
         return $jadi;
     }
@@ -416,25 +414,25 @@ if (!function_exists('ynz_terbilang_format')) {
         $angka = array('', 'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan', 'sembilan', 'sepuluh', 'sebelas');
         $temp = '';
         if ($x < 12) {
-            $temp = ' '.$angka[$x];
+            $temp = ' ' . $angka[$x];
         } elseif ($x < 20) {
-            $temp = ynz_terbilang_format($x - 10).' belas';
+            $temp = ynz_terbilang_format($x - 10) . ' belas';
         } elseif ($x < 100) {
-            $temp = ynz_terbilang_format($x / 10).' puluh'.ynz_terbilang_format($x % 10);
+            $temp = ynz_terbilang_format($x / 10) . ' puluh' . ynz_terbilang_format($x % 10);
         } elseif ($x < 200) {
-            $temp = ' seratus'.ynz_terbilang_format($x - 100);
+            $temp = ' seratus' . ynz_terbilang_format($x - 100);
         } elseif ($x < 1000) {
-            $temp = ynz_terbilang_format($x / 100).' ratus'.ynz_terbilang_format($x % 100);
+            $temp = ynz_terbilang_format($x / 100) . ' ratus' . ynz_terbilang_format($x % 100);
         } elseif ($x < 2000) {
-            $temp = ' seribu'.ynz_terbilang_format($x - 1000);
+            $temp = ' seribu' . ynz_terbilang_format($x - 1000);
         } elseif ($x < 1000000) {
-            $temp = ynz_terbilang_format($x / 1000).' ribu'.ynz_terbilang_format($x % 1000);
+            $temp = ynz_terbilang_format($x / 1000) . ' ribu' . ynz_terbilang_format($x % 1000);
         } elseif ($x < 1000000000) {
-            $temp = ynz_terbilang_format($x / 1000000).' juta'.ynz_terbilang_format($x % 1000000);
+            $temp = ynz_terbilang_format($x / 1000000) . ' juta' . ynz_terbilang_format($x % 1000000);
         } elseif ($x < 1000000000000) {
-            $temp = ynz_terbilang_format($x / 1000000000).' milyar'.ynz_terbilang_format(fmod($x, 1000000000));
+            $temp = ynz_terbilang_format($x / 1000000000) . ' milyar' . ynz_terbilang_format(fmod($x, 1000000000));
         } elseif ($x < 1000000000000000) {
-            $temp = ynz_terbilang_format($x / 1000000000000).' trilyun'.ynz_terbilang_format(fmod($x, 1000000000000));
+            $temp = ynz_terbilang_format($x / 1000000000000) . ' trilyun' . ynz_terbilang_format(fmod($x, 1000000000000));
         }
 
         return $temp;
@@ -445,23 +443,23 @@ if (!function_exists('ynz_terbilang')) {
     function ynz_terbilang($x, $style = 1)
     {
         if ($x < 0) {
-            $hasil = 'minus '.trim(ynz_terbilang_format($x));
+            $hasil = 'minus ' . trim(ynz_terbilang_format($x));
         } else {
             $hasil = trim(ynz_terbilang_format($x));
         }
         switch ($style) {
-        case 1:
-            $hasil = strtoupper($hasil);
-            break;
-        case 2:
-            $hasil = strtolower($hasil);
-            break;
-        case 3:
-            $hasil = ucwords($hasil);
-            break;
-        default:
-            $hasil = ucfirst($hasil);
-            break;
+            case 1:
+                $hasil = strtoupper($hasil);
+                break;
+            case 2:
+                $hasil = strtolower($hasil);
+                break;
+            case 3:
+                $hasil = ucwords($hasil);
+                break;
+            default:
+                $hasil = ucfirst($hasil);
+                break;
         }
 
         return $hasil;
@@ -476,7 +474,7 @@ if (!function_exists('tipe_pengiriman')) {
             'SEWA' => 'SEWA',
             'EKSPEDISI' => 'EKSPEDISI',
             'PELANGGAN' => 'PELANGGAN AMBIL SENDIRI',
-            );
+        );
         if ($ket == true) {
             return $uu[$ket];
         } else {
@@ -505,7 +503,7 @@ if (!function_exists('kategori_umur_piutang')) {
             '30|59' => '30-59',
             '60|89' => '60-89',
             '90' => '>90',
-            );
+        );
         if ($ket == true) {
             return $uu[$ket];
         } else {
@@ -517,7 +515,8 @@ if (!function_exists('kategori_umur_piutang')) {
 if (!function_exists('the_bulan')) {
     function the_bulan($time = false)
     {
-        $a = array('1' => 'Januari',
+        $a = array(
+            '1' => 'Januari',
             '2' => 'Februari',
             '3' => 'Maret',
             '4' => 'April',
@@ -538,7 +537,8 @@ if (!function_exists('the_bulan')) {
 if (!function_exists('bulan')) {
     function bulan($time = false)
     {
-        $a = array('01' => 'Januari',
+        $a = array(
+            '01' => 'Januari',
             '02' => 'Februari',
             '03' => 'Maret',
             '04' => 'April',
@@ -563,7 +563,7 @@ if (!function_exists('is_jenis_bayar')) {
             'CASH' => 'CASH',
             'TRANSFER' => 'TRANSFER',
             'BG' => 'GIRO',
-            );
+        );
         if ($ket == true) {
             return $uu[$ket];
         } else {
@@ -580,7 +580,7 @@ if (!function_exists('is_status_giro')) {
             'INV' => 'INVOICE',
             'CAIR' => 'CAIR',
             'TOLAK' => 'TOLAK',
-            );
+        );
         if ($ket == true) {
             return $uu[$ket];
         } else {
@@ -595,7 +595,7 @@ if (!function_exists('is_filter_report_jual')) {
         $uu = array(
             'by_customer' => 'Per Customer',
             'by_sales' => 'Per Sales',
-            );
+        );
         if ($ket == true) {
             return $uu[$ket];
         } else {
@@ -611,7 +611,7 @@ if (!function_exists('is_filter_detail_jual')) {
             'by_produk' => 'Per Produk',
             'by_customer' => 'Per Customer',
             'by_sales' => 'Per Sales',
-            );
+        );
         if ($ket == true) {
             return $uu[$ket];
         } else {
@@ -620,57 +620,104 @@ if (!function_exists('is_filter_detail_jual')) {
     }
 }
 
-    function tgl_indo($tgl){
-			$tanggal = substr($tgl,8,2);
-			$bulan =substr($tgl,5,2);
-			$tahun = substr($tgl,0,4);
-			return $tanggal.'-'.$bulan.'-'.$tahun;		 
-	}
-	function get10hari($id){
-					$hariini = date('Y-m-d H:i:s');
-					$sepuluh_hari = mktime(0,0,0,date('n'),date('j')-10,date('Y'));
-					$tendays = date("Y-m-d H:i:s", $sepuluh_hari);
-					$this->db->select('AVG(nominal) avg_nominal') ;
-					$this->db->from('child_history_lme');
-					$this->db->where('id_category1', $id);
-					$this->db->where('created_on >=', $tendays);
-					$this->db->where('created_on <=', $hariini);
-					$query = $this->db->get();
-					$tenrata['avg_nominal'];
-	}	
+function tgl_indo($tgl)
+{
+    $tanggal = substr($tgl, 8, 2);
+    $bulan = substr($tgl, 5, 2);
+    $tahun = substr($tgl, 0, 4);
+    return $tanggal . '-' . $bulan . '-' . $tahun;
+}
+function get10hari($id)
+{
+    $hariini = date('Y-m-d H:i:s');
+    $sepuluh_hari = mktime(0, 0, 0, date('n'), date('j') - 10, date('Y'));
+    $tendays = date("Y-m-d H:i:s", $sepuluh_hari);
+    $this->db->select('AVG(nominal) avg_nominal');
+    $this->db->from('child_history_lme');
+    $this->db->where('id_category1', $id);
+    $this->db->where('created_on >=', $tendays);
+    $this->db->where('created_on <=', $hariini);
+    $query = $this->db->get();
+    $tenrata['avg_nominal'];
+}
 
-    function checkApprove($id){
-        $CI 	=& get_instance();
-		$query	= $CI->db->get_where('dt_spkmarketing', array('deal'=>'1','id_spkmarketing'=>$id))->result_array();
-		return $query;
-    }
-	
-	function get_dashboard_stock(){
-        $CI 	=& get_instance();
-		$query	= $CI->db
-                        ->select('
+function checkApprove($id)
+{
+    $CI     = &get_instance();
+    $query    = $CI->db->get_where('dt_spkmarketing', array('deal' => '1', 'id_spkmarketing' => $id))->result_array();
+    return $query;
+}
+
+function get_dashboard_stock()
+{
+    $CI     = &get_instance();
+    $query    = $CI->db
+        ->select('
                             a.nama AS nm_lv2,
                             a.id_category2 AS category_lv2,
                             b.nama AS nm_lv1,
                             a.aktif AS status,
                             c.berat
                         ')
-                        ->from('ms_inventory_category2 a')
-                        ->join('ms_inventory_category1 b', 'a.id_category1=b.id_category1','left')
-                        ->join('stock_lv2 c', 'a.id_category2=c.id2','left')
-                        ->where('a.deleted','0')
-                        ->get()
-                        ->result_array();
-		return $query;
-    }
+        ->from('ms_inventory_category2 a')
+        ->join('ms_inventory_category1 b', 'a.id_category1=b.id_category1', 'left')
+        ->join('stock_lv2 c', 'a.id_category2=c.id2', 'left')
+        ->where('a.deleted', '0')
+        ->get()
+        ->result_array();
+    return $query;
+}
 
-    function get_name($table, $field, $where, $value){
-        $CI = &get_instance();
-        $query = "SELECT ".$field." FROM ".$table." WHERE ".$where."='".$value."' LIMIT 1";
-        $result = $CI->db->query($query)->result();
-        $hasil = (!empty($result))?$result[0]->$field:'';
-        if(empty($result)){
-            $hasil = $value;
-        }
-        return $hasil;
+function get_name($table, $field, $where, $value)
+{
+    $CI = &get_instance();
+    $query = "SELECT " . $field . " FROM " . $table . " WHERE " . $where . "='" . $value . "' LIMIT 1";
+    $result = $CI->db->query($query)->result();
+    $hasil = (!empty($result)) ? $result[0]->$field : '';
+    if (empty($result)) {
+        $hasil = $value;
     }
+    return $hasil;
+}
+
+function get_total_time_ct($product)
+{
+    $CI         = &get_instance();
+    $sql = "
+              SELECT
+                SUM(a.man_hours) AS total
+              FROM
+                cycletime_full a
+              WHERE
+                a.id_product = '" . $product . "'
+                ";
+    $sisa    = $CI->db->query($sql)->result();
+    $total = (!empty($sisa[0]->total)) ? $sisa[0]->total : 0;
+    return $total;
+}
+
+function get_total_time_cycletime()
+{
+    $CI         = &get_instance();
+    $sql = "SELECT
+            b.id_time,
+            b.id_product,
+            SUM(a.cycletime) AS ct_machine,
+            SUM(a.cycletime * qty_mp) AS ct_manpower
+          FROM
+            cycletime_detail_detail a
+            LEFT JOIN cycletime_header b ON a.id_time = b.id_time
+          WHERE
+            b.deleted_date IS NULL
+          GROUP BY b.id_time
+            ";
+    $result    = $CI->db->query($sql)->result_array();
+
+    $Arrback = [];
+    foreach ($result as $key => $value) {
+        $Arrback[$value['id_product']]['id_product'] = $value['id_product'];
+        $Arrback[$value['id_product']]['ct_machine'] = $value['ct_machine'];
+        $Arrback[$value['id_product']]['ct_manpower'] = $value['ct_manpower'];
+    }
+    return $Arrback;
+}

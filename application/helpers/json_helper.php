@@ -378,3 +378,57 @@ function log_history($id_user, $id_menu, $nm_menu, $device_type, $os_type, $desc
 
 	// return $CI->db->trans_status();
 }
+
+function get_machine_product()
+{
+	$CI = &get_instance();
+	$listGetCategory = $CI->db
+		->select('a.id_product,b.machine')
+		->group_by('a.id_product')
+		->join('cycletime_detail_detail b', 'a.id_time=b.id_time', 'join')
+		->get_where('cycletime_header a', array('a.deleted_date' => NULL, 'b.machine !=' => NULL, 'b.machine !=' => '0'))
+		->result_array();
+	$ArrGetCategory = [];
+	foreach ($listGetCategory as $key => $value) {
+		$ArrGetCategory[$value['id_product']] 	= $value['machine'];
+	}
+	return $ArrGetCategory;
+}
+
+function get_mold_product()
+{
+	$CI = &get_instance();
+	$listGetCategory = $CI->db
+		->select('a.id_product,b.mould')
+		->group_by('a.id_product')
+		->join('cycletime_detail_detail b', 'a.id_time=b.id_time', 'join')
+		->get_where('cycletime_header a', array('a.deleted_date' => NULL, 'b.mould !=' => NULL, 'b.mould !=' => '0'))
+		->result_array();
+	$ArrGetCategory = [];
+	foreach ($listGetCategory as $key => $value) {
+		$ArrGetCategory[$value['id_product']] 	= $value['mould'];
+	}
+	return $ArrGetCategory;
+}
+
+function get_rate_machine()
+{
+	$CI = &get_instance();
+	$listGetCategory = $CI->db->get_where('rate_machine', array('deleted_date' => NULL))->result_array();
+	$ArrGetCategory = [];
+	foreach ($listGetCategory as $key => $value) {
+		$ArrGetCategory[$value['kd_mesin']]['biaya_mesin'] 	= $value['biaya_mesin'];
+	}
+	return $ArrGetCategory;
+}
+
+function get_rate_mold()
+{
+	$CI = &get_instance();
+	$listGetCategory = $CI->db->get_where('rate_mold', array('deleted_date' => NULL))->result_array();
+	$ArrGetCategory = [];
+	foreach ($listGetCategory as $key => $value) {
+		$ArrGetCategory[$value['kd_mesin']]['biaya_mesin'] 	= $value['biaya_mesin'];
+	}
+	return $ArrGetCategory;
+}

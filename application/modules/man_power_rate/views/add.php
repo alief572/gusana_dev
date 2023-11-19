@@ -32,21 +32,38 @@
 								</tr>
 							</thead>
 							<tbody class="list_komp_sdmp">
+								<tr>
+										<td class="text-center">1</td>
+										<td class="text-center">THR</td>
+										<td class="text-center">Gaji Pokok / 12</td>
+										<td class="text-center"><?= number_format($gaji_pokok->gaji_pokok / 12, 2) ?></td>
+										<td class="text-center">Per Bulan</td>
+										<td class="text-center">
+											
+										</td>
+									</tr>
+									<tr>
+										<td class="text-center">2</td>
+										<td class="text-center">Cuti + Sakit</td>
+										<td class="text-center">Gaji Pokok / 12</td>
+										<td class="text-center"><?= number_format($gaji_pokok->gaji_pokok / 12, 2) ?></td>
+										<td class="text-center">Per Bulan</td>
+										<td class="text-center">
+											
+										</td>
+									</tr>
 								<?php
-								$val_sdmp = 0;
-								$x = 0;
+								$val_sdmp = (($gaji_pokok->gaji_pokok / 12) * 2);
+								$x = 2;
 								foreach ($komp_sdmp as $list_komp) :
 									$x++;
-									$nominal = 0;
-									if (isset($gaji_pokok) && $gaji_pokok->gaji_pokok > 0) {
-										$nominal = ($gaji_pokok->gaji_pokok * ($list_komp->std_val / 100));
-									}
+									$nominal = $list_komp->nominal;
 									$val_sdmp += $nominal;
 								?>
 									<tr>
 										<td class="text-center"><?= $x ?></td>
 										<td class="text-center"><?= $list_komp->nm_komp ?></td>
-										<td class="text-center"><?= $list_komp->std_val ?>%</td>
+										<td class="text-center"><?= $list_komp->standar ?>%</td>
 										<td class="text-center"><?= number_format($nominal, 2) ?></td>
 										<td class="text-center"><?= $list_komp->keterangan ?></td>
 										<td class="text-center">
@@ -63,18 +80,13 @@
 								<tr>
 									<td></td>
 									<td>
-										<select name="" id="" class="form-control form-control-sm chosen-select nm_komp_1 check_komp" data-tipe="1">
-											<option value="">- Nama Komponen -</option>
-											<?php foreach ($list_komp_sdmp as $list_sdmp) : ?>
-												<option value="<?= $list_sdmp['id'] ?>"><?= $list_sdmp['nm_komp'] ?></option>
-											<?php endforeach; ?>
-										</select>
+										<input type="text" name="" id="" class="form-control form-control-sm nm_komp_1" placeholder="Nama Komponen">
 									</td>
 									<td>
-										<input type="text" name="" id="" class="form-control form-control-sm standar_1" step="0.01" readonly>
+										<input type="text" name="" id="" class="form-control form-control-sm text-right val_standar standar_1" step="0.01" data-tipe="1">
 									</td>
 									<td>
-										<input type="text" name="" id="" class="form-control form-control-sm input_nominal text-right nominal_1" step="0.01" readonly>
+										<input type="text" name="" id="" class="form-control form-control-sm input_nominal val_nominal text-right nominal_1" step="0.01" data-tipe="1">
 									</td>
 									<td>
 										<input type="text" name="keterangan_sdmp" id="" class="form-control form-control-sm keterangan_1" placeholder="Keterangan">
@@ -117,16 +129,13 @@
 								$x = 0;
 								foreach ($komp_bpjs as $list_komp) :
 									$x++;
-									$nominal = 0;
-									if (isset($gaji_pokok) && $gaji_pokok->gaji_pokok > 0) {
-										$nominal = ($gaji_pokok->gaji_pokok * ($list_komp->std_val / 100));
-									}
+									$nominal = $list_komp->nominal;
 									$val_bpjs += $nominal;
 								?>
 									<tr>
 										<td class="text-center"><?= $x ?></td>
 										<td class="text-center"><?= $list_komp->nm_komp ?></td>
-										<td class="text-center"><?= $list_komp->std_val ?>%</td>
+										<td class="text-center"><?= $list_komp->standar ?>%</td>
 										<td class="text-center"><?= number_format($nominal, 2) ?></td>
 										<td class="text-center"><?= $list_komp->keterangan ?></td>
 										<td class="text-center">
@@ -143,18 +152,13 @@
 								<tr>
 									<td></td>
 									<td>
-										<select name="" id="" class="form-control form-control-sm chosen-select nm_komp_2 check_komp" data-tipe="2">
-											<option value="">- Nama Komponen -</option>
-											<?php foreach ($list_komp_bpjs as $list_bpjs) : ?>
-												<option value="<?= $list_bpjs['id'] ?>"><?= $list_bpjs['nm_komp'] ?></option>
-											<?php endforeach; ?>
-										</select>
+										<input type="text" name="" id="" class="form-control form-control-sm nm_komp_2" placeholder="Nama Komponen">
 									</td>
 									<td>
-										<input type="text" name="" id="" class="form-control form-control-sm standar_2" step="0.01" readonly>
+										<input type="text" name="" id="" class="form-control form-control-sm text-right val_standar standar_2" step="0.01" data-tipe="2">
 									</td>
 									<td>
-										<input type="text" name="" id="" class="form-control form-control-sm input_nominal text-right nominal_2" step="0.01" readonly>
+										<input type="text" name="" id="" class="form-control form-control-sm input_nominal val_nominal text-right nominal_2" step="0.01" data-tipe="2">
 									</td>
 									<td>
 										<input type="text" name="keterangan_sdmp" id="" class="form-control form-control-sm keterangan_2" placeholder="Keterangan">
@@ -199,18 +203,15 @@
 								$x = 0;
 								foreach ($komp_bll as $list_komp) :
 									$x++;
-									$nominal = 0;
-									if ($list_komp->periode_bulan > 0 && $list_komp->std_val > 0 && $list_komp->harga_pcs > 0) {
-										$nominal = (($list_komp->harga_pcs / $list_komp->periode_bulan) * $list_komp->std_val);
-									}
+									$nominal = $list_komp->nominal;
 									$val_bll += $nominal;
 								?>
 									<tr>
 										<td class="text-center"><?= $x ?></td>
 										<td class="text-center"><?= $list_komp->nm_komp ?></td>
-										<td class="text-center"><?= number_format($list_komp->std_val, 2) ?></td>
+										<td class="text-center"><?= number_format($list_komp->standar, 2) ?></td>
 										<td class="text-center">
-											<input type="number" class="form-control form-control-sm text-right ubah_periode_bulan periode_bulan_<?= $list_komp->id ?>" name="periode_bulan_<?= $list_komp->id ?>" id="" value="<?= $list_komp->periode_bulan ?>" data-id="<?= $list_komp->id ?>" readonly>
+											<input type="number" class="form-control form-control-sm text-right periode_bulan_<?= $list_komp->id ?>" name="periode_bulan_<?= $list_komp->id ?>" id="" value="<?= $list_komp->periode_bulan ?>" data-id="<?= $list_komp->id ?>" readonly>
 										</td>
 										<td class="text-center"><?= number_format($nominal, 2) ?></td>
 										<td class="text-center"><?= $list_komp->keterangan ?></td>
@@ -229,18 +230,13 @@
 								<tr>
 									<td></td>
 									<td>
-										<select name="" id="" class="form-control form-control-sm chosen-select nm_komp_3 check_komp" data-tipe="3">
-											<option value="">- Nama Komponen -</option>
-											<?php foreach ($list_komp_bll as $list_bll) : ?>
-												<option value="<?= $list_bll['id'] ?>"><?= $list_bll['nm_komp'] ?></option>
-											<?php endforeach; ?>
-										</select>
+										<input type="text" name="" id="" class="form-control form-control-sm nm_komp_3" placeholder="Nama Komponen">
 									</td>
 									<td>
-										<input type="text" name="" id="" class="form-control form-control-sm standar_3" step="0.01" readonly>
+										<input type="text" name="" id="" class="form-control form-control-sm text-right hitung_nominal_bll standar_3" step="0.01" data-tipe="3">
 									</td>
 									<td>
-										<input type="text" name="" id="" class="form-control form-control-sm input_nominal periode_bulan_3 text-right" placeholder="Periode Bulan" onchange="hitung_bll();">
+										<input type="text" name="" id="" class="form-control form-control-sm hitung_nominal_bll input_nominal periode_bulan_3 text-right" placeholder="Periode Bulan" data-tipe="3">
 									</td>
 									<td>
 										<input type="text" name="" id="" class="form-control form-control-sm input_nominal text-right nominal_3" step="0.01" readonly>
@@ -249,7 +245,7 @@
 										<input type="text" name="keterangan_bpjs" id="" class="form-control form-control-sm keterangan_3" placeholder="Keterangan">
 									</td>
 									<td>
-										<input type="text" name="" id="" class="form-control form-control-sm input_nominal text-right harga_pcs_3" onchange="hitung_bll();">
+										<input type="text" name="" id="" class="form-control form-control-sm input_nominal text-right hitung_nominal_bll harga_pcs_3" data-tipe="3">
 									</td>
 									<td class="text-center">
 										<button type="button" class="btn btn-sm btn-success add_komp" data-tipe="3">Add <i class="fa fa-plus"></i></button>
@@ -312,7 +308,7 @@
 					</div>
 				</div>
 				<button type="button" class="btn btn-danger" style=' margin-left:5px;' name="back" id="back"><i class="fa fa-reply"></i> Back</button>
-				<a href="<?= base_url('man_power_rate'); ?>" class="btn btn-primary" ><i class="fa fa-save"></i> Save</a>
+				<a href="javascript:void(0);" class="btn btn-primary" onclick="window.location.reload(true);"><i class="fa fa-save"></i> Save</a>
 			</div>
 
 		</form>
@@ -366,7 +362,67 @@
 			aPad: false
 		});
 
+		$(document).on("change", ".hitung_nominal_bll", function() {
+			var tipe = $(this).data('tipe');
 
+			var standar = $(".standar_" + tipe).val();
+			if (standar == "") {
+				var standar = 0;
+			}
+
+			var periode = $(".periode_bulan_" + tipe).val();
+			if (periode == "") {
+				var periode = 0;
+			}
+
+			var harga_pcs = $(".harga_pcs_" + tipe).val();
+			if (harga_pcs == "") {
+				var harga_pcs = 0;
+			} else {
+				var harga_pcs = harga_pcs.split(",").join("");
+				var harga_pcs = parseFloat(harga_pcs);
+			}
+
+			// alert(standar);
+			// alert(periode);
+			// alert(harga_pcs);
+
+			var nominal = 0;
+			if(harga_pcs > 0 && standar > 0 && periode > 0){
+				var nominal = ((harga_pcs * standar) / periode);
+			}
+
+			$(".nominal_" + tipe).autoNumeric("set", nominal);
+		});
+
+		$(document).on("change", ".val_standar", function() {
+			var tipe = $(this).data('tipe');
+			var standar = parseFloat($(".standar_" + tipe).val());
+
+			var gaji_pokok = $(".gaji_pokok").val();
+			var gaji_pokok = gaji_pokok.split(",").join("");
+			var gaji_pokok = parseFloat(gaji_pokok);
+
+			var nominal = parseFloat(gaji_pokok * standar / 100);
+
+			$(".nominal_" + tipe).autoNumeric('set', nominal);
+		});
+
+		$(document).on("change", ".val_nominal", function() {
+			var tipe = $(this).data('tipe');
+
+			var nominal = $(".nominal_" + tipe).val();
+			var nominal = nominal.split(",").join("");
+			var nominal = parseFloat(nominal);
+
+			var gaji_pokok = $(".gaji_pokok").val();
+			var gaji_pokok = gaji_pokok.split(",").join("");
+			var gaji_pokok = parseFloat(gaji_pokok);
+
+			var standar = parseFloat((nominal / gaji_pokok * 100).toFixed(2));
+
+			$(".standar_" + tipe).val(standar);
+		});
 
 		$(document).on("change", ".check_komp", function() {
 			var komp = $(this).val();
@@ -401,7 +457,13 @@
 			var tipe = $(this).data('tipe');
 
 			var nm_komp = $(".nm_komp_" + tipe).val();
+
+			var standar = $(".standar_" + tipe).val();
 			var keterangan = $(".keterangan_" + tipe).val();
+
+			var nominal = $(".nominal_" + tipe).val();
+			var nominal = nominal.split(",").join("");
+			var nominal = parseFloat(nominal);
 
 			var gaji_pokok = $(".gaji_pokok").val();
 			var gaji_pokok = gaji_pokok.split(",").join("");
@@ -410,58 +472,64 @@
 			var harga_pcs = 0;
 			var periode_bulan = 0;
 			if (tipe == 3) {
-				var harga_pcs = $(".harga_pcs_3").val();
+				var harga_pcs = $(".harga_pcs_" + tipe).val();
 				var harga_pcs = harga_pcs.split(",").join("");
 				var harga_pcs = parseFloat(harga_pcs);
 
-				var periode_bulan = $(".periode_bulan_3").val();
+				var periode_bulan = $(".periode_bulan_" + tipe).val();
 			}
 
-			new swal({
-				title: "Are you sure?",
-				text: "You will not be able to process again this data!",
-				type: "warning",
-				showCancelButton: true,
-				confirmButtonClass: "btn-danger",
-				confirmButtonText: "Yes, Process it!",
-				cancelButtonText: "No, cancel process!",
-				closeOnConfirm: true,
-				closeOnCancel: false
-			}).then((hasil) => {
-				if (hasil.isConfirmed) {
-					$.ajax({
-						type: "POST",
-						url: base_url + active_controller + '/add_komp',
-						data: {
-							"tipe": tipe,
-							"gaji_pokok": gaji_pokok,
-							"nm_komp": nm_komp,
-							"keterangan": keterangan,
-							"harga_pcs": harga_pcs,
-							"periode_bulan": periode_bulan
-						},
-						cache: false,
-						dataType: "JSON",
-						success: function(results) {
-							if (results.valid == 1) {
-								new swal({
-									title: "Success",
-									text: "Komponen telah berhasil di add",
-									type: "success"
-								});
-								window.location.reload(true);
-							} else {
-								new swal({
-									title: "Failed",
-									text: "Komponen gagal di add",
-									type: "danger"
-								});
-								window.location.reload(true);
+			if (nm_komp !== "" || nominal > 0) {
+				new swal({
+					title: "Are you sure?",
+					text: "You will not be able to process again this data!",
+					type: "warning",
+					showCancelButton: true,
+					confirmButtonClass: "btn-danger",
+					confirmButtonText: "Yes, Process it!",
+					cancelButtonText: "No, cancel process!",
+					closeOnConfirm: true,
+					closeOnCancel: false
+				}).then((hasil) => {
+					if (hasil.isConfirmed) {
+						$.ajax({
+							type: "POST",
+							url: base_url + active_controller + '/add_komp',
+							data: {
+								"tipe": tipe,
+								"gaji_pokok": gaji_pokok,
+								"nm_komp": nm_komp,
+								"standar": standar,
+								"nominal": nominal,
+								"keterangan": keterangan,
+								"harga_pcs": harga_pcs,
+								"periode_bulan": periode_bulan
+							},
+							cache: false,
+							dataType: "JSON",
+							success: function(results) {
+								if (results.valid == 1) {
+									new swal({
+										title: "Success",
+										text: "Komponen telah berhasil di add",
+										type: "success"
+									});
+									window.location.reload(true);
+								} else {
+									new swal({
+										title: "Failed",
+										text: "Komponen gagal di add",
+										type: "danger"
+									});
+									window.location.reload(true);
+								}
 							}
-						}
-					});
-				}
-			});
+						});
+					}
+				});
+			} else {
+				alert("Pastikan kolom Nama Komponen dan Nominal sudah terisi !!");
+			}
 		});
 
 		$(document).on("click", ".del_komp", function() {
