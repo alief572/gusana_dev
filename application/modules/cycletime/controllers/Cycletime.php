@@ -116,7 +116,8 @@ class Cycletime extends Admin_Controller
   {
     $this->auth->restrict($this->viewPermission);
     $id   = $this->input->post('id');
-    $header = $this->db->get_where('cycletime_header', array('id_time' => $id))->result();
+    $header = $this->db->query("SELECT a.*, b.nama as nm_product FROM cycletime_header a LEFT JOIN ms_product_category3 b ON b.id_category3 = a.id_product WHERE a.id_time = '".$id."'")->result();
+    // $header = $this->db->get_where('cycletime_header', array('id_time' => $id))->result();
     // print_r($header);
     $data = [
       'header' => $header

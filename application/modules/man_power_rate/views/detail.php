@@ -5,7 +5,7 @@ $ENABLE_VIEW    = has_permission('Man_Power_Rate.View');
 $ENABLE_DELETE  = has_permission('Man_Power_Rate.Delete');
 // print_r($header);
 
-
+$kurs_rmb = $gaji_pokok->kurs_rmb;
 // print_r($header);
 
 $ttl_mp_bulan = 0;
@@ -159,6 +159,21 @@ $ttl_mp_bulan = 0;
 							<th>Upah / Jam</th>
 							<th class="text-center">$</th>
 							<th class="text-right"><?= number_format((($gaji_pokok->gaji_pokok + $ttl_mp_bulan) / $gaji_pokok->kurs) / 173, 2) ?></th>
+							<th colspan="2"></th>
+						</tr>
+						<tr>
+							<th></th>
+							<th>Upah / Bulan</th>
+							<th class="text-center">RMB</th>
+							<th class="text-right"><?= number_format(($gaji_pokok->gaji_pokok + $ttl_mp_bulan) / $kurs_rmb, 2) ?></th>
+							<th>Kurs</th>
+							<th class="text-right"><?= number_format($kurs_rmb, 2) ?></th>
+						</tr>
+						<tr>
+							<th></th>
+							<th>Upah / Jam</th>
+							<th class="text-center">RMB</th>
+							<th class="text-right"><?= number_format((($gaji_pokok->gaji_pokok + $ttl_mp_bulan) / $kurs_rmb) / 173, 2) ?></th>
 							<th colspan="2"></th>
 						</tr>
 						<tr>

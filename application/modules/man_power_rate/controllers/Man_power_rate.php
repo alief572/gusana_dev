@@ -55,6 +55,8 @@ class Man_power_rate extends Admin_Controller
 
 	public function add()
 	{
+		// print_r( $this->db->get_where('ms_gaji_pokok', ['id' => 1])->row());
+		// exit;
 		$data = [
 			'gaji_pokok' => $this->db->get_where('ms_gaji_pokok', ['id' => 1])->row(),
 			'komp_sdmp' => $this->Man_power_rate_model->get_choose_komp_with_komp('1'),
@@ -795,5 +797,31 @@ class Man_power_rate extends Admin_Controller
 		];
 
 		echo json_encode($data);
+	}
+
+	public function ubah_kurs_rmb(){
+		$kurs = $this->input->post('kurs');
+		$ttl_all = $this->input->post('ttl_all');
+		$gaji_pokok = $this->input->post('gaji_pokok');
+
+		$this->db->trans_begin();
+
+		$this->db->update('ms_gaji_pokok', ['kurs_rmb' => $kurs], ['id' => 1]);
+
+		if ($this->db->trans_status() === FALSE) {
+			$this->db->trans_rollback();
+		} else {
+			$this->db->trans_commit();
+		}
+		
+		$upah_per_bulan_rmb = (($gaji_pokok + $ttl_all) / $kurs);
+		$upah_per_jam_rmb = ((($gaji_pokok + $ttl_all) / $kurs) / 173);
+
+		$data_return = [
+			'upah_per_bulan_rmb' => $upah_per_bulan_rmb,
+			'upah_per_jam_rmb' => $upah_per_jam_rmb
+		];
+
+		echo json_encode($data_return);
 	}
 }

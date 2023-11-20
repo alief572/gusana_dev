@@ -1,8 +1,12 @@
 <?php
-// print_r($header);
-
-
-// print_r($header);
+$kurs_rmb = $gaji_pokok->kurs_rmb;
+if($kurs_rmb == 0 || $kurs_rmb == null){
+	$kurs_rmb = 1;
+}
+$kurs = $gaji_pokok->kurs;
+if($kurs == 0 || $kurs == null){
+	$kurs = 1;
+}
 ?>
 
 <div class="box box-primary">
@@ -33,25 +37,25 @@
 							</thead>
 							<tbody class="list_komp_sdmp">
 								<tr>
-										<td class="text-center">1</td>
-										<td class="text-center">THR</td>
-										<td class="text-center">Gaji Pokok / 12</td>
-										<td class="text-center"><?= number_format($gaji_pokok->gaji_pokok / 12, 2) ?></td>
-										<td class="text-center">Per Bulan</td>
-										<td class="text-center">
-											
-										</td>
-									</tr>
-									<tr>
-										<td class="text-center">2</td>
-										<td class="text-center">Cuti + Sakit</td>
-										<td class="text-center">Gaji Pokok / 12</td>
-										<td class="text-center"><?= number_format($gaji_pokok->gaji_pokok / 12, 2) ?></td>
-										<td class="text-center">Per Bulan</td>
-										<td class="text-center">
-											
-										</td>
-									</tr>
+									<td class="text-center">1</td>
+									<td class="text-center">THR</td>
+									<td class="text-center">Gaji Pokok / 12</td>
+									<td class="text-center"><?= number_format($gaji_pokok->gaji_pokok / 12, 2) ?></td>
+									<td class="text-center">Per Bulan</td>
+									<td class="text-center">
+
+									</td>
+								</tr>
+								<tr>
+									<td class="text-center">2</td>
+									<td class="text-center">Cuti + Sakit</td>
+									<td class="text-center">Gaji Pokok / 12</td>
+									<td class="text-center"><?= number_format($gaji_pokok->gaji_pokok / 12, 2) ?></td>
+									<td class="text-center">Per Bulan</td>
+									<td class="text-center">
+
+									</td>
+								</tr>
 								<?php
 								$val_sdmp = (($gaji_pokok->gaji_pokok / 12) * 2);
 								$x = 2;
@@ -267,13 +271,23 @@
 				<br>
 				<div class="form-group row">
 					<div class="col-md-2">
-						<label for="customer">Kurs</label>
+						<label for="customer">Kurs $</label>
 					</div>
 					<div class="col-md-2">
 						<input type="hidden" name="" class="ttl_all" value="<?= ($val_sdmp + $val_bpjs + $val_bll) ?>">
 						<input type="text" name="rate_dollar" id="rate_dollar" class='form-control input-md text-right input_nominal text-right summaryCal ubah_kurs' value="<?= $gaji_pokok->kurs; ?>">
 					</div>
 				</div>
+				<div class="form-group row">
+					<div class="col-md-2">
+						<label for="customer">Kurs RMB</label>
+					</div>
+					<div class="col-md-2">
+						<!-- <input type="hidden" name="" class="ttl_all" value=""> -->
+						<input type="text" name="rate_rmb" id="rate_rmb" class='form-control input-md text-right input_nominal text-right summaryCal ubah_kurs_rmb' value="<?= $gaji_pokok->kurs_rmb; ?>">
+					</div>
+				</div>
+				<hr>
 				<div class="form-group row">
 					<div class="col-md-2">
 						<label for="customer">Upah /Bulan $</label>
@@ -288,6 +302,23 @@
 					</div>
 					<div class="col-md-2">
 						<input type="text" name="upah_per_jam_dollar" id="upah_per_jam_dollar" class='form-control input-md text-right input_nominal' readonly value="<?= ((($gaji_pokok->gaji_pokok + ($val_sdmp + $val_bpjs + $val_bll)) / $gaji_pokok->kurs) / 173) ?>">
+					</div>
+				</div>
+				<hr>
+				<div class="form-group row">
+					<div class="col-md-2">
+						<label for="customer">Upah /Bulan RMB</label>
+					</div>
+					<div class="col-md-2">
+						<input type="text" name="upah_per_bulan_rmb" id="upah_per_bulan_rmb" class='form-control input-md text-right input_nominal' readonly value="<?= (($gaji_pokok->gaji_pokok + ($val_sdmp + $val_bpjs + $val_bll)) / $kurs_rmb) ?>">
+					</div>
+				</div>
+				<div class="form-group row">
+					<div class="col-md-2">
+						<label for="customer">Upah /Jam RMB</label>
+					</div>
+					<div class="col-md-2">
+						<input type="text" name="upah_per_jam_rmb" id="upah_per_jam_rmb" class='form-control input-md text-right input_nominal' readonly value="<?= ((($gaji_pokok->gaji_pokok + ($val_sdmp + $val_bpjs + $val_bll)) / $kurs_rmb) / 173) ?>">
 					</div>
 				</div>
 				<hr>
@@ -362,6 +393,34 @@
 			aPad: false
 		});
 
+		$(document).on("change", ".ubah_kurs_rmb", function() {
+			var kurs = $(this).val();
+			var kurs = kurs.split(",").join("");
+			var kurs = parseFloat(kurs);
+
+			var ttl_all = parseFloat($(".ttl_all").val());
+
+			var gaji_pokok = $(".gaji_pokok").val();
+			var gaji_pokok = gaji_pokok.split(",").join("");
+			var gaji_pokok = parseFloat(gaji_pokok);
+
+			$.ajax({
+				type: "POST",
+				url: base_url + active_controller + "/ubah_kurs_rmb",
+				data: {
+					"kurs": kurs,
+					"ttl_all": ttl_all,
+					"gaji_pokok": gaji_pokok
+				},
+				cache: false,
+				dataType: "JSON",
+				success: function(result) {
+					$("#upah_per_bulan_rmb").autoNumeric('set', result.upah_per_bulan_rmb);
+					$("#upah_per_jam_rmb").autoNumeric('set', result.upah_per_jam_rmb);
+				}
+			});
+		});
+
 		$(document).on("change", ".hitung_nominal_bll", function() {
 			var tipe = $(this).data('tipe');
 
@@ -388,7 +447,7 @@
 			// alert(harga_pcs);
 
 			var nominal = 0;
-			if(harga_pcs > 0 && standar > 0 && periode > 0){
+			if (harga_pcs > 0 && standar > 0 && periode > 0) {
 				var nominal = ((harga_pcs * standar) / periode);
 			}
 

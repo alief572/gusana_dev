@@ -12,7 +12,7 @@ if($TimeTotal > 0){
 				<label for="inventory_1">Product Name</label>
 			</div>
 			 <div class="col-md-10">
-					<input type="text" class="form-control input-sm" id="spec6"  name="spec6" readonly="readonly" value="<?= strtoupper(get_name('new_inventory_4', 'nama', 'code_lv4', $header[0]->id_product)); ?>">
+					<input type="text" class="form-control input-sm" id="spec6"  name="spec6" readonly="readonly" value="<?= strtoupper(get_name('ms_inventory_category3', 'nama', 'id_category3', $header[0]->nm_product)); ?>">
 			</div>
 		</div>
 		<div class="form-group row">
@@ -60,7 +60,7 @@ if($TimeTotal > 0){
 												echo "<br><span class='text-primary'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".$MP2."</span>";
 											}
 										echo "</td>";
-										echo "<td align='right'>".$CT."</td>";
+										echo "<td align='right'>".$CT." Minutes</td>";
 										echo "<td align='right'>".$MP."</td>";
 										echo "<td align='left'>".$val2Dx['note']."</td>";
 								  	echo "</tr>";
@@ -71,14 +71,14 @@ if($TimeTotal > 0){
 							<tr>
 								<td class='text-center'></td>
 								<td class='text-right text-bold'>Total Time</td>
-								<td class='text-right text-bold'><?=$TimeTotal;?></td>
+								<td class='text-right text-bold'><?=$TimeTotal;?> Minutes</td>
 								<td class='text-center'></td>
 								<td class='text-center'></td>
 							</tr>
 							<tr>
 								<td class='text-center'></td>
 								<td class='text-right text-bold'>Cycletime</td>
-								<td class='text-right text-bold'><?=number_format($totalTime,2);?></td>
+								<td class='text-right text-bold'><?=number_format($totalTime,2);?> Minutes</td>
 								<td class='text-center'></td>
 								<td class='text-center'></td>
 							</tr>

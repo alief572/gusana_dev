@@ -106,5 +106,23 @@ $biaya_mesin 		= (!empty($listData[0]->biaya_mesin)) ? $listData[0]->biaya_mesin
 			width: '100%'
 		});
 		$('.maskM').autoNumeric();
+
+		$(document).on("change", "#kd_mesin", function() {
+			var kd_mesin = $(this).val();
+
+			$.ajax({
+				url: base_url + thisController + '/get_price_mesin',
+				type: "POST",
+				data: {
+					"kd_mesin": kd_mesin
+				},
+				cache: false,
+				dataType: "JSON",
+				success: function(result) {
+					// console.log(result.nilai);
+					$("#harga_mesin").autoNumeric('set', result.nilai);
+				}
+			})
+		});
 	});
 </script>

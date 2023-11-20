@@ -224,4 +224,16 @@ class Machine_rate extends Admin_Controller
     // exit;
     echo json_encode($ArrJson);
   }
+
+  public function get_price_mesin() {
+    $kd_mesin = $this->input->post('kd_mesin');
+
+    $data_mesin = $this->db->get_where('asset', ['id' => $kd_mesin, 'category' => 12])->row();
+
+    $hasil = [
+      'nilai' => $data_mesin->nilai_asset
+    ];
+
+    echo json_encode($hasil);
+  }
 }
