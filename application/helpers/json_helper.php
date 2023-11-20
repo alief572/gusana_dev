@@ -190,20 +190,37 @@ function get_list_inventory_lv3($category)
 	return $ArrGetCategory;
 }
 
-function get_inventory_lv4()
+function get_product_lv4()
 {
 	$CI = &get_instance();
-	$listGetCategory = $CI->db->get('new_inventory_4')->result_array();
+	$listGetCategory = $CI->db->get('ms_product_category3')->result_array();
 	$ArrGetCategory = [];
 	foreach ($listGetCategory as $key => $value) {
-		$ArrGetCategory[$value['code_lv4']]['code_lv1'] 	= $value['code_lv1'];
-		$ArrGetCategory[$value['code_lv4']]['code_lv2'] 	= $value['code_lv2'];
-		$ArrGetCategory[$value['code_lv4']]['code_lv3'] 	= $value['code_lv3'];
-		$ArrGetCategory[$value['code_lv4']]['code_lv4'] 	= $value['code_lv4'];
-		$ArrGetCategory[$value['code_lv4']]['nama'] 		= $value['nama'];
+		$ArrGetCategory[$value['id_category3']]['id_type'] 	= $value['id_type'];
+		$ArrGetCategory[$value['id_category3']]['id_category1'] 	= $value['id_category1'];
+		$ArrGetCategory[$value['id_category3']]['id_category2'] 	= $value['id_category2'];
+		$ArrGetCategory[$value['id_category3']]['id_category3'] 	= $value['id_category3'];
+		$ArrGetCategory[$value['id_category3']]['nama'] 		= $value['nama'];
 	}
 	return $ArrGetCategory;
 }
+
+function get_inventory_lv4()
+{
+	$CI = &get_instance();
+	$listGetCategory = $CI->db->get('ms_inventory_category3')->result_array();
+	$ArrGetCategory = [];
+	foreach ($listGetCategory as $key => $value) {
+		$ArrGetCategory[$value['id_category3']]['id_type'] 	= $value['id_type'];
+		$ArrGetCategory[$value['id_category3']]['id_category1'] 	= $value['id_category1'];
+		$ArrGetCategory[$value['id_category3']]['id_category2'] 	= $value['id_category2'];
+		$ArrGetCategory[$value['id_category3']]['id_category3'] 	= $value['id_category3'];
+		$ArrGetCategory[$value['id_category3']]['nama'] 		= $value['nama'];
+	}
+	return $ArrGetCategory;
+}
+
+
 
 function get_inventory_lv3()
 {
@@ -243,12 +260,18 @@ function get_accessories()
 function get_list_machine()
 {
 	$CI = &get_instance();
-	$listGetCategory = $CI->db->group_by('kd_asset')->get_where('asset', array('deleted_date' => NULL, 'category' => '4'))->result_array();
+	$listGetCategory = $CI->db->get_where('asset', ['deleted' => 'N', 'category' => '12'])->result_array();
 	$ArrGetCategory = [];
 	foreach ($listGetCategory as $key => $value) {
-		$ArrGetCategory[$value['kd_asset']]['kd_asset'] 	= $value['kd_asset'];
-		$ArrGetCategory[$value['kd_asset']]['nm_asset'] 	= $value['nm_asset'];
+		$ArrGetCategory[] = [
+			'id' => $value['id'],
+			'nm_asset' => $value['nm_asset']
+		];
+		// $ArrGetCategory['id'] 	= $value['id'];
+		// $ArrGetCategory['nm_asset'] 	= $value['nm_asset'];
 	}
+	// echo '<pre>'.print_r($ArrGetCategory).'</pre>';
+	// exit;
 	return $ArrGetCategory;
 }
 
@@ -327,10 +350,10 @@ function get_list_supplier()
 function get_price_ref()
 {
 	$CI = &get_instance();
-	$listGetCategory = $CI->db->get_where('new_inventory_4', array('deleted_date' => NULL))->result_array();
+	$listGetCategory = $CI->db->get_where('ms_inventory_category3')->result_array();
 	$ArrGetCategory = [];
 	foreach ($listGetCategory as $key => $value) {
-		$ArrGetCategory[$value['code_lv4']]['price_ref'] 	= $value['price_ref_use'];
+		$ArrGetCategory[$value['id_category3']]['price_ref'] 	= $value['price_ref_use'];
 	}
 	return $ArrGetCategory;
 }

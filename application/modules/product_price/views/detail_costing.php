@@ -15,10 +15,12 @@ if(!empty($detail_additive)){
 $TOTAL_PRICE_ALL = 0;
 
 //default
+// echo '<pre>'.print_r($detail).'</pre>';
+// exit;
 foreach($detail AS $val => $valx){ $val++;
-    $code_lv2		= (!empty($GET_LEVEL4[$valx['code_material']]['code_lv2']))?$GET_LEVEL4[$valx['code_material']]['code_lv2']:'-';
-    $price_ref      = (!empty($GET_PRICE_REF[$valx['code_material']]['price_ref']))?$GET_PRICE_REF[$valx['code_material']]['price_ref']:0;
-    $nm_category = strtolower(get_name('new_inventory_2','nama','code_lv2',$code_lv2));
+    $code_lv2		= (!empty($GET_LEVEL4[$valx['id']]['id_category1']))?$GET_LEVEL4[$valx['id']]['id_category1']:'-';
+    $price_ref      = (!empty($GET_PRICE_REF[$valx['id']]['price_ref']))?$GET_PRICE_REF[$valx['id']]['price_ref']:0;
+    $nm_category = strtolower(get_name('ms_inventory_category1','nama','id_category1',$code_lv2));
     $berat_pengurang_additive = ($nm_category == 'resin')?$BERAT_MINUS:0;
 
     $berat_bersih = $valx['weight'] - $berat_pengurang_additive;
@@ -27,24 +29,24 @@ foreach($detail AS $val => $valx){ $val++;
 }
 
 //additive
-foreach($detail_additive AS $val => $valx){ $val++;
-    $detail_custom    = $this->db->get_where('bom_detail_custom',array('no_bom_detail'=>$valx['no_bom_detail'],'category'=>'additive'))->result();
-    foreach($detail_custom AS $valx2){
-        $price_ref      = (!empty($GET_PRICE_REF[$valx2->code_material]['price_ref']))?$GET_PRICE_REF[$valx2->code_material]['price_ref']:0;
-        $total_price    = $valx2->weight * $price_ref;
-        $TOTAL_PRICE_ALL += $total_price;
-    }
-}
+// foreach($detail_additive AS $val => $valx){ $val++;
+//     $detail_custom    = $this->db->get_where('bom_detail_custom',array('no_bom_detail'=>$valx['no_bom_detail'],'category'=>'additive'))->result();
+//     foreach($detail_custom AS $valx2){
+//         $price_ref      = (!empty($GET_PRICE_REF[$valx2->code_material]['price_ref']))?$GET_PRICE_REF[$valx2->code_material]['price_ref']:0;
+//         $total_price    = $valx2->weight * $price_ref;
+//         $TOTAL_PRICE_ALL += $total_price;
+//     }
+// }
 
 //topping
-foreach($detail_topping AS $val => $valx){
-    $detail_custom    = $this->db->get_where('bom_detail_custom',array('no_bom_detail'=>$valx['no_bom_detail'],'category'=>'topping'))->result();
-    foreach($detail_custom AS $valx2){
-        $price_ref      = (!empty($GET_PRICE_REF[$valx2->code_material]['price_ref']))?$GET_PRICE_REF[$valx2->code_material]['price_ref']:0;
-        $total_price    = $valx2->weight * $price_ref;
-        $TOTAL_PRICE_ALL += $total_price;
-    }
-}
+// foreach($detail_topping AS $val => $valx){
+//     $detail_custom    = $this->db->get_where('bom_detail_custom',array('no_bom_detail'=>$valx['no_bom_detail'],'category'=>'topping'))->result();
+//     foreach($detail_custom AS $valx2){
+//         $price_ref      = (!empty($GET_PRICE_REF[$valx2->code_material]['price_ref']))?$GET_PRICE_REF[$valx2->code_material]['price_ref']:0;
+//         $total_price    = $valx2->weight * $price_ref;
+//         $TOTAL_PRICE_ALL += $total_price;
+//     }
+// }
 
 ?>
 
@@ -114,12 +116,12 @@ foreach($detail_topping AS $val => $valx){
                         if($value['judul'] == 'Mesin, cetakan, consumable'){
                             echo "<tr>";
                                 if($value['code'] == '4'){
-                                    $rate 	    = number_format($product_price[0]['rate_cycletime_machine'],2).' x '.number_format($product_price[0]['rate_depresiasi'],2);
+                                    $rate 	    = number_format($product_price[0]['rate_cycletime'],2).' x '.number_format($product_price[0]['rate_depresiasi'],2);
                                     $cost_machine	= $product_price[0]['cost_machine'];
                                     $detRate = "<span class='text-primary btncursor detailRate' id='btnShowMachine' data-tanda='machine' data-cost='".$product_price[0]['rate_depresiasi']."' data-id_product='".$header[0]->id_product."' >Detail</span>";
                                 }
                                 if($value['code'] == '5'){
-                                    $rate 	    = number_format($product_price[0]['rate_cycletime_machine'],2).' x '.number_format($product_price[0]['rate_mould'],2);
+                                    $rate 	    = number_format($product_price[0]['rate_cycletime'],2).' x '.number_format($product_price[0]['rate_mould'],2);
                                     $cost_machine 	= $product_price[0]['cost_mould'];
                                     $detRate = "<span class='text-primary btncursor detailRate' id='btnShowMold' data-tanda='mold' data-cost='".$product_price[0]['rate_mould']."' data-id_product='".$header[0]->id_product."' >Detail</span>";
                                 }

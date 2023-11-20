@@ -35,7 +35,8 @@ class Machine_rate extends Admin_Controller
     $where = [
       'deleted_date' => NULL,
     ];
-    $listData = $this->Machine_rate_model->get_data($where);
+    // $listData = $this->Machine_rate_model->get_data($where);
+    $listData = $this->db->query("SELECT a.*, b.kd_asset, b.nm_asset, c.nm_unit FROM rate_machine a LEFT JOIN asset b ON b.id = a.kd_mesin lEFT JOIN m_unit c ON c.id_unit = a.id_unit  ")->result();
 
     $data = [
       'result' =>  $listData,

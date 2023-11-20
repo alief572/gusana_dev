@@ -70,22 +70,22 @@ $ENABLE_DELETE  = has_permission('Product_Price.Delete');
 					success: function(result) {
 						console.log(result);
 
-						// if (result.status == '1') {
-						// 	new swal({
-						// 		title: "Sukses",
-						// 		text: "Data berhasil diupdate.",
-						// 		type: "success"
-						// 	}).then((hasil1) => {
-						// 		window.location.reload(true);
-						// 	});
-						// } else {
-						// 	new swal({
-						// 		title: "Error",
-						// 		text: "Data error. Gagal diupdate",
-						// 		type: "error"
-						// 	})
+						if (result.status == '1') {
+							new swal({
+								title: "Sukses",
+								text: "Data berhasil diupdate.",
+								type: "success"
+							}).then((hasil1) => {
+								window.location.reload(true);
+							});
+						} else {
+							new swal({
+								title: "Error",
+								text: "Data error. Gagal diupdate",
+								type: "error"
+							})
 
-						// }
+						}
 					},
 					error: function() {
 						new swal({

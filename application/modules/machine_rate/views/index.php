@@ -51,10 +51,10 @@ $ENABLE_DELETE  = has_permission('Rate_Machine.Delete');
 				?>
 						<tr>
 							<td><?= $numb; ?></td>
-							<td><?= strtoupper($record->kd_mesin) ?></td>
-							<td><?= strtoupper($nm_mesin) ?></td>
+							<td><?= strtoupper($record->kd_asset) ?></td>
+							<td><?= strtoupper($record->nm_asset) ?></td>
 							<td><?= strtoupper($record->kapasitas) ?></td>
-							<td><?= strtoupper($nm_satuan) ?></td>
+							<td><?= strtoupper($record->nm_unit) ?></td>
 							<td><?= number_format($record->harga_mesin, 2) ?></td>
 							<td><?= number_format($record->est_manfaat, 2) ?></td>
 							<td><?= number_format($record->depresiasi_bulan) ?></td>

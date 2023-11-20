@@ -22,8 +22,8 @@ $biaya_mesin 		= (!empty($listData[0]->biaya_mesin)) ? $listData[0]->biaya_mesin
 						<option value="0">Select Machine</option>
 						<?php
 						foreach ($list_asset as $key => $value) {
-							$selected = ($kd_mesin == $value['kd_asset']) ? 'selected' : '';
-							echo "<option value='" . $value['kd_asset'] . "' " . $selected . ">" . strtoupper($value['nm_asset']) . "</option>";
+							$selected = ($kd_mesin == $value['id']) ? 'selected' : '';
+							echo "<option value='" . $value['id'] . "' " . $selected . ">" . strtoupper($value['nm_asset']) . "</option>";
 						}
 						?>
 					</select>
