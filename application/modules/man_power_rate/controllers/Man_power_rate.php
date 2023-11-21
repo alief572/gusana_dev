@@ -39,6 +39,8 @@ class Man_power_rate extends Admin_Controller
 			'komp_sdmp' => $this->Man_power_rate_model->get_choose_komp_with_komp('1'),
 			'komp_bpjs' => $this->Man_power_rate_model->get_choose_komp_with_komp('2'),
 			'komp_bll' => $this->Man_power_rate_model->get_choose_komp_with_komp('3'),
+			'kurs_usd' => $this->Man_power_rate_model->get_usd_kurs(),
+			'kurs_rmb' => $this->Man_power_rate_model->get_rmb_kurs()
 		];
 
 
@@ -61,8 +63,15 @@ class Man_power_rate extends Admin_Controller
 			'gaji_pokok' => $this->db->get_where('ms_gaji_pokok', ['id' => 1])->row(),
 			'komp_sdmp' => $this->Man_power_rate_model->get_choose_komp_with_komp('1'),
 			'komp_bpjs' =>$this->Man_power_rate_model->get_choose_komp_with_komp('2') ,
-			'komp_bll' => $this->Man_power_rate_model->get_choose_komp_with_komp('3')
+			'komp_bll' => $this->Man_power_rate_model->get_choose_komp_with_komp('3'),
+			'kurs_usd' => $this->Man_power_rate_model->get_usd_kurs(),
+			'kurs_rmb' => $this->Man_power_rate_model->get_rmb_kurs()
 		];
+
+		// echo '<pre>';
+		// print_r($data);
+		// echo '</pre>';
+		// exit;
 
 		$this->template->set($data);
 		$this->template->title('Man Power Rate');

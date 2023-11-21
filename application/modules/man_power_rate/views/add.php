@@ -1,13 +1,3 @@
-<?php
-$kurs_rmb = $gaji_pokok->kurs_rmb;
-if($kurs_rmb == 0 || $kurs_rmb == null){
-	$kurs_rmb = 1;
-}
-$kurs = $gaji_pokok->kurs;
-if($kurs == 0 || $kurs == null){
-	$kurs = 1;
-}
-?>
 
 <div class="box box-primary">
 	<div class="box-body">
@@ -275,7 +265,7 @@ if($kurs == 0 || $kurs == null){
 					</div>
 					<div class="col-md-2">
 						<input type="hidden" name="" class="ttl_all" value="<?= ($val_sdmp + $val_bpjs + $val_bll) ?>">
-						<input type="text" name="rate_dollar" id="rate_dollar" class='form-control input-md text-right input_nominal text-right summaryCal ubah_kurs' value="<?= $gaji_pokok->kurs; ?>">
+						<input type="text" name="rate_dollar" id="rate_dollar" class='form-control input-md text-right input_nominal text-right summaryCal ubah_kurs' value="<?= $kurs_usd->kurs; ?>" readonly>
 					</div>
 				</div>
 				<div class="form-group row">
@@ -284,7 +274,7 @@ if($kurs == 0 || $kurs == null){
 					</div>
 					<div class="col-md-2">
 						<!-- <input type="hidden" name="" class="ttl_all" value=""> -->
-						<input type="text" name="rate_rmb" id="rate_rmb" class='form-control input-md text-right input_nominal text-right summaryCal ubah_kurs_rmb' value="<?= $gaji_pokok->kurs_rmb; ?>">
+						<input type="text" name="rate_rmb" id="rate_rmb" class='form-control input-md text-right input_nominal text-right summaryCal ubah_kurs_rmb' value="<?= $kurs_rmb->kurs ?>" readonly>
 					</div>
 				</div>
 				<hr>
@@ -293,7 +283,7 @@ if($kurs == 0 || $kurs == null){
 						<label for="customer">Upah /Bulan $</label>
 					</div>
 					<div class="col-md-2">
-						<input type="text" name="upah_per_bulan_dollar" id="upah_per_bulan_dollar" class='form-control input-md text-right input_nominal' readonly value="<?= (($gaji_pokok->gaji_pokok + ($val_sdmp + $val_bpjs + $val_bll)) / $gaji_pokok->kurs) ?>">
+						<input type="text" name="upah_per_bulan_dollar" id="upah_per_bulan_dollar" class='form-control input-md text-right input_nominal' readonly value="<?= (($gaji_pokok->gaji_pokok + ($val_sdmp + $val_bpjs + $val_bll)) / $kurs_usd->kurs) ?>">
 					</div>
 				</div>
 				<div class="form-group row">
@@ -301,7 +291,7 @@ if($kurs == 0 || $kurs == null){
 						<label for="customer">Upah /Jam $</label>
 					</div>
 					<div class="col-md-2">
-						<input type="text" name="upah_per_jam_dollar" id="upah_per_jam_dollar" class='form-control input-md text-right input_nominal' readonly value="<?= ((($gaji_pokok->gaji_pokok + ($val_sdmp + $val_bpjs + $val_bll)) / $gaji_pokok->kurs) / 173) ?>">
+						<input type="text" name="upah_per_jam_dollar" id="upah_per_jam_dollar" class='form-control input-md text-right input_nominal' readonly value="<?= ((($gaji_pokok->gaji_pokok + ($val_sdmp + $val_bpjs + $val_bll)) / $kurs_usd->kurs) / 173) ?>">
 					</div>
 				</div>
 				<hr>
@@ -310,7 +300,7 @@ if($kurs == 0 || $kurs == null){
 						<label for="customer">Upah /Bulan RMB</label>
 					</div>
 					<div class="col-md-2">
-						<input type="text" name="upah_per_bulan_rmb" id="upah_per_bulan_rmb" class='form-control input-md text-right input_nominal' readonly value="<?= (($gaji_pokok->gaji_pokok + ($val_sdmp + $val_bpjs + $val_bll)) / $kurs_rmb) ?>">
+						<input type="text" name="upah_per_bulan_rmb" id="upah_per_bulan_rmb" class='form-control input-md text-right input_nominal' readonly value="<?= (($gaji_pokok->gaji_pokok + ($val_sdmp + $val_bpjs + $val_bll)) / $kurs_rmb->kurs) ?>">
 					</div>
 				</div>
 				<div class="form-group row">
@@ -318,7 +308,7 @@ if($kurs == 0 || $kurs == null){
 						<label for="customer">Upah /Jam RMB</label>
 					</div>
 					<div class="col-md-2">
-						<input type="text" name="upah_per_jam_rmb" id="upah_per_jam_rmb" class='form-control input-md text-right input_nominal' readonly value="<?= ((($gaji_pokok->gaji_pokok + ($val_sdmp + $val_bpjs + $val_bll)) / $kurs_rmb) / 173) ?>">
+						<input type="text" name="upah_per_jam_rmb" id="upah_per_jam_rmb" class='form-control input-md text-right input_nominal' readonly value="<?= ((($gaji_pokok->gaji_pokok + ($val_sdmp + $val_bpjs + $val_bll)) / $kurs_rmb->kurs) / 173) ?>">
 					</div>
 				</div>
 				<hr>

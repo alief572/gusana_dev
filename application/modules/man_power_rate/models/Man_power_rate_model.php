@@ -171,6 +171,27 @@ class Man_power_rate_model extends BF_Model{
 		return $query->result();
 	}
 
+	public function get_usd_kurs(){
+		$getdata = $this->db->query("SELECT * FROM ms_kurs WHERE curr_to_idr = 'USD' AND tgl_periode_awal >= '".date('Y-m-d')."' AND tgl_periode_akhir <= '".date('Y-m-d')."'");
+
+		if($getdata->num_rows() < 1){
+			$getdata = $this->db->query("SELECT * FROM ms_kurs WHERE curr_to_idr = 'USD' ORDER BY tgl_periode_awal DESC");
+		}
+
+		return $getdata->row();
+
+	}
+
+	public function get_rmb_kurs(){
+		$getdata = $this->db->query("SELECT * FROM ms_kurs WHERE curr_to_idr = 'RMB' AND tgl_periode_awal >= '".date('Y-m-d')."' AND tgl_periode_akhir <= '".date('Y-m-d')."'");
+
+		if($getdata->num_rows() < 1){
+			$getdata = $this->db->query("SELECT * FROM ms_kurs WHERE curr_to_idr = 'RMB' ORDER BY tgl_periode_awal DESC");
+		}
+
+		return $getdata->row();
+	}
+
 	// public function list_komp_man_power_rate($tipe){
 	// 	$getAllKomp = $this->db->get_where('ms_komp_man_power_rate',['tipe' => $tipe])->result();
 	// 	$data = array();

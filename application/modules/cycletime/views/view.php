@@ -78,7 +78,7 @@ if($TimeTotal > 0){
 							<tr>
 								<td class='text-center'></td>
 								<td class='text-right text-bold'>Cycletime</td>
-								<td class='text-right text-bold'><?=number_format($totalTime,2);?> Minutes</td>
+								<td class='text-right text-bold'><?=number_format($totalTime,2);?> Hours</td>
 								<td class='text-center'></td>
 								<td class='text-center'></td>
 							</tr>
