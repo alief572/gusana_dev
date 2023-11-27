@@ -438,10 +438,10 @@ class Suppliers extends Admin_Controller
 	function deletePic()
 	{
 		$id = $this->input->post('id');
-		$data = $this->db->get_where('customer_pic', ['id' => $id])->row_array();
+		$data = $this->db->get_where('supplier_pic', ['id' => $id])->row_array();
 
 		$this->db->trans_begin();
-		$sql = $this->db->update('customer_pic', ['status' => '2', 'deleted_at' => date('Y-m-d H:i:s'), 'deleted_by' => $this->auth->user_id()], ['id' => $id]);
+		$sql = $this->db->update('supplier_pic', ['status' => '2', 'deleted_at' => date('Y-m-d H:i:s'), 'deleted_by' => $this->auth->user_id()], ['id' => $id]);
 		$errMsg = $this->db->error()['message'];
 		if ($this->db->trans_status() === FALSE) {
 			$this->db->trans_rollback();

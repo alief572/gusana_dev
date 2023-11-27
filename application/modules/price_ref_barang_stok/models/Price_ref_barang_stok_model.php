@@ -29,4 +29,16 @@ class Price_ref_barang_stok_model extends CI_Model
     {
         return $this->db->get_where('ms_barang_stok', array('id_barang_stok' => $id))->row_array();
     }
+
+    public function get_kurs_usd(){
+		$get_kurs_usd = $this->db->query("SELECT * FROM ms_kurs WHERE curr_to_idr = 'USD' AND tgl_periode_akhir >= '".date("Y-m-d")."' ORDER BY tgl_periode_awal DESC LIMIT 1 ")->row();
+		$kurs_usd = $get_kurs_usd->kurs;
+		return $kurs_usd;
+	}
+
+	public function get_kurs_rmb(){
+		$get_kurs_rmb = $this->db->query("SELECT * FROM ms_kurs WHERE curr_to_idr = 'RMB' AND tgl_periode_akhir >= '".date("Y-m-d")."' ORDER BY tgl_periode_awal DESC LIMIT 1")->row();
+		$kurs_rmb = $get_kurs_rmb->kurs;
+		return $kurs_rmb;
+	}
 }

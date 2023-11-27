@@ -54,14 +54,22 @@ class Price_sup_barang_stok extends Admin_Controller
       $post = $this->input->post();
 
       $id                 = $post['id'];
-      $price_ref_new      = str_replace(',', '', $post['price_ref_new']);
-      $price_ref_high_new      = str_replace(',', '', $post['price_ref_high_new']);
+      $price_ref_new_idr      = str_replace(',', '', $post['price_ref_new_idr']);
+      $price_ref_new_usd      = str_replace(',', '', $post['price_ref_new_usd']);
+      $price_ref_new_rmb      = str_replace(',', '', $post['price_ref_new_rmb']);
+      $price_ref_high_new_idr      = str_replace(',', '', $post['price_ref_high_new_idr']);
+      $price_ref_high_new_usd      = str_replace(',', '', $post['price_ref_high_new_usd']);
+      $price_ref_high_new_rmb      = str_replace(',', '', $post['price_ref_high_new_rmb']);
       $price_ref_expired  = $post['price_ref_expired'];
       $note               = $post['note'];
 
       $dataProcess1 = [
-        'price_ref_new'  => $price_ref_new,
-        'price_ref_high_new'  => $price_ref_high_new,
+        'price_ref_new_idr'  => $price_ref_new_idr,
+        'price_ref_new_usd'  => $price_ref_new_usd,
+        'price_ref_new_rmb'  => $price_ref_new_rmb,
+        'price_ref_high_new_idr'  => $price_ref_high_new_idr,
+        'price_ref_high_new_usd'  => $price_ref_high_new_usd,
+        'price_ref_high_new_rmb'  => $price_ref_high_new_rmb,
         'price_ref_new_expired'  => $price_ref_expired,
         'price_ref_new_date'  => date('Y-m-d'),
         'note'  => $note,
@@ -124,5 +132,17 @@ class Price_sup_barang_stok extends Admin_Controller
       $this->template->set($data);
       $this->template->render('add');
     }
+  }
+
+  public function get_kurs(){
+    $get_kurs_usd = $this->Price_sup_barang_stok_model->get_kurs_usd();
+    $get_kurs_rmb = $this->Price_sup_barang_stok_model->get_kurs_rmb();
+
+    $hasil = [
+      'kurs_usd' => $get_kurs_usd,
+      'kurs_rmb' => $get_kurs_rmb
+    ];
+
+    echo json_encode($hasil);
   }
 }

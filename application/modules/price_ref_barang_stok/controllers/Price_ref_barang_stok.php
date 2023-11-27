@@ -57,26 +57,38 @@ class Price_ref_barang_stok extends Admin_Controller
       $status_reject        = $post['status_reject'];
 
 
-      $price_ref_use_after          = str_replace(',', '', $post['price_ref_use_after']);
+      $price_ref_use_after_idr          = str_replace(',', '', $post['price_ref_use_after_idr']);
+      $price_ref_use_after_usd          = str_replace(',', '', $post['price_ref_use_after_usd']);
+      $price_ref_use_after_rmb          = str_replace(',', '', $post['price_ref_use_after_rmb']);
       $price_ref_expired_use_after  = $post['price_ref_expired_use_after'];
 
       $getPurchase = $this->db->get_where('ms_barang_stok', ['id_barang_stok' => $id])->row();
-      print_r($getPurchase);
-      exit;
+      // print_r($getPurchase);
+      // exit;
 
       if ($action_app == '1') {
         $dataProcess = [
-          'price_ref'             => $getPurchase->price_ref_new,
-          'price_ref_high'        => $getPurchase->price_ref_high_new,
+          'price_ref_idr'             => $getPurchase->price_ref_new_idr,
+          'price_ref_usd'             => $getPurchase->price_ref_new_usd,
+          'price_ref_rmb'             => $getPurchase->price_ref_new_rmb,
+          'price_ref_high_idr'        => $getPurchase->price_ref_high_new_idr,
+          'price_ref_high_usd'        => $getPurchase->price_ref_high_new_usd,
+          'price_ref_high_rmb'        => $getPurchase->price_ref_high_new_rmb,
           'price_ref_date'        => $getPurchase->price_ref_new_date,
           'price_ref_expired'     => $getPurchase->price_ref_new_expired,
 
-          'price_ref_new'             => NULL,
-          'price_ref_high_new'        => NULL,
+          'price_ref_new_idr'             => NULL,
+          'price_ref_new_usd'             => NULL,
+          'price_ref_new_rmb'             => NULL,
+          'price_ref_high_new_idr'        => NULL,
+          'price_ref_high_new_usd'        => NULL,
+          'price_ref_high_new_rmb'        => NULL,
           'price_ref_new_date'        => NULL,
           'price_ref_new_expired'     => NULL,
 
-          'price_ref_use'         => $price_ref_use_after,
+          'price_ref_use_idr'         => $price_ref_use_after_idr,
+          'price_ref_use_usd'         => $price_ref_use_after_usd,
+          'price_ref_use_rmb'         => $price_ref_use_after_rmb,
           'price_ref_date_use'    => date('Y-m-d'),
           'price_ref_expired_use'   => $price_ref_expired_use_after,
 
@@ -125,5 +137,17 @@ class Price_ref_barang_stok extends Admin_Controller
       $this->template->set($data);
       $this->template->render('add');
     }
+  }
+
+  public function get_kurs(){
+    $get_kurs_usd = $this->Price_ref_barang_stok_model->get_kurs_usd();
+    $get_kurs_rmb = $this->Price_ref_barang_stok_model->get_kurs_rmb();
+
+    $hasil = [
+      'kurs_usd' => $get_kurs_usd,
+      'kurs_rmb' => $get_kurs_rmb
+    ];
+
+    echo json_encode($hasil);
   }
 }

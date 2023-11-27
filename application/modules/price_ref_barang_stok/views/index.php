@@ -74,7 +74,7 @@ $ENABLE_DELETE  = has_permission('Barang_Stok.Delete');
 							<td><?= strtoupper($record->item_code) ?></td>
 							<td><?= strtoupper($record->nm_barang_stok) ?></td>
 							<td><?= strtoupper($record->trade_name) ?></td>
-							<td align='right'><?= number_format($record->price_ref_use, 2) ?></td>
+							<td align='right'><?= number_format($record->price_ref_use_idr, 2) ?></td>
 							<td align='center'><?= $expired; ?></td>
 
 							<!-- <td align='right'><?= number_format($record->price_ref, 2) ?></td>
@@ -106,7 +106,7 @@ $ENABLE_DELETE  = has_permission('Barang_Stok.Delete');
 <!-- awal untuk modal dialog -->
 
 <div class="modal modal-default fade" id="dialog-popup" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-lg">
+	<div class="modal-dialog modal-lg mx-wd-md-90p-force mx-wd-lg-90p-force">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
