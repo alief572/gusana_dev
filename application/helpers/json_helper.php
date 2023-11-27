@@ -353,7 +353,7 @@ function get_price_ref()
 	$listGetCategory = $CI->db->get_where('ms_inventory_category3')->result_array();
 	$ArrGetCategory = [];
 	foreach ($listGetCategory as $key => $value) {
-		$ArrGetCategory[$value['id_category3']]['price_ref'] 	= $value['price_ref_use'];
+		$ArrGetCategory[$value['id_category3']]['price_ref_idr'] 	= $value['price_ref_use_idr'];
 	}
 	return $ArrGetCategory;
 }

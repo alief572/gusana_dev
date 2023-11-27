@@ -21,7 +21,7 @@
                     <input type="text" name="product_code" id="" class="form-control form-control-sm product_code" value="<?= (isset($bom)) ? $bom->variant : null ?>">
                 </div>
                 <div class="col-md-2 mt-2">
-                    <label for="variant" class="tx-dark tx-bold">Qty Produksi</label>
+                    <label for="variant" class="tx-dark tx-bold">Lot Size</label>
                 </div>
                 <div class="col-md-2">
                     <input type="number" name="qty_hopper" id="" class="form-control form-control-sm" step="0.01" value="<?= (isset($bom)) ? $bom->qty_hopper : null ?>">

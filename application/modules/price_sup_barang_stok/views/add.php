@@ -4,12 +4,12 @@ $trade_name 		= (!empty($listData[0]->trade_name)) ? $listData[0]->trade_name : 
 $nama 		= (!empty($listData[0]->nm_barang_stok)) ? $listData[0]->nm_barang_stok : '';
 $status_app = (!empty($listData[0]->status_app)) ? $listData[0]->status_app : '';
 
-$price_ref_idr 		= (!empty($listData[0]->price_ref_idr)) ? $listData[0]->price_ref_idr : '';
-$price_ref_usd 		= (!empty($listData[0]->price_ref_usd)) ? $listData[0]->price_ref_usd : '';
-$price_ref_rmb 		= (!empty($listData[0]->price_ref_rmb)) ? $listData[0]->price_ref_rmb : '';
-$price_ref_high_idr = (!empty($listData[0]->price_ref_high_idr)) ? $listData[0]->price_ref_high_idr : '';
-$price_ref_high_usd = (!empty($listData[0]->price_ref_high_usd)) ? $listData[0]->price_ref_high_usd : '';
-$price_ref_high_rmb = (!empty($listData[0]->price_ref_high_rmb)) ? $listData[0]->price_ref_high_rmb : '';
+$price_ref_idr 		= (!empty($listData[0]->price_ref_idr)) ? $listData[0]->price_ref_idr : 0;
+$price_ref_usd 		= (!empty($listData[0]->price_ref_usd)) ? $listData[0]->price_ref_usd : 0;
+$price_ref_rmb 		= (!empty($listData[0]->price_ref_rmb)) ? $listData[0]->price_ref_rmb : 0;
+$price_ref_high_idr = (!empty($listData[0]->price_ref_high_idr)) ? $listData[0]->price_ref_high_idr : 0;
+$price_ref_high_usd = (!empty($listData[0]->price_ref_high_usd)) ? $listData[0]->price_ref_high_usd : 0;
+$price_ref_high_rmb = (!empty($listData[0]->price_ref_high_rmb)) ? $listData[0]->price_ref_high_rmb : 0;
 
 $price_ref_new_idr 	= '';
 $price_ref_new_usd 	= '';
@@ -22,14 +22,21 @@ $expired3 	= '';
 $expired6 	= '';
 $expired12 	= '';
 
+$price_ref_new_idr 	=  0;
+	$price_ref_new_usd 	=  0;
+	$price_ref_new_rmb 	=  0;
+	$price_ref_high_new_idr 	=  0;
+	$price_ref_high_new_usd 	=  0;
+	$price_ref_high_new_rmb 	=  0;
+
 if ($status_app == 'Y') {
 
-	$price_ref_new_idr 	= (!empty($listData[0]->price_ref_new_idr)) ? $listData[0]->price_ref_new_idr : '';
-	$price_ref_new_usd 	= (!empty($listData[0]->price_ref_new_usd)) ? $listData[0]->price_ref_new_usd : '';
-	$price_ref_new_rmb 	= (!empty($listData[0]->price_ref_new_rmb)) ? $listData[0]->price_ref_new_rmb : '';
-	$price_ref_high_new_idr 	= (!empty($listData[0]->price_ref_high_new_idr)) ? $listData[0]->price_ref_high_new_idr : '';
-	$price_ref_high_new_usd 	= (!empty($listData[0]->price_ref_high_new_usd)) ? $listData[0]->price_ref_high_new_usd : '';
-	$price_ref_high_new_rmb 	= (!empty($listData[0]->price_ref_high_new_rmb)) ? $listData[0]->price_ref_high_new_rmb : '';
+	$price_ref_new_idr 	= (!empty($listData[0]->price_ref_new_idr)) ? $listData[0]->price_ref_new_idr : 0;
+	$price_ref_new_usd 	= (!empty($listData[0]->price_ref_new_usd)) ? $listData[0]->price_ref_new_usd : 0;
+	$price_ref_new_rmb 	= (!empty($listData[0]->price_ref_new_rmb)) ? $listData[0]->price_ref_new_rmb : 0;
+	$price_ref_high_new_idr 	= (!empty($listData[0]->price_ref_high_new_idr)) ? $listData[0]->price_ref_high_new_idr : 0;
+	$price_ref_high_new_usd 	= (!empty($listData[0]->price_ref_high_new_usd)) ? $listData[0]->price_ref_high_new_usd : 0;
+	$price_ref_high_new_rmb 	= (!empty($listData[0]->price_ref_high_new_rmb)) ? $listData[0]->price_ref_high_new_rmb : 0;
 	$note 			= (!empty($listData[0]->note)) ? $listData[0]->note : '';
 	$upload_file 	= (!empty($listData[0]->upload_file)) ? $listData[0]->upload_file : '';
 
