@@ -76,10 +76,10 @@ $ENABLE_DELETE  = has_permission('Raw_Material.Delete');
 							<td><?= $numb; ?></td>
 							<td><?= strtoupper($record->material_code) ?></td>
 							<td><?= strtoupper($record->nama) ?></td>
-							<td align='right'><?= number_format($record->price_ref, 2) ?></td>
-							<td align='right'><?= number_format($record->price_ref_new, 2) ?></td>
-							<td align='right'><?= number_format($record->price_ref_high, 2) ?></td>
-							<td align='right'><?= number_format($record->price_ref_high_new, 2) ?></td>
+							<td align='right'><?= number_format($record->price_ref_idr, 2) ?></td>
+							<td align='right'><?= number_format($record->price_ref_new_idr, 2) ?></td>
+							<td align='right'><?= number_format($record->price_ref_high_idr, 2) ?></td>
+							<td align='right'><?= number_format($record->price_ref_high_new_idr, 2) ?></td>
 
 							<td align='center'><?= $expired; ?></td>
 							<td align='center'><?= $expired_new; ?></td>
@@ -110,7 +110,7 @@ $ENABLE_DELETE  = has_permission('Raw_Material.Delete');
 <!-- awal untuk modal dialog -->
 
 <div class="modal modal-default fade" id="dialog-popup" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-lg">
+	<div class="modal-dialog modal-lg mx-wd-md-90p-force mx-wd-lg-90p-force">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
