@@ -54,7 +54,12 @@ class Product_price extends Admin_Controller
 	{
 		// $this->auth->restrict($this->viewPermission);
 		$no_bom 	= $this->uri->segment(3);
+		// print_r($no_bom);
+		// exit;
 		$product_price 		= $this->db->get_where('product_price', array('no_bom' => $no_bom, 'deleted_date' => NULL))->result_array();
+		// echo '<pre>'; 
+		// print_r($product_price);
+		// echo'</pre>';
 		$costing_rate = $this->db->get_where('costing_rate', array('deleted_date' => NULL))->result_array();
 
 		//Material

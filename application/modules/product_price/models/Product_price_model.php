@@ -83,7 +83,7 @@ class Product_price_model extends BF_Model
 			// $nestedData[]	= "<div align='left'>".strtoupper(strtolower($row['nama_level1']))."</div>";
 			$nestedData[]	= "<div align='left'>" . strtoupper(strtolower($row['product_master'])) . "</div>";
 
-			$nestedData[]	= "<div align='right'>" . number_format($row['berat_material'], 4) . " Kg</div>";
+			$nestedData[]	= "<div align='right'>" . number_format($row['qty_hopper'], 2) . " Kg</div>";
 			$nestedData[]	= "<div align='right'>" . number_format($row['price_material'], 2) . "</div>";
 			$nestedData[]	= "<div align='right'>" . number_format($row['price_man_power'], 2) . "</div>";
 			$nestedData[]	= "<div align='right'>" . number_format($row['price_total'], 2) . "</div>";
@@ -124,11 +124,14 @@ class Product_price_model extends BF_Model
 		$sql = "SELECT
 					(@row:=@row+1) AS nomor,
 					a.*,
-					b.nama AS nama_level4
+					b.nama AS nama_level4,
+					c.qty_hopper
 				FROM
 					product_price a 
 					LEFT JOIN ms_inventory_category3 b ON a.code_lv4 = b.id_category3
+					LEFT JOIN ms_bom c ON a.code_lv4 = c.id_product
 				WHERE 1=1 AND
+					deleted_date IS NULL AND
 					(
 						a.no_bom LIKE '%" . $this->db->escape_like_str($like_value) . "%'
 						OR b.nama LIKE '%" . $this->db->escape_like_str($like_value) . "%'
