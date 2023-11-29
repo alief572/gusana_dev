@@ -7,7 +7,7 @@
                     <label for="product_master" class="tx-dark tx-bold">Product Master</label>
                 </div>
                 <div class="col-md-2">
-                    <select name="product_master" id="product_master" class="form-control form-control-sm get_product_code">
+                    <select name="product_master" id="product_master" class="form-control form-control-sm select get_product_code">
                         <option value="">- Product Master -</option>
                         <?php foreach ($product_master as $item_master) : ?>
                             <option value="<?= $item_master->id_category3 ?>" <?= (isset($bom) && $item_master->id_category3 == $bom->id_product) ? 'selected' : null ?>><?= $item_master->nama ?></option>
@@ -67,7 +67,7 @@
                             </select>
                         </td>
                         <td>
-                            <select name="" id="" class="form-control form-control-sm add_material_category">
+                            <select name="" id="" class="form-control form-control-sm select add_material_category">
                                 <option value="">- Material Category -</option>
                                 <?php foreach($material_category as $item_material_category) : ?>
                                     <option value="<?= $item_material_category->id_category1 ?>"><?= $item_material_category->nama ?></option>
@@ -113,8 +113,8 @@
             placeholder: "Choose one",
             allowClear: true,
             width: "100%",
-            dropdownParent: $("#dataForm"),
-            minimumResultsForSearch: -1
+            dropdownParent: $("#dataForm")
+            // minimumResultsForSearch: -1
         });
     });
 </script>

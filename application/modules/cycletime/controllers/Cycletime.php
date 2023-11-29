@@ -116,12 +116,15 @@ class Cycletime extends Admin_Controller
   {
     $this->auth->restrict($this->viewPermission);
     $id   = $this->input->post('id');
-    $header = $this->db->query("SELECT a.*, b.nama as nm_product FROM cycletime_header a LEFT JOIN ms_product_category3 b ON b.id_category3 = a.id_product WHERE a.id_time = '".$id."'")->result();
+    $header = $this->db->query("SELECT a.*, b.nama as nm_product FROM cycletime_header a LEFT JOIN ms_product_category3 b ON b.id_category3 = a.id_product WHERE a.id_time = '" . $id . "'")->result();
     // $header = $this->db->get_where('cycletime_header', array('id_time' => $id))->result();
     // print_r($header);
     $data = [
       'header' => $header
     ];
+    // echo '<pre>';
+    // print_r($data); 
+    // echo'</pre>';
     $this->template->set('results', $data);
     $this->template->render('view', $data);
   }
@@ -375,15 +378,17 @@ class Cycletime extends Admin_Controller
       $ArrDetail[$val]['costcenter']     = $valx['costcenter'];
       // $ArrDetail[$val]['machine'] 			= $valx['machine'];
       // $ArrDetail[$val]['mould'] 				= $valx['mould'];
-      foreach ($valx['detail'] as $val2 => $valx2) {
-        $ArrDetail2[$val2 . $val]['id_time']       = $id_material;
-        $ArrDetail2[$val2 . $val]['id_costcenter'] = $id_material . "-" . $urut;
-        $ArrDetail2[$val2 . $val]['nm_process']   = $valx2['process'];
-        $ArrDetail2[$val2 . $val]['cycletime']     = $valx2['cycletime'];
-        $ArrDetail2[$val2 . $val]['qty_mp']       = $valx2['qty_mp'];
-        $ArrDetail2[$val2 . $val]['note']         = $valx2['note'];
-        $ArrDetail2[$val2 . $val]['machine']       = $valx2['machine'];
-        $ArrDetail2[$val2 . $val]['mould']         = $valx2['mould'];
+      if (isset($valx['detail'])) {
+        foreach ($valx['detail'] as $val2 => $valx2) {
+          $ArrDetail2[$val2 . $val]['id_time']       = $id_material;
+          $ArrDetail2[$val2 . $val]['id_costcenter'] = $id_material . "-" . $urut;
+          $ArrDetail2[$val2 . $val]['nm_process']   = $valx2['process'];
+          $ArrDetail2[$val2 . $val]['cycletime']     = $valx2['cycletime'];
+          $ArrDetail2[$val2 . $val]['qty_mp']       = $valx2['qty_mp'];
+          $ArrDetail2[$val2 . $val]['note']         = $valx2['note'];
+          $ArrDetail2[$val2 . $val]['machine']       = $valx2['machine'];
+          $ArrDetail2[$val2 . $val]['mould']         = $valx2['mould'];
+        }
       }
     }
 

@@ -225,11 +225,11 @@ function get_inventory_lv4()
 function get_inventory_lv3()
 {
 	$CI = &get_instance();
-	$listGetCategory = $CI->db->get('new_inventory_3')->result_array();
+	$listGetCategory = $CI->db->get('ms_inventory_category2')->result_array();
 	$ArrGetCategory = [];
 	foreach ($listGetCategory as $key => $value) {
-		$ArrGetCategory[$value['code_lv3']]['code_lv3'] 	= $value['code_lv3'];
-		$ArrGetCategory[$value['code_lv3']]['nama'] 		= $value['nama'];
+		$ArrGetCategory[$value['id_category2']]['id_category2'] 	= $value['id_category2'];
+		$ArrGetCategory[$value['id_category2']]['nama'] 		= $value['nama'];
 	}
 	return $ArrGetCategory;
 }
@@ -353,7 +353,7 @@ function get_price_ref()
 	$listGetCategory = $CI->db->get_where('ms_inventory_category3')->result_array();
 	$ArrGetCategory = [];
 	foreach ($listGetCategory as $key => $value) {
-		$ArrGetCategory[$value['id_category3']]['price_ref_idr'] 	= $value['price_ref_use_idr'];
+		$ArrGetCategory[$value['id_category1']]['price_ref_idr'] 	= $value['price_ref_use_idr'];
 	}
 	return $ArrGetCategory;
 }

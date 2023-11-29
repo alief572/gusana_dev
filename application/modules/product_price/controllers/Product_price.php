@@ -60,6 +60,7 @@ class Product_price extends Admin_Controller
 		// echo '<pre>'; 
 		// print_r($product_price);
 		// echo'</pre>';
+		// exit;
 		$costing_rate = $this->db->get_where('costing_rate', array('deleted_date' => NULL))->result_array();
 
 		//Material
@@ -74,6 +75,7 @@ class Product_price extends Admin_Controller
 			'header' => $header,
 			'detail' => $detail,
 			'product' => $product,
+			'GET_LEVEL3' => get_inventory_lv3(),
 			'GET_LEVEL4' => get_inventory_lv4(),
 			'GET_ACC' => get_accessories(),
 			'GET_PRICE_REF' => get_price_ref()
@@ -87,15 +89,15 @@ class Product_price extends Admin_Controller
 		// $this->auth->restrict($this->viewPermission);
 		$no_bom 			= $this->input->post('no_bom');
 
-		$header 			= $this->db->get_where('bom_header', array('no_bom' => $no_bom))->result();
-		$detail   			= $this->db->get_where('bom_detail', array('no_bom' => $no_bom, 'category' => 'default'))->result_array();
+		$header 			= $this->db->get_where('ms_bom', array('id' => $no_bom))->result();
+		$detail   			= $this->db->get_where('ms_bom_detail_material', array('id_bom' => $no_bom))->result_array();
 		$detail_additive   	= $this->db->get_where('bom_detail', array('no_bom' => $no_bom, 'category' => 'additive'))->result_array();
 		$detail_topping   	= $this->db->get_where('bom_detail', array('no_bom' => $no_bom, 'category' => 'topping'))->result_array();
 		$detail_accessories = $this->db->get_where('bom_detail', array('no_bom' => $no_bom, 'category' => 'accessories'))->result_array();
 		$detail_flat_sheet 	= $this->db->get_where('bom_detail', array('no_bom' => $no_bom, 'category' => 'flat sheet'))->result_array();
 		$detail_end_plate 	= $this->db->get_where('bom_detail', array('no_bom' => $no_bom, 'category' => 'end plate'))->result_array();
 		$detail_ukuran_jadi = $this->db->get_where('bom_detail', array('no_bom' => $no_bom, 'category' => 'ukuran jadi'))->result_array();
-		$product    		= $this->product_price_model->get_data_where_array('new_inventory_4', array('deleted_date' => NULL, 'category' => 'product'));
+		$product    		= $this->db->get_where('ms_product_category3', ['id_category3' => $header[0]->id_product])->row();
 
 		$data = [
 			'header' => $header,
@@ -149,7 +151,7 @@ class Product_price extends Admin_Controller
 			$no_bom = $value['id'];
 			$kode 	= $date . '-' . $no_bom;
 
-			$detail	= $this->db->get_where('ms_bom_detail_material')->result_array();
+			$detail	= $this->db->get_where('ms_bom_detail_material',['id_bom' => $value['id']])->result_array();
 
 			$BERAT_MINUS = 0;
 			if (!empty($detail_additive)) {
@@ -164,7 +166,7 @@ class Product_price extends Admin_Controller
 			}
 
 			$TOTAL_PRICE_ALL = 0;
-			$TOTAL_BERAT_BERSIH = 0;
+			$TOTAL_BERAT_BERSIH = $value['qty_hopper'];
 			//default
 			if (!empty($detail)) {
 				// print_r($detail);
@@ -172,19 +174,26 @@ class Product_price extends Admin_Controller
 				foreach ($detail as $val => $valx) {
 					$val++;
 
+					// echo '<pre>'; 
+					// print_r($GET_PRICE_REF[$valx['id_category1']]);
+					// echo'</pre>';
+					// exit;
+
 					$code_lv2		= (!empty($GET_LEVEL4[$valx['id_category1']]['id_category1'])) ? $GET_LEVEL4[$valx['id_category1']]['id_category1'] : '-';
-					$price_ref      = (!empty($GET_PRICE_REF[$valx['id_category1']]['price_ref'])) ? $GET_PRICE_REF[$valx['id_category1']]['price_ref'] : 0;
+					$price_ref      = (!empty($GET_PRICE_REF[$valx['id_category1']]['price_ref_idr'])) ? $GET_PRICE_REF[$valx['id_category1']]['price_ref_idr'] : 0;
 					// $get_material_price_ref = $this->Product_price_model->get_material_price_ref();
 					$nm_category = strtolower(get_name('ms_inventory_category1', 'nama', 'id_category1', $code_lv2));
 					$berat_pengurang_additive = ($nm_category == 'resin') ? $BERAT_MINUS : 0;
 
+
+
 					// print_r($valx);
 					// exit;
 
-					$berat_bersih = $valx['weight'] - $berat_pengurang_additive;
+					$berat_bersih = $valx['weight'];
 					$total_price = $berat_bersih * $price_ref;
 					$TOTAL_PRICE_ALL += $total_price;
-					$TOTAL_BERAT_BERSIH += $berat_bersih;
+					// $TOTAL_BERAT_BERSIH = 0;
 					$UNIQ = $val . '-' . $key;
 					$ArrDetailDefault[$UNIQ]['kode'] 			=  $kode;
 					$ArrDetailDefault[$UNIQ]['category'] 		=  $valx['id_category1'];
@@ -531,8 +540,8 @@ class Product_price extends Admin_Controller
 			$no_bom 	  = $this->uri->segment(3);
 			$header   = $this->db->get_where('bom_header', array('no_bom' => $no_bom))->result();
 			$detail   = $this->db->get_where('bom_detail', array('no_bom' => $no_bom))->result_array();
-			$product    = $this->product_price_model->get_data_where_array('new_inventory_4', array('deleted_date' => NULL, 'category' => 'product'));
-			$material    = $this->product_price_model->get_data_where_array('new_inventory_4', array('deleted_date' => NULL, 'category' => 'material'));
+			$product    = $this->Product_price_model->get_data_where_array('new_inventory_4', array('deleted_date' => NULL, 'category' => 'product'));
+			$material    = $this->Product_price_model->get_data_where_array('new_inventory_4', array('deleted_date' => NULL, 'category' => 'material'));
 
 			// print_r($header);
 			// exit;
@@ -556,7 +565,7 @@ class Product_price extends Admin_Controller
 		$no_bom 	= $this->input->post('no_bom');
 		$header = $this->db->get_where('bom_header', array('no_bom' => $no_bom))->result();
 		$detail = $this->db->get_where('bom_detail', array('no_bom' => $no_bom))->result_array();
-		$product    = $this->product_price_model->get_data_where_array('new_inventory_4', array('deleted_date' => NULL, 'category' => 'product'));
+		$product    = $this->Product_price_model->get_data_where_array('new_inventory_4', array('deleted_date' => NULL, 'category' => 'product'));
 		// print_r($header);
 		$data = [
 			'header' => $header,
@@ -573,7 +582,7 @@ class Product_price extends Admin_Controller
 		$id 	= $this->uri->segment(3);
 		$no 	= 0;
 
-		$material    = $this->product_price_model->get_data_where_array('new_inventory_4', array('deleted_date' => NULL, 'category' => 'material'));
+		$material    = $this->Product_price_model->get_data_where_array('new_inventory_4', array('deleted_date' => NULL, 'category' => 'material'));
 		$d_Header = "";
 		// $d_Header .= "<tr>";
 		$d_Header .= "<tr class='header_" . $id . "'>";

@@ -30,7 +30,7 @@ $ENABLE_DELETE  = has_permission('Bom.Delete');
                         <th width="15" class="text-center">No</th>
                         <th>Product Master</th>
                         <th>Product Code</th>
-                        <th>Total Weight (Kg)</th>
+                        <th>Lot Size (Kg)</th>
                         <th>Waste Product (%)</th>
                         <th>Waste Setting / Cleaning (%)</th>
                         <th>Last By</th>

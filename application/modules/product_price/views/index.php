@@ -28,7 +28,7 @@ $ENABLE_DELETE  = has_permission('Product_Price.Delete');
 					<th style="width:5%;">#</th>
 					<!-- <th>Product Type</th> -->
 					<th style="width:25%;">Product Master</th>
-					<th  style="width:10%;" class='text-right'>Total Weight</th>
+					<th  style="width:10%;" class='text-right'>Lot Size</th>
 					<th style="width:10%;" class='text-right'>Price Material</th>
 					<th style="width:10%;" class='text-right'>Price MP</th>
 					<th style="width:10%;" class='text-right'>Price Total</th>
