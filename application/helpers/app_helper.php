@@ -721,3 +721,49 @@ function get_total_time_cycletime()
     }
     return $Arrback;
 }
+
+function get_konversi($material)
+{
+    $CI         = &get_instance();
+    $sql    = "SELECT a.konversi FROM ms_inventory_category3 a WHERE  a.id_category3 = '" . $material . "'";
+    $sisa      = $CI->db->query($sql)->result();
+    $total  = (!empty($sisa[0]->konversi)) ? $sisa[0]->konversi : 1;
+    return $total;
+}
+
+function get_stock_material($material)
+{
+    $CI         = &get_instance();
+
+    $sql = "
+          SELECT
+            a.qty_stock AS qty
+          FROM
+            warehouse_stock a
+          WHERE
+            a.id_material = '" . $material . "'
+            ";
+    $sisa    = $CI->db->query($sql)->result();
+    $total = (!empty($sisa[0]->qty)) ? $sisa[0]->qty : 0;
+    return $total;
+}
+
+
+function get_stock_material_packing($material)
+{
+    $CI         = &get_instance();
+    $stock    = get_stock_material($material);
+    $konversi = get_konversi($material);
+    $pack = 0;
+    if (!empty($stock) and $stock > 0 and $konversi > 0) {
+        $pack = $stock / $konversi;
+    }
+    return $pack;
+}
+
+function get_material()
+{
+    $CI     = &get_instance();
+    $query    = $CI->db->query("SELECT * FROM ms_inventory_category3 WHERE deleted = '0' ORDER BY nama ASC")->result_array();
+    return $query;
+}

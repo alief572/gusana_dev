@@ -43,14 +43,14 @@ if ($TimeTotal > 0) {
 								echo "<td align='right'><b></b></td>";
 								echo "<td align='left'></td>";
 								echo "</tr>";
-								$q_dheader_test = $this->db->query("SELECT * FROM cycletime_detail_detail WHERE id_costcenter='" . $val2x['id_costcenter'] . "'")->result_array();
+								$q_dheader_test = $this->db->query("SELECT a.* FROM cycletime_detail_detail a WHERE a.id_costcenter='" . $val2x['id_costcenter'] . "'")->result_array();
 								
 								foreach ($q_dheader_test as $val2D => $val2Dx) {
 									$val2D++;
 									$nomor = ($val2D == 1) ? $val2D : '';
 
-									$CT2 = (get_name('asset', 'nm_asset', 'kd_asset', $val2Dx['machine']) != '0') ? get_name('asset', 'nm_asset', 'kd_asset', $val2Dx['machine']) : '';
-									$MP2 = (get_name('asset', 'nm_asset', 'kd_asset', $val2Dx['mould']) != '0') ? get_name('asset', 'nm_asset', 'kd_asset', $val2Dx['mould']) : '';
+									$CT2 = (get_name('asset', 'nm_asset', 'id', $val2Dx['machine']) != '0') ? get_name('asset', 'nm_asset', 'id', $val2Dx['machine']) : '';
+									$MP2 = (get_name('asset', 'nm_asset', 'id', $val2Dx['mould']) != '0') ? get_name('asset', 'nm_asset', 'id', $val2Dx['mould']) : '';
 
 									$CT = ($val2Dx['cycletime'] != 0) ? $val2Dx['cycletime'] : '';
 									$MP = ($val2Dx['qty_mp'] != 0) ? $val2Dx['qty_mp'] : '';

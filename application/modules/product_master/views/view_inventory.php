@@ -84,7 +84,7 @@ $ENABLE_DELETE  = has_permission('Product_Master.Delete');
 						</td>
 					</tr>
 					<tr>
-						<td>Status</td>
+						<th>Status</th>
 						<td>:</td>
 						<td colspan="4">
 							<?php if ($results['inventory_4']->aktif == 1) : ?>
@@ -93,6 +93,74 @@ $ENABLE_DELETE  = has_permission('Product_Master.Delete');
 								<div class="badge badge-danger">Non Aktif</div>
 							<?php endif; ?>
 						</td>
+					</tr>
+				</table>
+				<table class="table">
+					<tr>
+						<th class="text-center" colspan="6">
+							<b>Spesifikasi</b>
+						</th>
+					</tr>
+					<tr>
+						<th>Aplikasi penggunaan cat dan coating</th>
+						<td>:</td>
+						<td><?= $results['aplikasi_penggunaan_cat'] ?></td>
+						<th>Water Resistance</th>
+						<td>:</td>
+						<td><?= $results['water_resistance'] ?></td>
+					</tr>
+					<tr>
+						<th>Weather & UV resistance</th>
+						<td>:</td>
+						<td><?= $results['weather_uv_resistance'] ?></td>
+						<th>Corrosion Resistance</th>
+						<td>:</td>
+						<td><?= $results['corrosion_resistance'] ?></td>
+					</tr>
+					<tr>
+						<th>Heat Resistance</th>
+						<td>:</td>
+						<td><?= $results['heat_resistant'] ?></td>
+						<th>Daya Rekat (Adhesi)</th>
+						<td>:</td>
+						<td><?= $results['daya_rekat'] ?></td>
+					</tr>
+					<tr>
+						<th>Lama Pengeringan</th>
+						<td>:</td>
+						<td><?= $results['lama_pengeringan'] ?></td>
+						<th>Permukaan</th>
+						<td>:</td>
+						<td><?= $results['permukaan'] ?></td>
+					</tr>
+					<tr>
+						<th>Anti Jamur dan Lumut</th>
+						<td>:</td>
+						<td><?= $results['anti_jamur_lumut'] ?></td>
+						<th>Mudah Dibersihkan (Dirt Resistance)</th>
+						<td>:</td>
+						<td><?= $results['mudah_dibersihkan'] ?></td>
+					</tr>
+					<tr>
+						<th>Anti Bakteri</th>
+						<td>:</td>
+						<td><?= $results['anti_bakteri'] ?></td>
+						<th>Daya tahan gesekan</th>
+						<td>:</td>
+						<td><?= $results['daya_tahan_gesekan'] ?></td>
+					</tr>
+					<tr>
+						<th>Anti Slip</th>
+						<td>:</td>
+						<td><?= $results['anti_slip'] ?></td>
+						<th>Fire Resistance</th>
+						<td>:</td>
+						<td><?= $results['fire_resistance'] ?></td>
+					</tr>
+					<tr>
+						<th>Ketahanan Bahan Kimia</th>
+						<td>:</td>
+						<td><?= $results['ketahanan_bahan_kimia'] ?></td>
 					</tr>
 				</table>
 				<h4 class="text-center">Alternatif Competitor</h4>

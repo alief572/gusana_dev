@@ -97,6 +97,7 @@ class Cycletime extends Admin_Controller
     $header  = $this->db->query("SELECT * FROM cycletime_header WHERE id_time='" . $id_time . "' LIMIT 1 ")->result();
     $costcenter  = $this->db->query("SELECT * FROM ms_costcenter WHERE deleted='0' ORDER BY nama_costcenter ASC ")->result_array();
     $machine  = $this->db->query("SELECT * FROM asset WHERE category='12' AND deleted_date IS NULL GROUP BY kd_asset, nm_asset ORDER BY nm_asset ASC ")->result_array();
+    $lot_size = $this->db->get_where('ms_bom', ['id_product' => $header[0]->id_product])->result();
     // $mould  = $this->db->query("SELECT * FROM asset WHERE category='7' AND deleted_date IS NULL GROUP BY SUBSTR(kd_asset, 1, 20) ORDER BY nm_asset ASC ")->result_array();
     $data = [
       'customer' => $customer,
@@ -104,7 +105,8 @@ class Cycletime extends Admin_Controller
       'product' => $product,
       'mesin' => $machine,
       'costcenter' => $costcenter,
-      'header' => $header
+      'header' => $header,
+      'lot_size' => $lot_size
     ];
     $this->template->set('results', $data);
     $this->template->page_icon('fa fa-edit');
@@ -273,9 +275,10 @@ class Cycletime extends Admin_Controller
     $id_material  = "TM-" . $Ym . $urut2;
 
     $ArrHeader    = array(
-      'id_time'      => $id_material,
-      'id_product'  => $data['produk'],
-      'created_by'  => $session['id_user'],
+      'id_time'       => $id_material,
+      'id_product'    => $data['produk'],
+      'lot_size'      => $data['lot_size'],
+      'created_by'    => $session['id_user'],
       'created_date'  => date('Y-m-d H:i:s')
     );
 
@@ -363,6 +366,7 @@ class Cycletime extends Admin_Controller
     $ArrHeader      = array(
       'id_time'      => $id_material,
       'id_product'  => $data['produk'],
+      'lot_size'    => $data['lot_size'],
       'updated_by'  => $session['id_user'],
       'updated_date'  => date('Y-m-d H:i:s')
     );
@@ -388,6 +392,7 @@ class Cycletime extends Admin_Controller
           $ArrDetail2[$val2 . $val]['note']         = $valx2['note'];
           $ArrDetail2[$val2 . $val]['machine']       = $valx2['machine'];
           $ArrDetail2[$val2 . $val]['mould']         = $valx2['mould'];
+          $ArrDetail2[$val2 . $val]['va_nva']         = $valx2['va_nva'];
         }
       }
     }
@@ -539,6 +544,21 @@ class Cycletime extends Admin_Controller
       history('Success insert select cycletime');
     }
     echo json_encode($Arr_Data);
+  }
+
+  public function get_lot_size()
+  {
+    $produk = $this->input->post('produk');
+
+    $get_lot_size = $this->db->get_where('ms_bom', ['id_product' => $produk])->result_array();
+
+    $hasil = '<option value="">- Pilih Lot Size -</option>';
+
+    foreach ($get_lot_size as $lot_size) {
+      $hasil = $hasil . '<option value="' . $lot_size['qty_hopper'] . '">' . $lot_size['qty_hopper'] . '</option>';
+    }
+
+    echo json_encode($hasil);
   }
 
   public function excel_report()
@@ -875,7 +895,7 @@ class Cycletime extends Admin_Controller
     header("Pragma: no-cache");
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     //ubah nama file saat diunduh
-    header('Content-Disposition: attachment;filename="cycletime-' . str_replace(' ', '-', strlower($cycletime[0]['nama_product'])) . '.xls"');
+    header('Content-Disposition: attachment;filename="cycletime-' . str_replace(' ', '-', strtolower($cycletime[0]['nama_product'])) . '.xls"');
     //unduh file
     $objWriter->save("php://output");
   }

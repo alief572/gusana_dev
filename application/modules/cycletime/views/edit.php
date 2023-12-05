@@ -20,6 +20,23 @@ $q_header_test = $this->db->query("SELECT * FROM cycletime_detail_header WHERE i
             <?php } ?>
           </select>
         </div>
+        <div class="col-md-2 mt-2">
+ 					<label for="customer">Lot Size <span class='text-danger'>*</span></label>
+ 				</div>
+ 				<div class="col-md-10 mt-2">
+ 					<select id="lot_size" name="lot_size" class="form-control input-md chosen-select lot_size" required>
+ 						<option value="">- Pilih Lot Size -</option>
+            <?php foreach($lot_size as $ls) : ?>
+              <?php
+                $selected = '';
+                if($ls->qty_hopper == $header[0]->lot_size){
+                  $selected = 'selected';
+                }  
+              ?>
+              <option value="<?= $ls->qty_hopper ?>" <?= $selected ?>><?= $ls->qty_hopper ?></option>
+            <?php endforeach; ?>
+ 					</select>
+ 				</div>
       </div>
 
       <br>
@@ -101,6 +118,13 @@ $q_header_test = $this->db->query("SELECT * FROM cycletime_detail_header WHERE i
                   echo "</td>";
                   echo "<td align='left'>";
                   echo "<input type='text' name='Detail[" . $id . "][detail][" . $no . "][note]' value='" . $val2Dx['note'] . "' class='form-control input-md' placeholder='Information'>";
+                  echo "<select class='form-control' name='Detail[".$id."][detail][".$no."][va_nva]'>";
+                  echo "
+                    <option value=''>- Pilih VA / NVA</option>
+                    <option value='1'"; if($val2Dx['va_nva'] == 1) {echo 'selected'; }  echo ">VA</option>
+                    <option value='2'"; if($val2Dx['va_nva'] == 2) {echo 'selected'; }  echo ">NVA</option>
+                  ";
+                  echo "</select>";
                   echo "</td>";
                   echo "<td align='center'>";
                   echo "&nbsp;<button type='button' class='btn btn-sm btn-danger delSubPart' title='Delete Part'><i class='fa fa-trash'></i></button>";

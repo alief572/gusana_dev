@@ -148,6 +148,161 @@
 							</td>
 						</tr>
 					</table>
+					<table class="table" border="0">
+ 						<thead>
+ 							<tr>
+ 								<th colspan="3">Spesifikasi</th>
+ 							</tr>
+ 						</thead>
+ 						<tbody>
+ 							<tr>
+ 								<td>
+ 									<label for="">Aplikasi penggunaan cat dan coating</label>
+ 									<select name="aplikasi_penggunaan_cat" id="" class="form-control form-control-sm">
+ 										<option value="">- Aplikasi penggunaan cat dan coating -</option>
+ 										<option value="1" <?= ($results['inventory_4']->aplikasi_penggunaan_cat == 1) ? 'selected' : null ?>>Steel/Besi</option>
+ 										<option value="2" <?= ($results['inventory_4']->aplikasi_penggunaan_cat == 2) ? 'selected' : null ?>>Kayu</option>
+ 										<option value="3" <?= ($results['inventory_4']->aplikasi_penggunaan_cat == 3) ? 'selected' : null ?>>Tembok</option>
+ 										<option value="4" <?= ($results['inventory_4']->aplikasi_penggunaan_cat == 4) ? 'selected' : null ?>>Lantai</option>
+ 										<option value="5" <?= ($results['inventory_4']->aplikasi_penggunaan_cat == 5) ? 'selected' : null ?>>Batu/Bata</option>
+ 										<option value="6" <?= ($results['inventory_4']->aplikasi_penggunaan_cat == 6) ? 'selected' : null ?>>Gypsum</option>
+ 										<option value="7" <?= ($results['inventory_4']->aplikasi_penggunaan_cat == 7) ? 'selected' : null ?>>Polymer</option>
+ 										<option value="8" <?= ($results['inventory_4']->aplikasi_penggunaan_cat == 8) ? 'selected' : null ?>>Beton</option>
+ 										<option value="9" <?= ($results['inventory_4']->aplikasi_penggunaan_cat == 9) ? 'selected' : null ?>>Baja</option>
+ 										<option value="10" <?= ($results['inventory_4']->aplikasi_penggunaan_cat == 10) ? 'selected' : null ?>>Semen</option>
+ 										<option value="11" <?= ($results['inventory_4']->aplikasi_penggunaan_cat == 11) ? 'selected' : null ?>>Keramik dan Kaca</option>
+ 									</select>
+ 								</td>
+ 								<td>
+ 									<label for="">Water Resistance</label>
+ 									<select name="water_resistance" id="" class="form-control form-control-sm">
+ 										<option value="">- Water Resistance -</option>
+ 										<option value="1" <?= ($results['inventory_4']->water_resistance == 1) ? 'selected' : null ?>>Yes</option>
+ 										<option value="2" <?= ($results['inventory_4']->water_resistance == 2) ? 'selected' : null ?>>No</option>
+ 									</select>
+ 								</td>
+ 								<td>
+ 									<label for="">Weather & UV resistance</label>
+ 									<select name="weather_uv_resistance" id="" class="form-control form-control-sm">
+ 										<option value="">- Weather & UV resistance -</option>
+ 										<option value="1" <?= ($results['inventory_4']->weather_uv_resistance == 1) ? 'selected' : null ?>>Yes</option>
+ 										<option value="2" <?= ($results['inventory_4']->weather_uv_resistance == 2) ? 'selected' : null ?>>No</option>
+ 									</select>
+ 								</td>
+ 							</tr>
+ 							<tr>
+ 								<td>
+ 									<label for="">Corrosion Resistance</label>
+ 									<select name="corrosion_resistance" id="" class="form-control form-control-sm">
+ 										<option value="">- Corrosion Resistance -</option>
+ 										<option value="1" <?= ($results['inventory_4']->corrosion_resistance == 1) ? 'selected' : null ?>>High</option>
+ 										<option value="2" <?= ($results['inventory_4']->corrosion_resistance == 2) ? 'selected' : null ?>>Medium</option>
+ 										<option value="3" <?= ($results['inventory_4']->corrosion_resistance == 3) ? 'selected' : null ?>>Low</option>
+ 									</select>
+ 								</td>
+ 								<td>
+ 									<label for="">Heat Resistance</label>
+ 									<select name="heat_resistance" id="" class="form-control form-control-sm">
+ 										<option value="">- Heat Resistance -</option>
+ 										<option value="1" <?= ($results['inventory_4']->heat_resistance == 1) ? 'selected' : null ?>>Up to 200 °C</option>
+ 										<option value="2" <?= ($results['inventory_4']->heat_resistance == 2) ? 'selected' : null ?>>Up to 300 °C</option>
+ 										<option value="3" <?= ($results['inventory_4']->heat_resistance == 3) ? 'selected' : null ?>>Up to 400 °C</option>
+ 										<option value="4" <?= ($results['inventory_4']->heat_resistance == 4) ? 'selected' : null ?>>Up to 500 °C</option>
+ 										<option value="5" <?= ($results['inventory_4']->heat_resistance == 5) ? 'selected' : null ?>>Up to 600 °C</option>
+ 										<option value="6" <?= ($results['inventory_4']->heat_resistance == 6) ? 'selected' : null ?>>Up to 800 °C</option>
+ 									</select>
+ 								</td>
+ 								<td>
+ 									<label for="">Daya Rekat (Adhesi)</label>
+ 									<select name="daya_rekat" id="" class="form-control form-control-sm">
+ 										<option value="">- Daya Rekat -</option>
+ 										<option value="1" <?= ($results['inventory_4']->daya_rekat == 1) ? 'selected' : null ?>>High</option>
+ 										<option value="2" <?= ($results['inventory_4']->daya_rekat == 2) ? 'selected' : null ?>>Medium</option>
+ 										<option value="3" <?= ($results['inventory_4']->daya_rekat == 3) ? 'selected' : null ?>>Low</option>
+ 									</select>
+ 								</td>
+ 							</tr>
+							<tr>
+								<td>
+ 									<label for="">Lama Pengeringan</label>
+ 									<select name="lama_pengeringan" id="" class="form-control form-control-sm">
+ 										<option value="">- Lama Pengeringan -</option>
+ 										<option value="1" <?= ($results['inventory_4']->lama_pengeringan == 1) ? 'selected' : null ?>>Cepat</option>
+ 										<option value="2" <?= ($results['inventory_4']->lama_pengeringan == 2) ? 'selected' : null ?>>Lambat</option>
+ 									</select>
+ 								</td>
+								<td>
+ 									<label for="">Permukaan</label>
+ 									<select name="permukaan" id="" class="form-control form-control-sm">
+ 										<option value="">- Permukaan -</option>
+ 										<option value="1" <?= ($results['inventory_4']->permukaan == 1) ? 'selected' : null ?>>Glossy</option>
+ 										<option value="2" <?= ($results['inventory_4']->permukaan == 2) ? 'selected' : null ?>>Matte</option>
+ 										<option value="3" <?= ($results['inventory_4']->permukaan == 3) ? 'selected' : null ?>>Semi Matte</option>
+ 									</select>
+ 								</td>
+								<td>
+ 									<label for="">Anti Jamur dan Lumut</label>
+ 									<select name="anti_jamur_lumut" id="" class="form-control form-control-sm">
+ 										<option value="">- Anti Jamur dan Lumut -</option>
+ 										<option value="1" <?= ($results['inventory_4']->anti_jamur_lumut == 1) ? 'selected' : null ?>>Yes</option>
+ 										<option value="2" <?= ($results['inventory_4']->anti_jamur_lumut == 2) ? 'selected' : null ?>>No</option>
+ 									</select>
+ 								</td>
+							</tr>
+							<tr>
+								<td>
+ 									<label for="">Mudah dibersihkan (Dirt Resistant)</label>
+ 									<select name="mudah_dibersihkan" id="" class="form-control form-control-sm">
+ 										<option value="">- Mudah dibersihkan (Dirt Resistant) -</option>
+ 										<option value="1" <?= ($results['inventory_4']->mudah_dibersihkan == 1) ? 'selected' : null ?>>Yes</option>
+ 										<option value="2" <?= ($results['inventory_4']->mudah_dibersihkan == 2) ? 'selected' : null ?>>No</option>
+ 									</select>
+ 								</td>
+								<td>
+ 									<label for="">Anti Bakteri</label>
+ 									<select name="anti_bakteri" id="" class="form-control form-control-sm">
+ 										<option value="">- Anti Bakteri -</option>
+ 										<option value="1" <?= ($results['inventory_4']->anti_bakteri == 1) ? 'selected' : null ?>>Yes</option>
+ 										<option value="2" <?= ($results['inventory_4']->anti_bakteri == 2) ? 'selected' : null ?>>No</option>
+ 									</select>
+ 								</td>
+								<td>
+ 									<label for="">Daya tahan gesekan</label>
+ 									<select name="daya_tahan_gesekan" id="" class="form-control form-control-sm">
+ 										<option value="">- Daya tahan gesekan -</option>
+ 										<option value="1" <?= ($results['inventory_4']->daya_tahan_gesekan == 1) ? 'selected' : null ?>>Yes</option>
+ 										<option value="2" <?= ($results['inventory_4']->daya_tahan_gesekan == 2) ? 'selected' : null ?>>No</option>
+ 									</select>
+ 								</td>
+							</tr>
+							<tr>
+								<td>
+ 									<label for="">Anti Slip</label>
+ 									<select name="anti_slip" id="" class="form-control form-control-sm">
+ 										<option value="">- Anti Slip -</option>
+ 										<option value="1" <?= ($results['inventory_4']->anti_slip == 1) ? 'selected' : null ?>>Yes</option>
+ 										<option value="2" <?= ($results['inventory_4']->anti_slip == 2) ? 'selected' : null ?>>No</option>
+ 									</select>
+ 								</td>
+								<td>
+ 									<label for="">Fire Resistance</label>
+ 									<select name="fire_resistance" id="" class="form-control form-control-sm">
+ 										<option value="">- Fire Resistance -</option>
+ 										<option value="1" <?= ($results['inventory_4']->fire_resistance == 1) ? 'selected' : null ?>>Yes</option>
+ 										<option value="2" <?= ($results['inventory_4']->fire_resistance == 2) ? 'selected' : null ?>>No</option>
+ 									</select>
+ 								</td>
+								<td>
+ 									<label for="">Ketahanan Bahan Kimia</label>
+ 									<select name="ketahanan_bahan_kimia" id="" class="form-control form-control-sm">
+ 										<option value="">- Ketahanan Bahan Kimia -</option>
+ 										<option value="1" <?= ($results['inventory_4']->ketahanan_bahan_kimia == 1) ? 'selected' : null ?>>Yes</option>
+ 										<option value="2" <?= ($results['inventory_4']->ketahanan_bahan_kimia == 2) ? 'selected' : null ?>>No</option>
+ 									</select>
+ 								</td>
+							</tr>
+ 						</tbody>
+ 					</table>
 					<div class="row">
 
 

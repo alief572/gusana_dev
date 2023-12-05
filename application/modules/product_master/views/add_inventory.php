@@ -130,6 +130,161 @@
  							<th colspan="4"></th>
  						</tr>
  					</table>
+ 					<table class="table" border="0">
+ 						<thead>
+ 							<tr>
+ 								<th colspan="3">Spesifikasi</th>
+ 							</tr>
+ 						</thead>
+ 						<tbody>
+ 							<tr>
+ 								<td>
+ 									<label for="">Aplikasi penggunaan cat dan coating</label>
+ 									<select name="aplikasi_penggunaan_cat" id="" class="form-control form-control-sm">
+ 										<option value="">- Aplikasi penggunaan cat dan coating -</option>
+ 										<option value="1">Steel/Besi</option>
+ 										<option value="2">Kayu</option>
+ 										<option value="3">Tembok</option>
+ 										<option value="4">Lantai</option>
+ 										<option value="5">Batu/Bata</option>
+ 										<option value="6">Gypsum</option>
+ 										<option value="7">Polymer</option>
+ 										<option value="8">Beton</option>
+ 										<option value="9">Baja</option>
+ 										<option value="10">Semen</option>
+ 										<option value="11">Keramik dan Kaca</option>
+ 									</select>
+ 								</td>
+ 								<td>
+ 									<label for="">Water Resistance</label>
+ 									<select name="water_resistance" id="" class="form-control form-control-sm">
+ 										<option value="">- Water Resistance -</option>
+ 										<option value="1">Yes</option>
+ 										<option value="2">No</option>
+ 									</select>
+ 								</td>
+ 								<td>
+ 									<label for="">Weather & UV resistance</label>
+ 									<select name="weather_uv_resistance" id="" class="form-control form-control-sm">
+ 										<option value="">- Weather & UV resistance -</option>
+ 										<option value="1">Yes</option>
+ 										<option value="2">No</option>
+ 									</select>
+ 								</td>
+ 							</tr>
+ 							<tr>
+ 								<td>
+ 									<label for="">Corrosion Resistance</label>
+ 									<select name="corrosion_resistance" id="" class="form-control form-control-sm">
+ 										<option value="">- Corrosion Resistance -</option>
+ 										<option value="1">High</option>
+ 										<option value="2">Medium</option>
+ 										<option value="3">Low</option>
+ 									</select>
+ 								</td>
+ 								<td>
+ 									<label for="">Heat Resistance</label>
+ 									<select name="heat_resistance" id="" class="form-control form-control-sm">
+ 										<option value="">- Heat Resistance -</option>
+ 										<option value="1">Up to 200 °C</option>
+ 										<option value="2">Up to 300 °C</option>
+ 										<option value="3">Up to 400 °C</option>
+ 										<option value="4">Up to 500 °C</option>
+ 										<option value="5">Up to 600 °C</option>
+ 										<option value="6">Up to 800 °C</option>
+ 									</select>
+ 								</td>
+ 								<td>
+ 									<label for="">Daya Rekat (Adhesi)</label>
+ 									<select name="daya_rekat" id="" class="form-control form-control-sm">
+ 										<option value="">- Daya Rekat -</option>
+ 										<option value="1">High</option>
+ 										<option value="2">Medium</option>
+ 										<option value="3">Low</option>
+ 									</select>
+ 								</td>
+ 							</tr>
+							<tr>
+								<td>
+ 									<label for="">Lama Pengeringan</label>
+ 									<select name="lama_pengeringan" id="" class="form-control form-control-sm">
+ 										<option value="">- Lama Pengeringan -</option>
+ 										<option value="1">Cepat</option>
+ 										<option value="2">Lambat</option>
+ 									</select>
+ 								</td>
+								<td>
+ 									<label for="">Permukaan</label>
+ 									<select name="permukaan" id="" class="form-control form-control-sm">
+ 										<option value="">- Permukaan -</option>
+ 										<option value="1">Glossy</option>
+ 										<option value="2">Matte</option>
+ 										<option value="3">Semi Matte</option>
+ 									</select>
+ 								</td>
+								<td>
+ 									<label for="">Anti Jamur dan Lumut</label>
+ 									<select name="anti_jamur_lumut" id="" class="form-control form-control-sm">
+ 										<option value="">- Anti Jamur dan Lumut -</option>
+ 										<option value="1">Yes</option>
+ 										<option value="2">No</option>
+ 									</select>
+ 								</td>
+							</tr>
+							<tr>
+								<td>
+ 									<label for="">Mudah dibersihkan (Dirt Resistance)</label>
+ 									<select name="mudah_dibersihkan" id="" class="form-control form-control-sm">
+ 										<option value="">- Mudah dibersihkan (Dirt Resistant) -</option>
+ 										<option value="1">Yes</option>
+ 										<option value="2">No</option>
+ 									</select>
+ 								</td>
+								<td>
+ 									<label for="">Anti Bakteri</label>
+ 									<select name="anti_bakteri" id="" class="form-control form-control-sm">
+ 										<option value="">- Anti Bakteri -</option>
+ 										<option value="1">Yes</option>
+ 										<option value="2">No</option>
+ 									</select>
+ 								</td>
+								<td>
+ 									<label for="">Daya tahan gesekan</label>
+ 									<select name="daya_tahan_gesekan" id="" class="form-control form-control-sm">
+ 										<option value="">- Daya tahan gesekan -</option>
+ 										<option value="1">Yes</option>
+ 										<option value="2">No</option>
+ 									</select>
+ 								</td>
+							</tr>
+							<tr>
+								<td>
+ 									<label for="">Anti Slip</label>
+ 									<select name="anti_slip" id="" class="form-control form-control-sm">
+ 										<option value="">- Anti Slip -</option>
+ 										<option value="1">Yes</option>
+ 										<option value="2">No</option>
+ 									</select>
+ 								</td>
+								<td>
+ 									<label for="">Fire Resistance</label>
+ 									<select name="fire_resistance" id="" class="form-control form-control-sm">
+ 										<option value="">- Fire Resistance -</option>
+ 										<option value="1">Yes</option>
+ 										<option value="2">No</option>
+ 									</select>
+ 								</td>
+								<td>
+ 									<label for="">Ketahanan Bahan Kimia</label>
+ 									<select name="ketahanan_bahan_kimia" id="" class="form-control form-control-sm">
+ 										<option value="">- Ketahanan Bahan Kimia -</option>
+ 										<option value="1">Yes</option>
+ 										<option value="2">No</option>
+ 									</select>
+ 								</td>
+							</tr>
+ 						</tbody>
+ 					</table>
  					<div class="row">
 
 
@@ -193,12 +348,12 @@
  	// $(document).on('keyup','#inventory_2','#inventory_3','#nm_inventory','.maker','.hardness', function(){
  	// cariNama();
  	// });
-	 $('.chosen-select').select2({
+ 	$('.chosen-select').select2({
  		dropdownParent: $('.box-primary'),
  		selectOnClose: true,
  		width: '100%'
  	});
- 	
+
 
  	$('.select').select2({
  		placeholder: 'Choose one',

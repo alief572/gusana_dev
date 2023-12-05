@@ -34,6 +34,7 @@ $ENABLE_DELETE  = has_permission('Cycletime.Delete');
 				<tr>
 					<th>#</th>
 					<th>Product Name</th>
+					<th>Lot Size</th>
 					<th>Cycle Time/Hour</th>
 					<th>Last By</th>
 					<th>Last Date</th>

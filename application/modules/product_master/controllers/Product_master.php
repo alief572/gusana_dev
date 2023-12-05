@@ -225,12 +225,119 @@ class Product_master extends Admin_Controller
 		$inventory_4 = $this->Product_master_model->get_data_category3_where($id);
 		$alt_comp = $this->Product_master_model->get_data_category3_alt_comp($id);
 
+		$list_aplikasi_penggunaan_cat = [
+			1 => 'Steel/Besi',
+			2 => 'Kayu',
+			3 => 'Tembok',
+			4 => 'Lantai',
+			5 => 'Batu/Bata',
+			6 => 'Gypsum',
+			7 => 'Polymer',
+			8 => 'Beton',
+			9 => 'Baja',
+			10 => 'Semen',
+			11 => 'Keramik dan Kaca'
+		];
+
+		$list_water_resistance = [
+			1 => 'Yes',
+			2 => 'No'
+		];
+
+		$list_weather_uv_resistance = [
+			1 => 'Yes',
+			2 => 'No'
+		];
+
+		$list_corrosion_resistance = [
+			1 => 'High',
+			2 => 'Medium',
+			3 => 'Low'
+		];
+
+		$list_heat_resistance = [
+			1 => 'Up to 200 °C',
+			2 => 'Up to 300 °C',
+			3 => 'Up to 400 °C',
+			4 => 'Up to 500 °C',
+			5 => 'Up to 600 °C',
+			6 => 'Up to 800 °C'
+		];
+
+		$list_daya_rekat = [
+			1 => 'High',
+			2 => 'Medium',
+			3 => 'Low'
+		];
+
+		$list_lama_pengeringan = [
+			1 => 'Cepat',
+			2 => 'Lambat'
+		];
+
+		$list_permukaan = [
+			1 => 'Glossy',
+			2 => 'Matte',
+			3 => 'Semi Matte'
+		];
+
+		$list_anti_jamur_lumut = [
+			1 => 'Yes',
+			2 => 'No'
+		];
+
+		$list_mudah_dibersihkan = [
+			1 => 'Yes',
+			2 => 'No'
+		];
+
+		$list_anti_bakteri = [
+			1 => 'Yes',
+			2 => 'No'
+		];
+
+		$list_daya_tahan_gesekan = [
+			1 => 'Yes',
+			2 => 'No'
+		];
+
+		$list_anti_slip = [
+			1 => 'Yes',
+			2 => 'No'
+		];
+
+		$list_fire_resistance = [
+			1 => 'Yes',
+			2 => 'No'
+		];
+
+		$list_ketahanan_bahan_kimia = [
+			1 => 'Yes',
+			2 => 'No'
+		];
+
+
 		$data = [
 			'inventory_1' => $inventory_1,
 			'inventory_2' => $inventory_2,
 			'inventory_3' => $inventory_3,
 			'inventory_4' => $inventory_4,
-			'alt_comp' => $alt_comp
+			'alt_comp' => $alt_comp,
+			'aplikasi_penggunaan_cat' => $list_aplikasi_penggunaan_cat[$inventory_4->aplikasi_penggunaan_cat],
+			'water_resistance' => $list_water_resistance[$inventory_4->water_resistance],
+			'weather_uv_resistance' => $list_weather_uv_resistance[$inventory_4->weather_uv_resistance],
+			'corrosion_resistance' => $list_corrosion_resistance[$inventory_4->corrosion_resistance],
+			'heat_resistance' => $list_heat_resistance[$inventory_4->heat_resistance],
+			'daya_rekat' => $list_daya_rekat[$inventory_4->daya_rekat],
+			'lama_pengeringan' => $list_lama_pengeringan[$inventory_4->lama_pengeringan],
+			'permukaan' => $list_permukaan[$inventory_4->permukaan],
+			'anti_jamur_lumut' => $list_anti_jamur_lumut[$inventory_4->anti_jamur_lumut],
+			'mudah_dibersihkan' => $list_mudah_dibersihkan[$inventory_4->mudah_dibersihkan],
+			'anti_bakteri' => $list_anti_bakteri[$inventory_4->anti_bakteri],
+			'daya_tahan_gesekan' => $list_daya_tahan_gesekan[$inventory_4->daya_tahan_gesekan],
+			'anti_slip' => $list_anti_slip[$inventory_4->anti_slip],
+			'fire_resistance' => $list_fire_resistance[$inventory_4->fire_resistance],
+			'ketahanan_bahan_kimia' => $list_ketahanan_bahan_kimia[$inventory_4->ketahanan_bahan_kimia]
 		];
 		$this->template->set('results', $data);
 		$this->template->title('Add Inventory');
@@ -443,6 +550,21 @@ class Product_master extends Admin_Controller
 			'cbm' => $this->input->post('cbm'),
 			'pds' => $data,
 			'aktif' => 1,
+			'aplikasi_penggunaan_cat' => $this->input->post('aplikasi_penggunaan_cat'),
+			'water_resistance' => $this->input->post('water_resistance'),
+			'weather_uv_resistance' => $this->input->post('weather_uv_resistance'),
+			'corrosion_resistance' => $this->input->post('corrosion_resistance'),
+			'heat_resistance' => $this->input->post('heat_resistance'),
+			'daya_rekat' => $this->input->post('daya_rekat'),
+			'lama_pengeringan' => $this->input->post('lama_pengeringan'),
+			'permukaan' => $this->input->post('permukaan'),
+			'anti_jamur_lumut' => $this->input->post('anti_jamur_lumut'),
+			'mudah_dibersihkan' => $this->input->post('mudah_dibersihkan'),
+			'anti_bakteri' => $this->input->post('anti_bakteri'),
+			'daya_tahan_gesekan' => $this->input->post('daya_tahan_gesekan'),
+			'anti_slip' => $this->input->post('anti_slip'),
+			'fire_resistance' => $this->input->post('fire_resistance'),
+			'ketahanan_bahan_kimia' => $this->input->post('ketahanan_bahan_kimia'),
 			'dibuat_oleh' => $this->auth->user_id(),
 			'dibuat_tgl' => date("Y-m-d H:i:s")
 		]);
@@ -512,6 +634,20 @@ class Product_master extends Admin_Controller
 			'cbm' => $this->input->post('cbm'),
 			'pds' => $data,
 			'aktif' => $this->input->post('aktif'),
+			'aplikasi_penggunaan_cat' => $this->input->post('aplikasi_penggunaan_cat'),
+			'water_resistance' => $this->input->post('water_resistance'),
+			'weather_uv_resistance' => $this->input->post('weather_uv_resistance'),
+			'corrosion_resistance' => $this->input->post('corrosion_resistance'),
+			'heat_resistance' => $this->input->post('heat_resistance'),
+			'daya_rekat' => $this->input->post('daya_rekat'),
+			'lama_pengeringan' => $this->input->post('lama_pengeringan'),
+			'permukaan' => $this->input->post('permukaan'),
+			'anti_jamur_lumut' => $this->input->post('anti_jamur_lumut'),
+			'mudah_dibersihkan' => $this->input->post('mudah_dibersihkan'),
+			'anti_bakteri' => $this->input->post('anti_bakteri'),
+			'daya_tahan_gesekan' => $this->input->post('daya_tahan_gesekan'),
+			'anti_slip' => $this->input->post('anti_slip'),
+			'fire_resistance' => $this->input->post('fire_resistance'),
 			'diubah_oleh' => date('Y-m-d H:i:s'),
 			'diubah_tgl' => $this->auth->user_id()
 		], ['id_category3' => $post['id_category3']]);

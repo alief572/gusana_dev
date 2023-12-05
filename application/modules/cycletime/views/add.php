@@ -6,7 +6,7 @@
  					<label for="customer">Produk Name <span class='text-danger'>*</span></label>
  				</div>
  				<div class="col-md-10">
- 					<select id="produk" name="produk" class="form-control input-md chosen-select" required>
+ 					<select id="produk" name="produk" class="form-control input-md chosen-select produk"  required>
  						<option value="0">Select An Option</option>
  						<?php
 							foreach ($results['product'] as $material) {
@@ -14,6 +14,14 @@
 							?>
  							<option value="<?= $material->id_category3; ?>"><?= strtoupper(strtolower($material->nama)) ?></option>
  						<?php } ?>
+ 					</select>
+ 				</div>
+ 				<div class="col-md-2 mt-2">
+ 					<label for="customer">Lot Size <span class='text-danger'>*</span></label>
+ 				</div>
+ 				<div class="col-md-10 mt-2">
+ 					<select id="lot_size" name="lot_size" class="form-control input-md chosen-select lot_size" required>
+ 						<option value="">- Pilih Lot Size -</option>
  					</select>
  				</div>
  			</div>
@@ -65,10 +73,35 @@
  	var base_url = '<?php echo base_url(); ?>';
  	var active_controller = '<?php echo ($this->uri->segment(1)); ?>';
 
- 	$(document).ready(function() {
- 		$('.chosen-select').select2({
+	function chosen_select(){
+		$('.chosen-select').select2({
  			width: '100%'
  		});
+	}
+
+ 	$(document).ready(function() {
+
+ 		chosen_select();
+
+ 		$(document).on("change", ".produk", function() {
+ 			var produk = $(this).val();
+			// alert(produk);
+ 			$.ajax({
+ 				type: "POST",
+ 				url: base_url + thisController + '/get_lot_size',
+ 				data: {
+ 					"produk": produk
+ 				},
+ 				cache: "FALSE",
+ 				dataType: "JSON",
+ 				success: function(result) {
+					// console.log(result);
+ 					$(".lot_size").html(result);
+					chosen_select();
+ 				}
+ 			});
+ 		});
+
 
  		//add part
  		$(document).on('click', '.addPart', function() {
@@ -199,83 +232,83 @@
  			}
 
  			new swal({
- 					title: "Are you sure?",
- 					text: "You will not be able to process again this data!",
- 					type: "warning",
- 					showCancelButton: true,
- 					confirmButtonClass: "btn-danger",
- 					confirmButtonText: "Yes, Process it!",
- 					cancelButtonText: "No, cancel process!",
- 					closeOnConfirm: true,
- 					closeOnCancel: false
- 				}).then((hasil) => {
-					if (hasil.isConfirmed) {
- 						var formData = new FormData($('#data-form')[0]);
- 						var baseurl = siteurl + 'cycletime/save_cycletime';
- 						$.ajax({
- 							url: baseurl,
- 							type: "POST",
- 							data: formData,
- 							cache: false,
- 							dataType: 'json',
- 							processData: false,
- 							contentType: false,
- 							success: function(data) {
- 								if (data.status == 1) {
- 									new swal({
- 										title: "Save Success!",
- 										text: data.pesan,
- 										type: "success",
- 										timer: 7000,
- 										showCancelButton: false,
- 										showConfirmButton: false,
- 										allowOutsideClick: false
- 									});
- 									window.location.href = base_url + active_controller;
- 								} else {
-
- 									if (data.status == 2) {
- 										new swal({
- 											title: "Save Failed!",
- 											text: data.pesan,
- 											type: "warning",
- 											timer: 7000,
- 											showCancelButton: false,
- 											showConfirmButton: false,
- 											allowOutsideClick: false
- 										});
- 									} else {
- 										new swal({
- 											title: "Save Failed!",
- 											text: data.pesan,
- 											type: "warning",
- 											timer: 7000,
- 											showCancelButton: false,
- 											showConfirmButton: false,
- 											allowOutsideClick: false
- 										});
- 									}
-
- 								}
- 							},
- 							error: function() {
-
+ 				title: "Are you sure?",
+ 				text: "You will not be able to process again this data!",
+ 				type: "warning",
+ 				showCancelButton: true,
+ 				confirmButtonClass: "btn-danger",
+ 				confirmButtonText: "Yes, Process it!",
+ 				cancelButtonText: "No, cancel process!",
+ 				closeOnConfirm: true,
+ 				closeOnCancel: false
+ 			}).then((hasil) => {
+ 				if (hasil.isConfirmed) {
+ 					var formData = new FormData($('#data-form')[0]);
+ 					var baseurl = siteurl + 'cycletime/save_cycletime';
+ 					$.ajax({
+ 						url: baseurl,
+ 						type: "POST",
+ 						data: formData,
+ 						cache: false,
+ 						dataType: 'json',
+ 						processData: false,
+ 						contentType: false,
+ 						success: function(data) {
+ 							if (data.status == 1) {
  								new swal({
- 									title: "Error Message !",
- 									text: 'An Error Occured During Process. Please try again..',
- 									type: "warning",
+ 									title: "Save Success!",
+ 									text: data.pesan,
+ 									type: "success",
  									timer: 7000,
  									showCancelButton: false,
  									showConfirmButton: false,
  									allowOutsideClick: false
  								});
+ 								window.location.href = base_url + active_controller;
+ 							} else {
+
+ 								if (data.status == 2) {
+ 									new swal({
+ 										title: "Save Failed!",
+ 										text: data.pesan,
+ 										type: "warning",
+ 										timer: 7000,
+ 										showCancelButton: false,
+ 										showConfirmButton: false,
+ 										allowOutsideClick: false
+ 									});
+ 								} else {
+ 									new swal({
+ 										title: "Save Failed!",
+ 										text: data.pesan,
+ 										type: "warning",
+ 										timer: 7000,
+ 										showCancelButton: false,
+ 										showConfirmButton: false,
+ 										allowOutsideClick: false
+ 									});
+ 								}
+
  							}
- 						});
- 					} else {
- 						new swal("Cancelled", "Data can be process again :)", "error");
- 						return false;
- 					}
-				});
+ 						},
+ 						error: function() {
+
+ 							new swal({
+ 								title: "Error Message !",
+ 								text: 'An Error Occured During Process. Please try again..',
+ 								type: "warning",
+ 								timer: 7000,
+ 								showCancelButton: false,
+ 								showConfirmButton: false,
+ 								allowOutsideClick: false
+ 							});
+ 						}
+ 					});
+ 				} else {
+ 					new swal("Cancelled", "Data can be process again :)", "error");
+ 					return false;
+ 				}
+ 			});
  		});
 
  	});

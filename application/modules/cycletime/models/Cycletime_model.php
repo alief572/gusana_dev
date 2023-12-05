@@ -93,6 +93,7 @@ class Cycletime_model extends BF_Model
       $nestedData   = array();
       $nestedData[]  = "<div align='left'>" . $nomor . "</div>";
       $nestedData[]  = "<div align='left'>" . strtoupper($row['nm_product']) . "</div>";
+      $nestedData[]  = "<div align='right'>" . strtoupper($row['lot_size']) . "</div>";
 
       $totalTime = 0;
       $TimeTotal = get_total_time_ct($row['id_product']);
