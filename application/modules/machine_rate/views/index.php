@@ -268,13 +268,13 @@ $ENABLE_DELETE  = has_permission('Rate_Machine.Delete');
 		});
 
 		function get_depresiasi() {
-			var harga_mesin = getNum($('#harga_mesin').val().split(",").join(""));
-			var est_manfaat = getNum($('#est_manfaat').val().split(",").join(""));
-			var used_hour_month = getNum($('#used_hour_month').val().split(",").join(""));
+			var harga_mesin = parseFloat($('#harga_mesin').val().split(",").join(""));
+			var est_manfaat = parseFloat($('#est_manfaat').val().split(",").join(""));
+			var used_hour_month = parseFloat($('#used_hour_month').val().split(",").join(""));
 			var depresiasi = harga_mesin / (est_manfaat * 12);
 			var biaya_mesin = depresiasi / used_hour_month;
 
-			$('#depresiasi_bulan').val(depresiasi.toFixed(2));
-			$('#biaya_mesin').val(biaya_mesin.toFixed(2));
+			$('#depresiasi_bulan').autoNumeric('set',depresiasi.toFixed(2));
+			$('#biaya_mesin').autoNumeric('set',biaya_mesin.toFixed(2));
 		}
 	</script>

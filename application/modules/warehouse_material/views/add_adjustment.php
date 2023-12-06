@@ -2,15 +2,17 @@
   <div class="box-body">
     <form id="data-form" method="post" autocomplete="off"><br>
       <div class="form-group row">
-        <!-- <div class="col-md-1">
-					<label for="customer">Warehouse <span class="text-red">*</span></label>
-				</div> -->
-        <!-- <div class="col-md-3">
+        <div class="col-md-1">
+          <label for="customer">Warehouse <span class="text-red">*</span></label>
+        </div>
+        <div class="col-md-3">
           <select id="kd_gudang" name="kd_gudang" class="form-control input-md chosen-select">
-						<option value="0">Select An Warehouse</option>
-           
-					</select>
-        </div> -->
+            <option value="0">Select An Warehouse</option>
+            <?php foreach (get_warehouse() as $val => $valx) { ?>
+              <option value="<?= $valx['id']; ?>"><?= strtoupper($valx['warehouse_nm']); ?></option>
+            <?php } ?>
+          </select>
+        </div>
 
         <div class="col-md-1">
           <label for="customer">Material <span class="text-red">*</span></label>
@@ -129,38 +131,37 @@
     cursor: pointer;
   }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/jquery-maskmoney@3.0.2/dist/jquery.maskMoney.min.js"></script>
 <script type="text/javascript">
   //$('#input-kendaraan').hide();
   var base_url = '<?php echo base_url(); ?>';
-  var active_controller = '<?php echo ($this->uri->segment(1)); ?>';
+  var thisController = '<?php echo ($this->uri->segment(1)); ?>';
 
   $(document).ready(function() {
     $('.chosen-select').select2();
-    $('.maskM').maskMoney();
+    $('.maskM').autoNumeric();
 
     //back
     $(document).on('click', '#back', function() {
-      window.location.href = base_url + active_controller + '/adjustment_material';
+      window.location.href = base_url + thisController + '/adjustment_material';
     });
 
-    $(document).on('change', '#material', function(e) {
+    $(document).on('change', '#material, #kd_gudang', function(e) {
       // loading_spinner();
       e.preventDefault();
       var material = $('#material').val();
-      // var kd_gudang		  = $('#kd_gudang').val();
-      var qty = $('#qty').val();
+      var kd_gudang = $('#kd_gudang').val();
+      var qty = parseFloat($('#qty').val());
 
       if (material == '0') {
         return false;
       }
 
-      // if (kd_gudang == '0') {
-      //   return false;
-      // }
+      if (kd_gudang == '0') {
+        return false;
+      }
 
       $.ajax({
-        url: base_url + active_controller + '/get_stock/' + material,
+        url: base_url + thisController + '/get_stock/' + material + '/' + kd_gudang,
         cache: false,
         type: "POST",
         dataType: "json",
@@ -218,7 +219,7 @@
       }
 
       $.ajax({
-        url: base_url + active_controller + '/get_stock/' + material + '/' + kd_gudang + '/' + unit,
+        url: base_url + thisController + '/get_stock/' + material + '/' + kd_gudang + '/' + unit,
         cache: false,
         type: "POST",
         dataType: "json",
@@ -291,92 +292,94 @@
       // alert('Proses belum dapat dilakukan');
       // return false;
       new swal({
-        title: "Are you sure?",
-        text: "You will not be able to process again this data!",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonClass: "btn-danger",
-        confirmButtonText: "Yes, Process it!",
-        cancelButtonText: "No, cancel process!",
-        closeOnConfirm: true,
-        closeOnCancel: false
-      }).then((hasil) => {
-        if (hasil.isConfirmed) {
-          var formData = new FormData($('#data-form')[0]);
-          var baseurl = siteurl + active_controller + '/add_adjustment';
-          $.ajax({
-            url: baseurl,
-            type: "POST",
-            data: formData,
-            cache: false,
-            dataType: 'json',
-            processData: false,
-            contentType: false,
-            success: function(data) {
-              console.log(data);
-              if (data.status == 1) {
+          title: "Are you sure?",
+          text: "You will not be able to process again this data!",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonClass: "btn-danger",
+          confirmButtonText: "Yes, Process it!",
+          cancelButtonText: "No, cancel process!",
+          closeOnConfirm: true,
+          closeOnCancel: false
+        }).then((hasil) => {
+          if (hasil.isConfirmed) {
+            var formData = new FormData($('#data-form')[0]);
+            var baseurl = siteurl + thisController + '/add_adjustment';
+            $.ajax({
+              url: baseurl,
+              type: "POST",
+              data: formData,
+              cache: false,
+              dataType: 'json',
+              processData: false,
+              contentType: false,
+              success: function(data) {
+                if (data.status == 1) {
+                  new swal({
+                    title: "Save Success!",
+                    text: data.pesan,
+                    type: "success",
+                    timer: 7000,
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                    allowOutsideClick: false
+                  });
+                  window.location.href = base_url + thisController + '/adjustment_material';
+                } else {
+
+                  if (data.status == 2) {
+                    new swal({
+                      title: "Save Failed!",
+                      text: data.pesan,
+                      type: "warning",
+                      timer: 7000,
+                      showCancelButton: false,
+                      showConfirmButton: false,
+                      allowOutsideClick: false
+                    });
+                  } else {
+                    new swal({
+                      title: "Save Failed!",
+                      text: data.pesan,
+                      type: "warning",
+                      timer: 7000,
+                      showCancelButton: false,
+                      showConfirmButton: false,
+                      allowOutsideClick: false
+                    });
+                  }
+
+                }
+              },
+              error: function() {
+
                 new swal({
-                  title: "Save Success!",
-                  text: data.pesan,
-                  type: "success",
+                  title: "Error Message !",
+                  text: 'An Error Occured During Process. Please try again..',
+                  type: "warning",
                   timer: 7000,
                   showCancelButton: false,
                   showConfirmButton: false,
                   allowOutsideClick: false
                 });
-                window.location.href = base_url + active_controller + '/adjustment_material';
-              } else {
-
-                if (data.status == 2) {
-                  new swal({
-                    title: "Save Failed!",
-                    text: data.pesan,
-                    type: "warning",
-                    timer: 7000,
-                    showCancelButton: false,
-                    showConfirmButton: false,
-                    allowOutsideClick: false
-                  });
-                } else {
-                  new swal({
-                    title: "Save Failed!",
-                    text: data.pesan,
-                    type: "warning",
-                    timer: 7000,
-                    showCancelButton: false,
-                    showConfirmButton: false,
-                    allowOutsideClick: false
-                  });
-                }
-
               }
-            },
-            error: function() {
-
-              new swal({
-                title: "Error Message !",
-                text: 'An Error Occured During Process. Please try again..',
-                type: "warning",
-                timer: 7000,
-                showCancelButton: false,
-                showConfirmButton: false,
-                allowOutsideClick: false
-              });
-            }
-          });
-        } else {
-          new swal("Cancelled", "Data can be process again :)", "error");
-          return false;
-        }
-      });
+            });
+          } else {
+            new swal("Cancelled", "Data can be process again :)", "error");
+            return false;
+          }
+        });
     });
 
   });
 
   function get_stock_akhir() {
     var adjustment = $("#adjustment").val();
-    var stock_awal = $("#stock_awal").val().split(",").join("");
-    var qty = $("#qty").val().split(",").join("");
+    if(adjustment == ''){
+      adjustment = 0
+    }
+    var stock_awal = parseFloat($("#stock_awal").val().split(",").join(""));
+    var qty = parseFloat($("#qty").val().split(",").join(""));
     if (adjustment == 'plus') {
       var stock_akhir = parseFloat(stock_awal + qty);
     }

@@ -23,7 +23,7 @@ thead input {
           <option value='0'>All Warehouse</option>
           <?php
           foreach(get_warehouse() AS $val => $valx){
-            echo "<option value='".$valx['id']."'>".strtoupper($valx['nm_gudang'])."</option>";
+            echo "<option value='".$valx['id']."'>".strtoupper($valx['warehouse_nm'])."</option>";
           }
           ?>
         </select>
@@ -44,7 +44,7 @@ thead input {
           <option value='0'>All Material</option>
           <?php
           foreach(get_material() AS $val => $valx){
-            echo "<option value='".$valx['code_material']."'>".strtoupper($valx['nm_material'])."</option>";
+            echo "<option value='".$valx['id_category3']."'>".strtoupper($valx['nama'])."</option>";
           }
           ?>
         </select>

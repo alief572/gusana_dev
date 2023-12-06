@@ -731,7 +731,7 @@ function get_konversi($material)
     return $total;
 }
 
-function get_stock_material($material)
+function get_stock_material($material = null, $kd_gudang = null)
 {
     $CI         = &get_instance();
 
@@ -741,7 +741,8 @@ function get_stock_material($material)
           FROM
             warehouse_stock a
           WHERE
-            a.id_material = '" . $material . "'
+            a.id_material = '" . $material . "' AND
+            a.id_gudang = '" . $kd_gudang . "'
             ";
     $sisa    = $CI->db->query($sql)->result();
     $total = (!empty($sisa[0]->qty)) ? $sisa[0]->qty : 0;
@@ -749,10 +750,10 @@ function get_stock_material($material)
 }
 
 
-function get_stock_material_packing($material)
+function get_stock_material_packing($material = null, $kd_gudang = null)
 {
     $CI         = &get_instance();
-    $stock    = get_stock_material($material);
+    $stock    = get_stock_material($material, $kd_gudang);
     $konversi = get_konversi($material);
     $pack = 0;
     if (!empty($stock) and $stock > 0 and $konversi > 0) {
@@ -766,4 +767,80 @@ function get_material()
     $CI     = &get_instance();
     $query    = $CI->db->query("SELECT * FROM ms_inventory_category3 WHERE deleted = '0' ORDER BY nama ASC")->result_array();
     return $query;
+}
+
+function get_warehouse()
+{
+    $CI     = &get_instance();
+    $query    = $CI->db->query("SELECT * FROM m_warehouse")->result_array();
+    return $query;
+}
+
+function get_data_planning()
+{
+    $CI     = &get_instance();
+    $query    = $CI->db->query("SELECT * FROM produksi_planning WHERE costcenter='CC2000012' AND sts_plan='N' ORDER BY date_awal ASC")->result_array();
+    return $query;
+}
+
+function get_product()
+{
+    $CI     = &get_instance();
+    $query    = $CI->db->query("SELECT * FROM ms_product_category3 ORDER BY id_category3 ASC")->result_array();
+    return $query;
+}
+
+function get_costcenter()
+{
+    $CI     = &get_instance();
+    $query    = $CI->db->query("SELECT * FROM ms_costcenter WHERE deleted='0' ORDER BY urut2 ASC")->result_array();
+    return $query;
+}
+
+function get_sts_warehouse($costcenter){
+    $CI 		      =& get_instance();
+    $qHeader	    = "SELECT a.sts_warehouse FROM ms_costcenter a WHERE a.id_costcenter = '".$costcenter."' LIMIT 1";
+    $restHeader	  = $CI->db->query($qHeader)->result_array();
+    $hasil	 	    = (!empty($restHeader[0]['sts_warehouse']))?$restHeader[0]['sts_warehouse']:'get error';
+    return $hasil;
+  }
+
+function get_last_costcenter_warehouse($product)
+{
+    $CI               = &get_instance();
+
+    $qHeader        = "SELECT MAX(urut) AS urut FROM cycletime_fast WHERE id_product='" . $product . "' LIMIT 1 ";
+    $query          = $CI->db->query($qHeader)->result();
+    $antrialx     = (!empty($query[0]->urut)) ? intval($query[0]->urut) : 0;
+    $urut         = sprintf('%02s', $antrialx - 1);
+    //filter pertama
+    $sql2            = "SELECT * FROM cycletime_fast WHERE id_product='" . $product . "' AND urut='" . $urut . "' LIMIT 1 ";
+    $query2             = $CI->db->query($sql2)->result();
+    $bef_costcenter  = (!empty($query2[0]->costcenter)) ? $query2[0]->costcenter : 0;
+
+    if (get_sts_warehouse($bef_costcenter) == 'N') {
+        $urut         = sprintf('%02s', $antrialx - 2);
+        //filter kedua
+        $sql2            = "SELECT * FROM cycletime_fast WHERE id_product='" . $product . "' AND urut='" . $urut . "' LIMIT 1 ";
+        $query2             = $CI->db->query($sql2)->result();
+        $bef_costcenter  = (!empty($query2[0]->costcenter)) ? $query2[0]->costcenter : 0;
+
+        if (get_sts_warehouse($bef_costcenter) == 'N') {
+            $urut         = sprintf('%02s', $antrialx - 3);
+            //filter ketiga
+            $sql2            = "SELECT * FROM cycletime_fast WHERE id_product='" . $product . "' AND urut='" . $urut . "' LIMIT 1 ";
+            $query2             = $CI->db->query($sql2)->result();
+            $bef_costcenter  = (!empty($query2[0]->costcenter)) ? $query2[0]->costcenter : 0;
+
+            if (get_sts_warehouse($bef_costcenter) == 'N') {
+                $urut         = sprintf('%02s', $antrialx - 4);
+                //filter keempat
+                $sql2            = "SELECT * FROM cycletime_fast WHERE id_product='" . $product . "' AND urut='" . $urut . "' LIMIT 1 ";
+                $query2             = $CI->db->query($sql2)->result();
+                $bef_costcenter  = (!empty($query2[0]->costcenter)) ? $query2[0]->costcenter : 0;
+            }
+        }
+    }
+
+    return $bef_costcenter;
 }

@@ -233,6 +233,11 @@ class Cycletime extends Admin_Controller
     $d_Header .= "</td>";
     $d_Header .= "<td align='left'>";
     $d_Header .= "<input type='text' name='Detail[" . $id . "][detail][" . $no . "][note]' class='form-control input-md' placeholder='Information'  data-decimal='.' data-thousand='' data-precision='0' data-allow-zero=''>";
+    $d_Header .= "<select class='form-control' name='Detail[".$id."][detail][".$no."][va_nva]'>";
+    $d_Header .= "<option value=''>- Pilih VA / NVA</option>";
+    $d_Header .= "<option value='1'>VA</option>";
+    $d_Header .= "<option value='2'>NVA</option>";
+    $d_Header .= "</select>";
     $d_Header .= "</td>";
     $d_Header .= "<td align='center'>";
     $d_Header .= "&nbsp;<button type='button' class='btn btn-sm btn-danger delSubPart' title='Delete Part'><i class='fa fa-trash'></i></button>";
@@ -300,6 +305,7 @@ class Cycletime extends Admin_Controller
         $ArrDetail2[$val2 . $val]['cycletime']     = $valx2['cycletime'];
         $ArrDetail2[$val2 . $val]['qty_mp']       = $valx2['qty_mp'];
         $ArrDetail2[$val2 . $val]['note']         = $valx2['note'];
+        $ArrDetail2[$val2 . $val]['va_nva']         = $valx2['va_nva'];
         $ArrDetail2[$val2 . $val]['machine']       = $valx2['machine'];
         // $ArrDetail2[$val2 . $val]['mould']         = $valx2['mould'];
       }

@@ -24,7 +24,7 @@ thead input {
 					<option value='0'>All Product</option>
 					<?php
 					foreach(get_product() AS $val => $valx){
-						echo "<option value='".$valx['id_category2']."'>".strtoupper($valx['nama'])."</option>";
+						echo "<option value='".$valx['id_category3']."'>".strtoupper($valx['nama'])."</option>";
 					}
 					?>
 				</select>

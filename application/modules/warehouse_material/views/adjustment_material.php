@@ -9,9 +9,8 @@ $ENABLE_DELETE  = has_permission('Adjustment.Delete');
 		width: 100%;
 	}
 </style>
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <div id='alert_edit' class="alert alert-success alert-dismissable" style="padding: 15px; display: none;"></div>
-
+<link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>">
 
 <div class="box">
 	<div class="box-header">
@@ -19,17 +18,21 @@ $ENABLE_DELETE  = has_permission('Adjustment.Delete');
 			<a class="btn btn-success btn-md" style='float:right;' href="<?= base_url('warehouse_material/add_adjustment') ?>" title="Add"> <i class="fa fa-plus">&nbsp;</i>Add Adjustment</a>
 		<?php endif; ?>
 		<br>
-		<!-- <div class="form-group row">
+		<div class="form-group row">
 			<div class="col-md-1">
 				<b>Warehouse</b>
 			</div>
 			<div class="col-md-3">
 				<select name='kd_gudang' id='kd_gudang' class='form-control input-sm chosen-select'>
 					<option value='0'>All Warehouse</option>
-					
+					<?php
+					foreach (get_warehouse() as $val => $valx) {
+						echo "<option value='" . $valx['id'] . "'>" . strtoupper($valx['warehouse_nm']) . "</option>";
+					}
+					?>
 				</select>
 			</div>
-		</div> -->
+		</div>
 		<div class="form-group row">
 			<div class="col-md-1">
 				<b>Material</b>
@@ -91,11 +94,8 @@ $ENABLE_DELETE  = has_permission('Adjustment.Delete');
 	<script src="<?= base_url('assets/plugins/datatables/jquery.dataTables.min.js') ?>"></script>
 	<script src="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.min.js') ?>"></script>
 
-	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
 	<!-- page script -->
 	<script type="text/javascript">
-		$(".chosen-select").select2();
 		$(document).on('click', '.detail', function() {
 			var no_delivery = $(this).data('no_delivery');
 			// alert(id);
@@ -195,7 +195,7 @@ $ENABLE_DELETE  = has_permission('Adjustment.Delete');
 		});
 
 
-		function DataTables(material = null) {
+		function DataTables(material = null, kd_gudang = null) {
 			var dataTable = $('#example1').DataTable({
 				// "scrollX": true,
 				"scrollCollapse": true,
@@ -236,7 +236,8 @@ $ENABLE_DELETE  = has_permission('Adjustment.Delete');
 					url: siteurl + 'warehouse_material/data_side_adjustment',
 					type: "post",
 					data: function(d) {
-						d.material = material
+						d.material = material,
+							d.kd_gudang = kd_gudang
 					},
 					cache: false,
 					error: function() {
