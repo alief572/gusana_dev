@@ -1,22 +1,22 @@
 <?php
-$ENABLE_ADD     = has_permission('Bom.Add');
-$ENABLE_MANAGE  = has_permission('Bom.Manage');
-$ENABLE_VIEW    = has_permission('Bom.View');
-$ENABLE_DELETE  = has_permission('Bom.Delete');
+$ENABLE_ADD     = has_permission('Divisi.Add');
+$ENABLE_MANAGE  = has_permission('Divisi.Manage');
+$ENABLE_VIEW    = has_permission('Divisi.View');
+$ENABLE_DELETE  = has_permission('Divisi.Delete');
 ?>
 
 <div class="br-pagetitle">
     <i class="tx-primary fa-4x <?= $template['page_icon']; ?>"></i>
     <div>
-        <h4>Bill of Material</h4>
-        <p class="mg-b-0">Lorem ipsum dolor sit amet.</p>
+        <h4>Finish Goods</h4>
+        <p class="mg-b-0"></p>
     </div>
 </div><!-- d-flex -->
 
 <div class="d-flex align-items-center justify-content-between pd-x-20 pd-sm-x-30 pd-t-25 mg-b-20 mg-sm-b-30">
     <?php echo Template::message(); ?>
     <?php if ($ENABLE_ADD) : ?>
-        <button class="btn btn-primary btn-oblong add" href="javascript:void(0)" title="Add"><i class="fa fa-plus">&nbsp;</i>Add New BOM</button>
+        <!-- <button class="btn btn-primary btn-oblong add" href="javascript:void(0)" title="Add"><i class="fa fa-plus">&nbsp;</i>Add New Divisi</button> -->
         <!-- <button type="button" class="btn btn-success btn-oblong" onclick="loadData()" title="Add"><i class="fa fa-plus">&nbsp;</i>Refresh</button> -->
     <?php endif; ?>
 </div>
@@ -27,17 +27,18 @@ $ENABLE_DELETE  = has_permission('Bom.Delete');
             <table id="dataTable" width="100%" class="table display table-bordered table-hover table-striped border-left-0 border-right-0">
                 <thead>
                     <tr>
-                        <th width="15" class="text-center">No</th>
-                        <th>Product Master</th>
-                        <th>Product Code</th>
-                        <th>Lot Size (Kg)</th>
-                        <th>Packaging</th>
-                        <th>Conversion</th>
-                        <th>Unit Measurement</th>
-                        <th>Last By</th>
-                        <th>Last Date</th>
+                        <th class="text-center">No</th>
+                        <th>Product Name</th>
+                        <th>Packing</th>
+                        <th>Konversi (kg)</th>
+                        <th>Actual Stock (kg)</th>
+                        <th>Stock Booking</th>
+                        <th>Free Stock</th>
+                        <th>Minimun Stock</th>
+                        <th>MOQ</th>
+                        <th>Propose</th>
                         <?php if ($ENABLE_MANAGE) : ?>
-                            <th class="desktop text-center no-sort" width="110">Action</th>
+                            <th>Action</th>
                         <?php endif; ?>
                     </tr>
                 </thead>
@@ -45,16 +46,17 @@ $ENABLE_DELETE  = has_permission('Bom.Delete');
                 <tfoot>
                     <tr>
                         <th>No</th>
-                        <th>Product Master</th>
-                        <th>Product Code</th>
-                        <th>Total Weight (Kg)</th>
-                        <th>Packaging</th>
-                        <th>Conversion</th>
-                        <th>Unit Measurement</th>
-                        <th>Last By</th>
-                        <th>Last Date</th>
+                        <th>Product Name</th>
+                        <th>Packing</th>
+                        <th>Konversi (kg)</th>
+                        <th>Actual Stock (kg)</th>
+                        <th>Stock Booking</th>
+                        <th>Free Stock</th>
+                        <th>Minimun Stock</th>
+                        <th>MOQ</th>
+                        <th>Propose</th>
                         <?php if ($ENABLE_MANAGE) : ?>
-                            <th>Action</th>
+                            <th>Opsi</th>
                         <?php endif; ?>
                     </tr>
                 </tfoot>
@@ -65,7 +67,7 @@ $ENABLE_DELETE  = has_permission('Bom.Delete');
 
 
 <div class="modal fade effect-scale" id="dialog-popup" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <form id="data-form" method="post" data-parsley-validate>
             <div class="modal-content">
                 <div class="modal-header">
@@ -86,33 +88,16 @@ $ENABLE_DELETE  = has_permission('Bom.Delete');
 
 <!-- page script -->
 <script type="text/javascript">
-
     $(document).ready(function() {
         loadData()
-    });
-
-    $(document).on("change",".get_product_code",function(){
-        var product_master = $(this).val();
-
-        $.ajax({
-            type : 'POST',
-            url : siteurl + thisController + 'get_product_code',
-            data : {
-                'product_master' : product_master
-            },
-            dataType : 'JSON',
-            success : function(result){
-                $(".product_code").val(result.product_code);
-            }
-        });
-    });
+    })
 
     $(document).on('click', '.add', function() {
         $.ajax({
             type: 'POST',
             url: siteurl + thisController + 'add',
             success: function(data) {
-                $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Add New BOM")
+                $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Add New Divisi")
                 $('#dialog-popup .modal-dialog').css({
                     'max-width': '90%'
                 })
@@ -129,7 +114,7 @@ $ENABLE_DELETE  = has_permission('Bom.Delete');
             type: 'GET',
             url: siteurl + thisController + 'edit/' + id,
             success: function(data) {
-                $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Edit BOM")
+                $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Edit Divisi")
                 $('#dialog-popup .modal-dialog').css({
                     'max-width': '90%'
                 })
@@ -146,7 +131,7 @@ $ENABLE_DELETE  = has_permission('Bom.Delete');
             type: 'GET',
             url: siteurl + thisController + 'view/' + id,
             success: function(data) {
-                $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;View BOM")
+                $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Edit Divisi")
                 $('#dialog-popup .modal-dialog').css({
                     'max-width': '75%'
                 })
@@ -157,7 +142,8 @@ $ENABLE_DELETE  = has_permission('Bom.Delete');
         })
     });
 
-    $(document).on('click', '.delete', function() {
+    $(document).on('click', '.delete', function(e) {
+        e.preventDefault()
         var swalWithBootstrapButtons = Swal.mixin({
             customClass: {
                 confirmButton: 'btn btn-primary mg-r-10 wd-100',
@@ -165,66 +151,67 @@ $ENABLE_DELETE  = has_permission('Bom.Delete');
             },
             buttonsStyling: false
         })
-
-        let id = $(this).data('id')
+        let id = $(this).data('id');
         swalWithBootstrapButtons.fire({
-            title: "Confirm",
-            text: "Are you sure to Delete this data BOM?",
+            title: "Confirm!",
+            text: "Are you sure to delete this data?",
             icon: "question",
             showCancelButton: true,
             confirmButtonText: "<i class='fa fa-check'></i> Yes",
             cancelButtonText: "<i class='fa fa-ban'></i> No",
             showLoaderOnConfirm: true,
-            preConfirm: (login) => {
+            preConfirm: () => {
                 return $.ajax({
+                    type: 'POST',
                     url: siteurl + thisController + 'delete',
-                    type: "POST",
-                    dataType: 'JSON',
+                    dataType: "JSON",
                     data: {
-                        id
+                        'id': id
                     },
                     error: function() {
                         Lobibox.notify('error', {
+                            title: 'Error!!!',
                             icon: 'fa fa-times',
                             position: 'top right',
                             showClass: 'zoomIn',
                             hideClass: 'zoomOut',
                             soundPath: '<?= base_url(); ?>themes/bracket/assets/lib/lobiani/sounds/',
-                            msg: 'Internal server error. Server timeout'
+                            msg: 'Internal server error. Ajax process failed.'
                         });
                     }
-                });
+                })
             },
             allowOutsideClick: true
         }).then((val) => {
             if (val.isConfirmed) {
                 if (val.value.status == '1') {
                     Lobibox.notify('success', {
+                        title: 'Success',
                         icon: 'fa fa-check',
-                        msg: val.value.msg,
                         position: 'top right',
                         showClass: 'zoomIn',
                         hideClass: 'zoomOut',
                         soundPath: '<?= base_url(); ?>themes/bracket/assets/lib/lobiani/sounds/',
+                        msg: val.value.msg
                     });
-                    $("#dialog-popup").modal('hide');
+                    $('#dialog-popup').modal('hide')
                     loadData()
-                    $('.dataTables_length select').select2({
-                        minimumResultsForSearch: -1
-                    })
+
                 } else {
                     Lobibox.notify('warning', {
+                        title: 'Warning',
                         icon: 'fa fa-ban',
-                        msg: val.value.msg,
                         position: 'top right',
                         showClass: 'zoomIn',
                         hideClass: 'zoomOut',
                         soundPath: '<?= base_url(); ?>themes/bracket/assets/lib/lobiani/sounds/',
+                        msg: val.value.msg
                     });
                 };
             }
-        });
-    });
+        })
+
+    })
 
     $(document).on('submit', '#data-form', function(e) {
         e.preventDefault()
@@ -298,81 +285,7 @@ $ENABLE_DELETE  = has_permission('Bom.Delete');
             }
         })
 
-    });
-
-    $(document).on("click", ".add_detail_material", function() {
-        var id_bom = $(".id_bom").val();
-        var material_type = $(".add_material_type").val();
-        var material_category = $(".add_material_category").val();
-        var weight = $(".add_weight").val();
-
-        if (material_type == '' || material_category == '' || weight == '' || weight < 0) {
-            swal.fire({
-                icon: 'error',
-                title: 'Error !',
-                text: 'Sorry, make sure all column has been filled !'
-            });
-        } else {
-            $(".add_detail_material").prop("disabled", true);
-            $.ajax({
-                type: "POST",
-                url: siteurl + thisController + 'add_detail_material',
-                data: {
-                    'id_bom': id_bom,
-                    'proses': material_type,
-                    'material_category': material_category,
-                    'weight': weight
-                },
-                dataType: 'JSON',
-                cache: false,
-                success: function(result) {
-                    // console.log(result);
-                    $(".add_detail_material").prop("disabled", false);
-                    if (result.status == 1) {
-                        $(".list_detail_material").html(result.hasil);
-                    } else {
-                        swal.fire({
-                            icon: 'error',
-                            title: 'Error !',
-                            text: 'Sorry, data has not been saved !',
-                            showConfirmButton: false,
-                            time: 1500
-                        });
-                    }
-                }
-            });
-        }
-    });
-
-    $(document).on("click",".del_material_detail",function(e){
-        var id = $(this).data('id');
-        var id_bom = $(".id_bom").val();
-
-        $.ajax({
-            type : 'POST',
-            url : siteurl + thisController + 'del_material_detail',
-            data : {
-                'id' : id,
-                'id_bom' : id_bom
-            },
-            cache : true,
-            dataType : 'JSON',
-            success : function(results){
-                if(results.valid == 1){
-                    $(".list_detail_material").html(results.hasil);
-                }else{
-                    Lobibox.notify('warning', {
-                        icon: 'fa fa-ban',
-                        msg: 'Maaf, hapus detail material gagal !',
-                        position: 'top right',
-                        showClass: 'zoomIn',
-                        hideClass: 'zoomOut',
-                        soundPath: '<?= base_url(); ?>themes/bracket/assets/lib/lobiani/sounds/',
-                    });
-                }
-            }
-        });
-    });
+    })
 
     function loadData() {
 

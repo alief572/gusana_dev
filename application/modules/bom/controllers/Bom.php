@@ -318,19 +318,26 @@ class Bom extends Admin_Controller
         $sql = "
             SELECT 
                 a.*,
+                b.unit_nm,
+                b.konversi,
                 b.nama as nm_product_master,
-                d.full_name as nm_dibuat
+                d.full_name as nm_dibuat,
+                e.nm_packaging
             FROM 
                 ms_bom a
                 LEFT JOIN ms_product_category3 b ON b.id_category3 = a.id_product
                 LEFT JOIN users d ON d.id_user = a.dibuat_oleh
+                LEFT JOIN master_packaging e ON e.id = b.packaging
             WHERE 1=1  
             AND (
                 a.id_product LIKE '%" . $string . "%' OR
                 a.variant LIKE '%" . $string . "%' OR
                 a.dibuat_oleh LIKE '" . $string . "' OR
+                b.unit_nm LIKE '" . $string . "' OR
+                b.konversi LIKE '" . $string . "' OR
                 b.nama LIKE '%" . $string . "%' OR
-                d.full_name LIKE '%" . $string . "%'
+                d.full_name LIKE '%" . $string . "%' OR
+                e.nm_packaging LIKE '%" . $string . "%' 
             )
         ";
 
@@ -385,8 +392,9 @@ class Bom extends Admin_Controller
             $nestedData[]  = $row['nm_product_master'];
             $nestedData[]  = $row['variant'];
             $nestedData[]  = $row['qty_hopper'];
-            $nestedData[]  = $row['waste_product'];
-            $nestedData[]  = $row['waste_set_clean'];
+            $nestedData[]  = $row['nm_packaging'];
+            $nestedData[]  = $row['konversi'];
+            $nestedData[]  = $row['unit_nm'];
             $nestedData[]  = $row['nm_dibuat'];
             $nestedData[]  = $last_date;
             $nestedData[]  = $buttons;

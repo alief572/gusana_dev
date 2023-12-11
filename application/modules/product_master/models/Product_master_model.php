@@ -139,11 +139,12 @@ class Product_master_model extends BF_Model
 	public function get_data_category3()
 	{
 		$search = "a.deleted='0' ";
-		$this->db->select('a.*, b.nama as nama_material_1, c.nama as nama_material_2, d.nama as nama_material_3');
+		$this->db->select('a.*, b.nama as nama_material_1, c.nama as nama_material_2, d.nama as nama_material_3, e.nm_packaging');
 		$this->db->from('ms_product_category3 a');
 		$this->db->join('ms_product_type b', 'b.id_type = a.id_type', 'left');
 		$this->db->join('ms_product_category1 c', 'c.id_category1 = a.id_category1', 'left');
 		$this->db->join('ms_product_category2 d', 'd.id_category2 = a.id_category2', 'left');
+		$this->db->join('master_packaging e', 'e.id = a.packaging', 'left');
 		$this->db->group_by('a.id_category3');
 		$query = $this->db->get();
 		return $query->result();

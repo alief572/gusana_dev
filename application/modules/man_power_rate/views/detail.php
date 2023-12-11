@@ -65,6 +65,7 @@ $ttl_mp_bulan = 0;
 							<td></td>
 						</tr>
 						<?php $x = 4;
+						$ttl_mp_bulan += (($gaji_pokok->gaji_pokok / 12) * 2);
 						foreach ($komp_sdmp as $list_sdmp) : ?>
 							<tr>
 								<td class="text-center"><?= $x ?></td>
@@ -75,7 +76,7 @@ $ttl_mp_bulan = 0;
 							</tr>
 							<?php
 							$x++;
-							$ttl_mp_bulan += (($gaji_pokok->gaji_pokok / 12) * 2) + $list_sdmp->nominal;
+							$ttl_mp_bulan += $list_sdmp->nominal;
 							?>
 						<?php endforeach; ?>
 					</tbody>

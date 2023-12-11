@@ -171,6 +171,9 @@ $id_bentuk = $this->uri->segment(3);
 						<th>Product Category</th>
 						<th>Product Jenis</th>
 						<th>Product Master</th>
+						<th>Packaging</th>
+						<th>Conversion</th>
+						<th>Unit Measurement</th>
 						<th>Status</th>
 						<?php if ($ENABLE_MANAGE) : ?>
 							<th>Action</th>
@@ -189,6 +192,9 @@ $id_bentuk = $this->uri->segment(3);
 								<td><?= $record->nama_material_2 ?></td>
 								<td><?= $record->nama_material_3 ?></td>
 								<td><?= $record->nama ?></td>
+								<td><?= $record->nm_packaging ?></td>
+								<td><?= $record->konversi ?></td>
+								<td><?= $record->unit_nm ?></td>
 								<td>
 									<?php if ($record->aktif == 1) : ?>
 										<div class="badge badge-success">Aktif</div>
@@ -267,13 +273,13 @@ $id_bentuk = $this->uri->segment(3);
 <!-- DataTables -->
 <script src="<?= base_url('assets/plugins/datatables/jquery.dataTables.min.js') ?>"></script>
 <script src="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.min.js') ?>"></script>
+<script src="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.min.js') ?>"></script>
+<script src="<?= base_url('assets/js/autoNumeric.js') ?>"></script>
 
 <!-- page script -->
 <script type="text/javascript">
 	var base_url = '<?php echo base_url(); ?>';
 	var active_controller = '<?php echo ($this->uri->segment(1)); ?>';
-
-	
 
 	function hitung_cbm() {
 		var dim_length = parseFloat($(".dim_length").val());

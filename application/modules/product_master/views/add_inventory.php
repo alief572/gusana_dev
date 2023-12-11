@@ -94,20 +94,21 @@
  						</tr>
  						<tr style="border:none !important;">
  							<th>Maximum Stok</th>
- 							<th colspan="2">
+ 							<th >
  								<input type="number" name="max_stok" id="" class="form-control form-control-sm" step="0.001">
  							</th>
  							<th>Minimum Stok</th>
- 							<th colspan="2">
+ 							<th >
  								<input type="number" name="min_stok" id="" class="form-control form-control-sm" step="0.01">
  							</th>
+							<th colspan="2"></th>
  						</tr>
  						<tr style="border:none !important;">
  							<th>PDS</th>
- 							<th colspan="2">
+ 							<th >
  								<input type="file" class="form-control form-control-sm" id="pds" name="pds" size="20" placeholder="PDS">
  							</th>
- 							<th colspan="3"></th>
+							<th colspan="4"></th>
  						</tr>
  						<tr>
  							<th>Dimensi (meter)</th>
@@ -120,14 +121,39 @@
  							<th>
  								<input type="number" name="dim_height" id="" class="form-control form-control-sm dim_height" placeholder="Height" onchange="hitung_cbm()" step="0.01">
  							</th>
- 							<th colspan="4"></th>
+ 							<th></th>
+ 							<th></th>
+ 							<th></th>
  						</tr>
  						<tr>
  							<th>CBM (m3)</th>
  							<th>
  								<input type="number" name="cbm" id="" class="form-control form-control-sm cbm" step="0.01" readonly>
  							</th>
- 							<th colspan="4"></th>
+ 							<th></th>
+ 							<th></th>
+ 							<th></th>
+ 							<th></th>
+ 						</tr>
+ 						<tr>
+ 							<th>Dimensi Tabung (Jari - jari / Meter)</th>
+ 							<th>
+ 								<input type="number" name="dim_tabung_r" id="" class="form-control form-control-sm dim_tabung">
+ 							</th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+ 						</tr>
+ 						<tr>
+ 							<th>CBM Tabung (m3)</th>
+ 							<th>
+ 								<input type="text" name="cbm_tabung" id="" class="form-control form-control-sm cbm_tabung" step="0.01" readonly>
+ 							</th>
+ 							<th></th>
+ 							<th></th>
+ 							<th></th>
+ 							<th></th>
  						</tr>
  					</table>
  					<table class="table" border="0">
@@ -204,8 +230,8 @@
  									</select>
  								</td>
  							</tr>
-							<tr>
-								<td>
+ 							<tr>
+ 								<td>
  									<label for="">Lama Pengeringan</label>
  									<select name="lama_pengeringan" id="" class="form-control form-control-sm">
  										<option value="">- Lama Pengeringan -</option>
@@ -213,7 +239,7 @@
  										<option value="2">Lambat</option>
  									</select>
  								</td>
-								<td>
+ 								<td>
  									<label for="">Permukaan</label>
  									<select name="permukaan" id="" class="form-control form-control-sm">
  										<option value="">- Permukaan -</option>
@@ -222,7 +248,7 @@
  										<option value="3">Semi Matte</option>
  									</select>
  								</td>
-								<td>
+ 								<td>
  									<label for="">Anti Jamur dan Lumut</label>
  									<select name="anti_jamur_lumut" id="" class="form-control form-control-sm">
  										<option value="">- Anti Jamur dan Lumut -</option>
@@ -230,9 +256,9 @@
  										<option value="2">No</option>
  									</select>
  								</td>
-							</tr>
-							<tr>
-								<td>
+ 							</tr>
+ 							<tr>
+ 								<td>
  									<label for="">Mudah dibersihkan (Dirt Resistance)</label>
  									<select name="mudah_dibersihkan" id="" class="form-control form-control-sm">
  										<option value="">- Mudah dibersihkan (Dirt Resistant) -</option>
@@ -240,7 +266,7 @@
  										<option value="2">No</option>
  									</select>
  								</td>
-								<td>
+ 								<td>
  									<label for="">Anti Bakteri</label>
  									<select name="anti_bakteri" id="" class="form-control form-control-sm">
  										<option value="">- Anti Bakteri -</option>
@@ -248,7 +274,7 @@
  										<option value="2">No</option>
  									</select>
  								</td>
-								<td>
+ 								<td>
  									<label for="">Daya tahan gesekan</label>
  									<select name="daya_tahan_gesekan" id="" class="form-control form-control-sm">
  										<option value="">- Daya tahan gesekan -</option>
@@ -256,9 +282,9 @@
  										<option value="2">No</option>
  									</select>
  								</td>
-							</tr>
-							<tr>
-								<td>
+ 							</tr>
+ 							<tr>
+ 								<td>
  									<label for="">Anti Slip</label>
  									<select name="anti_slip" id="" class="form-control form-control-sm">
  										<option value="">- Anti Slip -</option>
@@ -266,7 +292,7 @@
  										<option value="2">No</option>
  									</select>
  								</td>
-								<td>
+ 								<td>
  									<label for="">Fire Resistance</label>
  									<select name="fire_resistance" id="" class="form-control form-control-sm">
  										<option value="">- Fire Resistance -</option>
@@ -274,7 +300,7 @@
  										<option value="2">No</option>
  									</select>
  								</td>
-								<td>
+ 								<td>
  									<label for="">Ketahanan Bahan Kimia</label>
  									<select name="ketahanan_bahan_kimia" id="" class="form-control form-control-sm">
  										<option value="">- Ketahanan Bahan Kimia -</option>
@@ -282,7 +308,7 @@
  										<option value="2">No</option>
  									</select>
  								</td>
-							</tr>
+ 							</tr>
  						</tbody>
  					</table>
  					<div class="row">
@@ -348,6 +374,8 @@
  	// $(document).on('keyup','#inventory_2','#inventory_3','#nm_inventory','.maker','.hardness', function(){
  	// cariNama();
  	// });
+ 	$(".cbm_tabung").autoNumeric();
+
  	$('.chosen-select').select2({
  		dropdownParent: $('.box-primary'),
  		selectOnClose: true,
@@ -392,6 +420,20 @@
  		var add_button2 = $(".add_field_button2"); //Add button ID
 
  		//console.log(persen);
+
+ 		$(document).on("keyup", ".dim_tabung", function() {
+ 			var dim_tabung_r = $(this).val();
+ 			if (dim_tabung_r == "") {
+ 				dim_tabung_r = 0;
+ 			} else {
+ 				dim_tabung_r = dim_tabung_r.split(',').join('');
+ 				dim_tabung_r = parseFloat(dim_tabung_r);
+ 			}
+
+ 			var cbm_tabung = parseFloat(2 * (22/7) * dim_tabung_r);
+
+ 			$(".cbm_tabung").autoNumeric('set', cbm_tabung.toFixed(2));
+ 		});
 
  		var x2 = 1; //initlal text box count
  		$(add_button2).click(function(e) { //on add input button click

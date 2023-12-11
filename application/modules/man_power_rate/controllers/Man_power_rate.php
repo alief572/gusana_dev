@@ -34,15 +34,68 @@ class Man_power_rate extends Admin_Controller
 		$session = $this->session->userdata('app_session');
 		$this->template->page_icon('fa fa-users');
 
+		$gaji_pokok = $this->db->get_where('ms_gaji_pokok', ['id' => 1])->row();
+		$komp_sdmp = $this->Man_power_rate_model->get_choose_komp_with_komp('1');
+		$komp_bpjs = $this->Man_power_rate_model->get_choose_komp_with_komp('2');
+		$komp_bll = $this->Man_power_rate_model->get_choose_komp_with_komp('3');
+
+		$kurs_usd = $this->Man_power_rate_model->get_usd_kurs();
+		$kurs_rmb = $this->Man_power_rate_model->get_rmb_kurs();
 		$data = [
-			'gaji_pokok' => $this->db->get_where('ms_gaji_pokok',['id' => 1])->row(),
-			'komp_sdmp' => $this->Man_power_rate_model->get_choose_komp_with_komp('1'),
+			'gaji_pokok' => $gaji_pokok,
+			'komp_sdmp' => $komp_sdmp,
 			'komp_bpjs' => $this->Man_power_rate_model->get_choose_komp_with_komp('2'),
 			'komp_bll' => $this->Man_power_rate_model->get_choose_komp_with_komp('3'),
-			'kurs_usd' => $this->Man_power_rate_model->get_usd_kurs(),
-			'kurs_rmb' => $this->Man_power_rate_model->get_rmb_kurs()
+			'kurs_usd' => $kurs_usd,
+			'kurs_rmb' => $kurs_rmb
 		];
 
+		$total_mp_bulan = 0;
+		$total_mp_bulan += (($gaji_pokok->gaji_pokok / 12) * 2);
+
+		
+		$total_sdmp = $total_mp_bulan;
+		$total_bpjs = 0;
+		$total_bll = 0;
+		
+		foreach ($komp_sdmp as $list_sdmp) {
+			$total_mp_bulan += $list_sdmp->nominal;
+			$total_sdmp += $list_sdmp->nominal;
+		}
+		foreach ($komp_bpjs as $list_bpjs) {
+			$total_mp_bulan += $list_bpjs->nominal;
+			$total_bpjs += $list_bpjs->nominal;
+		}
+		foreach ($komp_bll as $list_bll) {
+			$total_mp_bulan += $list_bll->nominal;
+			$total_bll += $list_bll->nominal;
+		}
+
+		// $ttl = (($gaji_pokok->$gaji_pokok + $total_mp_bulan) / 173);
+
+		$this->db->trans_begin();
+
+		$this->db->where(['id IS NOT' => null])->delete('rate_man_power');
+		$this->db->insert('rate_man_power',[
+			'tanggal' => date("Y-m-d"),
+			'total_direct' => $total_sdmp,
+			'total_bpjs' => $total_bpjs,
+			'total_biaya_lain' => $total_bll,
+			'rate_dollar' => $kurs_usd->kurs,
+			'rate_rmb' => $kurs_rmb->kurs,
+			'upah_per_bulan_dollar' => (($gaji_pokok->gaji_pokok + $total_mp_bulan) / $kurs_usd->kurs),
+			'upah_per_bulan_rmb' => (($gaji_pokok->gaji_pokok + $total_mp_bulan) / $kurs_rmb->kurs),
+			'upah_per_jam_dollar' => ((($gaji_pokok->gaji_pokok + $total_mp_bulan) / $kurs_usd->kurs) / 173),
+			'upah_per_jam_rmb' => ((($gaji_pokok->gaji_pokok + $total_mp_bulan) / $kurs_rmb->kurs) / 173),
+			'upah_per_bulan' => ($gaji_pokok->gaji_pokok + $total_mp_bulan),
+			'upah_per_jam' => (($gaji_pokok->gaji_pokok + $total_mp_bulan) / 173)
+		]);
+
+		if($this->db->trans_status() === FALSE){
+			$this->db->trans_rollback();
+		}else{
+			$this->db->trans_commit();
+		}
 
 		history("View index man power rate");
 		$this->template->set($data);
@@ -62,7 +115,7 @@ class Man_power_rate extends Admin_Controller
 		$data = [
 			'gaji_pokok' => $this->db->get_where('ms_gaji_pokok', ['id' => 1])->row(),
 			'komp_sdmp' => $this->Man_power_rate_model->get_choose_komp_with_komp('1'),
-			'komp_bpjs' =>$this->Man_power_rate_model->get_choose_komp_with_komp('2') ,
+			'komp_bpjs' => $this->Man_power_rate_model->get_choose_komp_with_komp('2'),
 			'komp_bll' => $this->Man_power_rate_model->get_choose_komp_with_komp('3'),
 			'kurs_usd' => $this->Man_power_rate_model->get_usd_kurs(),
 			'kurs_rmb' => $this->Man_power_rate_model->get_rmb_kurs()
@@ -663,7 +716,7 @@ class Man_power_rate extends Admin_Controller
 		} else {
 			$this->db->trans_commit();
 		}
-		
+
 		$upah_per_bulan_dollar = (($gaji_pokok + $ttl_all) / $kurs);
 		$upah_per_jam_dollar = ((($gaji_pokok + $ttl_all) / $kurs) / 173);
 
@@ -758,14 +811,15 @@ class Man_power_rate extends Admin_Controller
 		echo json_encode($data);
 	}
 
-	public function del_komp(){
+	public function del_komp()
+	{
 		$id = $this->input->post('id');
 		$tipe = $this->input->post('tipe');
 		$gaji_pokok = $this->input->post('gaji_pokok');
 
 		$this->db->trans_begin();
 
-		$this->db->delete('ms_choose_komp_man_power_rate',['id' => $id]);
+		$this->db->delete('ms_choose_komp_man_power_rate', ['id' => $id]);
 
 		if ($this->db->trans_status() === FALSE) {
 			$this->db->trans_rollback();
@@ -808,7 +862,8 @@ class Man_power_rate extends Admin_Controller
 		echo json_encode($data);
 	}
 
-	public function ubah_kurs_rmb(){
+	public function ubah_kurs_rmb()
+	{
 		$kurs = $this->input->post('kurs');
 		$ttl_all = $this->input->post('ttl_all');
 		$gaji_pokok = $this->input->post('gaji_pokok');
@@ -822,7 +877,7 @@ class Man_power_rate extends Admin_Controller
 		} else {
 			$this->db->trans_commit();
 		}
-		
+
 		$upah_per_bulan_rmb = (($gaji_pokok + $ttl_all) / $kurs);
 		$upah_per_jam_rmb = ((($gaji_pokok + $ttl_all) / $kurs) / 173);
 
