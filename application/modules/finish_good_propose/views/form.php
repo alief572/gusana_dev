@@ -1,22 +1,35 @@
+<input type="hidden" name="list_id_category3" value="<?= implode(',',$list_id_category3) ?>">
 <div class="card-body" id="dataForm">
     <div class="row">
         <div class="col-md-12">
-            <div class="form-group row">
-                <div class="col-md-4">
-                    <label for="id_divisi" class="tx-dark tx-bold">ID Divisi<span class="tx-danger">*</span></label>
-                </div>
-                <div class="col-md-7">
-                    <input type="text" class="form-control" id="id_divisi" readonly name="id_divisi" value="<?= (isset($id_divisi)) ? $id_divisi : null; ?>" maxlength="10" placeholder="ID Divisi">
-                </div>
-            </div>
-            <div class="form-group row">
-                <div class="col-md-4">
-                    <label for="nama_divisi" class="tx-dark tx-bold">Nama Divisi</label>
-                </div>
-                <div class="col-md-7">
-                    <input type="text" class="form-control" id="nama_divisi" name="nama_divisi" value="<?= (isset($divisi)) ? $divisi->divisi : null; ?>" placeholder="Nama Divisi">
-                </div>
-            </div>
+            <table class="table table-striped w-100">
+                <thead>
+                    <tr>
+                        <th class="text-center">No</th>
+                        <th class="text-center">No. SO</th>
+                        <th class="text-center">Product Name</th>
+                        <th class="text-center">Contain (isi per packing)</th>
+                        <th class="text-center">Actual Stock (kg)</th>
+                        <th class="text-center">Stock Booking</th>
+                        <th class="text-center">Free Stock</th>
+                        <th class="text-center">Minimun Stock</th>
+                        <th class="text-center">MOQ</th>
+                        <th class="text-center">Propose</th>
+                        <th class="text-center">Due Date</th>
+                    </tr>
+                </thead>
+                <tbody class="list_so">
+                    <?php 
+                    // echo '<pre>'; 
+                    // print_r($results);
+                    // echo'</pre>'; 
+
+                    foreach($data_table as $data){
+                        echo $data;
+                    }
+                    ?>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

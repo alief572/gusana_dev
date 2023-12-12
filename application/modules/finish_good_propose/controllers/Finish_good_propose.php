@@ -48,20 +48,25 @@ class Finish_good_propose extends Admin_Controller
 
         $string = $this->db->escape_like_str($search);
         $sql = "
-            SELECT a.*
+            SELECT a.*,
+                b.nm_packaging,
+                IF(c.qty_asli > 0, c.qty_asli, 0) as qty_asli,
+                IF(a.moq > 0, a.moq, 0) as moq
             FROM
                 ms_product_category3 a 
                 LEFT JOIN master_packaging b ON b.id = a.packaging
-            WHERE 1=1 OR (
-                a.nama LIKE '%".$string."%' OR
-                a.konversi LIKE '%".$string."%' OR
-                b.nm_packaging LIKE '%".$string."%' OR
-                
-            ) 
+                LEFT JOIN ms_stock_product c ON c.id_product = a.id_category3
+            WHERE (1=1 AND (SELECT COUNT(aa.id_so) AS count_so FROM ms_so aa WHERE aa.id_product = a.id_category3 AND aa.propose <> aa.released) < 1) OR (
+                a.nama LIKE '%" . $string . "%' OR
+                a.konversi LIKE '%" . $string . "%' OR
+                a.min_stok LIKE '%" . $string . "%' OR
+                a.moq LIKE '%" . $string . "%' OR
+                b.nm_packaging LIKE '%" . $string . "%' 
+            ) GROUP BY a.id_category3
         ";
 
-        $totalData = $this->db->query($sql)->num_rows();
-        $totalFiltered = $this->db->query($sql)->num_rows();
+        $totalData = $this->db->query("SELECT a.id_category3 FROM ms_product_category3 a WHERE (SELECT COUNT(aa.id_so) AS count_so FROM ms_so aa WHERE aa.id_product = a.id_category3 AND aa.propose <> aa.released) < 1")->num_rows();
+        $totalFiltered = $this->db->query("SELECT a.id_category3 FROM ms_product_category3 a WHERE (SELECT COUNT(aa.id_so) AS count_so FROM ms_so aa WHERE aa.id_product = a.id_category3 AND aa.propose <> aa.released) < 1")->num_rows();
 
         $columns_order_by = array(
             0 => 'id',
@@ -79,34 +84,59 @@ class Finish_good_propose extends Admin_Controller
 
 
 
+        
+        $nomor = 1;
         foreach ($query->result_array() as $row) {
-            $buttons = '';
-            $total_data     = $totalData;
-            $start_dari     = $start;
-            $asc_desc       = $dir;
-            if (
-                $asc_desc == 'asc'
-            ) {
-                $nomor = $urut1 + $start_dari;
-            }
-            if (
-                $asc_desc == 'desc'
-            ) {
-                $nomor = ($total_data - $start_dari) - $urut2;
-            }
+            $check_data = $this->db->query('SELECT id_so FROM ms_so WHERE id_product = "' . $row['id_category3'] . '" AND propose <> released')->row();
+            
+            if (!empty($check_data)) {
+               
+            }else{
 
-            $view         = '<button type="button" class="btn btn-primary btn-sm view" data-toggle="tooltip" title="View" data-id="' . $row['id'] . '"><i class="fa fa-eye"></i></button>';
-            $edit         = '<button type="button" class="btn btn-success btn-sm edit" data-toggle="tooltip" title="Edit" data-id="' . $row['id'] . '"><i class="fa fa-edit"></i></button>';
-            $delete     = '<button type="button" class="btn btn-danger btn-sm delete" data-toggle="tooltip" title="Delete" data-id="' . $row['id'] . '"><i class="fa fa-trash"></i></button>';
-            $buttons     = $view . "&nbsp;" . $edit . "&nbsp;" . $delete;
+                $buttons = '';
+                $total_data     = $totalData;
+                $start_dari     = $start;
+                $asc_desc       = $dir;
+                if (
+                    $asc_desc == 'asc'
+                ) {
+                    // $nomor = $urut1 + $start_dari;
+                }
+                if (
+                    $asc_desc == 'desc'
+                ) {
+                    // $nomor = ($total_data - $start_dari) - $urut2;
+                }
 
-            $nestedData   = array();
-            $nestedData[]  = $nomor;
-            $nestedData[]  = $row['divisi'];
-            $nestedData[]  = $buttons;
-            $data[] = $nestedData;
-            $urut1++;
-            $urut2++;
+                $view         = '<button type="button" class="btn btn-primary btn-sm view" data-toggle="tooltip" title="View" data-id="' . $row['id'] . '"><i class="fa fa-eye"></i></button>';
+                // $edit         = '<button type="button" class="btn btn-success btn-sm edit" data-toggle="tooltip" title="Edit" data-id="' . $row['id'] . '"><i class="fa fa-edit"></i></button>';
+                // $delete     = '<button type="button" class="btn btn-danger btn-sm delete" data-toggle="tooltip" title="Delete" data-id="' . $row['id'] . '"><i class="fa fa-trash"></i></button>';
+                // $buttons     = $view . "&nbsp;" . $edit . "&nbsp;" . $delete;
+                $buttons = '';
+
+                $propose = 0;
+                if ($row['qty_asli'] < $row['min_stok']) {
+                    $propose = $row['min_stok'];
+                }
+
+                $nestedData   = array();
+                $nestedData[]  = '<input type="checkbox" name="finish_goods_nm_' . $row['id_category3'] . '" class="pilih pilih_' . $row['id_category3'] . '" value="' . $row['id_category3'] . '" data-id_category3="' . $row['id_category3'] . '" data-qty_asli="' . $row['qty_asli'] . '" data-moq="' . $row['moq'] . '" data-min_stok="' . $row['min_stok'] . '">';
+                $nestedData[]  = $nomor;
+                $nestedData[]  = $row['nama'];
+                $nestedData[]  = $row['nm_packaging'];
+                $nestedData[]  = $row['konversi'];
+                $nestedData[]  = $row['qty_asli'];
+                $nestedData[]  = 0;
+                $nestedData[]  = $row['qty_asli'];
+                $nestedData[]  = $row['min_stok'];
+                $nestedData[]  = $row['moq'];
+                $nestedData[]  = '<input type="text" class="form-control form-control-sm propose_val propose_' . $row['id_category3'] . '" value="' . $propose . '" readonly>';
+                $nestedData[]  = $buttons;
+                $data[] = $nestedData;
+                $urut1++;
+                $urut2++;
+                $nomor++;
+            }
         }
 
         $json_data = array(
@@ -122,20 +152,88 @@ class Finish_good_propose extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Finish_good_propose');
+        $this->template->title('Finish Goods');
         $this->template->render('index');
     }
 
     public function add()
     {
         $this->auth->restrict($this->viewPermission);
-        $divisi = $this->db->query('SELECT MAX(id) AS id_divisi FROM m_divisi')->row();
-        $id_divisi = ($divisi->id_divisi);
-        $id_divisi++;
-        $data = [
-            'id_divisi' => $id_divisi
-        ];
-        $this->template->set($data);
+        $data = array();
+
+        $list_id_category3 = $this->input->post('list_id_category3');
+        // echo '<pre>'; 
+        // print_r($list_id_category3);
+        // echo'</pre>';
+        // exit;
+
+        $code_so = $this->db->query("SELECT MAX(id_so) as max_id_so FROM ms_so WHERE id_so LIKE '%SO/" . date('Y') . "/" . date('m') . "/" . date('d') . "%'")->row();
+        $kodeBarang = $code_so->max_id_so;
+        $urutan = (int) substr($kodeBarang, 14, 6);
+        // $urutan++;
+        $tahun = date('Y/m/d/');
+        $huruf = "SO/";
+        $kodecollect = $huruf . $tahun . sprintf("%06s", $urutan);
+
+        $kump_id_category3 = array();
+
+        $x = 1;
+        foreach ($list_id_category3 as $category3) {
+
+            $kodeBarang2 = $kodecollect;
+            $urutan = (int) substr($kodeBarang2, 14, 6);
+            $urutan++;
+            $tahun = date('Y/m/d/');
+            $huruf = "SO/";
+            $kodecollect = $huruf . $tahun . sprintf("%06s", $urutan);
+
+            $get_query = $this->db->query("SELECT a.*, b.nm_packaging, c.qty_asli FROM ms_product_category3 a LEFT JOIN master_packaging b ON b.id = a.packaging LEFT JOIN ms_stock_product c ON c.id_product = a.id_category3 WHERE a.id_category3 = '" . $category3['id_category3'] . "' ")->row();
+
+            $kump_id_category3[] = $category3['id_category3'];
+
+            $data[] = '
+                <tr>
+                    <td class="text-center">' . $x . '</td>
+                    <td class="text-center">
+                        ' . $kodecollect . '
+                        <input type="hidden" name="no_so_' . $category3['id_category3'] . '" value="' . $kodecollect . '">
+                    </td>
+                    <td class="text-center">
+                        ' . $get_query->nama . '
+                        <input type="hidden" name="nm_product_so_' . $category3['id_category3'] . '" value="' . $get_query->nama . '">
+                    </td>
+                    <td class="text-center">
+                        ' . $get_query->nm_packaging . '
+                        <input type="hidden" name="product_packaging_' . $category3['id_category3'] . '" value="' . $get_query->nm_packaging . '">
+                    </td>
+                    <td class="text-center">' . number_format($get_query->qty_asli, 2) . '</td>
+                    <td class="text-center">' . number_format(0, 2) . '</td>
+                    <td class="text-center">' . number_format($get_query->qty_asli, 2) . '</td>
+                    <td class="text-center">' . number_format($get_query->min_stok, 2) . '</td>
+                    <td class="text-center">' . $get_query->moq . '</td>
+                    <td class="text-center">
+                        ' . number_format($category3['propose'], 2) . '
+                        <input type="hidden" name="propose_val_' . $category3['id_category3'] . '" value="' . $category3['propose'] . '">
+                    </td>
+                    <td class="text-center">
+                        <input type="date" name="due_date_' . $category3['id_category3'] . '" id="" class="form-control form-control-sm" min="' . date('Y-m-d') . '" required>
+                    </td>
+                </tr>
+            ';
+
+            $x++;
+        }
+
+
+        // echo '<pre>'; 
+        // print_r($data);
+        // echo'</pre>';
+        // exit;
+
+        $this->template->set([
+            'data_table' => $data,
+            'list_id_category3' => $kump_id_category3
+        ]);
         $this->template->render('form');
     }
 
@@ -190,50 +288,36 @@ class Finish_good_propose extends Admin_Controller
         $this->auth->restrict($this->addPermission);
         $post = $this->input->post();
 
-        $data = $post;
-        $data['id'] = ($post['id_divisi'] ?: null);
-        $data['divisi'] = ($post['nama_divisi'] ?: null);
-        $data['dibuat_oleh'] = $this->auth->user_id();
-        $data['dibuat_tgl'] = date("Y-m-d H:i:s");
-
-        $num_divisi = $this->db->query("SELECT divisi FROM m_divisi WHERE id = '" . $post['id_divisi'] . "'")->num_rows();
 
         $this->db->trans_begin();
-        if ($num_divisi > 0) {
-            $this->db->update('m_divisi', ['divisi' => $this->input->post('nama_divisi')], ['id' => $post['id_divisi']]);
+        $list_id_category3 = explode(",", $this->input->post('list_id_category3'));
+        foreach ($list_id_category3 as $category3) {
 
-            // Logging
-            $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
+            $id_so = $this->input->post('no_so_' . $category3);
+            $nm_product_so = $this->input->post('nm_product_so_' . $category3);
+            $propose_val = $this->input->post('propose_val_' . $category3);
+            $product_packaging = $this->input->post('product_packaging_' . $category3);
+            $due_date = $this->input->post('due_date_' . $category3);
 
-            $desc = "Update Finish_good_propose Data " . $data['id'] . " - " . $data['divisi'];
-            $device_name = $this->agent->mobile(); // Returns the mobile device name
-            if ($this->agent->is_browser()) {
-                $device_name = $this->agent->browser(); // Returns the browser name
-            } elseif ($this->agent->is_robot()) {
-                $device_name = $this->agent->robot(); // Returns the robot/crawler name
-            } elseif ($this->agent->is_mobile()) {
-                $device_name = $this->agent->mobile(); // Returns the mobile device name
-            } else {
-                $device_name = 'Unidentified Device';
-            }
+            $get_product = $this->db->get_where('ms_product_category3', ['id_category3' => $category3])->row();
 
-            $id_user = $this->auth->user_id();
-            $id_menu = $get_menu->id;
-            $nm_menu = $get_menu->title;
-            $device_type = $this->agent->platform();
-            $os_type = $this->agent->browser();
-            log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
-        } else {
-            $this->db->insert('m_divisi', [
-                'divisi' => $this->input->post('nama_divisi'),
+            $this->db->insert('ms_so', [
+                'id_so' => $id_so,
+                'id_product' => $category3,
+                'packaging' => $product_packaging,
+                'konversi' => $get_product->konversi,
+                'propose' => $propose_val,
+                'due_date' => $due_date,
+                'released' => 0,
+                'sisa_so' => $propose_val,
                 'dibuat_oleh' => $this->auth->user_id(),
-                'dibuat_tgl' => date("Y-m-d H:i:s")
+                'dibuat_tgl' => date('Y-m-d H:i:s')
             ]);
 
             // Logging
             $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
 
-            $desc = "Insert New Finish_good_propose Data " . $data['id'] . " - " . $data['divisi'];
+            $desc = "New SO Data " . $id_so . " - " . $nm_product_so;
             $device_name = $this->agent->mobile(); // Returns the mobile device name
             if ($this->agent->is_browser()) {
                 $device_name = $this->agent->browser(); // Returns the browser name
@@ -256,13 +340,13 @@ class Finish_good_propose extends Admin_Controller
         if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();
             $return    = array(
-                'msg'        => 'Failed save data Finish_Good.  Please try again.',
+                'msg'        => 'Failed to create Product SO.  Please try again.',
                 'status'    => 0
             );
-            $keterangan     = "FAILED save data Finish_good_propose " . $data['id'] . ", Finish_good_propose : " . $data['divisi'];
+            $keterangan     = "Failed to create Product SO";
             $status         = 1;
             $nm_hak_akses   = $this->addPermission;
-            $kode_universal = $data['id'];
+            $kode_universal = '';
             $jumlah         = 1;
             $sql            = $this->db->last_query();
         } else {
@@ -271,10 +355,10 @@ class Finish_good_propose extends Admin_Controller
                 'msg'        => 'Success Save data Finish_Good.',
                 'status'    => 1
             );
-            $keterangan     = "SUCCESS save data Finish_good_propose " . $data['id'] . ", Finish_good_propose : " . $data['divisi'];
+            $keterangan     = "Success create product SO";
             $status         = 1;
             $nm_hak_akses   = $this->addPermission;
-            $kode_universal = $data['id'];
+            $kode_universal = '';
             $jumlah         = 1;
             $sql            = $this->db->last_query();
         }

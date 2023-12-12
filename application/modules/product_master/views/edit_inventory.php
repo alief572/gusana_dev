@@ -143,7 +143,11 @@
 						<tr>
 							<th>Dimensi Tabung (Jari - jari / Meter)</th>
 							<th>
-								<input type="number" name="dim_tabung_r" id="" class="form-control form-control-sm dim_tabung" value="<?= $results['inventory_4']->dim_tabung_r ?>">
+								<input type="number" name="dim_tabung_r" id="" class="form-control form-control-sm dim_tabung_r dim_tabung" value="<?= $results['inventory_4']->dim_tabung_r ?>" step="0.01">
+							</th>
+							<th>Dimensi Tabung (Jari - jari / Meter)</th>
+							<th>
+								<input type="number" name="dim_tabung_t" id="" class="form-control form-control-sm dim_tabung_t dim_tabung" value="<?= $results['inventory_4']->dim_tabung_t ?>" step="0.01">
 							</th>
 						</tr>
 						<tr>
@@ -415,7 +419,8 @@
 	var active_controller = '<?php echo ($this->uri->segment(1)); ?>';
 
 	$(document).on("keyup", ".dim_tabung", function() {
-		var dim_tabung_r = $(this).val();
+		var dim_tabung_r = $(".dim_tabung_r").val();
+		var dim_tabung_t = $(".dim_tabung_t").val();
 		if (dim_tabung_r == "") {
 			dim_tabung_r = 0;
 		} else {
@@ -423,7 +428,18 @@
 			dim_tabung_r = parseFloat(dim_tabung_r);
 		}
 
-		var cbm_tabung = parseFloat(2 * (22/7) * dim_tabung_r);
+		if (dim_tabung_t == "") {
+			dim_tabung_t = 0;
+		} else {
+			dim_tabung_t = dim_tabung_t.split(',').join('');
+			dim_tabung_t = parseFloat(dim_tabung_t);
+		}
+
+		if (dim_tabung_r == 0 || dim_tabung_t == 0) {
+			var cbm_tabung = 0;
+		} else {
+			var cbm_tabung = parseFloat(3.14 * (dim_tabung_r * dim_tabung_r) * dim_tabung_t);
+		}
 
 		$(".cbm_tabung").autoNumeric('set', cbm_tabung.toFixed(2));
 	});

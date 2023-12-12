@@ -1,22 +1,22 @@
 <?php
-$ENABLE_ADD     = has_permission('Divisi.Add');
-$ENABLE_MANAGE  = has_permission('Divisi.Manage');
-$ENABLE_VIEW    = has_permission('Divisi.View');
-$ENABLE_DELETE  = has_permission('Divisi.Delete');
+$ENABLE_ADD     = has_permission('Menu_SO.Add');
+$ENABLE_MANAGE  = has_permission('Menu_SO.Manage');
+$ENABLE_VIEW    = has_permission('Menu_SO.View');
+$ENABLE_DELETE  = has_permission('Menu_SO.Delete');
 ?>
 
 <div class="br-pagetitle">
     <i class="tx-primary fa-4x <?= $template['page_icon']; ?>"></i>
     <div>
-        <h4>Finish Goods</h4>
-        <p class="mg-b-0"></p>
+        <h4>Menu SO</h4>
+        <!-- <p class="mg-b-0">Lorem ipsum dolor sit amet.</p> -->
     </div>
 </div><!-- d-flex -->
 
 <div class="d-flex align-items-center justify-content-between pd-x-20 pd-sm-x-30 pd-t-25 mg-b-20 mg-sm-b-30">
     <?php echo Template::message(); ?>
     <?php if ($ENABLE_ADD) : ?>
-        <button class="btn btn-primary btn-oblong add" href="javascript:void(0)" title="Add"><i class="fa fa-plus">&nbsp;</i>Propose</button>
+        <button class="btn btn-primary btn-oblong" href="javascript:void(0)" title="Add"><i class="fa fa-plus">&nbsp;</i>Create SPK</button>
         <!-- <button type="button" class="btn btn-success btn-oblong" onclick="loadData()" title="Add"><i class="fa fa-plus">&nbsp;</i>Refresh</button> -->
     <?php endif; ?>
 </div>
@@ -27,33 +27,35 @@ $ENABLE_DELETE  = has_permission('Divisi.Delete');
             <table id="dataTable" width="100%" class="table display table-bordered table-hover table-striped border-left-0 border-right-0">
                 <thead>
                     <tr>
-                        <th class="text-center"></th>
-                        <th class="text-center">No</th>
+                        <th width="15" class="text-center">No</th>
+                        <th>No. SO</th>
                         <th>Product Name</th>
                         <th>Packing</th>
-                        <th>Konversi (kg)</th>
-                        <th>Actual Stock (kg)</th>
-                        <th>Stock Booking</th>
-                        <th>Free Stock</th>
-                        <th>Minimun Stock</th>
-                        <th>MOQ</th>
+                        <th>Konversi</th>
                         <th>Propose</th>
+                        <th>Due Date</th>
+                        <th>Released</th>
+                        <th>Sisa SO</th>
+                        <?php if ($ENABLE_MANAGE) : ?>
+                            <th class="desktop text-center no-sort" width="110">Action</th>
+                        <?php endif; ?>
                     </tr>
                 </thead>
                 <tbody></tbody>
                 <tfoot>
                     <tr>
-                        <th></th>
                         <th>No</th>
+                        <th>No. SO</th>
                         <th>Product Name</th>
                         <th>Packing</th>
-                        <th>Konversi (kg)</th>
-                        <th>Actual Stock (kg)</th>
-                        <th>Stock Booking</th>
-                        <th>Free Stock</th>
-                        <th>Minimun Stock</th>
-                        <th>MOQ</th>
+                        <th>Konversi</th>
                         <th>Propose</th>
+                        <th>Due Date</th>
+                        <th>Released</th>
+                        <th>Sisa SO</th>
+                        <?php if ($ENABLE_MANAGE) : ?>
+                            <th>Action</th>
+                        <?php endif; ?>
                     </tr>
                 </tfoot>
             </table>
@@ -73,7 +75,7 @@ $ENABLE_DELETE  = has_permission('Divisi.Delete');
                 <div class="modal-body"></div>
                 <div class="modal-footer">
                     <button type="submit" class="btn wd-100 btn btn-primary" name="save" id="save"><i class="fa fa-save"></i>
-                        Create SO</button>
+                        Save</button>
                     <button type="button" class="btn wd-100 btn btn-danger" data-dismiss="modal">
                         <span class="fa fa-times"></span> Close</button>
                 </div>
@@ -89,44 +91,19 @@ $ENABLE_DELETE  = has_permission('Divisi.Delete');
     })
 
     $(document).on('click', '.add', function() {
-
-        var pilih = [];
-        $('.pilih:checked').each(function(){
-            pilih.push({
-                'id_category3': $(this).val(),
-                'propose': $('.propose_' + $(this).val()).val()
-            });
-        });
-        // console.log(pilih);
-        if($.isEmptyObject(pilih)){
-            Lobibox.notify('error', {
-                title: 'Error!!!',
-                icon: 'fa fa-times',
-                position: 'top right',
-                showClass: 'zoomIn',
-                hideClass: 'zoomOut',
-                soundPath: '<?= base_url(); ?>themes/bracket/assets/lib/lobiani/sounds/',
-                msg: 'Please check at least one product to propose !'
-            });
-        }else{
-            $.ajax({
-                type: 'POST',
-                url: siteurl + thisController + 'add',
-                data : {
-                    'list_id_category3': pilih
-                },
-                success: function(data) {
-                    $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Propose")
-                    $('#dialog-popup .modal-dialog').css({
-                        'max-width': '90%'
-                    })
-                    $("#dialog-popup").modal();
-                    $("#dialog-popup .modal-body").html(data);
-                    $("#save").removeClass('d-none');
-                }
-            })
-        }
-
+        $.ajax({
+            type: 'POST',
+            url: siteurl + thisController + 'add',
+            success: function(data) {
+                $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Add New Divisi")
+                $('#dialog-popup .modal-dialog').css({
+                    'max-width': '90%'
+                })
+                $("#dialog-popup").modal();
+                $("#dialog-popup .modal-body").html(data);
+                $("#save").removeClass('d-none');
+            }
+        })
     });
 
     $(document).on('click', '.edit', function(e) {
@@ -234,23 +211,6 @@ $ENABLE_DELETE  = has_permission('Divisi.Delete');
 
     })
 
-    $(document).on('change', '.pilih', function(){
-        var id_category3 = $(this).data('id_category3')
-        var moq = $(this).data('moq')
-        var qty_asli = $(this).data('qty_asli')
-        var min_stok = $(this).data('min_stok')
-
-        if($('.pilih_' + id_category3).is(':checked')){
-            $('.propose_' + id_category3).attr('readonly', false)
-            if(qty_asli < min_stok || qty_asli == 0){
-                $('.propose_' + id_category3).val(moq)
-            }
-        }else{
-            $('.propose_' + id_category3).val(0)
-            $('.propose_' + id_category3).attr('readonly', true)
-        }
-    })
-
     $(document).on('submit', '#data-form', function(e) {
         e.preventDefault()
         var swalWithBootstrapButtons = Swal.mixin({
@@ -263,8 +223,8 @@ $ENABLE_DELETE  = has_permission('Divisi.Delete');
 
         let formData = new FormData($('#data-form')[0]);
         swalWithBootstrapButtons.fire({
-            title: "Are you sure?",
-            text: "Are you sure to make SO from this product ?.",
+            title: "Anda Yakin?",
+            text: "Are you sure to save this data.",
             icon: "question",
             showCancelButton: true,
             confirmButtonText: "<i class='fa fa-check'></i> Yes",

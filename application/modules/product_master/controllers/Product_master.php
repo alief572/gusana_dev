@@ -549,6 +549,7 @@ class Product_master extends Admin_Controller
 			'dim_height' => $this->input->post('dim_height'),
 			'cbm' => $this->input->post('cbm'),
 			'dim_tabung_r' => $this->input->post('dim_tabung_r'),
+			'dim_tabung_t' => $this->input->post('dim_tabung_t'),
 			'cbm_tabung' => $this->input->post('cbm_tabung'),
 			'pds' => $data,
 			'aktif' => 1,
@@ -635,6 +636,7 @@ class Product_master extends Admin_Controller
 			'dim_height' => $this->input->post('dim_height'),
 			'cbm' => $this->input->post('cbm'),
 			'dim_tabung_r' => $this->input->post('dim_tabung_r'),
+			'dim_tabung_t' => $this->input->post('dim_tabung_t'),
 			'cbm_tabung' => $this->input->post('cbm_tabung'),
 			'pds' => $data,
 			'aktif' => $this->input->post('aktif'),
@@ -1126,4 +1128,109 @@ class Product_master extends Admin_Controller
 		$surface = $this->db->query("SELECT * FROM ms_surface WHERE id_surface='" . $idsurface . "'")->row();
 		echo "$surface->nm_surface";
 	}
+
+	public function getData()
+    {
+        $requestData    = $_REQUEST;
+        $status         = $requestData['status'];
+        $search         = $requestData['search']['value'];
+        $column         = $requestData['order'][0]['column'];
+        $dir            = $requestData['order'][0]['dir'];
+        $start          = $requestData['start'];
+        $length         = $requestData['length'];
+
+        $string = $this->db->escape_like_str($search);
+        $sql = "SELECT a.*, b.nama as nama_material_1, c.nama as nama_material_2, d.nama as nama_material_3, e.nm_packaging FROM ms_product_category3 a 
+		LEFT JOIN ms_product_type b ON b.id_type = a.id_type
+		LEFT JOIN ms_product_category1 c ON c.id_category1 = a.id_category1
+		LEFT JOIN ms_product_category2 d ON d.id_category2 = a.id_category2
+		LEFT JOIN master_packaging e ON e.id = a.packaging
+		WHERE 
+			1=1 AND
+			(
+				a.id_category3 LIKE '%".$string."%' OR 
+				a.nama LIKE '%".$string."%' OR 
+				b.nama LIKE '%".$string."%' OR 
+				c.nama LIKE '%".$string."%' OR 
+				d.nama LIKE '%".$string."%' OR 
+				e.nm_packaging LIKE '%".$string."%' OR 
+				a.konversi LIKE '%".$string."%' OR 
+				a.unit_nm LIKE '%".$string."%'
+			)
+		GROUP BY a.id_category3
+		";
+
+        $totalData = $this->db->query($sql)->num_rows();
+        $totalFiltered = $this->db->query($sql)->num_rows();
+
+        $columns_order_by = array(
+            0 => 'id',
+        );
+
+        // $sql .= " ORDER BY " . $columns_order_by[$column] . " " . $dir . " ";
+        $sql .= " LIMIT " . $start . " ," . $length . " ";
+        $query  = $this->db->query($sql);
+
+        $data  = array();
+        $urut1  = 1;
+        $urut2  = 0;
+
+        foreach ($query->result_array() as $row) {
+            $buttons = '';
+            $total_data     = $totalData;
+            $start_dari     = $start;
+            $asc_desc       = $dir;
+            if (
+                $asc_desc == 'asc'
+            ) {
+                $nomor = $urut1 + $start_dari;
+            }
+            if (
+                $asc_desc == 'desc'
+            ) {
+                $nomor = ($total_data - $start_dari) - $urut2;
+            }
+
+            $view         = '<a class="btn btn-primary btn-sm view" href="javascript:void(0)" title="View" data-id_inventory3="'.$row['id_category3'].'"><i class="fa fa-eye"></i>
+			</a>';
+            $edit         = '<a class="btn btn-success btn-sm edit" href="javascript:void(0)" title="Edit" data-id_inventory3="'.$row['id_category3'].'" data-id_type="'.$row['id_type'].'"><i class="fa fa-edit"></i>
+			</a>';
+            $delete     = '<a class="btn btn-danger btn-sm delete" href="javascript:void(0)" title="Delete" data-id_inventory3="'.$row['id_category3'].'"><i class="fa fa-trash"></i>
+			</a>';
+            $buttons     = $view . "&nbsp;" . $edit . "&nbsp;" . $delete;
+
+			if($row['aktif'] == 1){
+				$status = '<div class="badge badge-success">Aktif</div>';
+			}else{
+				$status = '<div class="badge badge-danger">Non Aktif</div>';
+			}
+
+            $nestedData   = array();
+            $nestedData[]  = $row['id_category3'];
+            $nestedData[]  = $row['nama_material_1'];
+            $nestedData[]  = $row['nama_material_2'];
+            $nestedData[]  = $row['nama_material_3'];
+            $nestedData[]  = $row['nama'];
+            $nestedData[]  = $row['nm_packaging'];
+            $nestedData[]  = $row['konversi'];
+            $nestedData[]  = $row['unit_nm'];
+            $nestedData[]  = $status;
+            // $nestedData[]  = $row['email'];
+            // $nestedData[]  = $row['address'];
+            // $nestedData[]  = $status[$row['status']];
+            $nestedData[]  = $buttons;
+            $data[] = $nestedData;
+            $urut1++;
+            $urut2++;
+        }
+
+        $json_data = array(
+            "draw"              => intval($requestData['draw']),
+            "recordsTotal"      => intval($totalData),
+            "recordsFiltered"   => intval($totalFiltered),
+            "data"              => $data
+        );
+
+        echo json_encode($json_data);
+    }
 }

@@ -94,21 +94,21 @@
  						</tr>
  						<tr style="border:none !important;">
  							<th>Maximum Stok</th>
- 							<th >
+ 							<th>
  								<input type="number" name="max_stok" id="" class="form-control form-control-sm" step="0.001">
  							</th>
  							<th>Minimum Stok</th>
- 							<th >
+ 							<th>
  								<input type="number" name="min_stok" id="" class="form-control form-control-sm" step="0.01">
  							</th>
-							<th colspan="2"></th>
+ 							<th colspan="2"></th>
  						</tr>
  						<tr style="border:none !important;">
  							<th>PDS</th>
- 							<th >
+ 							<th>
  								<input type="file" class="form-control form-control-sm" id="pds" name="pds" size="20" placeholder="PDS">
  							</th>
-							<th colspan="4"></th>
+ 							<th colspan="4"></th>
  						</tr>
  						<tr>
  							<th>Dimensi (meter)</th>
@@ -138,12 +138,14 @@
  						<tr>
  							<th>Dimensi Tabung (Jari - jari / Meter)</th>
  							<th>
- 								<input type="number" name="dim_tabung_r" id="" class="form-control form-control-sm dim_tabung">
+ 								<input type="number" name="dim_tabung_r" id="" class="form-control form-control-sm dim_tabung_r dim_tabung" step="0.01">
  							</th>
-							<th></th>
-							<th></th>
-							<th></th>
-							<th></th>
+ 							<th>Dimensi Tabung (Tinggi / Meter)</th>
+ 							<th>
+ 								<input type="number" name="dim_tabung_t" id="" class="form-control form-control-sm dim_tabung_t dim_tabung" step="0.01">
+ 							</th>
+ 							<th></th>
+ 							<th></th>
  						</tr>
  						<tr>
  							<th>CBM Tabung (m3)</th>
@@ -422,7 +424,8 @@
  		//console.log(persen);
 
  		$(document).on("keyup", ".dim_tabung", function() {
- 			var dim_tabung_r = $(this).val();
+ 			var dim_tabung_r = $(".dim_tabung_r").val();
+ 			var dim_tabung_t = $(".dim_tabung_t").val();
  			if (dim_tabung_r == "") {
  				dim_tabung_r = 0;
  			} else {
@@ -430,7 +433,19 @@
  				dim_tabung_r = parseFloat(dim_tabung_r);
  			}
 
- 			var cbm_tabung = parseFloat(2 * (22/7) * dim_tabung_r);
+ 			if (dim_tabung_t == "") {
+ 				dim_tabung_t = 0;
+ 			} else {
+ 				dim_tabung_t = dim_tabung_t.split(',').join('');
+ 				dim_tabung_t = parseFloat(dim_tabung_t);
+ 			}
+
+ 			if (dim_tabung_r == 0 || dim_tabung_t == 0) {
+ 				var cbm_tabung = 0;
+ 			} else {
+ 				var cbm_tabung = parseFloat(3.14 * (dim_tabung_r * dim_tabung_r) * dim_tabung_t);
+ 			}
+
 
  			$(".cbm_tabung").autoNumeric('set', cbm_tabung.toFixed(2));
  		});
