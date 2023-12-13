@@ -9,7 +9,7 @@
                     <th>Product Code</th>
                     <td>:</td>
                     <td><?= $results['bom']->variant ?></td>
-                    <th>qty Hopper (Kg)</th>
+                    <th>Lot Size (Kg)</th>
                     <td>:</td>
                     <td><?= $results['bom']->qty_hopper; ?></td>
                 </tr>

@@ -85,7 +85,7 @@ class Finish_good_propose extends Admin_Controller
 
 
         
-        $nomor = 1;
+        // $nomor = 1;
         foreach ($query->result_array() as $row) {
             $check_data = $this->db->query('SELECT id_so FROM ms_so WHERE id_product = "' . $row['id_category3'] . '" AND propose <> released')->row();
             
@@ -100,12 +100,12 @@ class Finish_good_propose extends Admin_Controller
                 if (
                     $asc_desc == 'asc'
                 ) {
-                    // $nomor = $urut1 + $start_dari;
+                    $nomor = $urut1 + $start_dari;
                 }
                 if (
                     $asc_desc == 'desc'
                 ) {
-                    // $nomor = ($total_data - $start_dari) - $urut2;
+                    $nomor = ($total_data - $start_dari) - $urut2;
                 }
 
                 $view         = '<button type="button" class="btn btn-primary btn-sm view" data-toggle="tooltip" title="View" data-id="' . $row['id'] . '"><i class="fa fa-eye"></i></button>';
@@ -115,9 +115,9 @@ class Finish_good_propose extends Admin_Controller
                 $buttons = '';
 
                 $propose = 0;
-                if ($row['qty_asli'] < $row['min_stok']) {
-                    $propose = $row['min_stok'];
-                }
+                // if ($row['qty_asli'] < $row['min_stok']) {
+                //     $propose = $row['moq'];
+                // }
 
                 $nestedData   = array();
                 $nestedData[]  = '<input type="checkbox" name="finish_goods_nm_' . $row['id_category3'] . '" class="pilih pilih_' . $row['id_category3'] . '" value="' . $row['id_category3'] . '" data-id_category3="' . $row['id_category3'] . '" data-qty_asli="' . $row['qty_asli'] . '" data-moq="' . $row['moq'] . '" data-min_stok="' . $row['min_stok'] . '">';
@@ -130,12 +130,12 @@ class Finish_good_propose extends Admin_Controller
                 $nestedData[]  = $row['qty_asli'];
                 $nestedData[]  = $row['min_stok'];
                 $nestedData[]  = $row['moq'];
-                $nestedData[]  = '<input type="text" class="form-control form-control-sm propose_val propose_' . $row['id_category3'] . '" value="' . $propose . '" readonly>';
+                $nestedData[]  = '<input type="number" class="form-control form-control-sm propose_val propose_' . $row['id_category3'] . '" value="' . $propose . '" readonly>';
                 $nestedData[]  = $buttons;
                 $data[] = $nestedData;
                 $urut1++;
                 $urut2++;
-                $nomor++;
+                // $nomor++;
             }
         }
 

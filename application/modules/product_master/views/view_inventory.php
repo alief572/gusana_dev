@@ -84,6 +84,27 @@ $ENABLE_DELETE  = has_permission('Product_Master.Delete');
 						</td>
 					</tr>
 					<tr>
+						<th>CBM (Meter)</th>
+						<td>:</td>
+						<td colspan="4">
+							<?= number_format($results['inventory_4']->cbm, 2) ?>
+						</td>
+					</tr>
+					<tr>
+						<th>Dimensi Tabung (22/7 x r<sup>2</sup> x t)</th>
+						<td>:</td>
+						<td colspan="4">
+							<?= '22/7 x ' . ($results['inventory_4']->dim_tabung_r * $results['inventory_4']->dim_tabung_r) . ' x ' . $results['inventory_4']->dim_tabung_t ?>
+						</td>
+					</tr>
+					<tr>
+						<th>CBM Tabung (Meter)</th>
+						<td>:</td>
+						<td colspan="4">
+							<?= number_format($results['inventory_4']->cbm_tabung, 2) ?>
+						</td>
+					</tr>
+					<tr>
 						<th>Status</th>
 						<td>:</td>
 						<td colspan="4">

@@ -103,9 +103,9 @@ class Menu_so extends Admin_Controller
 
             // $view         = '<button type="button" class="btn btn-primary btn-sm view" data-toggle="tooltip" title="View" data-id="' . $row['id'] . '"><i class="fa fa-eye"></i></button>';
             // $edit         = '<button type="button" class="btn btn-success btn-sm edit" data-toggle="tooltip" title="Edit" data-id="' . $row['id'] . '"><i class="fa fa-edit"></i></button>';
-            // $delete     = '<button type="button" class="btn btn-danger btn-sm delete" data-toggle="tooltip" title="Delete" data-id="' . $row['id'] . '"><i class="fa fa-trash"></i></button>';
-            // $buttons     = $view . "&nbsp;" . $edit . "&nbsp;" . $delete;
-            $buttons = '';
+            $delete     = '<button type="button" class="btn btn-danger btn-sm delete" data-toggle="tooltip" title="Delete" data-id="' . $row['id_so'] . '"><i class="fa fa-trash"></i></button>';
+            $buttons     = $delete;
+            // $buttons = '';
 
             $nestedData   = array();
             $nestedData[]  = $nomor;
@@ -118,6 +118,7 @@ class Menu_so extends Admin_Controller
             $nestedData[]  = $row['released'];
             $nestedData[]  = $row['sisa_so'];
             $nestedData[]  = '<input type="checkbox" name="pilih[]" value="'.$row['id_so'].'">';
+            $nestedData[]  = $buttons;
             $data[] = $nestedData;
             $urut1++;
             $urut2++;
@@ -136,7 +137,7 @@ class Menu_so extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Menu_so');
+        $this->template->title('Menu SO');
         $this->template->render('index');
     }
 
@@ -299,13 +300,13 @@ class Menu_so extends Admin_Controller
     public function delete()
     {
         $id = $this->input->post('id');
-        $data = $this->db->get_where('m_divisi', ['id' => $id])->row_array();
+        $data = $this->db->get_where('ms_so', ['id_so' => $id])->row_array();
 
         $this->db->trans_begin();
         // Logging
         $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
 
-        $desc = "Delete Menu_so Data " . $data['id'] . " - " . $data['divisi'];
+        $desc = "Delete SO Data " . $data['id_so'];
         $device_name = $this->agent->mobile(); // Returns the mobile device name
         if ($this->agent->is_browser()) {
             $device_name = $this->agent->browser(); // Returns the browser name
@@ -324,14 +325,14 @@ class Menu_so extends Admin_Controller
         $os_type = $this->agent->browser();
         log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
 
-        $sql = $this->db->delete('m_divisi', ['id' => $id]);
+        $sql = $this->db->delete('ms_so', ['id_so' => $id]);
         $errMsg = $this->db->error()['message'];
         if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();
             $keterangan     = "FAILED " . $errMsg;
             $status         = 0;
             $nm_hak_akses   = $this->addPermission;
-            $kode_universal = $data['id'];
+            $kode_universal = $data['id_so'];
             $jumlah         = 1;
             $sql            = $this->db->last_query();
             $return    = array(
@@ -344,10 +345,10 @@ class Menu_so extends Admin_Controller
                 'msg'        => 'Delete data Menu_so.',
                 'status'    => 1
             );
-            $keterangan     = "Delete data Menu_so " . $data['id'] . ", Menu_so : " . $data['divisi'];
+            $keterangan     = "Delete SO " . $data['id_so'];
             $status         = 1;
             $nm_hak_akses   = $this->addPermission;
-            $kode_universal = $data['id'];
+            $kode_universal = $data['id_so'];
             $jumlah         = 1;
             $sql            = $this->db->last_query();
         }

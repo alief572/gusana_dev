@@ -11,7 +11,7 @@ $id_bentuk = $this->uri->segment(3);
 	}
 </style>
 <div id='alert_edit' class="alert alert-success alert-dismissable" style="padding: 15px; display: none;"></div>
-<link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
 <div class="box">
 	<div class="box-header">
 		<?php if ($ENABLE_ADD) : ?>
@@ -163,7 +163,7 @@ $id_bentuk = $this->uri->segment(3);
 		<?php
 		} else {
 		?>
-			<table id="example3" class="table table-bordered table-striped">
+			<table id="dataTable" class="table table-bordered table-striped">
 				<thead>
 					<tr>
 						<th>ID</th>
@@ -178,47 +178,7 @@ $id_bentuk = $this->uri->segment(3);
 					</tr>
 				</thead>
 				<tbody>
-					<?php if (empty($results)) {
-					} else {
-						$numb = 0;
-						foreach ($results as $record) {
-							$numb++; ?>
-							<tr>
-								<td><?= $record->id_category3 ?></td>
-								<td><?= $record->nama_material_1 ?></td>
-								<td><?= $record->nama_material_2 ?></td>
-								<td><?= $record->nama_material_3 ?></td>
-								<td><?= $record->nama ?></td>
-								<td>
-									<?php if ($record->aktif == "aktif") : ?>
-										<div class="badge badge-success">Aktif</div>
-									<?php else : ?>
-										<div class="badge badge-danger">Non Aktif</div>
-									<?php endif; ?>
-								</td>
-								<td style="padding-left:20px">
-									<?php if ($ENABLE_VIEW) : ?>
-										<a class="btn btn-primary btn-sm view" href="javascript:void(0)" title="View" data-id_inventory3="<?= $record->id_category3 ?>"><i class="fa fa-eye"></i>
-										</a>
-									<?php endif; ?>
-									<?php if ($ENABLE_ADD) : ?>
-										<!-- <a class="btn btn-warning btn-sm copy" href="javascript:void(0)" title="Copy" data-id_inventory3="<?= $record->id_category3 ?>"><i class="fa fa-copy"></i>
-										</a> -->
-									<?php endif; ?>
-									<?php if ($ENABLE_MANAGE) : ?>
-										<a class="btn btn-success btn-sm edit" href="javascript:void(0)" title="Edit" data-id_inventory3="<?= $record->id_category3 ?>" data-id_type="<?= $record->id_type ?>"><i class="fa fa-edit"></i>
-										</a>
-									<?php endif; ?>
-
-									<?php if ($ENABLE_DELETE) : ?>
-										<a class="btn btn-danger btn-sm delete" href="javascript:void(0)" title="Delete" data-id_inventory3="<?= $record->id_category3 ?>"><i class="fa fa-trash"></i>
-										</a>
-									<?php endif; ?>
-								</td>
-
-							</tr>
-					<?php }
-					}  ?>
+					
 				</tbody>
 			</table>
 		<?php } ?>
@@ -265,8 +225,9 @@ $id_bentuk = $this->uri->segment(3);
 </div>
 
 <!-- DataTables -->
-<script src="<?= base_url('assets/plugins/datatables/jquery.dataTables.min.js') ?>"></script>
-<script src="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.min.js') ?>"></script>
+
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="<?= base_url('assets/js/autoNumeric.js') ?>"></script>
 
 <!-- page script -->
 <script type="text/javascript">
@@ -282,6 +243,168 @@ $id_bentuk = $this->uri->segment(3);
 
 		$(".cbm").val(cbm.toFixed(2));
 	}
+
+	function loadData() {
+        var oTable = $('#dataTable').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "stateSave": true,
+            "bAutoWidth": true,
+            "destroy": true,
+            "responsive": true,
+            "language": {
+                "sSearch": "",
+                'searchPlaceholder': 'Search...',
+                "sLengthMenu": "Display _MENU_",
+                "sInfo": "Display <b>_START_</b> to <b>_END_</b> from <b>_TOTAL_</b> data",
+                "sInfoFiltered": "(filtered from _MAX_ total entries)",
+                "sZeroRecords": "<i>Data tidak tersedia</i>",
+                "sEmptyTable": "<i>Data tidak ditemukan</i>",
+                "oPaginate": {
+                    "sPrevious": "<i class='fa fa-arrow-left' aria-hidden='true'></i>",
+                    "sNext": "<i class='fa fa-arrow-right' aria-hidden='true'></i>"
+                }
+            },
+            "responsive": {
+                "breakpoints": [{
+                        "name": 'desktop',
+                        "width": Infinity
+                    },
+                    {
+                        "name": 'tablet',
+                        "width": 1148
+                    },
+                    {
+                        "name": 'mobile',
+                        "width": 680
+                    },
+                    {
+                        "name": 'mobile-p',
+                        "width": 320
+                    }
+                ],
+            },
+            "aaSorting": [
+                [1, "asc"]
+            ],
+            "columnDefs": [{
+                    "targets": 'no-sort',
+                    "orderable": false,
+                }, {
+                    "targets": 'text-center',
+                    "className": 'text-center',
+                }, {
+                    "targets": 'tx-bold tx-dark',
+                    "className": 'tx-bold tx-dark',
+                }, {
+                    "targets": 'tx-bold tx-dark text-center',
+                    "className": 'tx-bold tx-dark text-center',
+                }
+
+            ],
+            "sPaginationType": "simple_numbers",
+            "iDisplayLength": 10,
+            "aLengthMenu": [5, 10, 20, 50, 100, 150],
+            "ajax": {
+                url: siteurl + thisController + 'getData',
+                type: "post",
+                data: function(d) {
+                    d.status = 'D'
+                },
+                cache: false,
+                error: function() {
+                    $(".my-grid-error").html("");
+                    $("#my-grid").append(
+                        '<tbody class="my-grid-error"><tr><th colspan="3">No data found in the server</th></tr></tbody>'
+                    );
+                    $("#my-grid_processing").css("display", "none");
+                }
+            }
+        });
+    }
+
+	function loadData_reload(){
+		var oTable = $('#dataTable').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "stateSave": true,
+            "bAutoWidth": true,
+            "destroy": true,
+            "responsive": true,
+            "language": {
+                "sSearch": "",
+                'searchPlaceholder': 'Search...',
+                "sLengthMenu": "Display _MENU_",
+                "sInfo": "Display <b>_START_</b> to <b>_END_</b> from <b>_TOTAL_</b> data",
+                "sInfoFiltered": "(filtered from _MAX_ total entries)",
+                "sZeroRecords": "<i>Data tidak tersedia</i>",
+                "sEmptyTable": "<i>Data tidak ditemukan</i>",
+                "oPaginate": {
+                    "sPrevious": "<i class='fa fa-arrow-left' aria-hidden='true'></i>",
+                    "sNext": "<i class='fa fa-arrow-right' aria-hidden='true'></i>"
+                }
+            },
+            "responsive": {
+                "breakpoints": [{
+                        "name": 'desktop',
+                        "width": Infinity
+                    },
+                    {
+                        "name": 'tablet',
+                        "width": 1148
+                    },
+                    {
+                        "name": 'mobile',
+                        "width": 680
+                    },
+                    {
+                        "name": 'mobile-p',
+                        "width": 320
+                    }
+                ],
+            },
+            "aaSorting": [
+                [1, "asc"]
+            ],
+            "columnDefs": [{
+                    "targets": 'no-sort',
+                    "orderable": false,
+                }, {
+                    "targets": 'text-center',
+                    "className": 'text-center',
+                }, {
+                    "targets": 'tx-bold tx-dark',
+                    "className": 'tx-bold tx-dark',
+                }, {
+                    "targets": 'tx-bold tx-dark text-center',
+                    "className": 'tx-bold tx-dark text-center',
+                }
+
+            ],
+            "sPaginationType": "simple_numbers",
+            "iDisplayLength": 10,
+            "aLengthMenu": [5, 10, 20, 50, 100, 150],
+            "ajax": {
+                url: siteurl + thisController + 'getData',
+                type: "post",
+                data: function(d) {
+                    d.status = 'D'
+                },
+                cache: false,
+                error: function() {
+                    $(".my-grid-error").html("");
+                    $("#my-grid").append(
+                        '<tbody class="my-grid-error"><tr><th colspan="3">No data found in the server</th></tr></tbody>'
+                    );
+                    $("#my-grid_processing").css("display", "none");
+                }
+            }
+        });
+	}
+
+	$(document).ready(function(){
+		loadData();
+	});
 
 	$(document).on("change", ".gabung_nama", function() {
 		var inv_lv_1 = $(".inv_lv_1").val();
@@ -606,4 +729,6 @@ $id_bentuk = $this->uri->segment(3);
 		tujuan = 'customer/rekap_pdf';
 		$(".modal-body").html('<iframe src="' + tujuan + '" frameborder="no" width="100%" height="400"></iframe>');
 	}
+
+	
 </script>

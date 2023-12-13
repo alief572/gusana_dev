@@ -37,7 +37,8 @@ $ENABLE_DELETE  = has_permission('Menu_SO.Delete');
                         <th>Released</th>
                         <th>Sisa SO</th>
                         <?php if ($ENABLE_MANAGE) : ?>
-                            <th class="desktop text-center no-sort" width="110">Action</th>
+                            <th class="desktop text-center no-sort">Pilih</th>
+                            <th class="desktop text-center no-sort">Action</th>
                         <?php endif; ?>
                     </tr>
                 </thead>
@@ -54,6 +55,7 @@ $ENABLE_DELETE  = has_permission('Menu_SO.Delete');
                         <th>Released</th>
                         <th>Sisa SO</th>
                         <?php if ($ENABLE_MANAGE) : ?>
+                            <th>Pilih</th>
                             <th>Action</th>
                         <?php endif; ?>
                     </tr>

@@ -12,13 +12,13 @@ $id_bentuk = $this->uri->segment(3);
 </style>
 <!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css"> -->
 <div id='alert_edit' class="alert alert-success alert-dismissable" style="padding: 15px; display: none;"></div>
-<link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>">
+<!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
 <div class="box">
 	<div class="box-header">
 		<?php if ($ENABLE_ADD) : ?>
 			<a class="btn btn-success btn-sm add" href="javascript:void(0)" data-id_bentuk="<?= $id_bentuk ?>" title="Add"><i class="fa fa-plus">&nbsp;</i>Add</a>
 		<?php endif; ?>
-		<!-- <a class="btn btn-primary btn-sm" href="<?= base_url('/product_master') ?>" title="Detail">Back</a> -->
+		
 		<span class="pull-right">
 		</span>
 	</div>
@@ -373,7 +373,7 @@ $id_bentuk = $this->uri->segment(3);
 								showConfirmButton: false,
 								allowOutsideClick: false
 							});
-							$("#dialog-popup").modal();
+							$("#dialog-popup").modal('hide');
 							loadData_reload();
 						} else {
 							if (data.status == 2) {
@@ -386,7 +386,7 @@ $id_bentuk = $this->uri->segment(3);
 									showConfirmButton: false,
 									allowOutsideClick: false
 								}).then((hasil3) => {
-									$("#dialog-popup").modal();
+									$("#dialog-popup").modal('hide');
 									loadData_reload();
 								});
 							} else {
@@ -399,7 +399,7 @@ $id_bentuk = $this->uri->segment(3);
 									showConfirmButton: false,
 									allowOutsideClick: false
 								}).then((hasil4) => {
-									$("#dialog-popup").modal();
+									$("#dialog-popup").modal('hide');
 									loadData_reload();
 								});
 							}
@@ -458,6 +458,7 @@ $id_bentuk = $this->uri->segment(3);
 								type: "success",
 								timer: 1500
 							}).then((hasil1) => {
+								// $("#dialog-popup").modal();
 								loadData_reload();
 							});
 						} else {
@@ -723,7 +724,5 @@ $id_bentuk = $this->uri->segment(3);
                 }
             }
         });
-
-		loadData_reload();
 	}
 </script>
