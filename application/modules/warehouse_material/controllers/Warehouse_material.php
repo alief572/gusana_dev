@@ -812,7 +812,7 @@ class Warehouse_material extends Admin_Controller
 					$ArrStockSupIns['nm_material'] 	= $rest_mat[0]->nama;
 					$ArrStockSupIns['id_gudang'] 		= $kd_gudang;
 					$ArrStockSupIns['kd_gudang'] 		= get_name('m_warehouse', 'id', 'id', $kd_gudang);
-					$ArrStockSupIns['qty_stock'] 		= $req_stock;
+					$ArrStockSupIns['qty_stock'] 		= ($IMP[1] == 'packing' ? ($stock_akhir * $rest_mat[0]->konversi) : $stock_akhir);
 					$ArrStockSupIns['update_by'] 		= $session['username'];
 					$ArrStockSupIns['update_date'] 	= date('Y-m-d H:i:s');
 
@@ -826,7 +826,7 @@ class Warehouse_material extends Admin_Controller
 					$ArrHistSubIns['id_gudang_ke'] 	= $kd_gudang;
 					$ArrHistSubIns['kd_gudang_ke'] 	= get_name('m_warehouse', 'id', 'id', $kd_gudang);
 					$ArrHistSubIns['qty_stock_awal'] 	= 0;
-					$ArrHistSubIns['qty_stock_akhir'] 	= $req_stock;
+					$ArrHistSubIns['qty_stock_akhir'] 	= ($IMP[1] == 'packing' ? ($stock_akhir * $rest_mat[0]->konversi) : $stock_akhir);
 					$ArrHistSubIns['qty_booking_awal'] 	= 0;
 					$ArrHistSubIns['qty_booking_akhir'] 	= 0;
 					$ArrHistSubIns['qty_rusak_awal'] 		= 0;

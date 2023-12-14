@@ -1,14 +1,14 @@
 <?php
-$ENABLE_ADD     = has_permission('Menu_SO.Add');
-$ENABLE_MANAGE  = has_permission('Menu_SO.Manage');
-$ENABLE_VIEW    = has_permission('Menu_SO.View');
-$ENABLE_DELETE  = has_permission('Menu_SO.Delete');
+$ENABLE_ADD     = has_permission('Menu_SPK.Add');
+$ENABLE_MANAGE  = has_permission('Menu_SPK.Manage');
+$ENABLE_VIEW    = has_permission('Menu_SPK.View');
+$ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
 ?>
 
 <div class="br-pagetitle">
     <i class="tx-primary fa-4x <?= $template['page_icon']; ?>"></i>
     <div>
-        <h4>Menu SO</h4>
+        <h4>Menu SPK</h4>
         <!-- <p class="mg-b-0">Lorem ipsum dolor sit amet.</p> -->
     </div>
 </div><!-- d-flex -->
@@ -16,7 +16,7 @@ $ENABLE_DELETE  = has_permission('Menu_SO.Delete');
 <div class="d-flex align-items-center justify-content-between pd-x-20 pd-sm-x-30 pd-t-25 mg-b-20 mg-sm-b-30">
     <?php echo Template::message(); ?>
     <?php if ($ENABLE_ADD) : ?>
-        <button class="btn btn-primary btn-oblong" href="javascript:void(0)" title="Add"><i class="fa fa-plus">&nbsp;</i>Create SPK</button>
+        <button class="btn btn-primary btn-oblong add" href="javascript:void(0)" title="Add"><i class="fa fa-plus">&nbsp;</i>Create SPK</button>
         <!-- <button type="button" class="btn btn-success btn-oblong" onclick="loadData()" title="Add"><i class="fa fa-plus">&nbsp;</i>Refresh</button> -->
     <?php endif; ?>
 </div>

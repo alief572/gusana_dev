@@ -109,12 +109,12 @@ foreach ($detail as $val => $valx) {
                         }
                     }
                     echo "<tr>";
-                    echo "<td class='text-center' rowspan='4'>3</td>";
+                    echo "<td class='text-center' rowspan='3'>3</td>";
                     // echo "<td class='text-center'></td>";
                     echo "<td class='text-left text-bold' colspan='4'>Mesin, cetakan, consumable</td>";
                     echo "</tr>";
                     foreach ($dataList as $key => $value) {
-                        if ($value['judul'] == 'Mesin, cetakan, consumable' ) {
+                        if ($value['judul'] == 'Mesin, cetakan, consumable' && $value['element_costing'] !== '3.2. Mold/ Cetakan') {
                             echo "<tr>";
                             if ($value['code'] == '4') {
                                 $rate         = number_format($product_price[0]['rate_cycletime'], 2) . ' x ' . number_format($product_price[0]['rate_depresiasi'], 2);

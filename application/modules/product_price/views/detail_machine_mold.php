@@ -31,7 +31,7 @@
                             $nox = 0;
                             $SUM_CT = 0;
                             $SUM_TOTALTIME = 0;
-                            $SUM_CT_TOTAL = 0;
+                            $SUM_CT_TOTAL = $totalCT->ttl_cycletime;
                             foreach ($q_header_test as $val2 => $val2x) {
                                 $nox++;
 
@@ -69,7 +69,7 @@
                                     $SUM_CT         += $CT;
                                     $SUM_TOTALTIME  += $TOTAL_TIME;
 
-                                    $SUM_CT_TOTAL   += $CT_TOTAL;
+                                    // $SUM_CT_TOTAL   += $CT_TOTAL;
 
 
                                     echo "<tr>";

@@ -96,7 +96,7 @@ class Cycletime_model extends BF_Model
       $nestedData[]  = "<div align='right'>" . strtoupper($row['lot_size']) . "</div>";
 
       $totalTime = 0;
-      $TimeTotal = get_total_time_ct($row['id_product']);
+      $TimeTotal = get_total_time_ct($row['id_time']);
       if ($TimeTotal > 0) {
         $totalTime = $TimeTotal / 60;
       }

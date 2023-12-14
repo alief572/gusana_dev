@@ -680,16 +680,16 @@ function get_name($table, $field, $where, $value)
     return $hasil;
 }
 
-function get_total_time_ct($product)
+function get_total_time_ct($id_time)
 {
     $CI         = &get_instance();
     $sql = "
               SELECT
-                SUM(a.man_hours) AS total
+                SUM(a.cycletime) AS total
               FROM
-                cycletime_full a
+                cycletime_detail_detail a
               WHERE
-                a.id_product = '" . $product . "'
+                a.id_time = '" . $id_time . "'
                 ";
     $sisa    = $CI->db->query($sql)->result();
     $total = (!empty($sisa[0]->total)) ? $sisa[0]->total : 0;
@@ -706,7 +706,7 @@ function get_total_time_cycletime()
             SUM(a.cycletime * qty_mp) AS ct_manpower
           FROM
             cycletime_detail_detail a
-            LEFT JOIN cycletime_header b ON a.id_time = b.id_time
+            JOIN cycletime_header b ON a.id_time = b.id_time
           WHERE
             b.deleted_date IS NULL
           GROUP BY b.id_time

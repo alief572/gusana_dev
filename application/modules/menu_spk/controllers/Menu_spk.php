@@ -11,23 +11,23 @@ if (!defined('BASEPATH')) {
  * This is controller for Master Employee
  */
 
-class Menu_so extends Admin_Controller
+class Menu_spk extends Admin_Controller
 {
-    protected $viewPermission     = 'Menu_SO.View';
-    protected $addPermission      = 'Menu_SO.Add';
-    protected $managePermission = 'Menu_SO.Manage';
-    protected $deletePermission = 'Menu_SO.Delete';
+    protected $viewPermission     = 'Menu_SPK.View';
+    protected $addPermission      = 'Menu_SPK.Add';
+    protected $managePermission = 'Menu_SPK.Manage';
+    protected $deletePermission = 'Menu_SPK.Delete';
     public function __construct()
     {
         parent::__construct();
 
         $this->load->library(array('upload', 'Image_lib', 'user_agent', 'uri'));
         $this->load->model(array(
-            'Menu_so/Menu_so_model',
+            'Menu_spk/Menu_spk_model',
             'Aktifitas/aktifitas_model',
         ));
         $this->load->helper(['url', 'json']);
-        $this->template->title('Menu_so');
+        $this->template->title('Menu_spk');
         $this->template->page_icon('fas fa-user-tie');
 
         date_default_timezone_set('Asia/Bangkok');
@@ -137,20 +137,43 @@ class Menu_so extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Menu SO');
+        $this->template->title('Menu SPK');
         $this->template->render('index');
     }
 
     public function add()
     {
         $this->auth->restrict($this->viewPermission);
-        $divisi = $this->db->query('SELECT MAX(id) AS id_divisi FROM m_divisi')->row();
-        $id_divisi = ($divisi->id_divisi);
-        $id_divisi++;
-        $data = [
-            'id_divisi' => $id_divisi
-        ];
-        $this->template->set($data);
+        // $data = array();
+        $data = $this->db->query("
+            SELECT
+                a.*,
+                b.moq,
+                b.nama as nm_product
+            FROM
+                ms_so a
+                LEFT JOIN ms_product_category3 b ON b.id_category3 = a.id_product
+            WHERE
+                sisa_so > 0
+        ")->result();
+
+        $array_spk_batch = array();
+
+        foreach($data as $list_data){
+            $get_product_batch = $this->db->get_where('ms_bom', ['id_product' => $list_data->id_product])->result();
+
+            $array_spk_batch[$list_data->id_product] = $get_product_batch; 
+        }
+
+        // echo '<pre>'; 
+        // print_r($array_spk_batch);
+        // echo'</pre>';
+        // exit;
+
+        $this->template->set([
+            'results' => $data,
+            'spk_batch' => $array_spk_batch
+        ]);
         $this->template->render('form');
     }
 
@@ -174,7 +197,7 @@ class Menu_so extends Admin_Controller
         // Logging
         $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
 
-        $desc = "View Menu_so Data " . $divisi->id . " - " . $divisi->divisi;
+        $desc = "View Menu_spk Data " . $divisi->id . " - " . $divisi->divisi;
         $device_name = $this->agent->mobile(); // Returns the mobile device name
         if ($this->agent->is_browser()) {
             $device_name = $this->agent->browser(); // Returns the browser name
@@ -220,7 +243,7 @@ class Menu_so extends Admin_Controller
             // Logging
             $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
 
-            $desc = "Update Menu_so Data " . $data['id'] . " - " . $data['divisi'];
+            $desc = "Update Menu_spk Data " . $data['id'] . " - " . $data['divisi'];
             $device_name = $this->agent->mobile(); // Returns the mobile device name
             if ($this->agent->is_browser()) {
                 $device_name = $this->agent->browser(); // Returns the browser name
@@ -248,7 +271,7 @@ class Menu_so extends Admin_Controller
             // Logging
             $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
 
-            $desc = "Insert New Menu_so Data " . $data['id'] . " - " . $data['divisi'];
+            $desc = "Insert New Menu_spk Data " . $data['id'] . " - " . $data['divisi'];
             $device_name = $this->agent->mobile(); // Returns the mobile device name
             if ($this->agent->is_browser()) {
                 $device_name = $this->agent->browser(); // Returns the browser name
@@ -271,10 +294,10 @@ class Menu_so extends Admin_Controller
         if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();
             $return    = array(
-                'msg'        => 'Failed save data Menu_so.  Please try again.',
+                'msg'        => 'Failed save data Menu_spk.  Please try again.',
                 'status'    => 0
             );
-            $keterangan     = "FAILED save data Menu_so " . $data['id'] . ", Menu_so : " . $data['divisi'];
+            $keterangan     = "FAILED save data Menu_spk " . $data['id'] . ", Menu_spk : " . $data['divisi'];
             $status         = 1;
             $nm_hak_akses   = $this->addPermission;
             $kode_universal = $data['id'];
@@ -283,10 +306,10 @@ class Menu_so extends Admin_Controller
         } else {
             $this->db->trans_commit();
             $return    = array(
-                'msg'        => 'Success Save data Menu_so.',
+                'msg'        => 'Success Save data Menu_spk.',
                 'status'    => 1
             );
-            $keterangan     = "SUCCESS save data Menu_so " . $data['id'] . ", Menu_so : " . $data['divisi'];
+            $keterangan     = "SUCCESS save data Menu_spk " . $data['id'] . ", Menu_spk : " . $data['divisi'];
             $status         = 1;
             $nm_hak_akses   = $this->addPermission;
             $kode_universal = $data['id'];
@@ -336,13 +359,13 @@ class Menu_so extends Admin_Controller
             $jumlah         = 1;
             $sql            = $this->db->last_query();
             $return    = array(
-                'msg'        => "Failed delete data Menu_so. Please try again. " . $errMsg,
+                'msg'        => "Failed delete data Menu_spk. Please try again. " . $errMsg,
                 'status'    => 0
             );
         } else {
             $this->db->trans_commit();
             $return    = array(
-                'msg'        => 'Delete data Menu_so.',
+                'msg'        => 'Delete data Menu_spk.',
                 'status'    => 1
             );
             $keterangan     = "Delete SO " . $data['id_so'];

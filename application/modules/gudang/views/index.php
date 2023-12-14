@@ -11,7 +11,7 @@
 			<?php
 			if (empty($uri_tanda)) {
 			?>
-				<div class='form-group row'><br>
+				<div class='form-group row'>
 					<label class='label-control col-sm-2'><b>Dari Gudang</b></label>
 					<div class='col-sm-4'>
 						<select id='gudang_before' name='gudang_before' class='form-control input-sm chosen_select' style='min-width:200px;'>
@@ -23,13 +23,11 @@
 							?>
 						</select>
 					</div>
-					<div class='in_id'>
-						<label class='label-control col-sm-2'><b>Ke Gudang</b></label>
-						<div class='col-sm-4'>
-							<select id='gudang_after' name='gudang_after' class='form-control input-sm chosen_select' style='min-width:200px;'>
-								<option value='0'>List Empty</option>
-							</select>
-						</div>
+					<label class='label-control col-sm-2'><b>Ke Gudang</b></label>
+					<div class='col-sm-4'>
+						<select id='gudang_after' name='gudang_after' class='form-control input-sm chosen_select' style='min-width:200px;'>
+							<option value='0'>List Empty</option>
+						</select>
 					</div>
 				</div>
 				<?php
@@ -60,7 +58,7 @@
 	<!-- /.box -->
 	<!-- modal -->
 	<div class="modal fade" id="ModalView2" style='overflow-y: auto;'>
-		<div class="modal-dialog" style='width:85%; '>
+		<div class="modal-dialog  modal-lg mx-wd-md-70p-force mx-wd-lg-70p-force">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">

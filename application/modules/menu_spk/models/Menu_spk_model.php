@@ -7,6 +7,6 @@
  * This is model class for table "Customer"
  */
 
-class Menu_so_model extends BF_Model
+class Menu_spk_model extends BF_Model
 {
 }

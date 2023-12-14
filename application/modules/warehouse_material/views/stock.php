@@ -26,7 +26,7 @@ $ENABLE_DELETE  = has_permission('Stock_Material.Delete');
 					<th class="text-center" rowspan='2'>Material</th>
 					<th width='4%' class="text-center" rowspan='2'>Konversi</th>
 					<th width='4%' class="text-center" rowspan='2'>Unit</th>
-					<th width='4%' class="text-center" rowspan='2'>Kelompok</th>
+					<!-- <th width='4%' class="text-center" rowspan='2'>Kelompok</th> -->
 					<th class="text-center" colspan='3'>Stock Pusat</th>
 					<th class="text-center" colspan='3'>Stock Transisi</th>
 					<th class="text-center" colspan='3'>Stock Produksi</th>
@@ -87,7 +87,7 @@ $ENABLE_DELETE  = has_permission('Stock_Material.Delete');
 		$("#head_title").html("<b>HISTORY</b>");
 		$.ajax({
 			type: 'POST',
-			url: base_url + active_controller + '/modal_history',
+			url: base_url + thisController + '/modal_history',
 			data: {
 				"gudang": gudang,
 				"material": material

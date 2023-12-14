@@ -66,20 +66,20 @@ class Warehouse_material_model extends BF_Model{
 
       $nestedData 	= array();
 			$nestedData[]	= "<div align='center'>".$nomor."</div>";
-			$nestedData[]	= "<div align='left'>".$row['code_company']."</div>";
-			$nestedData[]	= "<div align='left'>".strtoupper($row['nm_material'])."</div>";
+			$nestedData[]	= "<div align='left'>".$row['id_category3']."</div>";
+			$nestedData[]	= "<div align='left'>".strtoupper($row['nama'])."</div>";
       $nestedData[]	= "<div align='right'>".number_format($row['konversi'],2)."</div>";
-      $nestedData[]	= "<div align='left'>".strtoupper($row['unit'])."</div>";
-      $nestedData[]	= "<div align='left'>".strtoupper($row['kelompok'])."</div>";
-      $nestedData[]	= "<div align='right'>".number_format(get_stock_material($row['code_material'], '1'), 2)."</div>";
-      $nestedData[]	= "<div align='right'>".number_format(get_stock_material_packing($row['code_material'], '1'), 2)."</div>";
-      $nestedData[]	= "<div align='center'><button type='button' class='btn btn-sm btn-primary hist' data-gudang='1' data-material='".$row['code_material']."'><i class='fa fa-history'></i></button></div>";
-      $nestedData[]	= "<div align='right'>".number_format(get_stock_material($row['code_material'], '2'), 2)."</div>";
-      $nestedData[]	= "<div align='right'>".number_format(get_stock_material_packing($row['code_material'], '2'), 2)."</div>";
-      $nestedData[]	= "<div align='center'><button type='button' class='btn btn-sm btn-success hist' data-gudang='2' data-material='".$row['code_material']."'><i class='fa fa-history'></i></button></div>";
-      $nestedData[]	= "<div align='right'>".number_format(get_stock_material($row['code_material'], '3'), 2)."</div>";
-      $nestedData[]	= "<div align='right'>".number_format(get_stock_material_packing($row['code_material'], '3'), 2)."</div>";
-      $nestedData[]	= "<div align='center'><button type='button' class='btn btn-sm btn-warning hist' data-gudang='3' data-material='".$row['code_material']."'><i class='fa fa-history'></i></button></div>";
+      $nestedData[]	= "<div align='left'>".strtoupper($row['nm_unit'])."</div>";
+      // $nestedData[]	= "<div align='left'>".strtoupper($row['kelompok'])."</div>";
+      $nestedData[]	= "<div align='right'>".number_format(get_stock_material($row['id_category3'], '1'), 2)."</div>";
+      $nestedData[]	= "<div align='right'>".number_format(get_stock_material_packing($row['id_category3'], '1'), 2)."</div>";
+      $nestedData[]	= "<div align='center'><button type='button' class='btn btn-sm btn-primary hist' data-gudang='1' data-material='".$row['id_category3']."'><i class='fa fa-history'></i></button></div>";
+      $nestedData[]	= "<div align='right'>".number_format(get_stock_material($row['id_category3'], '2'), 2)."</div>";
+      $nestedData[]	= "<div align='right'>".number_format(get_stock_material_packing($row['id_category3'], '2'), 2)."</div>";
+      $nestedData[]	= "<div align='center'><button type='button' class='btn btn-sm btn-success hist' data-gudang='2' data-material='".$row['id_category3']."'><i class='fa fa-history'></i></button></div>";
+      $nestedData[]	= "<div align='right'>".number_format(get_stock_material($row['id_category3'], '3'), 2)."</div>";
+      $nestedData[]	= "<div align='right'>".number_format(get_stock_material_packing($row['id_category3'], '3'), 2)."</div>";
+      $nestedData[]	= "<div align='center'><button type='button' class='btn btn-sm btn-warning hist' data-gudang='3' data-material='".$row['id_category3']."'><i class='fa fa-history'></i></button></div>";
 			$data[] = $nestedData;
             $urut1++;
             $urut2++;
@@ -99,15 +99,16 @@ class Warehouse_material_model extends BF_Model{
 
 		$sql = "
 			SELECT
-        (@row:=@row+1) AS nomor,
-				a.*
+				a.*,
+        b.nm_unit
 			FROM
-			   ms_material a,
-         (SELECT @row:=0) r
+			   ms_inventory_category3 a
+         LEFT JOIN m_unit b ON b.id_unit = a.unit
 		   WHERE 1=1 AND (
-				a.code_material LIKE '%".$this->db->escape_like_str($like_value)."%'
-				OR a.code_company LIKE '%".$this->db->escape_like_str($like_value)."%'
-				OR a.nm_material LIKE '%".$this->db->escape_like_str($like_value)."%'
+				a.id_category3 LIKE '%".$this->db->escape_like_str($like_value)."%'
+				OR a.nama LIKE '%".$this->db->escape_like_str($like_value)."%'
+				OR a.konversi LIKE '%".$this->db->escape_like_str($like_value)."%'
+				OR b.nm_unit LIKE '%".$this->db->escape_like_str($like_value)."%'
 	        )
 		";
 		// echo $sql; exit;
@@ -124,7 +125,7 @@ class Warehouse_material_model extends BF_Model{
       6 => 'kelompok'
 		);
 
-		$sql .= " ORDER BY ".$columns_order_by[$column_order]." ".$column_dir." ";
+		// $sql .= " ORDER BY ".$columns_order_by[$column_order]." ".$column_dir." ";
 		$sql .= " LIMIT ".$limit_start." ,".$limit_length." ";
 
 		$data['query'] = $this->db->query($sql);

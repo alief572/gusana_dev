@@ -156,11 +156,11 @@ if ($status_app == 'Y') {
 			</div>
 			<div class="form-group row">
 				<div class="col-md-2">
-					<label>File Evidance <span class='text-danger'>*</span></label>
+					<label>File Evidence <span class='text-danger'>*</span></label>
 				</div>
 				<div class="col-md-4">
 					<div class="form-group">
-						<input type="file" name='photo' id="photo" required>
+						<input type="file" name='photo' id="photo">
 					</div>
 					<?php if (!empty($upload_file)) { ?>
 						<a href='<?= base_url() . $upload_file; ?>' target='_blank' class="help-block" title='Download'>Download File</a>

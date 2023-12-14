@@ -161,9 +161,8 @@ class Gudang_model extends BF_Model
 				}
 			}
 
-			$nestedData[]	= "<div align='left'>
+			$nestedData[]	= "<div align='center'>
 									<button type='button' class='btn btn-sm btn-primary detailAjust' data-tanda='request' title='View Permintaan' data-kode_trans='" . $row['kode_trans'] . "'><i class='fa fa-eye'></i></button>
-                                    " . $print . "
 									" . $plus . "
 									</div>";
 			$data[] = $nestedData;

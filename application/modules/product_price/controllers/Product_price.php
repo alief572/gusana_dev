@@ -241,7 +241,7 @@ class Product_price extends Admin_Controller
 			$rate_cycletime 	= 0;
 			$rate_cycletime_mch 	= 0;
 			if ($cycletimeMaster > 0) {
-				$rate_cycletime 		= $cycletimeMaster / 60;
+				$rate_cycletime 		= $cycletimeMesin / 60;
 				$rate_cycletime_mch 	= $cycletimeMesin / 60;
 			}
 			$rate_manpower 		= $GET_RATE_MAN_POWER[0]->upah_per_jam;
@@ -399,11 +399,13 @@ class Product_price extends Admin_Controller
 		$tanda 		= $this->input->post('tanda');
 		$cost 		= $this->input->post('cost');
 		$header = $this->db->get_where('cycletime_header', array('id_product' => $id_product, 'deleted_date' => NULL))->result();
+		$totalCT = $this->db->query("SELECT SUM(a.cycletime) AS ttl_cycletime FROM cycletime_detail_detail a WHERE a.id_time = '".$header[0]->id_time."'")->row();
 		// print_r($header);
 		$title = ($tanda == 'machine') ? 'Machine' : 'Mold';
 		$data = [
 			'id_product' => $id_product,
 			'header' => $header,
+			'totalCT' => $totalCT,
 			'tanda' => $tanda,
 			'title' => $title,
 			'cost' => $cost,
