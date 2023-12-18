@@ -66,6 +66,8 @@ class Spk_filling extends Admin_Controller
             'ditarik_oleh' => $this->auth->user_id()
         ]);
 
+        $this->db->update('ms_so', ['released' => $batch_ke], ['id_so' => $id_so]);
+
         // $this->db->update('ms_so', ['released' => $batch_ke], ['id_so' => $id_so]);
 
         if ($this->db->trans_status() === FALSE) {

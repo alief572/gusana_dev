@@ -30,7 +30,7 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
                     </tr>
                     <tr>
                         <th class="text-center">
-                            <h5>Bahan Baku</h5>
+                            <h5>Product</h5>
                         </th>
                     </tr>
                 </thead>

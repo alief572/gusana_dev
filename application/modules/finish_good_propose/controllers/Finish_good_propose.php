@@ -56,7 +56,7 @@ class Finish_good_propose extends Admin_Controller
                 ms_product_category3 a 
                 LEFT JOIN master_packaging b ON b.id = a.packaging
                 LEFT JOIN ms_stock_product c ON c.id_product = a.id_category3
-            WHERE (1=1 AND (SELECT COUNT(aa.id_so) AS count_so FROM ms_so aa WHERE aa.id_product = a.id_category3 AND aa.propose <> aa.released) < 1) AND (
+            WHERE (1=1 AND (SELECT COUNT(aa.id_so) AS count_so FROM ms_so aa WHERE aa.id_product = a.id_category3 AND aa.batch <> aa.released) < 1) AND (
                 a.nama LIKE '%" . $string . "%' OR
                 a.konversi LIKE '%" . $string . "%' OR
                 a.min_stok LIKE '%" . $string . "%' OR
@@ -65,8 +65,8 @@ class Finish_good_propose extends Admin_Controller
             ) GROUP BY a.id_category3
         ";
 
-        $totalData = $this->db->query("SELECT a.id_category3 FROM ms_product_category3 a WHERE (SELECT COUNT(aa.id_so) AS count_so FROM ms_so aa WHERE aa.id_product = a.id_category3 AND aa.propose <> aa.released) < 1")->num_rows();
-        $totalFiltered = $this->db->query("SELECT a.id_category3 FROM ms_product_category3 a WHERE (SELECT COUNT(aa.id_so) AS count_so FROM ms_so aa WHERE aa.id_product = a.id_category3 AND aa.propose <> aa.released) < 1")->num_rows();
+        $totalData = $this->db->query("SELECT a.id_category3 FROM ms_product_category3 a WHERE (SELECT COUNT(aa.id_so) AS count_so FROM ms_so aa WHERE aa.id_product = a.id_category3 AND aa.batch <> aa.released) < 1")->num_rows();
+        $totalFiltered = $this->db->query("SELECT a.id_category3 FROM ms_product_category3 a WHERE (SELECT COUNT(aa.id_so) AS count_so FROM ms_so aa WHERE aa.id_product = a.id_category3 AND aa.batch <> aa.released) < 1")->num_rows();
 
         $columns_order_by = array(
             0 => 'id',
@@ -87,7 +87,7 @@ class Finish_good_propose extends Admin_Controller
         
         // $nomor = 1;
         foreach ($query->result_array() as $row) {
-            $check_data = $this->db->query('SELECT id_so FROM ms_so WHERE id_product = "' . $row['id_category3'] . '" AND propose <> released')->row();
+            $check_data = $this->db->query('SELECT id_so FROM ms_so WHERE id_product = "' . $row['id_category3'] . '" AND batch <> released')->row();
             
             if (!empty($check_data)) {
                

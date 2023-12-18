@@ -15,7 +15,7 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
     }
 </style>
 
-<div class="br-pagebody pd-10" >
+<div class="br-pagebody pd-10">
     <div class="card bd-gray-400" id="printableDiv">
         <form action="" id="data-form">
             <table class="w-100">
@@ -111,23 +111,37 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
 
             </table>
 
-            <table class="" style="width:300px; margin-top:15px;">
-                <tr>
-                    <th>Dicetak Oleh</th>
-                    <th>:</th>
-                    <th><?= $results['data_user']->full_name; ?></th>
-                </tr>
-                <tr>
-                    <th>Dicetak Tgl</th>
-                    <th>:</th>
-                    <th><?= date('d-m-Y'); ?></th>
-                </tr>
-                <tr>
-                    <th>No Cetak</th>
-                    <th>:</th>
-                    <th><?= $results['no_cetak']; ?></th>
-                </tr>
-            </table>
+            <div class="row">
+                <div class="col-6">
+                    <table class="" style="width:100%; margin-top:15px;">
+                        <tr>
+                            <th>Dicetak Oleh</th>
+                            <th>:</th>
+                            <th><?= $results['data_user']->full_name; ?></th>
+                        </tr>
+                        <tr>
+                            <th>Dicetak Tgl</th>
+                            <th>:</th>
+                            <th><?= date('d-m-Y'); ?></th>
+                        </tr>
+                        <tr>
+                            <th>No Cetak</th>
+                            <th>:</th>
+                            <th><?= $results['no_cetak']; ?></th>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-6">
+                    <table class="" style="width:100%; margin-top:15px;">
+                        <tr>
+                            <th style="vertical-align:top;">Keterangan</th>
+                            <th>
+                                <textarea name="" id="" cols="30" rows="3" class="form-control form-control-sm"></textarea>
+                            </th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
 
         </form>
     </div>
