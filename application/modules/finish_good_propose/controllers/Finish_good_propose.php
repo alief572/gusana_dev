@@ -56,7 +56,7 @@ class Finish_good_propose extends Admin_Controller
                 ms_product_category3 a 
                 LEFT JOIN master_packaging b ON b.id = a.packaging
                 LEFT JOIN ms_stock_product c ON c.id_product = a.id_category3
-            WHERE (1=1 AND (SELECT COUNT(aa.id_so) AS count_so FROM ms_so aa WHERE aa.id_product = a.id_category3 AND aa.propose <> aa.released) < 1) OR (
+            WHERE (1=1 AND (SELECT COUNT(aa.id_so) AS count_so FROM ms_so aa WHERE aa.id_product = a.id_category3 AND aa.propose <> aa.released) < 1) AND (
                 a.nama LIKE '%" . $string . "%' OR
                 a.konversi LIKE '%" . $string . "%' OR
                 a.min_stok LIKE '%" . $string . "%' OR
@@ -126,8 +126,9 @@ class Finish_good_propose extends Admin_Controller
                 $nestedData[]  = $row['nm_packaging'];
                 $nestedData[]  = $row['konversi'];
                 $nestedData[]  = $row['qty_asli'];
+                $nestedData[]  = ($row['qty_asli'] / $row['konversi']);
                 $nestedData[]  = 0;
-                $nestedData[]  = $row['qty_asli'];
+                $nestedData[]  = ($row['qty_asli'] / $row['konversi']);
                 $nestedData[]  = $row['min_stok'];
                 $nestedData[]  = $row['moq'];
                 $nestedData[]  = '<input type="number" class="form-control form-control-sm propose_val propose_' . $row['id_category3'] . '" value="' . $propose . '" readonly>';
@@ -191,13 +192,16 @@ class Finish_good_propose extends Admin_Controller
 
             $kump_id_category3[] = $category3['id_category3'];
 
+            $get_bom_product = $this->db->get_where('ms_bom', ['id_product' => $category3['id_category3']])->result();
+            $list_bom_product = '';
+            
+            foreach($get_bom_product as $bom_product) :
+                $list_bom_product .= '<option value="'.$bom_product->id.'">'.$bom_product->qty_hopper.'</option>';
+            endforeach;
+
             $data[] = '
                 <tr>
                     <td class="text-center">' . $x . '</td>
-                    <td class="text-center">
-                        ' . $kodecollect . '
-                        <input type="hidden" name="no_so_' . $category3['id_category3'] . '" value="' . $kodecollect . '">
-                    </td>
                     <td class="text-center">
                         ' . $get_query->nama . '
                         <input type="hidden" name="nm_product_so_' . $category3['id_category3'] . '" value="' . $get_query->nama . '">
@@ -206,14 +210,22 @@ class Finish_good_propose extends Admin_Controller
                         ' . $get_query->nm_packaging . '
                         <input type="hidden" name="product_packaging_' . $category3['id_category3'] . '" value="' . $get_query->nm_packaging . '">
                     </td>
+                    <td class="text-center">' . number_format($get_query->konversi, 2) . '</td>
                     <td class="text-center">' . number_format($get_query->qty_asli, 2) . '</td>
+                    <td class="text-center">' . number_format(($get_query->qty_asli / $get_query->konversi), 2) . '</td>
                     <td class="text-center">' . number_format(0, 2) . '</td>
-                    <td class="text-center">' . number_format($get_query->qty_asli, 2) . '</td>
+                    <td class="text-center">' . number_format(($get_query->qty_asli / $get_query->konversi), 2) . '</td>
                     <td class="text-center">' . number_format($get_query->min_stok, 2) . '</td>
                     <td class="text-center">' . $get_query->moq . '</td>
                     <td class="text-center">
                         ' . number_format($category3['propose'], 2) . '
                         <input type="hidden" name="propose_val_' . $category3['id_category3'] . '" value="' . $category3['propose'] . '">
+                    </td>
+                    <td class="text-center">
+                        <select class="form-control form-control-sm" name="bom_'.$category3['id_category3'].'">
+                            <option value="">- Lot Size (Kg) -</option>
+                            '.$list_bom_product.'
+                        </select>
                     </td>
                     <td class="text-center">
                         <input type="date" name="due_date_' . $category3['id_category3'] . '" id="" class="form-control form-control-sm" min="' . date('Y-m-d') . '" required>
@@ -293,13 +305,23 @@ class Finish_good_propose extends Admin_Controller
         $list_id_category3 = explode(",", $this->input->post('list_id_category3'));
         foreach ($list_id_category3 as $category3) {
 
-            $id_so = $this->input->post('no_so_' . $category3);
+            $code_so = $this->db->query("SELECT MAX(id_so) as max_id_so FROM ms_so WHERE id_so LIKE '%SO/" . date('Y') . "/" . date('m') . "/" . date('d') . "%'")->row();
+            $kodeBarang = $code_so->max_id_so;
+            $urutan = (int) substr($kodeBarang, 14, 6);
+            $urutan++;
+            $tahun = date('Y/m/d/');
+            $huruf = "SO/";
+            $kode_so = $huruf . $tahun . sprintf("%06s", $urutan);
+
+            $id_so = $kode_so;
             $nm_product_so = $this->input->post('nm_product_so_' . $category3);
             $propose_val = $this->input->post('propose_val_' . $category3);
             $product_packaging = $this->input->post('product_packaging_' . $category3);
             $due_date = $this->input->post('due_date_' . $category3);
+            $bom = $this->input->post('bom_' . $category3);
 
             $get_product = $this->db->get_where('ms_product_category3', ['id_category3' => $category3])->row();
+            $get_bom = $this->db->get_where('ms_bom', ['id' => $bom])->row();
 
             $this->db->insert('ms_so', [
                 'id_so' => $id_so,
@@ -310,6 +332,8 @@ class Finish_good_propose extends Admin_Controller
                 'due_date' => $due_date,
                 'released' => 0,
                 'sisa_so' => $propose_val,
+                'id_bom' => $bom,
+                'batch' => ($propose_val / $get_bom->qty_hopper),
                 'dibuat_oleh' => $this->auth->user_id(),
                 'dibuat_tgl' => date('Y-m-d H:i:s')
             ]);

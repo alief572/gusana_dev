@@ -232,17 +232,17 @@ $ENABLE_DELETE  = has_permission('Raw_Material.Delete');
 			// alert(data);
 
 			new swal({
-					title: "Anda Yakin?",
-					text: "Data akan diproses!",
-					type: "warning",
-					showCancelButton: true,
-					confirmButtonClass: "btn-info",
-					confirmButtonText: "Yes",
-					cancelButtonText: "No",
-					closeOnConfirm: false
-				}).then((hasil) => {
-					if(hasil.isConfirmed){
-						var form_data = new FormData($(this)[0]);
+				title: "Anda Yakin?",
+				text: "Data akan diproses!",
+				type: "warning",
+				showCancelButton: true,
+				confirmButtonClass: "btn-info",
+				confirmButtonText: "Yes",
+				cancelButtonText: "No",
+				closeOnConfirm: false
+			}).then((hasil) => {
+				if (hasil.isConfirmed) {
+					var form_data = new FormData($(this)[0]);
 					$.ajax({
 						type: 'POST',
 						url: '<?= base_url('/price_sup_raw_material') ?>' + '/add',
@@ -253,14 +253,14 @@ $ENABLE_DELETE  = has_permission('Raw_Material.Delete');
 						success: function(data) {
 							if (data.status == '1') {
 								new swal({
-										title: "Sukses",
-										text: data.pesan,
-										type: "success"
-									}).then((hasil1) => {
-										if(hasil1.isConfirmed){
-											window.location.reload(true);
-										}
-									});
+									title: "Sukses",
+									text: data.pesan,
+									type: "success"
+								}).then((hasil1) => {
+									if (hasil1.isConfirmed) {
+										window.location.reload(true);
+									}
+								});
 							} else {
 								new swal({
 									title: "Error",
@@ -278,8 +278,8 @@ $ENABLE_DELETE  = has_permission('Raw_Material.Delete');
 							})
 						}
 					});
-					}
-				});
+				}
+			});
 
 		})
 
@@ -310,14 +310,14 @@ $ENABLE_DELETE  = has_permission('Raw_Material.Delete');
 						success: function(data) {
 							if (data.status == '1') {
 								new swal({
-										title: "Sukses",
-										text: data.pesan,
-										type: "success"
-									}).then((hasil) => {
-										if(hasil.isConfirmed){
-											window.location.reload(true);
-										}
-									});
+									title: "Sukses",
+									text: data.pesan,
+									type: "success"
+								}).then((hasil) => {
+									if (hasil.isConfirmed) {
+										window.location.reload(true);
+									}
+								});
 							} else {
 								new swal({
 									title: "Error",

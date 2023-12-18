@@ -6,15 +6,17 @@
                 <thead>
                     <tr>
                         <th class="text-center">No</th>
-                        <th class="text-center">No. SO</th>
                         <th class="text-center">Product Name</th>
-                        <th class="text-center">Contain (isi per packing)</th>
-                        <th class="text-center">Actual Stock (kg)</th>
-                        <th class="text-center">Stock Booking</th>
-                        <th class="text-center">Free Stock</th>
-                        <th class="text-center">Minimun Stock</th>
-                        <th class="text-center">MOQ</th>
-                        <th class="text-center">Propose</th>
+                        <th class="text-center">Packing</th>
+                        <th class="text-center">Konversi (kg)</th>
+                        <th class="text-center">Actual Stock (Kg)</th>
+                        <th class="text-center">Actual Stock (Kaleng)</th>
+                        <th class="text-center">Stock Booking (Kaleng)</th>
+                        <th class="text-center">Free Stock (Kaleng)</th>
+                        <th class="text-center">Minimun Stock (Kaleng)</th>
+                        <th class="text-center">MOQ (Kg)</th>
+                        <th class="text-center">Propose (Kg)</th>
+                        <th class="text-center">Lot Size (Kg)</th>
                         <th class="text-center">Due Date</th>
                     </tr>
                 </thead>
