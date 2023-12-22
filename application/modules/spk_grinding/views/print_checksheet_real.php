@@ -28,11 +28,11 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
                             <h5>Checksheet Grinding</h5>
                         </th>
                     </tr>
-                    <tr>
+                    <!-- <tr>
                         <th class="text-center">
                             <h5>Bahan Baku</h5>
                         </th>
-                    </tr>
+                    </tr> -->
                 </thead>
             </table>
             <table class="w-60">

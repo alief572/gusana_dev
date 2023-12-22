@@ -43,12 +43,12 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
                             <img src="<?= base_url("assets/img/Gusana.png") ?>" alt="" style="width:150px;">
                         </th>
                         <th class="text-center">
-                            <h5>Checksheet Coloring</h5>
+                            <h5>Checksheet Penimbangan</h5>
                         </th>
                     </tr>
                     <tr>
                         <th class="text-center">
-                            <h5>Bahan Baku</h5>
+                            <h5>Mixing 2</h5>
                         </th>
                     </tr>
                 </thead>

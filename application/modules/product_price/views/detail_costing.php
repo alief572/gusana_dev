@@ -53,22 +53,23 @@ foreach ($detail as $val => $valx) {
 
 <div class="box">
     <div class="box-body">
-        <form id="data-form" method="post">
-            <table id="example1" class="table table-sm table-bordered">
-                <thead>
-                    <tr>
-                        <th class='text-center' width="5%">#</th>
-                        <!-- <th class='text-center' width="5%">Code</th> -->
-                        <th class='text-center' width="25%">Element Costing</th>
-                        <th class='text-center' width="12%">Rate</th>
-                        <th class='text-right' width="12%">Price</th>
-                        <th class='text-center'>Keterangan</th>
-                        <th class='text-center' width="10%">Detail</th>
-                    </tr>
-                </thead>
-                <tbody>
+        <!-- <form id="data-form" method="post"> -->
+        <table id="example1" class="table table-sm table-bordered">
+            <thead>
+                <tr>
+                    <th class='text-center' width="5%">#</th>
+                    <!-- <th class='text-center' width="5%">Code</th> -->
+                    <th class='text-center' width="25%">Element Costing</th>
+                    <th class='text-center' width="12%">Rate</th>
+                    <th class='text-right' width="12%">Price</th>
+                    <th class='text-center'>Keterangan</th>
+                    <th class='text-center' width="10%">Detail</th>
+                </tr>
+            </thead>
+            <tbody>
+                <form action="" method="post" id="data-form">
                     <?php
-                    
+
                     foreach ($dataList as $key => $value) {
                         if ($value['judul'] == 'Material') {
                             echo "<tr>";
@@ -212,14 +213,38 @@ foreach ($detail as $val => $valx) {
                                 $rate         = '';
                                 $cost        = $product_price[0]['cost_price_final'];
                             }
+                            if ($value['code'] == '20') {
+                                $rate         = '';
+                                $cost        = ($product_price[0]['cost_price_final'] / $product_price[0]['qty_hopper']);
+                            }
+                            if ($value['code'] == '21') {
+                                $rate         = '';
+                                $cost        = 0;
+                            }
+                            if ($value['code'] == '22') {
+                                $rate         = '';
+                                $cost        = ($product_price[0]['propose_costing'] - ($product_price[0]['cost_price_final'] / $product_price[0]['qty_hopper']));
+                            }
+                            if ($value['code'] == '23') {
+                                $rate         = '';
+                                $cost        = ($product_price[0]['propose_costing'] / ($product_price[0]['cost_price_final'] / $product_price[0]['qty_hopper']) * 100);
+                            }
                             echo "<tr>";
                             echo "<td class='text-center'>" . $nomor . "</td>";
                             echo "<td>" . $value['element_costing'] . "</td>";
                             echo "<td class='text-center'>" . $rate . "</td>";
                             if ($value['code'] == '16') {
                                 echo "<td class='text-right'></td>";
+                            } else if ($value['code'] == '21') {
+                                echo "<td><input type='text' class='form-control form-control-sm text-right autoNumeric propose_price' name='propose_price' value='" . $product_price[0]['propose_costing'] . "' data-price_final='" . round($product_price[0]['cost_price_final'] / $product_price[0]['qty_hopper'], 2) . "'></td>";
                             } else {
-                                echo "<td class='text-right'>" . number_format($cost, 2) . "</td>";
+                                if ($value['code'] == '22') {
+                                    echo "<td class='text-right selisih'>" . number_format($cost, 2) . "</td>";
+                                } else if ($value['code'] == '23') {
+                                    echo "<td class='text-right persentase'>" . number_format($cost, 2) . "%</td>";
+                                } else {
+                                    echo "<td class='text-right'>" . number_format($cost, 2) . "</td>";
+                                }
                             }
                             echo "<td>" . $value['keterangan'] . "</td>";
                             echo "<td></td>";
@@ -227,8 +252,10 @@ foreach ($detail as $val => $valx) {
                         }
                     }
                     ?>
-                </tbody>
-            </table>
+            </tbody>
+        </table>
+        <a href="<?= base_url('/product_price') ?>" class="btn btn-sm btn-danger">Back</a>
+        <button type="submit" class="btn btn-sm btn-success" id="save">Save</button>
         </form>
     </div>
 </div>
@@ -257,7 +284,9 @@ foreach ($detail as $val => $valx) {
     <!-- page script -->
     <script type="text/javascript">
         $(document).ready(function() {
-            $('.autoNumeric').autoNumeric()
+            $('.autoNumeric').autoNumeric();
+            $('.selisih').autoNumeric();
+            $('.persentase').autoNumeric();
             $('#rate_1,#rate_2,#rate_4,#rate_5,#rate_8,#rate_15,#rate_16,#rate_19,#coa_14,#coa_15,#coa_16,#coa_17,#coa_18,#coa_19').prop('readonly', true);
 
             $(document).on('click', '#btnShowMaterial', function() {
@@ -299,75 +328,91 @@ foreach ($detail as $val => $valx) {
                     }
                 })
             });
+
+            $(document).on('change', '.propose_price', function() {
+                var propose_price = $(this).val();
+                if (propose_price == '') {
+                    propose_price = 0;
+                } else {
+                    propose_price = propose_price.split(',').join('');
+                }
+
+                var price_final = $(this).data('price_final');
+
+                var selisih = (propose_price - price_final);
+                var persentase = ((propose_price / price_final) * 100);
+
+                $('.selisih').html(selisih.toFixed(2).toLocaleString());
+                $('.persentase').html(persentase.toFixed(2).toLocaleString() + '%');
+            });
         })
 
         $('#save').click(function(e) {
             e.preventDefault();
 
             new swal({
-                    title: "Are you sure?",
-                    text: "You will not be able to process again this data!",
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonClass: "btn-danger",
-                    confirmButtonText: "Yes, Process it!",
-                    cancelButtonText: "No, cancel process!",
-                    closeOnConfirm: true,
-                    closeOnCancel: false
-                }).then((hasil) => {
-                    if (hasil.isConfirmed) {
-                        var formData = new FormData($('#data-form')[0]);
-                        var baseurl = base_url + thisController + 'saveCostingRate';
-                        $.ajax({
-                            url: baseurl,
-                            type: "POST",
-                            data: formData,
-                            cache: false,
-                            dataType: 'json',
-                            processData: false,
-                            contentType: false,
-                            success: function(data) {
-                                if (data.status == 1) {
-                                    new swal({
-                                        title: "Save Success!",
-                                        text: data.pesan,
-                                        type: "success",
-                                        timer: 7000
-                                    });
-                                    window.location.href = base_url + thisController;
-                                } else {
-
-                                    if (data.status == 2) {
-                                        new swal({
-                                            title: "Save Failed!",
-                                            text: data.pesan,
-                                            type: "warning",
-                                            timer: 7000
-                                        });
-                                    } else {
-                                        new swal({
-                                            title: "Save Failed!",
-                                            text: data.pesan,
-                                            type: "warning",
-                                            timer: 7000
-                                        });
-                                    }
-
-                                }
-                            },
-                            error: function() {
+                title: "Are you sure?",
+                text: "This will make the previous price list change",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Yes, Process it!",
+                cancelButtonText: "No, cancel process!",
+                closeOnConfirm: true,
+                closeOnCancel: false
+            }).then((hasil) => {
+                if (hasil.isConfirmed) {
+                    var formData = $('#data-form').serialize();
+                    var baseurl = base_url + thisController + 'saveCostingRate/' + '<?= $product_price[0]['no_bom']; ?>';
+                    $.ajax({
+                        url: baseurl,
+                        type: "POST",
+                        data: formData,
+                        cache: false,
+                        dataType: 'json',
+                        success: function(data) {
+                            console.log(data);
+                            if (data.status == 1) {
                                 new swal({
-                                    title: "Error Message !",
-                                    text: 'An Error Occured During Process. Please try again..',
-                                    type: "warning",
-                                    timer: 7000
+                                    title: "Save Success!",
+                                    text: data.pesan,
+                                    type: "success",
+                                    timer: 5000
                                 });
+                                location.reload = true;
+                            } else {
+
+                                if (data.status == 2) {
+                                    new swal({
+                                        title: "Save Failed!",
+                                        text: data.pesan,
+                                        type: "warning",
+                                        timer: 5000
+                                    });
+                                } else {
+                                    new swal({
+                                        title: "Save Failed!",
+                                        text: data.pesan,
+                                        type: "warning",
+                                        timer: 5000
+                                    });
+                                }
+
                             }
-                        });
-                    } else {
-                        new swal("Cancelled", "Data can be process again :)", "error");
-                        return false;
-                    }
-                });
+                        },
+                        error: function() {
+                            new swal({
+                                title: "Error Message !",
+                                text: 'An Error Occured During Process. Please try again..',
+                                type: "warning",
+                                timer: 5000
+                            });
+                        }
+                    });
+                } else {
+                    new swal("Cancelled", "Data can be process again :)", "error");
+                    return false;
+                }
+            });
         });
     </script>

@@ -15,7 +15,7 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
     }
 </style>
 
-<div class="br-pagebody pd-10" >
+<div class="br-pagebody pd-10">
     <div class="card bd-gray-400" id="printableDiv">
         <form action="" id="data-form">
             <table class="w-100">
@@ -63,16 +63,20 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
                         <th class="text-center pd-10">No.</th>
                         <th class="text-center pd-10">Konversi / pack (Kg)</th>
                         <th class="text-center pd-10">Packaging</th>
-                        <th class="text-center pd-10">Total Qty</th>
+                        <th class="text-center pd-10">Total Qty (Kaleng)</th>
                         <th class="text-center pd-10">Aktual Qty (Kaleng)</th>
-                        <th class="text-center pd-10">Sisa Produk</th>
+                        <th class="text-center pd-10">Sisa Produksi Sebelumnya (Kaleng)</th>
+                        <th class="text-center pd-10">Total (Kaleng)</th>
+                        <th class="text-center pd-10">Sisa Produk (Kaleng)</th>
                     </tr>
                 </thead>
                 <tbody>
                     <td class="text-center">1</td>
                     <td class="text-center"><?= $results['data_product_so']->konversi . ' ' . $results['data_product_so']->packaging ?></td>
                     <td class="text-center"><?= $results['data_product_so']->packaging ?></td>
-                    <td class="text-center"><?= number_format(($results['data_product_so']->propose / $results['data_product_so']->konversi), 2).' '.$results['data_product_so']->packaging ?></td>
+                    <td class="text-center"><?= number_format(($results['data_product_so']->propose / $results['data_product_so']->konversi), 2) . ' ' . $results['data_product_so']->packaging ?></td>
+                    <td class="text-center"></td>
+                    <td class="text-center"></td>
                     <td class="text-center"></td>
                     <td class="text-center"></td>
                 </tbody>
@@ -81,7 +85,7 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
             <table class="w-100 mt-t-20" border="1">
                 <thead>
                     <tr>
-                        <th class="text-center pd-10" colspan="6">Aktual pengecekan berat per packaging (Pengecekan Acak)</th>
+                        <th class="text-center pd-10" colspan="8">Aktual pengecekan berat per packaging (Pengecekan Acak)</th>
                     </tr>
                     <tr>
                         <th class="text-center pd-10">No. Packaging</th>
@@ -104,8 +108,7 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
             </table>
 
             <div class="text-right" style="margin-top: 25px;">
-                <!-- <button type="submit" class="btn btn-sm btn-success">Save</button> -->
-                <a class="btn btn-sm btn-info" target="_blank" href="<?= base_url('spk_filling/print_checksheet_real/' . $results['data_spk']->id_spk) ?>">Print</a>
+
             </div>
         </form>
     </div>

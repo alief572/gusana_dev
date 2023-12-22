@@ -56,7 +56,15 @@ class Product_price extends Admin_Controller
 		$no_bom 	= $this->uri->segment(3);
 		// print_r($no_bom);
 		// exit;
-		$product_price 		= $this->db->get_where('product_price', array('no_bom' => $no_bom, 'deleted_date' => NULL))->result_array();
+		// $product_price 		= $this->db->get_where('product_price', array('no_bom' => $no_bom, 'deleted_date' => NULL))->result_array();
+		$product_price 		= $this->db->select('a.*, IF(a.product_costing_kg_after > 0, a.product_costing_kg_after, a.product_costing_kg_before) as product_costing, IF(b.price_list != "" AND b.price_list > 0, b.price_list, b.propose_price_list) as propose_costing, b.qty_hopper');
+		$product_price 		= $this->db->from('product_price a');
+		$product_price 		= $this->db->join('ms_bom b', 'b.id = a.no_bom', 'left');
+		$product_price 		= $this->db->where([
+			'no_bom' => $no_bom,
+			'deleted_date' => NULL
+		]);
+		$product_price 		= $this->db->get()->result_array();
 		// echo '<pre>'; 
 		// print_r($product_price);
 		// echo'</pre>';
@@ -412,34 +420,6 @@ class Product_price extends Admin_Controller
 		];
 		$this->template->render('detail_machine_mold', $data);
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	public function add()
 	{
@@ -898,5 +878,28 @@ class Product_price extends Admin_Controller
 		header('Content-Disposition: attachment;filename="bom-detail-' . $kode_bom . '.xls"');
 		//unduh file
 		$objWriter->save("php://output");
+	}
+
+	public function saveCostingRate($id_bom){
+		$propose_price = $this->input->post('propose_price');
+		$propose_price = str_replace(',','',$propose_price);
+
+		$this->db->trans_begin();
+
+		$this->db->update('ms_bom', ['propose_price_list' => $propose_price, 'sts_price_list' => 0, 'req_app' => 1], ['id' => $id_bom]);
+
+		if($this->db->trans_status() === FALSE){
+			$this->db->trans_rollback();
+			$hasil = [
+				'status' => 0
+			];
+		}else{
+			$this->db->trans_commit();
+			$hasil = [
+				'status' => 1
+			];
+		}
+
+		echo json_encode($hasil);
 	}
 }

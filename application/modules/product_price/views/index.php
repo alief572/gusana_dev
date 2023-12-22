@@ -25,17 +25,17 @@ $ENABLE_DELETE  = has_permission('Product_Price.Delete');
 		<table id="example1" class="table table-bordered table-striped">
 			<thead>
 				<tr>
-					<th style="width:5%;">#</th>
+					<th>#</th>
 					<!-- <th>Product Type</th> -->
-					<th style="width:25%;">Product Master</th>
-					<th  style="width:10%;" class='text-right'>Lot Size</th>
-					<th style="width:10%;" class='text-right'>Price Material</th>
-					<th style="width:10%;" class='text-right'>Price MP</th>
-					<th style="width:10%;" class='text-right'>Price Total</th>
+					<th>Product Master</th>
+					<th class='text-right'>Lot Size</th>
+					<th class='text-right'>Price Material</th>
+					<th class='text-right'>Price MP</th>
+					<th class='text-right'>Price Total</th>
+					<th class='text-center'>Status</th>
 					<th>Action</th>
 				</tr>
 			</thead>
-
 			<tbody></tbody>
 		</table>
 	</div>

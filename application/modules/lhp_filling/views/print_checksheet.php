@@ -36,8 +36,8 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
 <div class="br-pagebody pd-10">
     <div class="card bd-gray-400 printed">
         <form action="" id="data-form">
-            <input type="hidden" name="id_spk"  class="id_spk" id="" value="<?= $results['data_spk']->id_spk ?>">
-            <input type="hidden" name="id_so"  class="id_so" id="" value="<?= $results['data_spk']->id_so ?>">
+            <input type="hidden" name="id_spk" class="id_spk" id="" value="<?= $results['data_spk']->id_spk ?>">
+            <input type="hidden" name="id_so" class="id_so" id="" value="<?= $results['data_spk']->id_so ?>">
             <table class="w-100">
                 <thead>
                     <tr>
@@ -83,9 +83,11 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
                         <th class="text-center pd-10">No.</th>
                         <th class="text-center pd-10">Konversi / pack (Kg)</th>
                         <th class="text-center pd-10">Packaging</th>
-                        <th class="text-center pd-10">Total Qty</th>
+                        <th class="text-center pd-10">Total Qty (Kaleng)</th>
                         <th class="text-center pd-10">Aktual Qty (Kaleng)</th>
-                        <th class="text-center pd-10">Sisa Produk</th>
+                        <th class="text-center pd-10">Sisa Produksi Sebelumnya (Kaleng)</th>
+                        <th class="text-center pd-10">Total (Kaleng)</th>
+                        <th class="text-center pd-10">Sisa Produk (Kaleng)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -94,7 +96,13 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
                     <td class="text-center"><?= $results['data_product_so']->packaging ?></td>
                     <td class="text-center"><?= number_format(($results['data_product_so']->propose / $results['data_product_so']->konversi), 2) . ' ' . $results['data_product_so']->packaging ?></td>
                     <td class="text-center">
-                        <input type="number" name="aktual_qty" id="" class="form-control form-control-sm text-right" step="0.01" value="<?= $results['data_spk']->product_aktual_qty ?>" <?= ($results['closing_spk'] == 1) ? 'readonly' : null ?>>
+                        <input type="number" name="aktual_qty" id="" class="form-control form-control-sm text-right aktual_qty" step="0.01" value="<?= $results['data_spk']->product_aktual_qty ?>" <?= ($results['closing_spk'] == 1) ? 'readonly' : null ?>>
+                    </td>
+                    <td class="text-center">
+                        <input type="number" name="sisa_produksi_sebelum" id="" class="form-control form-control-sm text-right" step="0.01" value="<?= $results['data_spk']->sisa_produksi_sebelum ?>" <?= ($results['closing_spk'] == 1) ? 'readonly' : null ?>>
+                    </td>
+                    <td class="text-center">
+                        <input type="number" name="total_kaleng" id="" class="form-control form-control-sm text-right" step="0.01" value="<?= $results['data_spk']->total_kaleng ?>" <?= ($results['closing_spk'] == 1) ? 'readonly' : null ?>>
                     </td>
                     <td class="text-center">
                         <input type="number" name="sisa_produk" id="" class="form-control form-control-sm text-right" step="0.01" min="0" value="<?= $results['data_spk']->sisa_produk ?>" <?= ($results['closing_spk'] == 1) ? 'readonly' : null ?>>
@@ -105,7 +113,7 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
             <table class="w-100 mt-t-20" border="1">
                 <thead>
                     <tr>
-                        <th class="text-center pd-10" colspan="6">Aktual pengecekan berat per packaging (Pengecekan Acak)</th>
+                        <th class="text-center pd-10" colspan="8">Aktual pengecekan berat per packaging (Pengecekan Acak)</th>
                     </tr>
                     <tr>
                         <th class="text-center pd-10">No. Packaging</th>
@@ -259,6 +267,7 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
             var id_spk = $('.id_spk').val();
             var id_so = $('.id_so').val();
             var id_proses = '-';
+            var aktual_qty = $('.aktual_qty').val();
 
             swal.fire({
                 title: "Are you sure?",
@@ -276,7 +285,8 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
                         data: {
                             'id_spk': id_spk,
                             'id_so': id_so,
-                            'id_proses': id_proses
+                            'id_proses': id_proses,
+                            'aktual_qty': aktual_qty
                         },
                         cache: false,
                         error: function() {

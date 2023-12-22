@@ -78,6 +78,14 @@ class Product_price_model extends BF_Model
 				$nomor = ($total_data - $start_dari) - $urut2;
 			}
 
+			if($row['sts_price_list'] == '1'){
+				$status = '<div class="text-light badge badge-success">Set</div>';
+			}else if($row['sts_price_list'] == '2'){
+				$status = '<div class="text-light badge badge-danger">Reject</div>';
+			}else{
+				$status = '<div class="text-light badge badge-warning">Not Set</div>';
+			}
+
 			$nestedData 	= array();
 			$nestedData[]	= "<div align='center'>" . $nomor . "</div>";
 			// $nestedData[]	= "<div align='left'>".strtoupper(strtolower($row['nama_level1']))."</div>";
@@ -87,6 +95,7 @@ class Product_price_model extends BF_Model
 			$nestedData[]	= "<div align='right'>" . number_format($row['price_material'], 2) . "</div>";
 			$nestedData[]	= "<div align='right'>" . number_format($row['price_man_power'], 2) . "</div>";
 			$nestedData[]	= "<div align='right'>" . number_format($row['price_total'], 2) . "</div>";
+			$nestedData[]	= $status;
 
 
 			$edit	= "";
@@ -124,9 +133,11 @@ class Product_price_model extends BF_Model
 		$sql = "SELECT
 					(@row:=@row+1) AS nomor,
 					a.*,
-					b.nama AS nama_level4
+					b.nama AS nama_level4,
+					c.sts_price_list
 				FROM
 					product_price a 
+					JOIN ms_bom c ON c.id = a.no_bom
 					LEFT JOIN ms_product_category3 b ON a.code_lv4 = b.id_category3
 				WHERE 1=1 AND
 					deleted_date IS NULL AND
