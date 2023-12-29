@@ -47,12 +47,18 @@
  							<th>
  								<input type="text" name="product_code" id="" class="form-control form-control-sm" placeholder="Product Code">
  							</th>
- 							<th>Trade Name</th>
+ 							<th>Curing Agent</th>
  							<th>
- 								<input type="text" name="trade_name" id="" class="form-control form-control-sm" placeholder="Trade Name">
+								<select name="curing_agent" id="" class="form-control form-control-sm select" placeholder="Curing Agent">
+									<option value="">- Curing Agent -</option>
+									<?php foreach($results['list_curing_agent'] as $curing_agent) : ?>
+										<option value="<?= $curing_agent->id_category3 ?>"><?= $curing_agent->nama ?></option>
+									<?php endforeach; ?>
+								</select>
+ 								<!-- <input type="text" name="trade_name" id="" class="form-control form-control-sm" placeholder="Trade Name"> -->
  							</th>
  							<th>
- 								<input type="text" name="lead_time" id="" class="form-control form-control-sm" placeholder="Lead Time">
+ 								<input type="text" name="curing_agent_konversi" id="" class="form-control form-control-sm text-right autonum" placeholder="Curing Agent Konversi (Kg)">
  							</th>
  							<th>
  								<input type="text" name="moq" id="" class="form-control form-control-sm" placeholder="MOQ">
@@ -377,6 +383,7 @@
  	// cariNama();
  	// });
  	$(".cbm_tabung").autoNumeric();
+ 	$(".autonum").autoNumeric();
 
  	$('.chosen-select').select2({
  		dropdownParent: $('.box-primary'),
@@ -388,7 +395,7 @@
  	$('.select').select2({
  		placeholder: 'Choose one',
  		dropdownParent: $('.box-primary'),
- 		width: "100%",
+ 		width: "150px",
  		allowClear: true
  	});
 

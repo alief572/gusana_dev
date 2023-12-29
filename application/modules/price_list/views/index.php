@@ -25,6 +25,8 @@ $ENABLE_DELETE  = has_permission('Price_List.Delete');
                         <th class="desktop tablet mobile tx-bold tx-dark text-center">Nama Product</th>
                         <th class="desktop tablet mobile tx-bold tx-dark text-center">Packaging</th>
                         <th class="desktop tablet mobile tx-bold tx-dark text-center">Lot Size</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Curing Agent</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Curing Agent Konversi</th>
                         <th class="desktop tablet mobile tx-bold tx-dark text-center">Pricelist / Kg</th>
                         <th class="desktop tablet mobile tx-bold tx-dark text-center">Pricelist / Kaleng</th>
                     </tr>
@@ -37,6 +39,8 @@ $ENABLE_DELETE  = has_permission('Price_List.Delete');
                         <th>Nama Product</th>
                         <th>Packaging</th>
                         <th>Lot Size</th>
+                        <th>Curing Agent</th>
+                        <th>Curing Agent Konversi</th>
                         <th>Pricelist / Kg</th>
                         <th>Pricelist / Kaleng</th>
                     </tr>

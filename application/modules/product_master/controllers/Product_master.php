@@ -158,6 +158,8 @@ class Product_master extends Admin_Controller
 		$packaging = $this->Product_master_model->get_data('master_packaging');
 		$unit = $this->Product_master_model->get_data('m_unit');
 
+		$list_curing_agent = $this->Product_master_model->get_data('ms_product_category3', 'id_type', 'P231100013');
+
 		$data = [
 			'inventory_1' => $inventory_1,
 			'inventory_2' => $inventory_2,
@@ -166,7 +168,8 @@ class Product_master extends Admin_Controller
 			'inv_4_alt' => $inv_4_alt,
 			'alt_comp' => $alt_comp,
 			'packaging' => $packaging,
-			'unit' => $unit
+			'unit' => $unit,
+			'list_curing_agent' => $list_curing_agent
 		];
 
 
@@ -382,6 +385,8 @@ class Product_master extends Admin_Controller
 			$inv_lv_1 = $this->input->post('inv_lv_1');
 		}
 
+		$list_curing_agent = $this->Product_master_model->get_data('ms_product_category3', 'id_type', 'P231100013');
+
 
 		$data = [
 			'inventory_1' => $inventory_1,
@@ -394,7 +399,8 @@ class Product_master extends Admin_Controller
 			'inventory_2' => $inventory_2,
 			'id_category3' => $this->auth->user_id(),
 			'inv_lv_1' => $inv_lv_1,
-			'kategori_fg' => $kategori_fg
+			'kategori_fg' => $kategori_fg,
+			'list_curing_agent' => $list_curing_agent
 		];
 
 		$this->template->set('results', $data);
@@ -534,8 +540,9 @@ class Product_master extends Admin_Controller
 			'id_category1' => $this->input->post('inventory_2'),
 			'id_category2' => $this->input->post('inventory_3'),
 			'nama' => $this->input->post('nm_lv_4'),
-			'trade_name' => $this->input->post('trade_name'),
-			'lead_time' => $this->input->post('lead_time'),
+			'nama_mandarin' => $this->input->post('nm_lv_4_mandarin'),
+			'curing_agent' => $this->input->post('curing_agent'),
+			'curing_agent_konversi' => $this->input->post('curing_agent_konversi'),
 			'moq' => $this->input->post('moq'),
 			'packaging' => $this->input->post('packaging'),
 			'konversi' => $this->input->post('konversi'),
@@ -621,8 +628,9 @@ class Product_master extends Admin_Controller
 			'id_category1' => $this->input->post('inventory_2'),
 			'id_category2' => $this->input->post('inventory_3'),
 			'nama' => $this->input->post('nm_lv_4'),
-			'trade_name' => $this->input->post('trade_name'),
-			'lead_time' => $this->input->post('lead_time'),
+			'nama_mandarin' => $this->input->post('nm_lv_4_mandarin'),
+			'curing_agent' => $this->input->post('curing_agent'),
+			'curing_agent_konversi' => $this->input->post('curing_agent_konversi'),
 			'moq' => $this->input->post('moq'),
 			'packaging' => $this->input->post('packaging'),
 			'konversi' => $this->input->post('konversi'),

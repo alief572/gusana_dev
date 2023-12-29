@@ -24,7 +24,7 @@
         </div>
         <div class="col-6">
             <label for="kode_produk">Selisih</label>
-            <input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format(($get_data->price_list - ($get_data->cost_price_final / $get_data->qty_hopper)), 2) ?>" readonly>
+            <input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= (($get_data->cost_price_final > 0 && $get_data->qty_hopper > 0) ? number_format(($get_data->price_list - ($get_data->cost_price_final / $get_data->qty_hopper)), 2) : 0 ) ?>" readonly>
         </div>
         <div class="col-6">
             <label for="kode_produk">Price Before</label>
@@ -32,7 +32,7 @@
         </div>
         <div class="col-6">
             <label for="kode_produk">Persentase</label>
-            <input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format(($get_data->price_list/($get_data->cost_price_final / $get_data->qty_hopper)) * 100,2) ?>%" readonly>
+            <input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= ($get_data->cost_price_final > 0 && $get_data->qty_hopper > 0) ? number_format(($get_data->price_list/($get_data->cost_price_final / $get_data->qty_hopper)) * 100,2) : 0 ?>%" readonly>
         </div>
         <div class="col-6">
             <label for="">Price Approve</label>

@@ -34,14 +34,14 @@ $ENABLE_DELETE  = has_permission('Product_Master.Delete');
 						<th>Product Code</th>
 						<td>:</td>
 						<td><?= $results['inventory_4']->product_code; ?></td>
-						<th>Trade Name</th>
+						<th>Curing Agent</th>
 						<td>:</td>
-						<td><?= $results['inventory_4']->trade_name; ?></td>
+						<td><?= $results['inventory_4']->nm_curing_agent; ?></td>
 					</tr>
 					<tr>
-						<th>Lead Time</th>
+						<th>Curing Agent Konversi</th>
 						<td>:</td>
-						<td><?= $results['inventory_4']->lead_time; ?></td>
+						<td><?= $results['inventory_4']->curing_agent_konversi; ?></td>
 						<th>MOQ</th>
 						<td>:</td>
 						<td><?= $results['inventory_4']->moq; ?></td>

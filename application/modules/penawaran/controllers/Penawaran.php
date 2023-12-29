@@ -1,0 +1,938 @@
+<?php
+
+// if (!defined('BASEPATH/')) {
+//     exit('No direct script access allowed');
+// }
+
+/*
+ * @author Hikmat Aolia
+ * @copyright Copyright (c) 2023, Hikmat Aolia
+ *
+ * This is controller for Master Employee
+ */
+
+class Penawaran extends Admin_Controller
+{
+    protected $viewPermission     = 'Penawaran.View';
+    protected $addPermission      = 'Penawaran.Add';
+    protected $managePermission = 'Penawaran.Manage';
+    protected $deletePermission = 'Penawaran.Delete';
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->load->library(array('upload', 'Image_lib', 'user_agent', 'uri'));
+        $this->load->model(array(
+            'Penawaran/Penawaran_model',
+            'Aktifitas/aktifitas_model',
+        ));
+        $this->load->helper(['url', 'json']);
+        $this->template->title('Penawaran');
+        $this->template->page_icon('fas fa-user-tie');
+
+        date_default_timezone_set('Asia/Bangkok');
+    }
+
+    public function getData()
+    {
+        $requestData    = $_REQUEST;
+        $status         = $requestData['status'];
+        $search         = $requestData['search']['value'];
+        $column         = $requestData['order'][0]['column'];
+        $dir            = $requestData['order'][0]['dir'];
+        $start          = $requestData['start'];
+        $length         = $requestData['length'];
+
+        $where = "";
+        // $where = " AND `status` <> 'D'";
+
+        $string = $this->db->escape_like_str($search);
+        $sql = "SELECT *
+        FROM ms_penawaran WHERE 1=1  
+        AND (
+            id_penawaran LIKE '%$string%' OR
+            nm_cust LIKE '%$string%' OR
+            nm_marketing LIKE '%$string%' OR
+            nilai_penawaran LIKE '%$string%' OR
+            tgl_penawaran LIKE '%$string%' OR
+            keterangan LIKE '%$string%' OR
+            revisi LIKE '%$string%'
+        )";
+
+        $totalData = $this->db->query($sql)->num_rows();
+        $totalFiltered = $this->db->query($sql)->num_rows();
+
+        $columns_order_by = array(
+            0 => 'id_penawaran',
+            1 => 'id_penawaran'
+        );
+
+        $sql .= " ORDER BY " . $columns_order_by[$column] . " " . $dir . " ";
+        $sql .= " LIMIT " . $start . " ," . $length . " ";
+        $query  = $this->db->query($sql);
+
+
+        $data  = array();
+        $urut1  = 1;
+        $urut2  = 0;
+
+
+
+        foreach ($query->result_array() as $row) {
+            $buttons = '';
+            $total_data     = $totalData;
+            $start_dari     = $start;
+            $asc_desc       = $dir;
+            if (
+                $asc_desc == 'asc'
+            ) {
+                $nomor = $urut1 + $start_dari;
+            }
+            if (
+                $asc_desc == 'desc'
+            ) {
+                $nomor = ($total_data - $start_dari) - $urut2;
+            }
+
+            $view         = '<button type="button" class="btn btn-primary btn-sm view" data-toggle="tooltip" title="View" data-id="' . str_replace('/', '-', $row['id_penawaran']) . '"><i class="fa fa-eye"></i></button>';
+
+            $edit         = '<button type="button" class="btn btn-success btn-sm edit" data-toggle="tooltip" title="Edit" data-id="' . str_replace('/', '-', $row['id_penawaran']) . '"><i class="fa fa-edit"></i></button>';
+
+            $delete     = '<button type="button" class="btn btn-danger btn-sm btn-sm delete" data-toggle="tooltip" title="Delete" data-id="' . str_replace('/', '-', $row['id_penawaran']) . '"><i class="fa fa-trash"></i></button>';
+
+            $print = '<button type="button" class="btn btn-info btn-sm print_penawaran" data-toggle="tooltip" title="Print" data-id="' . str_replace('/', '-', $row['id_penawaran']) . '"><i class="fa fa-print"></i></button>';
+
+            $send = '<button type="button" class="btn btn-success btn-sm send_penawaran" data-toggle="tooltip" title="Send" data-id="' . str_replace('/', '-', $row['id_penawaran']) . '"><i class="fa fa-arrow-right"></i></button>';
+
+            $request = '<button type="button" class="btn btn-warning btn-sm request_approval" data-toggle="tooltip" title="Request Approval" data-id="' . str_replace('/', '-', $row['id_penawaran']) . '"><i class="fa fa-user"></i></button>';
+
+            $buttons     = $view . "&nbsp;" . $edit . "&nbsp;" . $delete . "&nbsp;" . $print . "&nbsp;" . $send . "&nbsp;" . $request;
+
+            if ($row['sts'] == '' || $row['sts'] == null) {
+                $buttons = $edit . ' ' . $request;
+            }
+            if($row['sts'] == 'approved'){
+                $buttons = $buttons. ' '.$print;
+            }
+            if($row['sts'] == 'request_approval'){
+                $buttons = $view;
+            }
+
+            $status = '';
+            if ($row['sts'] == 'send') {
+                $status = '<div class="badge badge-warning text-light">Send</div>';
+            } else if ($row['sts'] == 'request_approval') {
+                $status = '<div class="badge badge-info">Request Approval</div>';
+            } else if ($row['sts'] == 'approved') {
+                $status = '<div class="badge badge-success text-light">Approved</div>';
+            } else if ($row['sts'] == 'Reject') {
+                $status = '<div class="badge badge-danget text-light">Reject</div>';
+            } else {
+                $status = '<div class="badge badge-warning text-light">Draft</div>';
+            }
+
+            $nestedData   = array();
+            $nestedData[]  = $nomor;
+            $nestedData[]  = $row['id_penawaran'];
+            $nestedData[]  = $row['nm_cust'];
+            $nestedData[]  = $row['nm_marketing'];
+            $nestedData[]  = number_format($row['nilai_penawaran'], 2);
+            $nestedData[]  = date('d F Y', strtotime($row['tgl_penawaran']));
+            $nestedData[]  = $row['keterangan'];
+            $nestedData[]  = $row['revisi'];
+            $nestedData[]  = $status;
+            $nestedData[]  = $buttons;
+            $data[] = $nestedData;
+            $urut1++;
+            $urut2++;
+        }
+
+        $json_data = array(
+            "draw"              => intval($requestData['draw']),
+            "recordsTotal"      => intval($totalData),
+            "recordsFiltered"   => intval($totalFiltered),
+            "data"              => $data
+        );
+
+        echo json_encode($json_data);
+    }
+
+    public function index()
+    {
+        $this->auth->restrict($this->viewPermission);
+        $this->template->title('Penawaran');
+        $this->template->render('index');
+    }
+
+    public function add()
+    {
+        $this->auth->restrict($this->viewPermission);
+        $get_cust = $this->db->get('customers')->result();
+        $get_produk = $this->db->get_where('ms_product_category3', ['aktif' => 1])->result();
+        $get_sales = $this->db->get_where('employees', ['deleted_at' => null])->result();
+        $get_penawaran_detail = $this->db->get_where('ms_penawaran_detail', ['id_penawaran' => $this->auth->user_id()])->result();
+
+        $this->db->select('SUM(a.total_harga) AS ttl_harga');
+        $this->db->from('ms_penawaran_detail a');
+        $this->db->where(['a.id_penawaran' => $this->auth->user_id()]);
+        $get_total_harga = $this->db->get()->row();
+
+        $data = [
+            'list_customer' => $get_cust,
+            'list_produk' => $get_produk,
+            'list_sales' => $get_sales,
+            'list_penawaran_detail' => $get_penawaran_detail,
+            'total_harga' => $get_total_harga->ttl_harga,
+            'id_penawaran' => $this->auth->user_id()
+        ];
+        $this->template->set($data);
+        $this->template->render('form');
+    }
+
+    public function edit($id)
+    {
+        $this->auth->restrict($this->managePermission);
+        $id = str_replace('-', '/', $id);
+
+        $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id])->row();
+        $get_penawaran_detail = $this->db->get_where('ms_penawaran_detail', ['id_penawaran' => $id])->result();
+
+        $get_cust = $this->db->get('customers')->result();
+        $get_produk = $this->db->get_where('ms_product_category3', ['aktif' => 1])->result();
+        $get_sales = $this->db->get_where('employees', ['deleted_at' => null])->result();
+
+        $get_pic = $this->db->get('customer_pic')->result();
+
+        $this->db->select('SUM(a.total_harga) AS ttl_harga');
+        $this->db->from('ms_penawaran_detail a');
+        $this->db->where(['a.id_penawaran' => $id]);
+        $get_total_harga = $this->db->get()->row();
+
+        $this->template->set([
+            'data_penawaran' => $get_penawaran,
+            'data_penawaran_detail' => $get_penawaran_detail,
+            'list_customer' => $get_cust,
+            'list_produk' => $get_produk,
+            'list_sales' => $get_sales,
+            'list_pic' => $get_pic,
+            'list_penawaran_detail' => $get_penawaran_detail,
+            'total_harga' => $get_total_harga->ttl_harga
+        ]);
+        $this->template->render('form');
+    }
+
+    public function view($id)
+    {
+        $this->auth->restrict($this->managePermission);
+        $id = str_replace('-', '/', $id);
+
+        $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id])->row();
+        // echo '<pre>';
+        // print_r($id);
+        // echo'</pre>';
+        // exit;
+        $get_penawaran_detail = $this->db->get_where('ms_penawaran_detail', ['id_penawaran' => $id])->result();
+
+        $this->template->set([
+            'data_penawaran' => $get_penawaran,
+            'data_penawaran_detail' => $get_penawaran_detail
+        ]);
+        $this->template->render('view');
+    }
+
+    public function save()
+    {
+        $this->auth->restrict($this->addPermission);
+        $post = $this->input->post();
+
+        $check_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => str_replace('-', '/', $post['id_penawaran'])])->num_rows();
+
+        $get_marketing = $this->db->get_where('employees', ['id' => $post['sales_marketing']])->row();
+        $get_customer = $this->db->get_where('customers', ['id_customer' => $post['customer']])->row();
+        $get_pic_cust = $this->db->get_where('customer_pic', ['id' => $post['pic_cust']])->row();
+
+        $this->db->select('SUM(a.total_harga) AS ttl_harga');
+        $this->db->from('ms_penawaran_detail a');
+        $this->db->where(['a.id_penawaran' => str_replace('-', '/', $post['id_penawaran'])]);
+        $get_total_harga = $this->db->get()->row();
+
+        $nilai_disc = 0;
+        if ($post['disc_val'] > 0 && $post['disc_val'] !== '') {
+            $nilai_disc = $post['disc_val'];
+        }
+        if ($post['disc_per'] > 0 && $post['disc_per'] !== '') {
+            $nilai_disc = ($get_total_harga->ttl_harga * $post['disc_per'] / 100);
+        }
+
+        $ppn_num = (($get_total_harga->ttl_harga - ($nilai_disc)) * $post['persen_ppn'] / 100);
+
+        $grand_total = ($get_total_harga->ttl_harga - $nilai_disc + $ppn_num);
+
+        $valid_stock = 1;
+
+        $this->db->trans_begin();
+        if ($check_penawaran > 0) {
+            $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => str_replace('-', '/', $post['id_penawaran'])])->row();
+            $revisi = $get_penawaran->revisi + 1;
+
+            if($post['req_approval'] == 1){
+                $this->db->update('ms_penawaran', [
+                    'id_marketing' => $post['sales_marketing'],
+                    'nm_marketing' => $get_marketing->name,
+                    'id_cust' => $post['customer'],
+                    'nm_cust' => $get_customer->customer_name,
+                    'no_telp_cust' => $post['no_telp'],
+                    'id_pic_cust' => $post['pic_cust'],
+                    'nm_pic_cust' => $get_pic_cust->name,
+                    'nilai_penawaran' => $get_total_harga->ttl_harga,
+                    'tgl_penawaran' => $post['tgl_penawaran'],
+                    'ppn_type' => $post['ppn_type'],
+                    'total' => $get_total_harga->ttl_harga,
+                    'disc_num' => $post['disc_val'],
+                    'disc_persen' => $post['disc_per'],
+                    'nilai_disc' => $nilai_disc,
+                    'ppn_persen' => $post['persen_ppn'],
+                    'ppn_num' => $ppn_num,
+                    'grand_total' => $grand_total,
+                    'sts' => 'request_approval',
+                    'keterangan' => $post['keterangan'],
+                    'diubah_oleh' => $this->auth->user_id(),
+                    'diubah_tgl' => date('Y-m-d H:i:s')
+                ], [
+                    'id_penawaran' => str_replace('-', '/', $post['id_penawaran'])
+                ]);
+            }else{
+                $this->db->update('ms_penawaran', [
+                    'id_marketing' => $post['sales_marketing'],
+                    'nm_marketing' => $get_marketing->name,
+                    'id_cust' => $post['customer'],
+                    'nm_cust' => $get_customer->customer_name,
+                    'no_telp_cust' => $post['no_telp'],
+                    'id_pic_cust' => $post['pic_cust'],
+                    'nm_pic_cust' => $get_pic_cust->name,
+                    'nilai_penawaran' => $get_total_harga->ttl_harga,
+                    'tgl_penawaran' => $post['tgl_penawaran'],
+                    'ppn_type' => $post['ppn_type'],
+                    'total' => $get_total_harga->ttl_harga,
+                    'disc_num' => $post['disc_val'],
+                    'disc_persen' => $post['disc_per'],
+                    'nilai_disc' => $nilai_disc,
+                    'ppn_persen' => $post['persen_ppn'],
+                    'ppn_num' => $ppn_num,
+                    'grand_total' => $grand_total,
+                    'revisi' => $revisi,
+                    'diubah_oleh' => $this->auth->user_id(),
+                    'diubah_tgl' => date('Y-m-d H:i:s')
+                ], [
+                    'id_penawaran' => str_replace('-', '/', $post['id_penawaran'])
+                ]);
+            }
+            
+
+            // Logging
+            $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
+
+            $desc = "Update Penawaran Data - " . str_replace('-', '/', $post['id_penawaran']);
+            $device_name = $this->agent->mobile(); // Returns the mobile device name
+            if ($this->agent->is_browser()) {
+                $device_name = $this->agent->browser(); // Returns the browser name
+            } elseif ($this->agent->is_robot()) {
+                $device_name = $this->agent->robot(); // Returns the robot/crawler name
+            } elseif ($this->agent->is_mobile()) {
+                $device_name = $this->agent->mobile(); // Returns the mobile device name
+            } else {
+                $device_name = 'Unidentified Device';
+            }
+
+            $id_user = $this->auth->user_id();
+            $id_menu = $get_menu->id;
+            $nm_menu = $get_menu->title;
+            $device_type = $this->agent->platform();
+            $os_type = $this->agent->browser();
+            log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
+        } else {
+            $code_pen = $this->db->query("SELECT MAX(id_penawaran) as max_id_penawaran FROM ms_penawaran WHERE id_penawaran LIKE '%PN/" . date('Y') . "/" . date('m') . "/" . date('d') . "%'")->row();
+            $kodeBarang = $code_pen->max_id_penawaran;
+            $urutan = (int) substr($kodeBarang, 14, 6);
+            $urutan++;
+            $tahun = date('Y/m/d/');
+            $huruf = "PN/";
+            $kode_pn = $huruf . $tahun . sprintf("%06s", $urutan);
+
+            $this->db->insert('ms_penawaran', [
+                'id_penawaran' => $kode_pn,
+                'id_marketing' => $post['sales_marketing'],
+                'nm_marketing' => $get_marketing->name,
+                'id_cust' => $post['customer'],
+                'nm_cust' => $get_customer->customer_name,
+                'no_telp_cust' => $post['no_telp'],
+                'id_pic_cust' => $post['pic_cust'],
+                'nm_pic_cust' => $get_pic_cust->name,
+                'nilai_penawaran' => $get_total_harga->ttl_harga,
+                'tgl_penawaran' => $post['tgl_penawaran'],
+                'ppn_type' => $post['ppn_type'],
+                'total' => $get_total_harga->ttl_harga,
+                'disc_num' => $post['disc_val'],
+                'disc_persen' => $post['disc_per'],
+                'nilai_disc' => $nilai_disc,
+                'ppn_persen' => $post['persen_ppn'],
+                'ppn_num' => $ppn_num,
+                'grand_total' => $grand_total,
+                'dibuat_oleh' => $this->auth->user_id(),
+                'dibuat_tgl' => date('Y-m-d H:i:s')
+            ]);
+
+            $get_detail = $this->db->get_where('ms_penawaran_detail', ['id_penawaran' => $this->auth->user_id()])->result();
+            foreach($get_detail as $detail) :
+                $check_stock = $this->db->get_where('ms_stock_product', ['id_product' => $detail->id_product])->num_rows();
+                if($check_stock > 0 && $valid_stock == 1){
+                    $get_stock = $this->db->get_where('ms_stock_product', ['id_product' => $detail->id_product])->row();
+                    if($get_stock->qty_asli >= $detail->weight){
+                        $qty_akhir = ($get_stock->qty_asli - $detail->weight);
+                        $this->db->update('ms_stock_product', ['qty_asli' => $qty_akhir], ['id_product' => $detail->id_product]);
+                    }else{
+                        // $valid_stock = 0;
+                    }
+                }
+            endforeach;
+
+            $this->db->update('ms_penawaran_detail', ['id_penawaran' => $kode_pn], ['id_penawaran' => $this->auth->user_id()]);
+
+            // Logging
+            $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
+
+            $desc = "Insert New Penawaran Data - " . $kode_pn;
+            $device_name = $this->agent->mobile(); // Returns the mobile device name
+            if ($this->agent->is_browser()) {
+                $device_name = $this->agent->browser(); // Returns the browser name
+            } elseif ($this->agent->is_robot()) {
+                $device_name = $this->agent->robot(); // Returns the robot/crawler name
+            } elseif ($this->agent->is_mobile()) {
+                $device_name = $this->agent->mobile(); // Returns the mobile device name
+            } else {
+                $device_name = 'Unidentified Device';
+            }
+
+            $id_user = $this->auth->user_id();
+            $id_menu = $get_menu->id;
+            $nm_menu = $get_menu->title;
+            $device_type = $this->agent->platform();
+            $os_type = $this->agent->browser();
+            log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
+        }
+
+        // if ($this->db->trans_status() === FALSE || $valid_stock !== 1) {
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            $msg = 'Failed save data Penawaran.  Please try again.';
+            if($valid_stock !== 1){
+                $msg = 'Maaf, ada stock barang yang kurang dari permintaan.';
+            }
+            $return    = array(
+                'msg'        => $msg,
+                'status'    => 0
+            );
+            $keterangan     = "FAILED save data Penawaran " . (isset($kode_pn) ? $kode_pn : str_replace('-', '/', $post['id_penawaran']));
+            $status         = 1;
+            $nm_hak_akses   = $this->addPermission;
+            $kode_universal = (isset($kode_pn) ? $kode_pn : str_replace('-', '/', $post['id_penawaran']));
+            $jumlah         = 1;
+            $sql            = $this->db->last_query();
+        } else {
+            $this->db->trans_commit();
+
+            $msg = 'Success Save data Penawaran.';
+            if($post['req_approval'] == 1){
+                $msg = 'Request Approval success';
+            }
+            $return    = array(
+                'msg'        => $msg,
+                'status'    => 1
+            );
+            $keterangan     = "SUCCESS save data Penawaran " . (isset($kode_pn) ? $kode_pn : str_replace('-', '/', $post['id_penawaran']));
+            $status         = 1;
+            $nm_hak_akses   = $this->addPermission;
+            $kode_universal = (isset($kode_pn) ? $kode_pn : str_replace('-', '/', $post['id_penawaran']));
+            $jumlah         = 1;
+            $sql            = $this->db->last_query();
+        }
+        simpan_aktifitas($nm_hak_akses, $kode_universal, $keterangan, $jumlah, $sql, $status);
+        echo json_encode($return);
+    }
+
+    public function delete()
+    {
+        $id = $this->input->post('id');
+        $data = $this->db->get_where('m_divisi', ['id' => $id])->row_array();
+
+        $this->db->trans_begin();
+        // Logging
+        $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
+
+        $desc = "Delete Penawaran Data " . $data['id'] . " - " . $data['divisi'];
+        $device_name = $this->agent->mobile(); // Returns the mobile device name
+        if ($this->agent->is_browser()) {
+            $device_name = $this->agent->browser(); // Returns the browser name
+        } elseif ($this->agent->is_robot()) {
+            $device_name = $this->agent->robot(); // Returns the robot/crawler name
+        } elseif ($this->agent->is_mobile()) {
+            $device_name = $this->agent->mobile(); // Returns the mobile device name
+        } else {
+            $device_name = 'Unidentified Device';
+        }
+
+        $id_user = $this->auth->user_id();
+        $id_menu = $get_menu->id;
+        $nm_menu = $get_menu->title;
+        $device_type = $this->agent->platform();
+        $os_type = $this->agent->browser();
+        log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
+
+        $sql = $this->db->delete('m_divisi', ['id' => $id]);
+        $errMsg = $this->db->error()['message'];
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            $keterangan     = "FAILED " . $errMsg;
+            $status         = 0;
+            $nm_hak_akses   = $this->addPermission;
+            $kode_universal = $data['id'];
+            $jumlah         = 1;
+            $sql            = $this->db->last_query();
+            $return    = array(
+                'msg'        => "Failed delete data Penawaran. Please try again. " . $errMsg,
+                'status'    => 0
+            );
+        } else {
+            $this->db->trans_commit();
+            $return    = array(
+                'msg'        => 'Delete data Penawaran.',
+                'status'    => 1
+            );
+            $keterangan     = "Delete data Penawaran " . $data['id'] . ", Penawaran : " . $data['divisi'];
+            $status         = 1;
+            $nm_hak_akses   = $this->addPermission;
+            $kode_universal = $data['id'];
+            $jumlah         = 1;
+            $sql            = $this->db->last_query();
+        }
+        simpan_aktifitas($nm_hak_akses, $kode_universal, $keterangan, $jumlah, $sql, $status);
+        echo json_encode($return);
+    }
+
+    public function customer()
+    {
+        $customer = $this->input->post('customer');
+
+        $get_cust = $this->db->get_where('customers', ['id_customer' => $customer])->row();
+
+        $no_telp_cust = $get_cust->telephone;
+
+        $list_pic_cust = array();
+        $list_pic_cust[] = '<option value="">- PIC Customer -</option>';
+        $get_pic_cust = $this->db->get_where('customer_pic', ['id_customer' => $customer])->result();
+        foreach ($get_pic_cust as $pic_cust) {
+            $list_pic_cust[] = '<option value="' . $pic_cust->id . '">' . $pic_cust->name . '</option>';
+        }
+
+        echo json_encode([
+            'list_pic_cust' => $list_pic_cust,
+            'no_telp_cust' => $no_telp_cust
+        ]);
+    }
+
+    public function get_produk_detail()
+    {
+        $produk = $this->input->post('produk');
+
+        $get_produk = $this->db->select('a.*, b.nm_packaging, c.nama as ral_code');
+        $get_produk = $this->db->from('ms_product_category3 a');
+        $get_produk = $this->db->join('master_packaging b', 'b.id = a.packaging', 'left');
+        $get_produk = $this->db->join('ms_product_category2 c', 'c.id_category2 = a.id_category2', 'left');
+        $get_produk = $this->db->where(['a.id_category3' => $produk]);
+        $get_produk = $this->db->group_by('a.id_category3');
+        $get_produk = $this->db->get()->row();
+
+        $get_lot_size = $this->db->select('a.qty_hopper, a.id');
+        $get_lot_size = $this->db->from('ms_bom a');
+        $get_lot_size = $this->db->where(['a.id_product' => $produk]);
+        $get_lot_size = $this->db->order_by('a.qty_hopper', 'desc');
+        $get_lot_size = $this->db->get()->result();
+
+        $list_lot_size = array();
+        foreach ($get_lot_size as $lot_size) :
+            $list_lot_size[] = '<option value="' . $lot_size->id . '">' . $lot_size->qty_hopper . '</option>';
+        endforeach;
+
+        $num_free_stock = $this->db->get_where('ms_stock_product', ['id_product' => $produk])->num_rows();
+
+        if ($num_free_stock < 1) {
+            $free_stock = 0;
+        } else {
+            $get_free_stock = $this->db->get_where('ms_stock_product', ['id_product' => $produk])->row();
+
+            $free_stock = ($get_free_stock->qty_asli / $get_produk->konversi);
+        }
+
+        // echo '<pre>'; 
+        // print_r([
+        //     'list_lot_size' => $list_lot_size,
+        //     'kode_produk' => $get_produk->product_code,
+        //     'konversi' => $get_produk->konversi,
+        //     'spesifikasi_kemasan' => $get_produk->konversi.' '.$get_produk->unit_nm,
+        //     'ral_code' => $get_produk->ral_code,
+        //     'free_stock' => $free_stock
+        // ]);
+        // echo'</pre>';
+        // exit;
+
+        echo json_encode([
+            'list_lot_size' => $list_lot_size,
+            'kode_produk' => $get_produk->product_code,
+            'konversi' => $get_produk->konversi,
+            'spesifikasi_kemasan' => $get_produk->konversi . ' ' . $get_produk->unit_nm,
+            'ral_code' => $get_produk->ral_code,
+            'free_stock' => $free_stock
+        ]);
+    }
+
+    public function hitung_harga_satuan()
+    {
+        $qty_detail = $this->input->post('qty_detail');
+        $produk_detail = $this->input->post('produk_detail');
+        $lot_size_detail = $this->input->post('lot_size_detail');
+
+        $price_list = 0;
+        $check_biaya_bom = $this->db->get_where('ms_bom', ['id_product' => $produk_detail, 'id' => $lot_size_detail, 'sts_price_list' => 1])->num_rows();
+        if ($check_biaya_bom > 0) {
+            $get_biaya_bom = $this->db->get_where('ms_bom', ['id_product' => $produk_detail, 'id' => $lot_size_detail, 'sts_price_list' => 1])->row();
+            $price_list = $get_biaya_bom->price_list;
+        }
+
+        echo json_encode(['price_list' => number_format($price_list, 2)]);
+    }
+
+    public function get_harga_satuan()
+    {
+        $produk_detail = $this->input->post('produk_detail');
+        $lot_size_detail = $this->input->post('lot_size_detail');
+
+        $harga_satuan = 0;
+        $check_harga_satuan = $this->db->get_where('ms_bom', ['id_product' => $produk_detail, 'id' => $lot_size_detail, 'sts_price_list' => 1])->num_rows();
+        if ($check_harga_satuan) {
+            $get_harga_satuan = $this->db->get_where('ms_bom', ['id_product' => $produk_detail, 'id' => $lot_size_detail, 'sts_price_list' => 1])->row();
+            $harga_satuan = $get_harga_satuan->price_list;
+        }
+
+        echo json_encode([
+            'harga_satuan' => number_format($harga_satuan, 2)
+        ]);
+    }
+
+    public function hitung_weight()
+    {
+        $produk_detail = $this->input->post('produk_detail');
+        $lot_size_detail = $this->input->post('lot_size_detail');
+        $qty_detail = $this->input->post('qty_detail');
+
+        $get_produk = $this->db->get_where('ms_product_category3', ['id_category3' => $produk_detail])->row();
+
+        $weight = ($qty_detail * $get_produk->konversi);
+
+        echo json_encode(['weight' => $weight, 'weight_form' => number_format($weight, 2)]);
+    }
+
+    public function hitung_total_harga()
+    {
+        $produk_detail = $this->input->post('produk_detail');
+        $lot_size_detail = $this->input->post('lot_size_detail');
+        $qty_detail = $this->input->post('qty_detail');
+        $harga_satuan_detail = $this->input->post('harga_satuan_detail');
+
+        $get_produk = $this->db->get_where('ms_product_category3', ['id_category3' => $produk_detail])->row();
+
+        $total_harga = ($harga_satuan_detail * ($qty_detail * $get_produk->konversi));
+
+        echo json_encode(['total_harga' => $total_harga, 'total_harga2' => number_format($total_harga, 2)]);
+    }
+
+    public function add_penawaran_detail()
+    {
+        $id_penawaran = $this->input->post('id_penawaran');
+        $id_penawaran = str_replace('-', '/', $id_penawaran);
+        $produk_detail = $this->input->post('produk_detail');
+        $lot_size_detail = $this->input->post('lot_size_detail');
+        $qty_detail = $this->input->post('qty_detail');
+
+        $get_produk = $this->db->select('a.*, b.nm_packaging, c.nama as ral_code');
+        $get_produk = $this->db->from('ms_product_category3 a');
+        $get_produk = $this->db->join('master_packaging b', 'b.id = a.packaging', 'left');
+        $get_produk = $this->db->join('ms_product_category2 c', 'c.id_category2 = a.id_category2', 'left');
+        $get_produk = $this->db->where(['a.id_category3' => $produk_detail]);
+        $get_produk = $this->db->get()->row();
+
+        $get_qty_hopper = $this->db->select('a.qty_hopper');
+        $get_qty_hopper = $this->db->from('ms_bom a');
+        $get_qty_hopper = $this->db->where(['a.id' => $lot_size_detail]);
+        $get_qty_hopper = $this->db->get()->row();
+
+        $valid_stock = 1;
+
+        $free_stock = 0;
+
+        $check_stock = $this->db->select('a.qty_asli');
+        $check_stock = $this->db->from('ms_stock_product a');
+        $check_stock = $this->db->where(['id_product' => $produk_detail]);
+        $check_stock = $this->db->get()->num_rows();
+        if ($check_stock > 0) {
+            $get_free_stock = $this->db->select('a.qty_asli');
+            $get_free_stock = $this->db->from('ms_stock_product a');
+            $get_free_stock = $this->db->where(['id_product' => $produk_detail]);
+            $get_free_stock = $this->db->get()->row();
+            $free_stock = ($get_free_stock->qty_asli / $get_produk->konversi);
+        }
+
+        // if ($free_stock < $qty_detail) {
+        //     $valid_stock = 0;
+        // }
+
+        $price_list = $this->input->post('harga_satuan_detail');
+
+        $code_pen_det = $this->db->query("SELECT MAX(id) as max_id FROM ms_penawaran_detail WHERE id LIKE '%PD/" . date('Y') . "/" . date('m') . "/" . date('d') . "%'")->row();
+        $kodeBarang = $code_pen_det->max_id;
+        $urutan = (int) substr($kodeBarang, 14, 6);
+        $urutan++;
+        $tahun = date('Y/m/d/');
+        $huruf = "PD/";
+        $kode_pd = $huruf . $tahun . sprintf("%06s", $urutan);
+
+        $this->db->trans_begin();
+
+        $this->db->insert('ms_penawaran_detail', [
+            'id' => $kode_pd,
+            'id_penawaran' => $id_penawaran,
+            'id_product' => $produk_detail,
+            'nm_product' => $get_produk->nama,
+            'kode_product' => $get_produk->product_code,
+            'konversi' => $get_produk->konversi,
+            'packaging' => $get_produk->nm_packaging,
+            'ral_code' => $get_produk->ral_code,
+            'qty' => $qty_detail,
+            'weight' => ($qty_detail * $get_produk->konversi),
+            'harga_satuan' => $price_list,
+            'total_harga' => ($price_list * ($qty_detail * $get_produk->konversi)),
+            'free_stock' => $free_stock,
+            'lot_size' => $get_qty_hopper->qty_hopper,
+            'dibuat_oleh' => $this->auth->user_id(),
+            'dibuat_tgl' => date('Y-m-d H:i:s')
+        ]);
+
+        if ($this->db->trans_status() === FALSE || $valid_stock !== 1) {
+            $this->db->trans_rollback();
+        } else {
+            $this->db->trans_commit();
+        }
+
+        $hasil = array();
+
+        $this->db->select('a.*');
+        $this->db->from('ms_penawaran_detail a');
+        $this->db->where(['id_penawaran' => $id_penawaran]);
+        $get_penawaran_detail = $this->db->get()->result();
+
+        $ttl_harga = 0;
+
+        $x = 1;
+        foreach ($get_penawaran_detail as $penawaran_detail) :
+            $hasil[] = '
+                <tr>
+                    <td class="text-center">' . $x . '</td>
+                    <td>' . $penawaran_detail->nm_product . '</td>
+                    <td>' . $penawaran_detail->lot_size . '</td>
+                    <td>' . $penawaran_detail->kode_product . '</td>
+                    <td>' . $penawaran_detail->konversi . ' ' . $penawaran_detail->packaging . '</td>
+                    <td>' . $penawaran_detail->ral_code . '</td>
+                    <td class="text-right">' . number_format($penawaran_detail->qty, 2) . '</td>
+                    <td class="text-right">' . number_format($penawaran_detail->weight, 2) . '</td>
+                    <td class="text-right">
+                        <input type="text" name="harga_satuan_' . str_replace('/', '-', $penawaran_detail->id) . '" id="" class="form-control form-control-sm autonum harga_satuan" data-id="' . str_replace('/', '-', $penawaran_detail->id) . '" value="' . number_format($penawaran_detail->harga_satuan, 2) . '">
+                    </td>
+                    <td class="text-right">' . number_format($penawaran_detail->free_stock, 2) . '</td>
+                    <td class="text-right">' . number_format($penawaran_detail->total_harga, 2) . '</td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-danger btn-sm del_detail" data-id="' . str_replace('/', '-', $penawaran_detail->id) . '">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            ';
+            $x++;
+
+            $ttl_harga += $penawaran_detail->total_harga;
+        endforeach;
+
+        echo json_encode([
+            'hasil' => $hasil,
+            'valid_stock' => $valid_stock,
+            'ttl_harga' => $ttl_harga
+        ]);
+    }
+
+    public function hitung_disc()
+    {
+        $id_penawaran = $this->input->post('id_penawaran');
+        $id_penawaran = str_replace('-', '/', $id_penawaran);
+        $disc_val = $this->input->post('disc_val');
+        $disc_type = $this->input->post('disc_type');
+
+        $this->db->select('SUM(a.total_harga) AS ttl_harga');
+        $this->db->from('ms_penawaran_detail a');
+        $this->db->where(['a.id_penawaran' => $id_penawaran]);
+        $get_ttl_harga = $this->db->get()->row();
+
+        $nilai_disc = 0;
+        if ($disc_type == "val") {
+            $nilai_disc = $disc_val;
+        }
+        if ($disc_type == "per") {
+            $nilai_disc = ($get_ttl_harga->ttl_harga * $disc_val / 100);
+        }
+
+        echo json_encode(['nilai_disc' => $nilai_disc, 'nilai_disc2' => number_format($nilai_disc, 2)]);
+    }
+
+    public function hitung_all()
+    {
+        $id_penawaran = $this->input->post('id_penawaran');
+        $id_penawaran = str_replace('-', '/', $id_penawaran);
+        $disc_val = $this->input->post('disc_val');
+        $disc_per = $this->input->post('disc_per');
+        $persen_ppn = $this->input->post('persen_ppn');
+
+        $this->db->select('SUM(a.total_harga) AS ttl_harga');
+        $this->db->from('ms_penawaran_detail a');
+        $this->db->where(['a.id_penawaran' => $id_penawaran]);
+        $get_ttl_harga = $this->db->get()->row();
+
+        $total_harga = $get_ttl_harga->ttl_harga;
+
+        $nilai_disc = 0;
+        if ($disc_val > 0 && $disc_val !== '') {
+            $nilai_disc = $disc_val;
+        }
+        if ($disc_per > 0 && $disc_per !== '') {
+            $nilai_disc = ($get_ttl_harga->ttl_harga * $disc_per / 100);
+        }
+
+        $total_after_disc = ($get_ttl_harga->ttl_harga - $nilai_disc);
+
+        $nilai_ppn = ($total_after_disc * $persen_ppn / 100);
+
+        $total_grand_total = ($total_after_disc + $nilai_ppn);
+
+        echo json_encode([
+            'total_harga' => $total_harga,
+            'total_harga2' => number_format($total_harga, 2),
+            'nilai_disc' => $nilai_disc,
+            'nilai_disc2' => number_format($nilai_disc, 2),
+            'total_after_disc' => $total_after_disc,
+            'total_after_disc2' => number_format($total_after_disc, 2),
+            'nilai_ppn' => $nilai_ppn,
+            'nilai_ppn2' => number_format($nilai_ppn, 2),
+            'total_grand_total' => $total_grand_total,
+            'total_grand_total2' => number_format($total_grand_total, 2)
+        ]);
+    }
+
+    public function del_detail()
+    {
+        $id = $this->input->post('id');
+        $id = str_replace('-', '/', $id);
+        $id_penawaran = $this->input->post('id_penawaran');
+        $id_penawaran = str_replace('-', '/', $id_penawaran);
+
+        $this->db->trans_begin();
+
+        $this->db->delete('ms_penawaran_detail', ['id' => $id]);
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+        } else {
+            $this->db->trans_commit();
+        }
+
+        $hasil = array();
+
+        $this->db->select('a.*');
+        $this->db->from('ms_penawaran_detail a');
+        $this->db->where(['id_penawaran' => $id_penawaran]);
+        $get_penawaran_detail = $this->db->get()->result();
+
+        $ttl_harga = 0;
+
+        $x = 1;
+        foreach ($get_penawaran_detail as $penawaran_detail) :
+            $hasil[] = '
+                <tr>
+                    <td class="text-center">' . $x . '</td>
+                    <td>' . $penawaran_detail->nm_product . '</td>
+                    <td>' . $penawaran_detail->lot_size . '</td>
+                    <td>' . $penawaran_detail->kode_product . '</td>
+                    <td>' . $penawaran_detail->konversi . ' ' . $penawaran_detail->packaging . '</td>
+                    <td>' . $penawaran_detail->ral_code . '</td>
+                    <td class="text-right">' . number_format($penawaran_detail->qty, 2) . '</td>
+                    <td class="text-right">' . number_format($penawaran_detail->weight, 2) . '</td>
+                    <td class="text-right">
+                        <input type="text" name="harga_satuan_' . str_replace('/', '-', $penawaran_detail->id) . '" id="" class="form-control form-control-sm autonum harga_satuan" data-id="' . str_replace('/', '-', $penawaran_detail->id) . '" value="' . number_format($penawaran_detail->harga_satuan, 2) . '">
+                    </td>
+                    <td class="text-right">' . number_format($penawaran_detail->free_stock, 2) . '</td>
+                    <td class="text-right">' . number_format($penawaran_detail->total_harga, 2) . '</td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-danger del_detail" data-id="' . str_replace('/', '-', $penawaran_detail->id) . '">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            ';
+            $x++;
+
+            $ttl_harga += $penawaran_detail->total_harga;
+        endforeach;
+
+        echo json_encode([
+            'hasil' => $hasil,
+            'ttl_harga' => $ttl_harga
+        ]);
+    }
+
+    public function request_approval($id)
+    {
+        $this->auth->restrict($this->managePermission);
+        $id = str_replace('-', '/', $id);
+
+        $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id])->row();
+        $get_penawaran_detail = $this->db->get_where('ms_penawaran_detail', ['id_penawaran' => $id])->result();
+
+        $get_cust = $this->db->get('customers')->result();
+        $get_produk = $this->db->get_where('ms_product_category3', ['aktif' => 1])->result();
+        $get_sales = $this->db->get_where('employees', ['deleted_at' => null])->result();
+
+        $get_pic = $this->db->get('customer_pic')->result();
+
+        $this->db->select('SUM(a.total_harga) AS ttl_harga');
+        $this->db->from('ms_penawaran_detail a');
+        $this->db->where(['a.id_penawaran' => $id]);
+        $get_total_harga = $this->db->get()->row();
+
+        $this->template->set([
+            'data_penawaran' => $get_penawaran,
+            'data_penawaran_detail' => $get_penawaran_detail,
+            'list_customer' => $get_cust,
+            'list_produk' => $get_produk,
+            'list_sales' => $get_sales,
+            'list_pic' => $get_pic,
+            'list_penawaran_detail' => $get_penawaran_detail,
+            'total_harga' => $get_total_harga->ttl_harga,
+            'request_approval' => 1
+        ]);
+        $this->template->render('form');
+    }
+}

@@ -46,17 +46,29 @@
 							</th>
 						</tr>
 						<tr style="border:none !important;">
+							<th>Product Master (Mandarin)</th>
+							<th colspan="5">
+								<input type="text" name="nm_lv_4_mandarin" id="" class="form-control form-control-sm" placeholder="Product Master (Mandarin)" value="<?= $results['inventory_4']->nama_mandarin ?>">
+							</th>
+						</tr>
+						<tr style="border:none !important;">
 							<th>Product Code</th>
 							<th>
 								<input type="text" name="product_code" id="" class="form-control form-control-sm" placeholder="Product Code" value="<?= $results['inventory_4']->product_code ?>">
 							</th>
-							<th>Trade Name</th>
-							<th>
-								<input type="text" name="trade_name" id="" class="form-control form-control-sm" value="<?= $results['inventory_4']->trade_name; ?>">
-							</th>
-							<th>
-								<input type="text" name="lead_time" id="" class="form-control form-control-sm" placeholder="Lead Time" value="<?= $results['inventory_4']->lead_time ?>">
-							</th>
+							<th>Curing Agent</th>
+ 							<th>
+								<select name="curing_agent" id="" class="form-control form-control-sm chosen_select" placeholder="Curing Agent">
+									<option value="">- Curing Agent -</option>
+									<?php foreach($results['list_curing_agent'] as $curing_agent) : ?>
+										<option value="<?= $curing_agent->id_category3 ?>" <?= ($results['inventory_4']->curing_agent == $curing_agent->id_category3) ? 'selected' : null ?>><?= $curing_agent->nama ?></option>
+									<?php endforeach; ?>
+								</select>
+ 								<!-- <input type="text" name="trade_name" id="" class="form-control form-control-sm" placeholder="Trade Name"> -->
+ 							</th>
+ 							<th>
+ 								<input type="text" name="curing_agent_konversi" id="" class="form-control form-control-sm text-right autonum" placeholder="Curing Agent Konversi (Kg)" value="<?= $results['inventory_4']->curing_agent_konversi ?>">
+ 							</th>
 							<th>
 								<input type="text" name="moq" id="" class="form-control form-control-sm" placeholder="MOQ" value="<?= $results['inventory_4']->moq ?>">
 							</th>
@@ -404,6 +416,12 @@
 		placeholder: 'Choose one',
 		dropdownParent: $('#dialog-popup'),
 		width: "100%",
+		allowClear: true
+	});
+	$('.chosen_select').select2({
+		placeholder: 'Choose one',
+		dropdownParent: $('#dialog-popup'),
+		width: "150px",
 		allowClear: true
 	});
 

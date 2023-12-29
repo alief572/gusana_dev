@@ -46,11 +46,12 @@ class Price_list extends Admin_Controller
 
         $string = $this->db->escape_like_str($search);
         $sql = "
-            SELECT a.*, b.nama, b.product_code, b.konversi, b.product_code, c.nm_packaging
+            SELECT a.*, b.nama, b.product_code, b.konversi, b.product_code, c.nm_packaging, d.nama as nm_curing_agent
             FROM
                 ms_bom a
                 JOIN ms_product_category3 b ON b.id_category3 = a.id_product
                 LEFT JOIN master_packaging c ON c.id = b.packaging
+                LEFT JOIN ms_product_category3 d ON d.id_category3 = b.curing_agent
             WHERE
                 1=1 AND a.sts_price_list = '1' AND (
                     b.product_code LIKE '%".$string."%' OR
@@ -58,7 +59,8 @@ class Price_list extends Admin_Controller
                     c.nm_packaging LIKE '%".$string."%' OR
                     a.qty_hopper LIKE '%".$string."%' OR
                     a.price_list LIKE '%".$string."%' OR
-                    (a.price_list * b.konversi) LIKE '%".$string."%'
+                    (a.price_list * b.konversi) LIKE '%".$string."%' OR
+                    d.nama LIKE '%".$string."%'
                 )
         ";
 
@@ -104,6 +106,8 @@ class Price_list extends Admin_Controller
             $nestedData[]  = $row['nama'];
             $nestedData[]  = number_format($row['konversi'],2);
             $nestedData[]  = number_format($row['qty_hopper'],2);
+            $nestedData[]  = $row['nm_curing_agent'];
+            $nestedData[]  = number_format($row['curing_agent_konversi'],2);
             $nestedData[]  = number_format($row['price_list'],2);
             $nestedData[]  = number_format(($row['price_list'] * $row['konversi']),2);
             // $nestedData[]  = $row['email'];
