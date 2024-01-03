@@ -85,9 +85,7 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
                         <th class="text-center pd-10">Packaging</th>
                         <th class="text-center pd-10">Total Qty (Kaleng)</th>
                         <th class="text-center pd-10">Aktual Qty (Kaleng)</th>
-                        <th class="text-center pd-10">Sisa Produksi Sebelumnya (Kaleng)</th>
-                        <th class="text-center pd-10">Total (Kaleng)</th>
-                        <th class="text-center pd-10">Sisa Produk (Kaleng)</th>
+                        <th class="text-center pd-10">Sisa Produk (Kg)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -97,12 +95,6 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
                     <td class="text-center"><?= number_format(($results['data_product_so']->propose / $results['data_product_so']->konversi), 2) . ' ' . $results['data_product_so']->packaging ?></td>
                     <td class="text-center">
                         <input type="number" name="aktual_qty" id="" class="form-control form-control-sm text-right aktual_qty" step="0.01" value="<?= $results['data_spk']->product_aktual_qty ?>" <?= ($results['closing_spk'] == 1) ? 'readonly' : null ?>>
-                    </td>
-                    <td class="text-center">
-                        <input type="number" name="sisa_produksi_sebelum" id="" class="form-control form-control-sm text-right" step="0.01" value="<?= $results['data_spk']->sisa_produksi_sebelum ?>" <?= ($results['closing_spk'] == 1) ? 'readonly' : null ?>>
-                    </td>
-                    <td class="text-center">
-                        <input type="number" name="total_kaleng" id="" class="form-control form-control-sm text-right" step="0.01" value="<?= $results['data_spk']->total_kaleng ?>" <?= ($results['closing_spk'] == 1) ? 'readonly' : null ?>>
                     </td>
                     <td class="text-center">
                         <input type="number" name="sisa_produk" id="" class="form-control form-control-sm text-right" step="0.01" min="0" value="<?= $results['data_spk']->sisa_produk ?>" <?= ($results['closing_spk'] == 1) ? 'readonly' : null ?>>

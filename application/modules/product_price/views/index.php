@@ -17,7 +17,10 @@ $ENABLE_DELETE  = has_permission('Product_Price.Delete');
 		<span class="pull-left">
 			<button type='button' class='btn btn-sm btn-primary' id='btnUpdate'>Update Product Price</button>
 			<br>
-			<span class='text-bold text-red'><?= $last_update; ?></span>
+			<span class='text-bold text-red'><?= $last_update; ?></span> <br>
+			<button type="button" class="btn btn-sm btn-success add_product_set">
+				<i class="fa fa-plus"></i> Add Product Set
+			</button>
 		</span>
 	</div>
 	<!-- /.box-header -->
@@ -42,6 +45,25 @@ $ENABLE_DELETE  = has_permission('Product_Price.Delete');
 	<!-- /.box-body -->
 </div>
 
+<div class="modal fade" id="dialog-popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg mx-wd-md-70p-force mx-wd-lg-70p-force">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title" id="myModalLabel"><span class="fa fa-users"></span>&nbsp;Add Product Set</h4>
+			</div>
+			<div class="modal-body" id="ModalView">
+				...
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary save_price">Save</button>
+				<button type="button" class="btn btn-danger" data-dismiss="modal">
+					<span class="glyphicon glyphicon-remove"></span> Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <!-- DataTables -->
 <script src="<?= base_url('assets/plugins/datatables/jquery.dataTables.min.js') ?>"></script>
 <script src="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.min.js') ?>"></script>
@@ -52,18 +74,18 @@ $ENABLE_DELETE  = has_permission('Product_Price.Delete');
 	$(document).on('click', '#btnUpdate', function(e) {
 		e.preventDefault()
 		new swal({
-				title: "Anda Yakin?",
-				text: "Menarik Price Ref & BOM Terbaru !",
-				type: "warning",
-				showCancelButton: true,
-				confirmButtonClass: "btn-info",
-				confirmButtonText: "Ya, Update!",
-				cancelButtonText: "Batal",
-				closeOnConfirm: false
-			}).then((hasil) => {
-				console.log(base_url + thisController + '/update_product_price');
-				if(hasil.isConfirmed){
-					$.ajax({
+			title: "Anda Yakin?",
+			text: "Menarik Price Ref & BOM Terbaru !",
+			type: "warning",
+			showCancelButton: true,
+			confirmButtonClass: "btn-info",
+			confirmButtonText: "Ya, Update!",
+			cancelButtonText: "Batal",
+			closeOnConfirm: false
+		}).then((hasil) => {
+			console.log(base_url + thisController + '/update_product_price');
+			if (hasil.isConfirmed) {
+				$.ajax({
 					type: 'POST',
 					url: base_url + thisController + '/update_product_price',
 					dataType: "json",
@@ -95,10 +117,32 @@ $ENABLE_DELETE  = has_permission('Product_Price.Delete');
 						})
 					}
 				});
-				}
-			});
+			}
+		});
 
 	});
+
+	$(document).on('click', '.add_product_set', function() {
+		var id = $(this).data('id_bentuk');
+		// $(".modal-title").html("<i class='fa fa-list-alt'></i><b></b>");
+		$.ajax({
+			type: 'POST',
+			url: siteurl + 'product_price/add_product_set/',
+			data: {
+				'id': ''
+			},
+			success: function(data) {
+				$("#dialog-popup").modal();
+				$("#ModalView").html(data);
+			}
+		})
+	});
+
+	$(document).on('click', '.save_price', function(){
+		$('#dialog-popup').modal('hide');
+		DataTables();
+	});
+
 
 	$(function() {
 		DataTables();

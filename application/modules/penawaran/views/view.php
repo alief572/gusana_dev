@@ -88,8 +88,13 @@
                     </tr>
                     <tr>
                         <td colspan="6"></td>
+                        <td>Biaya Pengiriman</td>
+                        <td colspan="3" class="text-right"><?= number_format($data_penawaran->biaya_pengiriman, 2) ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="6"></td>
                         <td colspan="3">Grand Total</td>
-                        <td class="text-right"><?= number_format(($ttl_harga - $data_penawaran->nilai_disc + $data_penawaran->ppn_num), 2) ?></td>
+                        <td class="text-right"><?= number_format(($ttl_harga - $data_penawaran->nilai_disc + $data_penawaran->ppn_num + $data_penawaran->biaya_pengiriman), 2) ?></td>
                     </tr>
                 </tbody>
             </table>

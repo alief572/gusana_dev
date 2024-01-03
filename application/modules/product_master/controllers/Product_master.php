@@ -1218,6 +1218,7 @@ class Product_master extends Admin_Controller
             $nestedData[]  = $row['nama_material_1'];
             $nestedData[]  = $row['nama_material_2'];
             $nestedData[]  = $row['nama_material_3'];
+            $nestedData[]  = $row['nama_mandarin'];
             $nestedData[]  = $row['nama'];
             $nestedData[]  = $row['nm_packaging'];
             $nestedData[]  = $row['konversi'];

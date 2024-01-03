@@ -25,15 +25,19 @@ class Menu_generator
 	public function build_menus($type = 1)
 	{
 		$auth = $this->get_auth_permission($this->user_id);
+		// echo '<pre>'; 
+		// print_r($auth);
+		// echo'</pre>';
+		// exit;
 		if (!$auth) {
 			$auth = array(NULL);
 		}
 
 		if ($type == 1) {
 			$menu = $this->ci->db->select("t1.*")
-				->from("{$this->x}menus as t1")
-				->join("{$this->x}menus as t2", "t1.id = t2.parent_id", "left")
-				//->join("{$this->x}menus as t3","t2.id = t3.parent_id","left")
+				->from("menus as t1")
+				->join("menus as t2", "t1.id = t2.parent_id", "left")
+				//->join("menus as t3","t2.id = t3.parent_id","left")
 				->where("t1.parent_id", 0)
 				->where("t1.group_menu", $type)
 				->where("t1.status", 1)
@@ -49,15 +53,20 @@ class Menu_generator
 							</a>
 						</li>";
 
+			// echo '<pre>'; 
+			// print_r($auth);
+			// echo'</pre>';
+			// exit;
 			if (is_array($menu) && count($menu)) {
 				foreach ($menu as $rw) {
 					$id 		= $rw->id;
+					// echo $id."<br>";
 					$title 		= $rw->title;
 					$link 		= $rw->link;
 					$icon 		= $rw->icon;
 					$target 	= $rw->target;
 					$submenu = $this->ci->db->select("t1.*")
-						->from("{$this->x}menus as t1")
+						->from("menus as t1")
 						->where("t1.parent_id", $id)
 						->where("t1.group_menu", $type)
 						->where("t1.status", 1);
@@ -65,14 +74,18 @@ class Menu_generator
 						$submenu = $submenu->where_in("t1.permission_id", $auth);
 					}
 					$submenu = $submenu->group_by("t1.id")
-						->group_by("t1.id")
 						->order_by("t1.order", "ASC")
 						->get()
 						->result();
 					//Jump to end_for point
+					// echo '<pre>'; 
+					// print_r($submenu);
+					// echo '</pre>';
+					// exit;
 					if (count($submenu) == 0) {
-						if ($link != "#") {
-							if (!in_array($rw->permission_id, $auth) && $this->is_admin == FALSE) {
+						
+						if ($link !== "#") {
+							if (!in_array($rw->permission_id, $auth) && $this->is_admin === FALSE) {
 								goto end_for;
 							}
 							$active = "";
@@ -94,6 +107,7 @@ class Menu_generator
 									}
 								}
 							}
+							
 							$html .= "<li class='{$active}'><a href='" . ($link == '#' ? '#' : site_url($link)) . "' " . ($target == '_blank' ? "target='_blank'" : "") . "><i class='{$icon}'></i> <span>" . ucwords($title) . "</span></a></li>";
 						}
 						goto end_for;
@@ -130,8 +144,18 @@ class Menu_generator
                       </a>
                       <ul class='br-menu-sub'>";
 
+					  	// echo '<pre>'; 
+						// print_r($submenu);
+						// echo '</pre>';
+						// exit;
 
 					//Make Sub Menu
+					// if($rw->id == 81){
+					// 	echo '<pre>';
+					// 	print_r($submenu);
+					// 	echo '</pre>';
+					// 	exit;
+					// }
 					foreach ($submenu as $sub) {
 						$subid 		= $sub->id;
 						$subtitle 	= $sub->title;
@@ -144,7 +168,7 @@ class Menu_generator
 						}
 
 						$submenusub = $this->ci->db->select("t1.*")
-							->from("{$this->x}menus as t1")
+							->from("menus as t1")
 							->where("t1.parent_id", $subid)
 							->where("t1.group_menu", $type)
 							->where("t1.status", 1);
@@ -152,14 +176,24 @@ class Menu_generator
 							$submenusub = $submenusub->where_in("t1.permission_id", $auth);
 						}
 						$submenusub = $submenusub->group_by("t1.id")
-							->group_by("t1.id")
 							->order_by("t1.order", "ASC")
 							->get()
 							->result();
+						// 	echo '<pre>'; 
+						// print_r($submenusub);
+						// echo '</pre>';
+						// exit;
 						//Jump to end_for point
+						// echo '<pre>'; 
+						// print_r(count($submenusub));
+						// echo '</pre>';
+						// exit;
 						if (count($submenusub) == 0) {
-							if ($sublink != "#") {
-								if (!in_array($rw->permission_id, $auth) && $this->is_admin == FALSE) {
+							if ($sublink !== "#") {
+								// if($rw->id == 81){
+								// 	echo $subid."<br>";
+								// }
+								if (!in_array($sub->permission_id, $auth) && $this->is_admin === FALSE) {
 									goto end_for_sub;
 								}
 								$active = "";
@@ -182,6 +216,7 @@ class Menu_generator
 								break;
 							}
 						}
+						
 						$html .= "
 	            			  <li class='br-menu-item'>
 								<a href='#' class='br-menu-link with-sub {$active}'>
@@ -190,6 +225,7 @@ class Menu_generator
 								</a>
 								<ul class='br-menu-sub'>";
 						//Make Sub Menu
+						
 						foreach ($submenusub as $subsub) {
 							$subidsub 		= $subsub->id;
 							$subtitlesub 	= $subsub->title;
@@ -250,9 +286,9 @@ class Menu_generator
 
 		if ($type == 1) {
 			$menu = $this->ci->db->select("t1.*")
-				->from("{$this->x}menus as t1")
-				->join("{$this->x}menus as t2", "t1.id = t2.parent_id", "left")
-				//->join("{$this->x}menus as t3","t2.id = t3.parent_id","left")
+				->from("menus as t1")
+				->join("menus as t2", "t1.id = t2.parent_id", "left")
+				//->join("menus as t3","t2.id = t3.parent_id","left")
 				->where("t1.parent_id", 0)
 				->where("t1.group_menu", $type)
 				->where("t1.status", 1)
@@ -277,7 +313,7 @@ class Menu_generator
 					$icon 		= $rw->icon;
 					$target 	= $rw->target;
 					$submenu = $this->ci->db->select("t1.*")
-						->from("{$this->x}menus as t1")
+						->from("menus as t1")
 						->where("t1.parent_id", $id)
 						->where("t1.group_menu", $type)
 						->where("t1.status", 1);
@@ -291,7 +327,7 @@ class Menu_generator
 						->result();
 					//Jump to end_for point
 					if (count($submenu) == 0) {
-						if ($link != "#") {
+						if ($link !== "#") {
 							if (!in_array($rw->permission_id, $auth) && $this->is_admin == FALSE) {
 								goto end_for;
 							}

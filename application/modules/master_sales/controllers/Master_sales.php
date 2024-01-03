@@ -48,14 +48,15 @@ class Master_sales extends Admin_Controller
 
         $string = $this->db->escape_like_str($search);
         $sql = "
-            SELECT a.*, b.kode_sales
+            SELECT a.*, b.kode_nama, b.kode_angka
             FROM
                 employees a
                 LEFT JOIN ms_kode_sales b ON b.id_sales = a.id
             WHERE
                 1=1 AND (
                     a.name LIKE '%".$string."%' OR
-                    b.kode_sales LIKE '%".$string."%'
+                    b.kode_nama LIKE '%".$string."%' OR
+                    b.kode_angka LIKE '%".$string."%'
                 )
         ";
 
@@ -100,7 +101,8 @@ class Master_sales extends Admin_Controller
             $nestedData   = array();
             $nestedData[]  = $nomor;
             $nestedData[]  = $row['name'];
-            $nestedData[]  = $row['kode_sales'];
+            $nestedData[]  = $row['kode_nama'];
+            $nestedData[]  = $row['kode_angka'];
             $nestedData[]  = $buttons;
             $data[] = $nestedData;
             $urut1++;
@@ -140,7 +142,7 @@ class Master_sales extends Admin_Controller
     public function edit($id)
     {
         $this->auth->restrict($this->managePermission);
-        $this->db->select('a.*, b.kode_sales');
+        $this->db->select('a.*, b.kode_nama, b.kode_angka');
         $this->db->from('employees a');
         $this->db->join('ms_kode_sales b', 'b.id_sales = a.id', 'left');
         $this->db->where(['a.id' => $id]);
@@ -195,12 +197,13 @@ class Master_sales extends Admin_Controller
 
         $check_kode_sales = $this->db->get_where('ms_kode_sales', ['id_sales' => $post['id_sales']])->num_rows();
         if($check_kode_sales > 0){
-            $this->db->update('ms_kode_sales', ['kode_sales' => $post['kode_sales'], 'diubah_oleh' => $this->auth->user_id(), 'diubah_tgl' => date('Y-m-d H:i:s')], ['id_sales' => $post['id_sales']]);
+            $this->db->update('ms_kode_sales', ['kode_nama' => $post['kode_nama'], 'kode_angka' => $post['kode_angka'], 'diubah_oleh' => $this->auth->user_id(), 'diubah_tgl' => date('Y-m-d H:i:s')], ['id_sales' => $post['id_sales']]);
         }else{
             $this->db->insert('ms_kode_sales', [
                 'id_sales' => $post['id_sales'],
                 'nama_sales' => $post['nama_sales'],
-                'kode_sales' => $post['kode_sales'],
+                'kode_nama' => $post['kode_nama'],
+                'kode_angka' => $post['kode_angka'],
                 'dibuat_oleh' => $this->auth->user_id(),
                 'dibuat_tgl' => date('Y-m-d H:i:s')
             ]);
@@ -209,7 +212,7 @@ class Master_sales extends Admin_Controller
         // Logging
         $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
 
-        $desc = "Insert New Kode Sales Data " . $post['id_sales'] . " - " . $post['nama_sales'];
+        $desc = "Insert New Kode Sales Data " . $post['id_sales'] . " - " . $post['nama_sales'].', Kode Nama : '. $post['kode_nama'].', Kode Angka : '. $post['kode_angka'];
         $device_name = $this->agent->mobile(); // Returns the mobile device name
         if ($this->agent->is_browser()) {
             $device_name = $this->agent->browser(); // Returns the browser name

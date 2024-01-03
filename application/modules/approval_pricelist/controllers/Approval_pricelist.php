@@ -13,10 +13,10 @@ if (!defined('BASEPATH')) {
 
 class Approval_pricelist extends Admin_Controller
 {
-    protected $viewPermission     = 'Approval_pricelist.View';
-    protected $addPermission      = 'Approval_pricelist.Add';
-    protected $managePermission = 'Approval_pricelist.Manage';
-    protected $deletePermission = 'Approval_pricelist.Delete';
+    protected $viewPermission     = 'Approval_Pricelist.View';
+    protected $addPermission      = 'Approval_Pricelist.Add';
+    protected $managePermission = 'Approval_Pricelist.Manage';
+    protected $deletePermission = 'Approval_Pricelist.Delete';
     public function __construct()
     {
         parent::__construct();
@@ -102,7 +102,7 @@ class Approval_pricelist extends Admin_Controller
                 $nomor = ($total_data - $start_dari) - $urut2;
             }
 
-            $status = '';
+            $status = 'Not Set';
             if ($row['req_app'] == "1") {
                 // if ($row['sts_price_list'] == 1) {
                 //     $status = '<div class="badge badge-success">Approved</div>';
@@ -111,13 +111,13 @@ class Approval_pricelist extends Admin_Controller
                 // } else {
                 //     $status = '<div class="badge badge-warning text-light">Waiting Approval</div>';
                 // }
-                $status = '<div class="badge badge-warning text-light">Waiting Approval</div>';
+                $status = '<span>Not Set</span><br><div class="badge badge-warning text-light">Waiting Approval</div>';
             } else {
                 if ($row['sts_price_list'] == 1) {
-                    $status = '<div class="badge badge-success">Approved</div>';
+                    $status = '<span>Ok</span><br><div class="badge badge-success">Approved</div>';
                 }
                 if ($row['sts_price_list'] == 2) {
-                    $status = '<div class="badge badge-danger">Reject</div>';
+                    $status = '<span>No</span><br><div class="badge badge-danger">Reject</div>';
                 }
             }
 
@@ -301,6 +301,7 @@ class Approval_pricelist extends Admin_Controller
                 'price_list' => str_replace(',', '', $post['price_approve']),
                 'propose_price_list' => 0,
                 'sts_price_list' => $post['approval_action'],
+                'dist_price' => str_replace(',','',$post['dist_price']),
                 'req_app' => 0,
                 'expired_date' => $post['expired_date'],
                 'reason' => $post['reason'],

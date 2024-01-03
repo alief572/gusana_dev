@@ -33,6 +33,7 @@ $id_bentuk = $this->uri->segment(3);
 						<th>Product Type</th>
 						<th>Product Category</th>
 						<th>Product Jenis</th>
+						<th>Product Master (Mandarin)</th>
 						<th>Product Master</th>
 						<th>Status</th>
 						<?php if ($ENABLE_MANAGE) : ?>
@@ -171,6 +172,7 @@ $id_bentuk = $this->uri->segment(3);
 						<th>Product Type</th>
 						<th>Product Category</th>
 						<th>Product Jenis</th>
+						<th>Product Master (Mandarin)</th>
 						<th>Product Master</th>
 						<th>Packaging</th>
 						<th>Conversion</th>

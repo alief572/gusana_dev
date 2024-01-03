@@ -293,6 +293,7 @@ class Penawaran extends Admin_Controller
                     'nilai_disc' => $nilai_disc,
                     'ppn_persen' => $post['persen_ppn'],
                     'ppn_num' => $ppn_num,
+                    'biaya_pengiriman' => str_replace(',', '', $post['biaya_pengiriman']),
                     'grand_total' => $grand_total,
                     'sts' => 'request_approval',
                     'keterangan' => $post['keterangan'],
@@ -319,6 +320,7 @@ class Penawaran extends Admin_Controller
                     'nilai_disc' => $nilai_disc,
                     'ppn_persen' => $post['persen_ppn'],
                     'ppn_num' => $ppn_num,
+                    'biaya_pengiriman' => str_replace(',', '', $post['biaya_pengiriman']),
                     'grand_total' => $grand_total,
                     'revisi' => $revisi,
                     'diubah_oleh' => $this->auth->user_id(),
@@ -807,6 +809,8 @@ class Penawaran extends Admin_Controller
         $disc_val = $this->input->post('disc_val');
         $disc_per = $this->input->post('disc_per');
         $persen_ppn = $this->input->post('persen_ppn');
+        $ppn_type = $this->input->post('ppn_type');
+        $biaya_pengiriman = $this->input->post('biaya_pengiriman');
 
         $this->db->select('SUM(a.total_harga) AS ttl_harga');
         $this->db->from('ms_penawaran_detail a');
@@ -826,8 +830,11 @@ class Penawaran extends Admin_Controller
         $total_after_disc = ($get_ttl_harga->ttl_harga - $nilai_disc);
 
         $nilai_ppn = ($total_after_disc * $persen_ppn / 100);
+        if($ppn_type !== '1'){
+            $nilai_ppn = 0;
+        }
 
-        $total_grand_total = ($total_after_disc + $nilai_ppn);
+        $total_grand_total = ($total_after_disc + $nilai_ppn + $biaya_pengiriman);
 
         echo json_encode([
             'total_harga' => $total_harga,

@@ -34,7 +34,7 @@
         <select name="parent_id" id="parent_id" class="select form-control parent_id">
             <option value=""></option>
             <?php if ($parent) foreach ($parent as $k => $par) : ?>
-            <option value="<?= $k; ?>" <?= ($k == $parent) ? 'selected' : ''; ?>><?= $par ; ?></option>
+            <option value="<?= $k; ?>" <?= ($k == $data->parent_id) ? 'selected' : ''; ?>><?= $par ; ?></option>
             <?php endforeach; ?>
         </select>
     </div>
@@ -117,7 +117,7 @@
 <script type="text/javascript">
 $(document).ready(function() {
     $('.select').select2({
-        minimumResultsForSearch: -1,
+        // minimumResultsForSearch: -1,
         placeholder: 'Choose one',
         dropdownParent: $('#dialog-popup'),
         width: "100%",

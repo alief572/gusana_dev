@@ -22,7 +22,8 @@ $ENABLE_DELETE  = has_permission('Divisi.Delete');
                     <tr>
                         <th width="15" class="text-center">No</th>
                         <th class="desktop tablet mobile tx-bold tx-dark" width="">Nama Marketing / Sales</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Kode Sales</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Kode Nama</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Kode Angka</th>
                         <?php if ($ENABLE_MANAGE) : ?>
                             <th class="desktop text-center no-sort" width="110">Action</th>
                         <?php endif; ?>
@@ -33,7 +34,8 @@ $ENABLE_DELETE  = has_permission('Divisi.Delete');
                     <tr>
                         <th>No</th>
                         <th>Nama Marketing / Sales</th>
-                        <th>Kode Sales</th>
+                        <th>Kode Nama</th>
+                        <th>Kode Angka</th>
                         <?php if ($ENABLE_MANAGE) : ?>
                             <th>Action</th>
                         <?php endif; ?>

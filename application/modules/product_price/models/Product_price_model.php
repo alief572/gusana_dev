@@ -78,10 +78,10 @@ class Product_price_model extends BF_Model
 				$nomor = ($total_data - $start_dari) - $urut2;
 			}
 
-			if($row['sts_price_list'] == '1'){
+			$check_product_set = $this->db->get_where('ms_product_set', ['id_product' => $row['code_lv4']])->num_rows();
+
+			if($check_product_set > 0){
 				$status = '<div class="text-light badge badge-success">Set</div>';
-			}else if($row['sts_price_list'] == '2'){
-				$status = '<div class="text-light badge badge-danger">Reject</div>';
 			}else{
 				$status = '<div class="text-light badge badge-warning">Not Set</div>';
 			}

@@ -10,8 +10,12 @@
                 <input type="text" name="nama_sales" id="" class="form-control form-control-sm" value="<?= $data_sales->name ?>" readonly>
             </div>
             <div class="form-group">
-                <label for="">Kode Sales</label>
-                <input type="text" name="kode_sales" id="" class="form-control form-control-sm" value="<?= $data_sales->kode_sales ?>">
+                <label for="">Kode Nama</label>
+                <input type="text" name="kode_nama" id="" class="form-control form-control-sm" value="<?= $data_sales->kode_nama ?>">
+            </div>
+            <div class="form-group">
+                <label for="">Kode Angka</label>
+                <input type="text" name="kode_angka" id="" class="form-control form-control-sm" value="<?= $data_sales->kode_angka ?>">
             </div>
         </div>
     </div>

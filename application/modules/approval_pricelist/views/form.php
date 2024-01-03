@@ -29,7 +29,7 @@
             <input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format(($get_data->propose_price_list - ($get_data->cost_price_final / $get_data->qty_hopper)), 2) ?>" readonly>
         </div>
         <div class="col-6">
-            <label for="kode_produk">Price Before</label>
+            <label for="kode_produk">Market Price Before</label>
             <input type="text" name="price_before" id="" class="form-control form-control-sm text-right" value="<?= number_format($get_data->price_list, 2) ?>" readonly>
         </div>
         <div class="col-6">
@@ -37,12 +37,20 @@
             <input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format(($get_data->propose_price_list/($get_data->cost_price_final / $get_data->qty_hopper)) * 100,2) ?>%" readonly>
         </div>
         <div class="col-6">
-            <label for="">Price Approve</label>
+            <label for="">Market Price Approve</label>
             <input type="text" name="price_approve" id="" class="form-control form-control-sm text-right autonum" value="<?= $get_data->propose_price_list ?>" required>
         </div>
         <div class="col-6">
             <label for="">Expired Date</label>
             <input type="date" name="expired_date" id="" class="form-control form-control-sm autonum" value="" required>
+        </div>
+        <div class="col-6">
+            <label for="">Distributor Price Before</label>
+            <input type="text" name="" id="" class="form-control form-control-sm text-right" value="<?= number_format($get_data->dist_price, 2) ?>" readonly>
+        </div>
+        <div class="col-6">
+            <label for="">Distributor Price</label>
+            <input type="text" name="dist_price" id="" class="form-control form-control-sm text-right autonum" value="">
         </div>
         <div class="col-12">
             <label for="">Action</label>

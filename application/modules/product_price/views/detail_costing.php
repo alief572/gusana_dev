@@ -229,6 +229,17 @@ foreach ($detail as $val => $valx) {
                                 $rate         = '';
                                 $cost        = ($product_price[0]['propose_costing'] / ($product_price[0]['cost_price_final'] / $product_price[0]['qty_hopper']) * 100);
                             }
+                            if ($value['code'] == '24') {
+                                $rate         = '';
+
+                                $get_product_set = $this->db->get_where('ms_product_set', ['id_product' => $product_price[0]['code_lv4']])->num_rows();
+                                if($get_product_set > 0){
+                                    $cost = '<div class="badge badge-success">Set</div>';
+                                }else{
+                                    $cost = '<div class="badge badge-danger">Not Set</div>';
+                                }
+                                
+                            }
                             echo "<tr>";
                             echo "<td class='text-center'>" . $nomor . "</td>";
                             echo "<td>" . $value['element_costing'] . "</td>";
@@ -242,11 +253,42 @@ foreach ($detail as $val => $valx) {
                                     echo "<td class='text-right selisih'>" . number_format($cost, 2) . "</td>";
                                 } else if ($value['code'] == '23') {
                                     echo "<td class='text-right persentase'>" . number_format($cost, 2) . "%</td>";
-                                } else {
+                                }else if($value['code'] == '24'){
+                                    $hasil = '';
+                                    $get_product_set = $this->db->get_where('ms_product_set', ['id_product' => $product_price[0]['code_lv4']])->num_rows();
+                                    if($get_product_set > 0){
+                                        echo "
+                                        <td class='text-center'>
+                                            Set
+                                        </td>";
+                                    }else{
+                                        echo "
+                                        <td class='text-center'>
+                                            Not Set
+                                        </td>";
+                                    }
+                                }
+                                 else {
                                     echo "<td class='text-right'>" . number_format($cost, 2) . "</td>";
                                 }
                             }
-                            echo "<td>" . $value['keterangan'] . "</td>";
+                            if($value['code'] == 24){
+                                $hasil = '';
+                                $get_product_set = $this->db->get_where('ms_product_set', ['id_product' => $product_price[0]['code_lv4']])->result();
+                                $x = 1;
+                                foreach($get_product_set as $product_set) :
+                                    if($x == 1){
+                                        $hasil = $hasil . $product_set->nama_product;
+                                    }else{
+                                        $hasil = $hasil . ' and '.$product_set->nama_product;
+                                    }
+                                    $x++;
+                                endforeach;
+                                
+                                echo "<td class='text-left'>".$hasil."</td>";
+                            }else{
+                                echo "<td>" . $value['keterangan'] . "</td>";
+                            }
                             echo "<td></td>";
                             echo "</tr>";
                         }

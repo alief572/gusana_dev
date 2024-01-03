@@ -31,6 +31,11 @@ $ENABLE_DELETE  = has_permission('Product_Master.Delete');
 						<td colspan="4"><?= $results['inventory_4']->nama; ?></td>
 					</tr>
 					<tr>
+						<th>Product Master (Mandarin)</th>
+						<td>:</td>
+						<td colspan="4"><?= $results['inventory_4']->nama_mandarin; ?></td>
+					</tr>
+					<tr>
 						<th>Product Code</th>
 						<td>:</td>
 						<td><?= $results['inventory_4']->product_code; ?></td>

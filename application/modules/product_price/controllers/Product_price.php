@@ -902,4 +902,147 @@ class Product_price extends Admin_Controller
 
 		echo json_encode($hasil);
 	}
+
+	public function add_product_set(){
+		$this->auth->restrict($this->viewPermission);
+		
+		$this->db->select('a.id_category3, a.nama');
+		$this->db->from('ms_product_category3 a');
+		$this->db->where('a.aktif =', 1);
+		$this->db->where('a.id_type !=', 'P231100013');
+        $get_product = $this->db->get()->result();
+
+		$get_product_set = $this->db->get_where('ms_product_category3', ['aktif' => 1, 'id_type' => 'P231100013'])->result();
+
+		$data = array();
+		$data = [
+			'list_product' => $get_product,
+			'list_product_set' => $get_product_set
+		];
+
+
+        $this->template->set('results', $data);
+        $this->template->render('add_product_set');
+	}
+
+	public function save_product_set(){
+		$post = $this->input->post();
+
+		$this->db->select('a.nama');
+		$this->db->from('ms_product_category3 a');
+		$this->db->where('a.id_category3 =', $post['product_master']);
+		$get_product_master = $this->db->get()->row();
+
+		$this->db->select('a.nama');
+		$this->db->from('ms_product_category3 a');
+		$this->db->where('a.id_category3 =', $post['set_product']);
+		$get_set_product = $this->db->get()->row();
+
+		$this->db->trans_begin();
+
+		$this->db->insert('ms_product_set', [
+			'id_product' => $post['product_master'],
+			'nama_product' => $get_product_master->nama,
+			'id_product_set' => $post['set_product'],
+			'nama_product_set' => $get_set_product->nama,
+			'dibuat_oleh' => $this->auth->user_id(),
+			'dibuat_tgl' => date('Y-m-d H:i:s')
+		]);
+
+		if($this->db->trans_status() === FALSE){
+			$this->db->trans_rollback();
+		}else{
+			$this->db->trans_commit();
+		}
+
+		$data = array();
+
+		$this->db->select('a.*');
+		$this->db->from('ms_product_set a');
+		$this->db->where('a.id_product =', $post['product_master']);
+		$get_list_set_product = $this->db->get()->result();
+
+		$x = 1;
+		foreach($get_list_set_product as $set_product) :
+			$data[] = '
+				<tr>
+					<td class="text-center">Product '.$x.'</td>
+					<td class="text-center">'.$set_product->nama_product_set.'</td>
+					<td class="text-center">
+						<button type="button" class="btn btn-sm btn-danger del_set_product" data-id="'.$set_product->id.'">
+							<i class="fa fa-trash"></i>
+						</button>
+					</td>
+				</tr>
+			';
+			$x++;
+		endforeach;
+		
+		echo json_encode(['hasil' => $data]);
+	}
+
+	public function get_list_product_set(){
+		$post = $this->input->post();
+
+		$this->db->select('a.*');
+		$this->db->from('ms_product_set a');
+		$this->db->where('a.id_product =', $post['product_master']);
+		$get_list_product_set = $this->db->get()->result();
+
+		$data = array();
+		$x = 1;
+		foreach($get_list_product_set as $product_set) :
+			$data[] = '
+				<tr>
+					<td class="text-center">Product '.$x.'</td>
+					<td class="text-center">'.$product_set->nama_product_set.'</td>
+					<td class="text-center">
+						<button type="button" class="btn btn-sm btn-danger del_set_product" data-id="'.$product_set->id.'">
+							<i class="fa fa-trash"></i>
+						</button>
+					</td>
+				</tr>
+			';
+			$x++;
+		endforeach;
+
+		echo json_encode(['hasil' => $data]);
+	}
+
+	public function del_set_product(){
+		$post = $this->input->post();
+
+		$this->db->trans_begin();
+
+		$this->db->delete('ms_product_set', ['id' => $post['id']]);
+		if($this->db->trans_status() === FALSE){
+			$this->db->trans_rollback();
+		}else{
+			$this->db->trans_commit();
+		}
+
+		$this->db->select('a.*');
+		$this->db->from('ms_product_set a');
+		$this->db->where('a.id_product =', $post['product_master']);
+		$get_list_product_set = $this->db->get()->result();
+
+		$data = array();
+		$x = 1;
+		foreach($get_list_product_set as $product_set) :
+			$data[] = '
+				<tr>
+					<td class="text-center">Product '.$x.'</td>
+					<td class="text-center">'.$product_set->nama_product_set.'</td>
+					<td class="text-center">
+						<button type="button" class="btn btn-sm btn-danger del_set_product" data-id="'.$product_set->id.'">
+							<i class="fa fa-trash"></i>
+						</button>
+					</td>
+				</tr>
+			';
+			$x++;
+		endforeach;
+
+		echo json_encode(['hasil' => $data]);
+	}
 }

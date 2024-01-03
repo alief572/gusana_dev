@@ -65,9 +65,7 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
                         <th class="text-center pd-10">Packaging</th>
                         <th class="text-center pd-10">Total Qty (Kaleng)</th>
                         <th class="text-center pd-10">Aktual Qty (Kaleng)</th>
-                        <th class="text-center pd-10">Sisa Produksi Sebelumnya (Kaleng)</th>
-                        <th class="text-center pd-10">Total (Kaleng)</th>
-                        <th class="text-center pd-10">Sisa Produk (Kaleng)</th>
+                        <th class="text-center pd-10">Sisa Produk (Kg)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -75,8 +73,6 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
                     <td class="text-center"><?= $results['data_product_so']->konversi . ' ' . $results['data_product_so']->packaging ?></td>
                     <td class="text-center"><?= $results['data_product_so']->packaging ?></td>
                     <td class="text-center"><?= number_format(($results['data_product_so']->propose / $results['data_product_so']->konversi), 2) . ' ' . $results['data_product_so']->packaging ?></td>
-                    <td class="text-center"></td>
-                    <td class="text-center"></td>
                     <td class="text-center"></td>
                     <td class="text-center"></td>
                 </tbody>

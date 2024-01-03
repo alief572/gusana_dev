@@ -42,6 +42,12 @@
  								<input type="text" name="nm_lv_4" id="" class="form-control form-control-sm nm_lv_4" placeholder="Product Master">
  							</th>
  						</tr>
+						 <tr style="border:none !important;">
+							<th>Product Master (Mandarin)</th>
+							<th colspan="5">
+								<input type="text" name="nm_lv_4_mandarin" id="" class="form-control form-control-sm" placeholder="Product Master (Mandarin)" value="">
+							</th>
+						</tr>
  						<tr style="border:none !important;">
  							<th>Product Code</th>
  							<th>

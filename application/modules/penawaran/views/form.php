@@ -203,10 +203,17 @@
                         <td colspan="7"></td>
                         <td class="">PPN</td>
                         <td class="" colspan="2">
-                            <input type="number" name="persen_ppn" id="" class="form-control form-control-sm text-right persen_ppn" placeholder="Input PPN Percent" value="<?= (isset($data_penawaran)) ? number_format($data_penawaran->ppn_persen, 2) : null ?>">
+                            <input type="number" name="persen_ppn" id="" class="form-control form-control-sm text-right persen_ppn" placeholder="Input PPN Percent" value="11" readonly>
                         </td>
                         <td class="text-right nilai_ppn">
                             <?= (isset($data_penawaran)) ? number_format($data_penawaran->ppn_num, 2) : null ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="7"></td>
+                        <td class="">Biaya Pengiriman</td>
+                        <td class="" colspan="3">
+                            <input type="text" name="biaya_pengiriman" id="" class="form-control form-control-sm text-right biaya_pengiriman autonum" placeholder="Input Biaya Pengiriman" value="<?= (isset($data_penawaran)) ? number_format($data_penawaran->biaya_pengiriman, 2) : null ?>">
                         </td>
                     </tr>
                     <tr>
@@ -215,7 +222,7 @@
                             <span style="font-weight:bold;">Grand Total</span>
                         </td>
                         <td class="text-right total_grand_total">
-                            <?= (isset($data_penawaran)) ? number_format($total_harga - $data_penawaran->nilai_disc + $data_penawaran->ppn_num, 2) : null ?>
+                            <?= (isset($data_penawaran)) ? number_format($total_harga - $data_penawaran->nilai_disc + $data_penawaran->ppn_num + $data_penawaran->biaya_pengiriman, 2) : null ?>
                         </td>
                     </tr>
                 </tbody>
@@ -339,12 +346,21 @@
             disc_per = parseFloat(disc_per);
         }
 
+        var ppn_type = $('.ppn_type').val();
         var persen_ppn = $('.persen_ppn').val();
         if (persen_ppn == null) {
             persen_ppn = 0;
         } else {
             persen_ppn = persen_ppn.split(',').join('');
             persen_ppn = parseFloat(persen_ppn);
+        }
+
+        var biaya_pengiriman = $('.biaya_pengiriman').val();
+        if (biaya_pengiriman == null) {
+            biaya_pengiriman = 0;
+        } else {
+            biaya_pengiriman = biaya_pengiriman.split(',').join('');
+            biaya_pengiriman = parseFloat(biaya_pengiriman);
         }
 
         $.ajax({
@@ -354,7 +370,9 @@
                 'id_penawaran': id_penawaran,
                 'disc_val': disc_val,
                 'disc_per': disc_per,
-                'persen_ppn': persen_ppn
+                'persen_ppn': persen_ppn,
+                'ppn_type': ppn_type,
+                'biaya_pengiriman': biaya_pengiriman
             },
             cache: false,
             dataType: 'json',
@@ -457,13 +475,17 @@
 
     $(document).on('change', '.ppn_type', function() {
         var ppn_type = $(this).val();
-        if (ppn_type == 1) {
-            $('.persen_ppn').attr('readonly', false);
-            $('.persen_ppn').val(0);
-        } else {
-            $('.persen_ppn').attr('readonly', true);
-            $('.persen_ppn').val(0);
-        }
+        // if (ppn_type == 1) {
+        //     $('.persen_ppn').attr('readonly', false);
+        //     $('.persen_ppn').val(11);
+        // } else {
+        //     $('.persen_ppn').attr('readonly', true);
+        //     $('.persen_ppn').val(11);
+        // }
+        $('.persen_ppn').attr('readonly', true);
+        $('.persen_ppn').val(11);
+
+        hitung_all();
     });
 
     $(document).on('keyup', '.disc_input', function() {
@@ -512,7 +534,8 @@
         });
     });
 
-    $(document).on('click', '.add_penawaran_detail', function() {
+    $(document).on('click', '.add_penawaran_detail', function(e) {
+        e.preventDefault();
         var id_penawaran = $('.id_penawaran').val();
         var produk_detail = $('.produk_detail').val();
         var lot_size_detail = $('.lot_size_detail').val();
@@ -609,5 +632,9 @@
                 hitung_all();
             }
         });
+    });
+
+    $(document).on('keyup', '.biaya_pengiriman', function(){
+        hitung_all();
     });
 </script>

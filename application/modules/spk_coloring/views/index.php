@@ -1,8 +1,8 @@
 <?php
-$ENABLE_ADD     = has_permission('Menu_SPK.Add');
-$ENABLE_MANAGE  = has_permission('Menu_SPK.Manage');
-$ENABLE_VIEW    = has_permission('Menu_SPK.View');
-$ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
+$ENABLE_ADD     = has_permission('Coloring.Add');
+$ENABLE_MANAGE  = has_permission('Coloring.Manage');
+$ENABLE_VIEW    = has_permission('Coloring.View');
+$ENABLE_DELETE  = has_permission('Coloring.Delete');
 ?>
 
 <div class="br-pagetitle">

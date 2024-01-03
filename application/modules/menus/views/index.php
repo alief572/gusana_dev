@@ -174,7 +174,7 @@ $ENABLE_DELETE  = has_permission('menus.Delete');
                                 $('.dataTables_length select').select2({
                                     // containerCs  sClass: 'select2-outline-success',
                                     // dropdownCssClass: 'select2-hidden-accessible hover-success',
-                                    minimumResultsForSearch: -1
+                                    // minimumResultsForSearch: -1
                                 })
                             } else {
                                 Lobibox.notify('warning', {
@@ -231,7 +231,7 @@ $ENABLE_DELETE  = has_permission('menus.Delete');
                     $('.dataTables_length select').select2({
                         // containerCs  sClass: 'select2-outline-success',
                         // dropdownCssClass: 'select2-hidden-accessible hover-success',
-                        minimumResultsForSearch: -1
+                        // minimumResultsForSearch: -1
                     })
 					
 					window.location.href = base_url + active_controller;
