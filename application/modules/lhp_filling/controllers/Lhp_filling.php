@@ -219,12 +219,6 @@ class Lhp_filling extends Admin_Controller
         $aktual_qty = $this->input->post('aktual_qty');
         $sisa_produk = $this->input->post('sisa_produk');
 
-        $no_packaging1 = $this->input->post('no_packaging1');
-        $no_packaging2 = $this->input->post('no_packaging2');
-        $no_packaging3 = $this->input->post('no_packaging3');
-        $no_packaging4 = $this->input->post('no_packaging4');
-        $no_packaging5 = $this->input->post('no_packaging5');
-
         $berat_aktual1 = $this->input->post('berat_aktual1');
         $berat_aktual2 = $this->input->post('berat_aktual2');
         $berat_aktual3 = $this->input->post('berat_aktual3');
@@ -236,11 +230,6 @@ class Lhp_filling extends Admin_Controller
         $this->db->update('ms_create_spk', [
             'product_aktual_qty' => $aktual_qty,
             'sisa_produk' => $sisa_produk,
-            'no_packaging1' => $no_packaging1,
-            'no_packaging2' => $no_packaging2,
-            'no_packaging3' => $no_packaging3,
-            'no_packaging4' => $no_packaging4,
-            'no_packaging5' => $no_packaging5,
             'berat_aktual_1' => $berat_aktual1,
             'berat_aktual_2' => $berat_aktual2,
             'berat_aktual_3' => $berat_aktual3,

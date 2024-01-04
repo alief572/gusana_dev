@@ -72,7 +72,7 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
                     <td class="text-center">1</td>
                     <td class="text-center"><?= $results['data_product_so']->konversi . ' ' . $results['data_product_so']->packaging ?></td>
                     <td class="text-center"><?= $results['data_product_so']->packaging ?></td>
-                    <td class="text-center"><?= number_format(($results['data_product_so']->propose / $results['data_product_so']->konversi), 2).' '.$results['data_product_so']->packaging ?></td>
+                    <td class="text-center"><?= number_format(($results['data_product_so']->propose / $results['data_product_so']->konversi / ($results['data_product_so']->propose / $results['data_bom']->qty_hopper)), 2).' '.$results['data_product_so']->packaging ?></td>
                     <td class="text-center"></td>
                     <td class="text-center"></td>
                 </tbody>
@@ -84,12 +84,12 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
                         <th class="text-center pd-10" colspan="6">Aktual pengecekan berat per packaging (Pengecekan Acak)</th>
                     </tr>
                     <tr>
-                        <th class="text-center pd-10">No. Packaging</th>
-                        <th class="text-center pd-10"></th>
-                        <th class="text-center pd-10"></th>
-                        <th class="text-center pd-10"></th>
-                        <th class="text-center pd-10"></th>
-                        <th class="text-center pd-10"></th>
+                        <th class="text-center pd-10">No. Sample</th>
+                        <th class="text-center pd-10">#1</th>
+                        <th class="text-center pd-10">#2</th>
+                        <th class="text-center pd-10">#3</th>
+                        <th class="text-center pd-10">#4</th>
+                        <th class="text-center pd-10">#5</th>
                     </tr>
                     <tr>
                         <th class="text-center pd-10">Berat Aktual (Kg)</th>

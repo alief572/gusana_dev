@@ -15,7 +15,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 <div class="d-flex align-items-center justify-content-between pd-x-20 pd-sm-x-30 pd-t-25 mg-b-20 mg-sm-b-30">
     <?php echo Template::message(); ?>
     <?php if ($ENABLE_ADD) : ?>
-        <button class="btn btn-primary btn-oblong add" href="javascript:void(0)" title="Add"><i class="fa fa-plus">&nbsp;</i>Add Penawaran</button>
+        <a class="btn btn-primary btn-oblong add" href="penawaran/add/new" title="Add"><i class="fa fa-plus">&nbsp;</i>Add Penawaran</a>
         <!-- <button type="button" class="btn btn-success btn-oblong" onclick="loadData()" title="Add"><i class="fa fa-plus">&nbsp;</i>Refresh</button> -->
     <?php endif; ?>
 </div>
@@ -32,7 +32,6 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         <th class="desktop tablet mobile tx-bold tx-dark" width="">Nama Marketing</th>
                         <th class="desktop tablet mobile tx-bold tx-dark" width="">Nilai Penawaran</th>
                         <th class="desktop tablet mobile tx-bold tx-dark" width="">Tanggal Penawaran</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Keterangan</th>
                         <th class="desktop tablet mobile tx-bold tx-dark" width="">Revisi</th>
                         <th class="desktop tablet mobile tx-bold tx-dark" width="">Status</th>
                         <?php if ($ENABLE_MANAGE) : ?>
@@ -49,7 +48,6 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         <th>Nama Marketing</th>
                         <th>Nilai Penawaran</th>
                         <th>Tanggal Penawaran</th>
-                        <th>Keterangan</th>
                         <th>Revisi</th>
                         <th>Status</th>
                         <?php if ($ENABLE_MANAGE) : ?>
@@ -95,21 +93,22 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     })
 
     $(document).on('click', '.add', function() {
+        
         $.ajax({
             type: 'POST',
             url: siteurl + thisController + 'add',
             success: function(data) {
-                $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Add Penawaran")
-                $('#dialog-popup .modal-dialog').css({
-                    'max-width': '90%'
-                })
-                $("#dialog-popup").modal();
-                $("#dialog-popup .modal-body").html(data);
-                $("#save").removeClass('d-none');
+                // $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Add Penawaran")
+                // $('#dialog-popup .modal-dialog').css({
+                //     'max-width': '90%'
+                // })
+                // $("#dialog-popup").modal();
+                // $("#dialog-popup .modal-body").html(data);
+                // $("#save").removeClass('d-none');
 
-                $("#save").removeClass('btn-warning');
-                $("#save").addClass('btn-primary');
-                $("#save").html('<i class="fa fa-save"></i> Save');
+                // $("#save").removeClass('btn-warning');
+                // $("#save").addClass('btn-primary');
+                // $("#save").html('<i class="fa fa-save"></i> Save');
             }
         })
     });
@@ -141,16 +140,16 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             type: 'GET',
             url: siteurl + thisController + 'request_approval/' + id,
             success: function(data) {
-                $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Request Approval Penawaran")
-                $('#dialog-popup .modal-dialog').css({
-                    'max-width': '90%'
-                })
-                $("#dialog-popup").modal();
-                $("#dialog-popup .modal-body").html(data);
-                $("#save").removeClass('d-none');
-                $("#save").removeClass('btn-primary');
-                $("#save").addClass('btn-warning');
-                $("#save").html('<i class="fa fa-check"></i> Request');
+                // $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Request Approval Penawaran")
+                // $('#dialog-popup .modal-dialog').css({
+                //     'max-width': '90%'
+                // })
+                // $("#dialog-popup").modal();
+                // $("#dialog-popup .modal-body").html(data);
+                // $("#save").removeClass('d-none');
+                // $("#save").removeClass('btn-primary');
+                // $("#save").addClass('btn-warning');
+                // $("#save").html('<i class="fa fa-check"></i> Request');
             }
         })
     });

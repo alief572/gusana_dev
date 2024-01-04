@@ -92,7 +92,7 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
                     <td class="text-center">1</td>
                     <td class="text-center"><?= $results['data_product_so']->konversi . ' ' . $results['data_product_so']->packaging ?></td>
                     <td class="text-center"><?= $results['data_product_so']->packaging ?></td>
-                    <td class="text-center"><?= number_format(($results['data_product_so']->propose / $results['data_product_so']->konversi), 2) . ' ' . $results['data_product_so']->packaging ?></td>
+                    <td class="text-center"><?= number_format(($results['data_product_so']->propose / $results['data_product_so']->konversi / ($results['data_product_so']->propose / $results['data_bom']->qty_hopper)), 2).' '.$results['data_product_so']->packaging ?></td>
                     <td class="text-center">
                         <input type="number" name="aktual_qty" id="" class="form-control form-control-sm text-right aktual_qty" step="0.01" value="<?= $results['data_spk']->product_aktual_qty ?>" <?= ($results['closing_spk'] == 1) ? 'readonly' : null ?>>
                     </td>
@@ -108,12 +108,12 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
                         <th class="text-center pd-10" colspan="8">Aktual pengecekan berat per packaging (Pengecekan Acak)</th>
                     </tr>
                     <tr>
-                        <th class="text-center pd-10">No. Packaging</th>
-                        <th class="text-center pd-10"><input type="text" name="no_packaging1" id="" class="form-control form-control-sm" value="<?= $results['data_spk']->no_packaging1 ?>" <?= ($results['closing_spk'] == 1) ? 'readonly' : null ?>></th>
-                        <th class="text-center pd-10"><input type="text" name="no_packaging2" id="" class="form-control form-control-sm" value="<?= $results['data_spk']->no_packaging2 ?>" <?= ($results['closing_spk'] == 1) ? 'readonly' : null ?>></th>
-                        <th class="text-center pd-10"><input type="text" name="no_packaging3" id="" class="form-control form-control-sm" value="<?= $results['data_spk']->no_packaging3 ?>" <?= ($results['closing_spk'] == 1) ? 'readonly' : null ?>></th>
-                        <th class="text-center pd-10"><input type="text" name="no_packaging4" id="" class="form-control form-control-sm" value="<?= $results['data_spk']->no_packaging4 ?>" <?= ($results['closing_spk'] == 1) ? 'readonly' : null ?>></th>
-                        <th class="text-center pd-10"><input type="text" name="no_packaging5" id="" class="form-control form-control-sm" value="<?= $results['data_spk']->no_packaging5 ?>" <?= ($results['closing_spk'] == 1) ? 'readonly' : null ?>></th>
+                        <th class="text-center pd-10">No. Sample</th>
+                        <th class="text-center pd-10">#1</th>
+                        <th class="text-center pd-10">#2</th>
+                        <th class="text-center pd-10">#3</th>
+                        <th class="text-center pd-10">#4</th>
+                        <th class="text-center pd-10">#5</th>
                     </tr>
                     <tr>
                         <th class="text-center pd-10">Berat Aktual (Kg)</th>

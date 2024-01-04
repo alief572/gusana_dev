@@ -469,7 +469,7 @@ class Lhp_mixing_2 extends Admin_Controller
             WHERE
                 a.id_spk = "'.$id_spk.'"
                 AND a.id_so = "'.$get_data_spk->id_so.'"
-                AND a.id_proses = "1"
+                AND a.id_proses = "6"
             GROUP BY a.id_category1
 
         ')->result();
