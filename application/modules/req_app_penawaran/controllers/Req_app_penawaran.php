@@ -11,12 +11,12 @@
  * This is controller for Master Employee
  */
 
-class Penawaran extends Admin_Controller
+class Req_app_penawaran extends Admin_Controller
 {
-    protected $viewPermission     = 'Penawaran.View';
-    protected $addPermission      = 'Penawaran.Add';
-    protected $managePermission = 'Penawaran.Manage';
-    protected $deletePermission = 'Penawaran.Delete';
+    protected $viewPermission     = 'Request_Approval.View';
+    protected $addPermission      = 'Request_Approval.Add';
+    protected $managePermission = 'Request_Approval.Manage';
+    protected $deletePermission = 'Request_Approval.Delete';
     public function __construct()
     {
         parent::__construct();
@@ -27,7 +27,7 @@ class Penawaran extends Admin_Controller
             'Aktifitas/aktifitas_model',
         ));
         $this->load->helper(['url', 'json']);
-        $this->template->title('Penawaran');
+        $this->template->title('Request Approval Penawaran');
         $this->template->page_icon('fas fa-user-tie');
 
         date_default_timezone_set('Asia/Bangkok');
@@ -48,10 +48,9 @@ class Penawaran extends Admin_Controller
 
         $string = $this->db->escape_like_str($search);
         $sql = "SELECT *
-        FROM ms_penawaran WHERE 1=1 AND (sts != 'rejected' OR sts IS NULL)
+        FROM ms_penawaran WHERE 1=1 AND sts = 'request_approval' 
         AND (
             id_penawaran LIKE '%$string%' OR
-            id_quote LIKE '%$string%' OR
             nm_cust LIKE '%$string%' OR
             nm_marketing LIKE '%$string%' OR
             nilai_penawaran LIKE '%$string%' OR
@@ -94,7 +93,8 @@ class Penawaran extends Admin_Controller
                 $nomor = ($total_data - $start_dari) - $urut2;
             }
 
-            $view         = '<button type="button" class="btn btn-primary btn-sm view" data-toggle="tooltip" title="View" data-id="' . str_replace('/', '-', $row['id_penawaran']) . '"><i class="fa fa-eye"></i></button>';
+            // $view         = '<button type="button" class="btn btn-primary btn-sm view" data-toggle="tooltip" title="View" data-id="' . str_replace('/', '-', $row['id_penawaran']) . '"><i class="fa fa-eye"></i></button>';
+            $view         = '<a href="req_app_penawaran/add/' . str_replace('/', '-', $row['id_penawaran']) . '" class="btn btn-info btn-sm" data-toggle="tooltip" title="View"><i class="fa fa-eye"></i></a>';
 
             $edit         = '<a href="penawaran/add/' . str_replace('/', '-', $row['id_penawaran']) . '" class="btn btn-success btn-sm" data-toggle="tooltip" title="Edit"><i class="fa fa-edit"></i></a>';
 
@@ -106,40 +106,16 @@ class Penawaran extends Admin_Controller
 
             $request = '<a href="penawaran/request_approval/' . str_replace('/', '-', $row['id_penawaran']) . '" class="btn btn-warning btn-sm request_approval" data-toggle="tooltip" title="Request Approval" data-id="' . str_replace('/', '-', $row['id_penawaran']) . '"><i class="fa fa-user"></i></a>';
 
-            $buttons     = $view . "&nbsp;" . $edit . "&nbsp;" . $delete . "&nbsp;" . $print . "&nbsp;" . $send . "&nbsp;" . $request;
-
-            if ($row['sts'] == '' || $row['sts'] == null) {
-                $buttons = $edit . ' ' . $request . ' ' . $print;
-            }
-            if ($row['sts'] == 'approved') {
-                $buttons = $print . ' ' . $view . ' ' . $send;
-            }
-            if ($row['sts'] == 'request_approval') {
-                $buttons = $view;
-            }
+            $buttons     = $view;
 
             $status = '';
-            if ($row['sts'] == 'send') {
-                $status = '<div class="badge badge-warning text-light">Send</div>';
-            } else if ($row['sts'] == 'request_approval') {
-                $status = '<div class="badge badge-info">Request Approval</div>';
-            } else if ($row['sts'] == 'approved') {
-                $status = '<div class="badge badge-success text-light">Approved</div>';
-            } else if ($row['sts'] == 'rejected') {
-                $status = '<div class="badge badge-danget text-light">Reject</div>';
-            } else {
-                $status = '<div class="badge badge-warning text-light">Draft</div>';
-            }
-
-            if ($row['id_quote'] !== null && $row['id_quote'] !== '') {
-                $id = $row['id_quote'];
-            } else {
-                $id = $row['id_penawaran'];
+            if ($row['sts'] == "request_approval") {
+                $status = '<div class="badge badge-info">Waiting Approval</div>';
             }
 
             $nestedData   = array();
             $nestedData[]  = $nomor;
-            $nestedData[]  = $id;
+            $nestedData[]  = $row['id_penawaran'];
             $nestedData[]  = $row['nm_cust'];
             $nestedData[]  = $row['nm_marketing'];
             $nestedData[]  = number_format($row['nilai_penawaran'], 2);
@@ -165,7 +141,7 @@ class Penawaran extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Penawaran');
+        $this->template->title('Request Approval Penawaran');
         $this->template->render('index');
     }
 
@@ -262,7 +238,6 @@ class Penawaran extends Admin_Controller
     {
         $this->auth->restrict($this->managePermission);
         $id = str_replace('-', '/', $id);
-        $id = str_replace('SP/', 'SP-', $id);
 
         $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id])->row();
         // echo '<pre>';
@@ -284,6 +259,7 @@ class Penawaran extends Admin_Controller
         $post = $this->input->post();
 
         $check_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $post['id_penawaran']])->num_rows();
+        $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $post['id_penawaran']])->row();
 
         $get_marketing = $this->db->get_where('employees', ['id' => $post['sales_marketing']])->row();
         $get_customer = $this->db->get_where('customers', ['id_customer' => $post['customer']])->row();
@@ -310,203 +286,69 @@ class Penawaran extends Admin_Controller
 
         $valid_sales = 1;
 
-        $this->db->trans_begin();
-        if ($check_penawaran > 0) {
-            $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $post['id_penawaran']])->row();
-            $revisi = $get_penawaran->revisi + 1;
+        $id_quote = '';
+        if ($post['req_action'] == 1) {
 
-            if ($post['req_approval'] == 1) {
-                $this->db->update('ms_penawaran', [
-                    'id_marketing' => $post['sales_marketing'],
-                    'nm_marketing' => $get_marketing->name,
-                    'id_cust' => $post['customer'],
-                    'nm_cust' => $get_customer->customer_name,
-                    'id_pic_cust' => $post['pic_cust'],
-                    'nm_pic_cust' => $get_pic_cust->name,
-                    'nilai_penawaran' => $get_total_harga->ttl_harga,
-                    'tgl_penawaran' => $post['tgl_penawaran'],
-                    'ppn_type' => $post['ppn_type'],
-                    'total' => $get_total_harga->ttl_harga,
-                    'disc_num' => $post['disc_val'],
-                    'disc_persen' => $post['disc_per'],
-                    'nilai_disc' => $nilai_disc,
-                    'ppn_persen' => $post['persen_ppn'],
-                    'ppn_num' => $ppn_num,
-                    'biaya_pengiriman' => str_replace(',', '', $post['biaya_pengiriman']),
-                    'grand_total' => $grand_total,
-                    'sts' => 'request_approval',
-                    'keterangan' => $post['keterangan'],
-                    'deliver_date' => $post['deliver_date'],
-                    'deliver_type' => $post['deliver_type'],
-                    'address_cust' => $post['address_cust'],
-                    'diubah_oleh' => $this->auth->user_id(),
-                    'diubah_tgl' => date('Y-m-d H:i:s')
-                ], [
-                    'id_penawaran' => $post['id_penawaran']
-                ]);
-            } else {
-                $this->db->update('ms_penawaran', [
-                    'id_marketing' => $post['sales_marketing'],
-                    'nm_marketing' => $get_marketing->name,
-                    'id_cust' => $post['customer'],
-                    'nm_cust' => $get_customer->customer_name,
-                    'id_pic_cust' => $post['pic_cust'],
-                    'nm_pic_cust' => $get_pic_cust->name,
-                    'nilai_penawaran' => $get_total_harga->ttl_harga,
-                    'tgl_penawaran' => $post['tgl_penawaran'],
-                    'ppn_type' => $post['ppn_type'],
-                    'total' => $get_total_harga->ttl_harga,
-                    'disc_num' => $post['disc_val'],
-                    'disc_persen' => $post['disc_per'],
-                    'nilai_disc' => $nilai_disc,
-                    'ppn_persen' => $post['persen_ppn'],
-                    'ppn_num' => $ppn_num,
-                    'biaya_pengiriman' => str_replace(',', '', $post['biaya_pengiriman']),
-                    'grand_total' => $grand_total,
-                    'revisi' => $revisi,
-                    'deliver_date' => $post['deliver_date'],
-                    'deliver_type' => $post['deliver_type'],
-                    'address_cust' => $post['address_cust'],
-                    'diubah_oleh' => $this->auth->user_id(),
-                    'diubah_tgl' => date('Y-m-d H:i:s')
-                ], [
-                    'id_penawaran' => $post['id_penawaran']
-                ]);
-            }
+            $get_kode_sales = $this->db->get_where('ms_kode_sales', ['id_sales' => $get_penawaran->id_marketing])->row();
+            $get_customer = $this->db->get('customers')->result();
 
+            $num_pesanan = $this->db->get_where('ms_penawaran', ['id_cust' => $get_penawaran->id_cust, 'sts' => 'approved'])->num_rows();
+            $jum_pesanan = sprintf('%02s', ($num_pesanan + 1));
 
-            // Logging
-            $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
-
-            $desc = "Update Penawaran Data - " . $post['id_penawaran'];
-            $device_name = $this->agent->mobile(); // Returns the mobile device name
-            if ($this->agent->is_browser()) {
-                $device_name = $this->agent->browser(); // Returns the browser name
-            } elseif ($this->agent->is_robot()) {
-                $device_name = $this->agent->robot(); // Returns the robot/crawler name
-            } elseif ($this->agent->is_mobile()) {
-                $device_name = $this->agent->mobile(); // Returns the mobile device name
-            } else {
-                $device_name = 'Unidentified Device';
-            }
-
-            $id_user = $this->auth->user_id();
-            $id_menu = $get_menu->id;
-            $nm_menu = $get_menu->title;
-            $device_type = $this->agent->platform();
-            $os_type = $this->agent->browser();
-            log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
-        } else {
-
-            $kode_sales = '';
-
-            $this->db->select('a.kode_angka, a.kode_nama');
-            $this->db->from('ms_kode_sales a');
-            $this->db->where('a.id_sales =', $post['sales_marketing']);
-            $this->db->where('a.kode_nama !=', '');
-            $this->db->where('a.kode_nama !=', null);
-            $this->db->where('a.kode_angka !=', '');
-            $this->db->where('a.kode_angka !=', null);
-            $check_kode_sales = $this->db->get()->num_rows();
-
-            // echo '<pre>'; 
-            // print_r($check_kode_sales);
-            // echo'</pre>';
+            // print_r($jum_pesanan);
             // exit;
 
-            if ($check_kode_sales > 0) {
-
-                // echo '<pre>'; 
-                // print_r($check_kode_sales);
-                // echo'</pre>';
-                // exit;
-
-                $this->db->select('a.kode_angka, a.kode_nama');
-                $this->db->from('ms_kode_sales a');
-                $this->db->where('a.id_sales =', $post['sales_marketing']);
-                $this->db->where('a.kode_nama !=', '');
-                $this->db->where('a.kode_nama !=', null);
-                $this->db->where('a.kode_angka !=', '');
-                $this->db->where('a.kode_angka !=', null);
-                $get_kode_sales = $this->db->get()->row();
-
-
-
-                $kode_sales = '';
-                $code_pen = $this->db->query("SELECT MAX(id_penawaran) as max_id_penawaran FROM ms_penawaran WHERE id_penawaran LIKE '%/SP-" . $get_kode_sales->kode_nama . "/" . date('m') . '/' . date('Y') . "%'")->row();
-                $kodeBarang = $code_pen->max_id_penawaran;
-                $urutan = (int) substr($kodeBarang, 0, 3);
-                $urutan++;
-                $tahun = date('Y/m/d/');
-                $huruf = "PN/";
-                $kode_pn = sprintf("%03s", $urutan) . '/SP-' . $get_kode_sales->kode_nama . "/" . date('m') . '/' . date('Y');
-
-                $this->db->insert('ms_penawaran', [
-                    'id_penawaran' => $kode_pn,
-                    'id_marketing' => $post['sales_marketing'],
-                    'nm_marketing' => $get_marketing->name,
-                    'id_cust' => $post['customer'],
-                    'nm_cust' => $get_customer->customer_name,
-                    'id_pic_cust' => $post['pic_cust'],
-                    'nm_pic_cust' => $get_pic_cust->name,
-                    'nilai_penawaran' => $get_total_harga->ttl_harga,
-                    'tgl_penawaran' => $post['tgl_penawaran'],
-                    'ppn_type' => $post['ppn_type'],
-                    'total' => $get_total_harga->ttl_harga,
-                    'disc_num' => $post['disc_val'],
-                    'disc_persen' => $post['disc_per'],
-                    'nilai_disc' => $nilai_disc,
-                    'ppn_persen' => $post['persen_ppn'],
-                    'ppn_num' => $ppn_num,
-                    'grand_total' => $grand_total,
-                    'deliver_date' => $post['deliver_date'],
-                    'deliver_type' => $post['deliver_type'],
-                    'address_cust' => $post['address_cust'],
-                    'dibuat_oleh' => $this->auth->user_id(),
-                    'dibuat_tgl' => date('Y-m-d H:i:s')
-                ]);
-
-                $get_detail = $this->db->get_where('ms_penawaran_detail', ['id_penawaran' => $this->auth->user_id()])->result();
-                foreach ($get_detail as $detail) :
-                    $check_stock = $this->db->get_where('ms_stock_product', ['id_product' => $detail->id_product])->num_rows();
-                    if ($check_stock > 0 && $valid_stock == 1) {
-                        $get_stock = $this->db->get_where('ms_stock_product', ['id_product' => $detail->id_product])->row();
-                        if ($get_stock->qty_asli >= $detail->weight) {
-                            $qty_akhir = ($get_stock->qty_asli - $detail->weight);
-                            $this->db->update('ms_stock_product', ['qty_asli' => $qty_akhir], ['id_product' => $detail->id_product]);
-                        } else {
-                            // $valid_stock = 0;
-                        }
-                    }
-                endforeach;
-
-                $this->db->update('ms_penawaran_detail', ['id_penawaran' => $kode_pn], ['id_penawaran' => $this->auth->user_id()]);
-
-                // Logging
-                $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
-
-                $desc = "Insert New Penawaran Data - " . $kode_pn;
-                $device_name = $this->agent->mobile(); // Returns the mobile device name
-                if ($this->agent->is_browser()) {
-                    $device_name = $this->agent->browser(); // Returns the browser name
-                } elseif ($this->agent->is_robot()) {
-                    $device_name = $this->agent->robot(); // Returns the robot/crawler name
-                } elseif ($this->agent->is_mobile()) {
-                    $device_name = $this->agent->mobile(); // Returns the mobile device name
-                } else {
-                    $device_name = 'Unidentified Device';
+            $kode_cust = '';
+            $x = 1;
+            foreach ($get_customer as $customer) :
+                if ($customer->id_customer == $get_penawaran->id_cust) {
+                    $kode_cust = $x;
                 }
+                $x++;
+            endforeach;
 
-                $id_user = $this->auth->user_id();
-                $id_menu = $get_menu->id;
-                $nm_menu = $get_menu->title;
-                $device_type = $this->agent->platform();
-                $os_type = $this->agent->browser();
-                log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
-            } else {
-                $valid_sales = 0;
-            }
+
+            $id_quote = 'G' . $get_kode_sales->kode_angka . $kode_cust . $jum_pesanan . date('Ymd');
         }
+
+        $get_customer = $this->db->get_where('customers', ['id_customer' => $get_penawaran->id_cust])->row();
+
+        if ($post['req_action'] == 1) {
+            $req_action = 'approved';
+        } else {
+            $req_action = 'rejected';
+        }
+
+        $this->db->trans_begin();
+        $this->db->update('ms_penawaran', [
+            'id_marketing' => $post['sales_marketing'],
+            'id_quote' => $id_quote,
+            'nm_marketing' => $get_marketing->name,
+            'id_cust' => $post['customer'],
+            'nm_cust' => $get_customer->customer_name,
+            'id_pic_cust' => $post['pic_cust'],
+            'nm_pic_cust' => $get_pic_cust->name,
+            'nilai_penawaran' => $get_total_harga->ttl_harga,
+            'tgl_penawaran' => $post['tgl_penawaran'],
+            'ppn_type' => $post['ppn_type'],
+            'total' => $get_total_harga->ttl_harga,
+            'disc_num' => $post['disc_val'],
+            'disc_persen' => $post['disc_per'],
+            'nilai_disc' => $nilai_disc,
+            'ppn_persen' => $post['persen_ppn'],
+            'ppn_num' => $ppn_num,
+            'biaya_pengiriman' => str_replace(',', '', $post['biaya_pengiriman']),
+            'grand_total' => $grand_total,
+            'sts' => $req_action,
+            'keterangan_app' => $post['keterangan'],
+            'deliver_date' => $post['deliver_date'],
+            'deliver_type' => $post['deliver_type'],
+            'address_cust' => $post['address_cust'],
+            'diubah_oleh' => $this->auth->user_id(),
+            'diubah_tgl' => date('Y-m-d H:i:s')
+        ], [
+            'id_penawaran' => $post['id_penawaran']
+        ]);
 
         // if ($this->db->trans_status() === FALSE || $valid_stock !== 1) {
         if ($this->db->trans_status() === FALSE || $valid_sales != 1) {
@@ -532,9 +374,9 @@ class Penawaran extends Admin_Controller
         } else {
             $this->db->trans_commit();
 
-            $msg = 'Success Save data Penawaran.';
-            if ($post['req_approval'] == 1) {
-                $msg = 'Request Approval success';
+            $msg = 'Success Approve Penawaran.';
+            if ($post['req_action'] == 2) {
+                $msg = 'Success Reject Penawaran';
             }
             $return    = array(
                 'msg'        => $msg,

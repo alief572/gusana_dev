@@ -13,10 +13,10 @@ if (!defined('BASEPATH')) {
 
 class Bom extends Admin_Controller
 {
-    protected $viewPermission     = 'Bom.View';
-    protected $addPermission      = 'Bom.Add';
-    protected $managePermission = 'Bom.Manage';
-    protected $deletePermission = 'Bom.Delete';
+    protected $viewPermission     = 'Engineering.View';
+    protected $addPermission      = 'Engineering.Add';
+    protected $managePermission = 'Engineering.Manage';
+    protected $deletePermission = 'Engineering.Delete';
 
     public function __construct()
     {

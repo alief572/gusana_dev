@@ -81,10 +81,10 @@ $query_builder = true;
 
 $db['default'] = array(
     'dsn' => '',
-    'hostname' => 'localhost',
+    'hostname' => '203.160.58.170',
     'username' => 'root',
-    'password' => '',
-    'database' => 'db_gusana',
+    'password' => 'sentral2022**',
+    'database' => 'gusana_db',
     'dbdriver' => 'mysqli',
     'dbprefix' => '',
     'pconnect' => false,

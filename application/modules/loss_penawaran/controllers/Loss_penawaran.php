@@ -11,19 +11,19 @@
  * This is controller for Master Employee
  */
 
-class Penawaran extends Admin_Controller
+class Loss_Penawaran extends Admin_Controller
 {
-    protected $viewPermission     = 'Penawaran.View';
-    protected $addPermission      = 'Penawaran.Add';
-    protected $managePermission = 'Penawaran.Manage';
-    protected $deletePermission = 'Penawaran.Delete';
+    protected $viewPermission     = 'Loss_Penawaran.View';
+    protected $addPermission      = 'Loss_Penawaran.Add';
+    protected $managePermission = 'Loss_Penawaran.Manage';
+    protected $deletePermission = 'Loss_Penawaran.Delete';
     public function __construct()
     {
         parent::__construct();
 
         $this->load->library(array('upload', 'Image_lib', 'user_agent', 'uri'));
         $this->load->model(array(
-            'Penawaran/Penawaran_model',
+            'Loss_penawaran/Loss_penawaran_model',
             'Aktifitas/aktifitas_model',
         ));
         $this->load->helper(['url', 'json']);
@@ -48,7 +48,7 @@ class Penawaran extends Admin_Controller
 
         $string = $this->db->escape_like_str($search);
         $sql = "SELECT *
-        FROM ms_penawaran WHERE 1=1 AND (sts != 'rejected' OR sts IS NULL)
+        FROM ms_penawaran WHERE 1=1 AND sts = 'rejected'
         AND (
             id_penawaran LIKE '%$string%' OR
             id_quote LIKE '%$string%' OR
@@ -106,17 +106,17 @@ class Penawaran extends Admin_Controller
 
             $request = '<a href="penawaran/request_approval/' . str_replace('/', '-', $row['id_penawaran']) . '" class="btn btn-warning btn-sm request_approval" data-toggle="tooltip" title="Request Approval" data-id="' . str_replace('/', '-', $row['id_penawaran']) . '"><i class="fa fa-user"></i></a>';
 
-            $buttons     = $view . "&nbsp;" . $edit . "&nbsp;" . $delete . "&nbsp;" . $print . "&nbsp;" . $send . "&nbsp;" . $request;
+            $buttons     = $view;
 
-            if ($row['sts'] == '' || $row['sts'] == null) {
-                $buttons = $edit . ' ' . $request . ' ' . $print;
-            }
-            if ($row['sts'] == 'approved') {
-                $buttons = $print . ' ' . $view . ' ' . $send;
-            }
-            if ($row['sts'] == 'request_approval') {
-                $buttons = $view;
-            }
+            // if ($row['sts'] == '' || $row['sts'] == null) {
+            //     $buttons = $edit . ' ' . $request . ' ' . $print;
+            // }
+            // if ($row['sts'] == 'approved') {
+            //     $buttons = $print . ' ' . $view . ' ' . $send;
+            // }
+            // if ($row['sts'] == 'request_approval') {
+            //     $buttons = $view;
+            // }
 
             $status = '';
             if ($row['sts'] == 'send') {
@@ -126,7 +126,7 @@ class Penawaran extends Admin_Controller
             } else if ($row['sts'] == 'approved') {
                 $status = '<div class="badge badge-success text-light">Approved</div>';
             } else if ($row['sts'] == 'rejected') {
-                $status = '<div class="badge badge-danget text-light">Reject</div>';
+                $status = '<div class="badge badge-danger text-light">Reject</div>';
             } else {
                 $status = '<div class="badge badge-warning text-light">Draft</div>';
             }

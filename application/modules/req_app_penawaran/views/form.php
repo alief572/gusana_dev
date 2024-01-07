@@ -40,10 +40,10 @@
                     if (isset($data_penawaran)) {
                         foreach ($list_pic as $pic) :
                             $selected = '';
-                            if($pic->id == $data_penawaran->id_pic_cust){
+                            if ($pic->id == $data_penawaran->id_pic_cust) {
                                 $selected = 'selected';
                             }
-                            echo '<option value="' . $pic->id . '" '.$selected.'>' . $pic->name . '</option>';
+                            echo '<option value="' . $pic->id . '" ' . $selected . '>' . $pic->name . '</option>';
                         endforeach;
                     }
                     ?>
@@ -51,7 +51,7 @@
             </div>
             <div class="col-6">
                 <label for="">Delivery Date</label>
-                <input type="date" name="deliver_date" id="" class="form-control" value="<?= (isset($data_penawaran)) ? $data_penawaran->deliver_date : null?>" required>
+                <input type="date" name="deliver_date" id="" class="form-control" value="<?= (isset($data_penawaran)) ? $data_penawaran->deliver_date : null ?>" required>
             </div>
             <div class="col-6">
                 <label for="">Delivery Type</label>
@@ -90,8 +90,16 @@
                     <option value="0" <?= (isset($data_penawaran) && $data_penawaran->ppn_type == 0) ? 'selected' : null ?>>Non PPN</option>
                 </select>
             </div>
+            <div class="col-12"></div>
+            <div class="col-6">
+                <label for="">Action</label>
+                <select name="req_action" id="" class="form-control">
+                    <option value="1">Approve</option>
+                    <option value="2">Reject</option>
+                </select>
+            </div>
         </div>
-    
+
         <div class="col-12">
             <button type="button" class="btn btn-sm btn-success add_product" style="margin-top:20px;">
                 <i class="fa fa-plus"></i>
@@ -207,7 +215,7 @@
                                     <td>%</td>
                                 </tr>
                             </table>
-                            
+
                         </td>
                         <td class="text-right disc_harga">
                             <?= (isset($data_penawaran) ? number_format($data_penawaran->nilai_disc, 2) : null) ?>
@@ -243,22 +251,15 @@
             </table>
         </div>
 
-        <div class="col-5 <?= (isset($request_approval) && $request_approval == 1) ? '' : 'd-none' ?>">
+        <div class="col-5">
             <div class="form-group">
-                <label>Keterangan Request Approval</label>
-                <textarea name="keterangan" class="form-control " cols="10" rows="10"></textarea>
+                <label>Keterangan Approval/Reject</label>
+                <textarea name="keterangan" class="form-control " cols="10" rows="5"></textarea>
             </div>
         </div>
         <div class="text-right">
-            <?php 
-                if(isset($request_approval) && $request_approval == 1){
-                    echo '<button type="submit" class="btn btn-sm btn-warning" name="request_approval" id="request_approval">Request Approval</button>';
-                }else{
-                    echo '<button type="submit" class="btn btn-sm btn-primary" name="save" id="save">Save</button>';
-                }
-            ?>
-            
-            <a href="<?= base_url('/penawaran') ?>" class="btn btn-sm btn-danger">Back</a>
+            <button type="submit" class="btn btn-sm btn-primary" name="save" id="save">Save</button>
+            <a href="<?= base_url('/req_app_penawaran') ?>" class="btn btn-sm btn-danger">Back</a>
         </div>
     </div>
 </form>
@@ -360,7 +361,7 @@
                         </div>
                         <div class="col-4" style="margin-top: 10px;">
                             <select name="lot_size_detail" id="" class="form-control lot_size_detail" required>
-                                
+
                             </select>
                         </div>
                         <div class="col-2 mt-15" style="margin-top: 10px;">
@@ -564,18 +565,18 @@
         });
     }
 
-    function refresh_table_product(){
+    function refresh_table_product() {
         var id_penawaran = $('.id_penawaran').val();
 
         $.ajax({
-            type : 'post',
+            type: 'post',
             url: siteurl + thisController + 'refresh_table_product',
             data: {
                 'id_penawaran': id_penawaran
             },
             cache: false,
             dataType: 'json',
-            success: function(result){
+            success: function(result) {
                 $('#table-product').html(result.hasil);
 
                 $('.autonum').autoNumeric();
@@ -609,11 +610,11 @@
         $('.weight').autoNumeric();
     });
 
-    $(document).on('click', '.add_product', function(){
+    $(document).on('click', '.add_product', function() {
         $('#add-product').modal();
 
         $('.id_detail').val('');
-        $('.produk_detail').val('').trigger('change.select2'); 
+        $('.produk_detail').val('').trigger('change.select2');
         $('.curing_agent_pack_spec').val('');
         $('.qty').val('');
         $('.ral_code').val('');
@@ -868,7 +869,7 @@
         });
     });
 
-    $(document).on('keyup', '.biaya_pengiriman', function(){
+    $(document).on('keyup', '.biaya_pengiriman', function() {
         hitung_all();
     });
 
@@ -878,7 +879,7 @@
         var req_approval = $('.req_approval').val();
         // alert(req_approval);
         var msg = 'Are you sure to save this data ?';
-        if(req_approval == '1'){
+        if (req_approval == '1') {
             msg = 'Are you sure to make request approval ?'
         }
 
@@ -953,7 +954,7 @@
         })
     });
 
-    $(document).on('click', '.edit_detail', function(){
+    $(document).on('click', '.edit_detail', function() {
         var id = $(this).data('id');
 
         $.ajax({
@@ -964,12 +965,12 @@
             },
             cache: false,
             dataType: 'json',
-            success: function(result){
+            success: function(result) {
                 $('#add-product').modal();
 
                 // $('.id_penawaran2').val(result.id_penawaran2);
                 $('.id_detail').val(result.id);
-                $('.produk_detail').val(result.id_product).trigger('change.select2'); 
+                $('.produk_detail').val(result.id_product).trigger('change.select2');
                 $('.curing_agent_pack_spec').val(result.curing_agent_pack_spec);
                 $('.qty').autoNumeric('set', result.qty);
                 $('.ral_code').val(result.ral_code);
@@ -996,7 +997,7 @@
         var req_approval = $('.req_approval').val();
         // alert(req_approval);
         var msg = 'Are you sure to save this data ?';
-        if(req_approval == '1'){
+        if (req_approval == '1') {
             msg = 'Are you sure to make request approval ?'
         }
 
@@ -1052,7 +1053,7 @@
                         hideClass: 'zoomOut',
                         soundPath: '<?= base_url(); ?>themes/bracket/assets/lib/lobiani/sounds/',
                     });
-                    window.location.href='<?= base_url('/penawaran') ?>';
+                    window.location.href = '<?= base_url('/req_app_penawaran') ?>';
                 } else {
                     Lobibox.notify('warning', {
                         icon: 'fa fa-ban',

@@ -1,16 +1,24 @@
 <?php
-$ENABLE_ADD     = has_permission('Loss_Penawaran.Add');
-$ENABLE_MANAGE  = has_permission('Loss_Penawaran.Manage');
-$ENABLE_VIEW    = has_permission('Loss_Penawaran.View');
-$ENABLE_DELETE  = has_permission('Loss_Penawaran.Delete');
+$ENABLE_ADD     = has_permission('Penawaran.Add');
+$ENABLE_MANAGE  = has_permission('Penawaran.Manage');
+$ENABLE_VIEW    = has_permission('Penawaran.View');
+$ENABLE_DELETE  = has_permission('Penawaran.Delete');
 ?>
 
 <div class="br-pagetitle">
     <i class="tx-primary fa-4x <?= $template['page_icon']; ?>"></i>
     <div>
-        <h4>Loss Penawaran</h4>
+        <h4>Penawaran</h4>
     </div>
 </div><!-- d-flex -->
+
+<div class="d-flex align-items-center justify-content-between pd-x-20 pd-sm-x-30 pd-t-25 mg-b-20 mg-sm-b-30">
+    <?php echo Template::message(); ?>
+    <?php if ($ENABLE_ADD) : ?>
+        <a class="btn btn-primary btn-oblong add" href="penawaran/add/new" title="Add"><i class="fa fa-plus">&nbsp;</i>Add Penawaran</a>
+        <!-- <button type="button" class="btn btn-success btn-oblong" onclick="loadData()" title="Add"><i class="fa fa-plus">&nbsp;</i>Refresh</button> -->
+    <?php endif; ?>
+</div>
 
 <div class="br-pagebody pd-x-20 pd-sm-x-30 mg-y-3">
     <div class="card bd-gray-400">
@@ -77,12 +85,15 @@ $ENABLE_DELETE  = has_permission('Loss_Penawaran.Delete');
 
 <!-- page script -->
 <script type="text/javascript">
+
+    
+    
     $(document).ready(function() {
         loadData()
     })
 
     $(document).on('click', '.add', function() {
-
+        
         $.ajax({
             type: 'POST',
             url: siteurl + thisController + 'add',
@@ -238,7 +249,7 @@ $ENABLE_DELETE  = has_permission('Loss_Penawaran.Delete');
         var req_approval = $('.req_approval').val();
         // alert(req_approval);
         var msg = 'Are you sure to save this data ?';
-        if (req_approval == '1') {
+        if(req_approval == '1'){
             msg = 'Are you sure to make request approval ?'
         }
 
@@ -314,7 +325,7 @@ $ENABLE_DELETE  = has_permission('Loss_Penawaran.Delete');
 
     });
 
-    $(document).on('click', '.print_penawaran', function() {
+    $(document).on('click','.print_penawaran', function(){
         var id = $(this).data('id');
 
         window.open(siteurl + thisController + 'print_penawaran/' + id, '_blank');

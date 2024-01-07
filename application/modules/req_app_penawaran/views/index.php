@@ -1,14 +1,14 @@
 <?php
-$ENABLE_ADD     = has_permission('Loss_Penawaran.Add');
-$ENABLE_MANAGE  = has_permission('Loss_Penawaran.Manage');
-$ENABLE_VIEW    = has_permission('Loss_Penawaran.View');
-$ENABLE_DELETE  = has_permission('Loss_Penawaran.Delete');
+$ENABLE_ADD     = has_permission('Request_Approval.Add');
+$ENABLE_MANAGE  = has_permission('Request_Approval.Manage');
+$ENABLE_VIEW    = has_permission('Request_Approval.View');
+$ENABLE_DELETE  = has_permission('Request_Approval.Delete');
 ?>
 
 <div class="br-pagetitle">
     <i class="tx-primary fa-4x <?= $template['page_icon']; ?>"></i>
     <div>
-        <h4>Loss Penawaran</h4>
+        <h4>Request Approval Penawaran</h4>
     </div>
 </div><!-- d-flex -->
 

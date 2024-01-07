@@ -6,7 +6,7 @@
                     <th class="text-left">Customer Name</th>
                     <th class="text-left">: <?= $data_penawaran->nm_cust ?></th>
                     <th class="text-left">Quote Number</th>
-                    <th class="text-left">: <?= ($data_penawaran->id_quote !== null) ? $data_penawaran->id_quote : $data_penawaran->id_penawaran ?></th>
+                    <th class="text-left">: <?= $data_penawaran->id_penawaran ?></th>
                 </tr>
                 <tr>
                     <th class="text-left">Customer Address</th>

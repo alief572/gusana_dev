@@ -158,6 +158,11 @@ class Product_master extends Admin_Controller
 		$packaging = $this->Product_master_model->get_data('master_packaging');
 		$unit = $this->Product_master_model->get_data('m_unit');
 
+		$this->db->select('a.*');
+		$this->db->from('ms_product_category3 a');
+		$this->db->where('a.id_category3 !=', $id);
+		$get_all_inven_4 = $this->db->get()->result();
+
 		$list_curing_agent = $this->Product_master_model->get_data('ms_product_category3', 'id_type', 'P231100013');
 
 		$data = [
@@ -169,7 +174,8 @@ class Product_master extends Admin_Controller
 			'alt_comp' => $alt_comp,
 			'packaging' => $packaging,
 			'unit' => $unit,
-			'list_curing_agent' => $list_curing_agent
+			'list_curing_agent' => $list_curing_agent,
+			'all_inventory_4' => $get_all_inven_4
 		];
 
 
@@ -530,6 +536,14 @@ class Product_master extends Admin_Controller
 
 		$get_unit = $this->db->get_where('m_unit', ['id_unit' => $this->input->post('unit')])->row();
 
+		$id_refer = $this->input->post('refer_product');
+		$nm_refer = '';
+		$check_refer = $this->db->get_where('ms_product_category3', ['id_category3' => $this->input->post('refer_product')])->num_rows();
+		if($check_refer > 0){
+			$get_refer = $this->db->get_where('ms_product_category3', ['id_category3' => $this->input->post('refer_product')])->row();
+			$nm_refer = $get_refer->nama;
+		}
+
 		$this->db->trans_begin();
 		$numb1 = 0;
 		//$head = $_POST['hd1'];
@@ -575,6 +589,8 @@ class Product_master extends Admin_Controller
 			'anti_slip' => $this->input->post('anti_slip'),
 			'fire_resistance' => $this->input->post('fire_resistance'),
 			'ketahanan_bahan_kimia' => $this->input->post('ketahanan_bahan_kimia'),
+			'id_product_refer' => $id_refer,
+			'nm_product_refer' => $nm_refer,
 			'dibuat_oleh' => $this->auth->user_id(),
 			'dibuat_tgl' => date("Y-m-d H:i:s")
 		]);
@@ -623,6 +639,14 @@ class Product_master extends Admin_Controller
 
 		$get_unit = $this->db->get_where('m_unit', ['id_unit' => $this->input->post('unit')])->row();
 
+		$id_refer = $this->input->post('refer_product');
+		$nm_refer = '';
+		$check_refer = $this->db->get_where('ms_product_category3', ['id_category3' => $this->input->post('refer_product')])->num_rows();
+		if($check_refer > 0){
+			$get_refer = $this->db->get_where('ms_product_category3', ['id_category3' => $this->input->post('refer_product')])->row();
+			$nm_refer = $get_refer->nama;
+		}
+
 		$this->db->update("ms_product_category3", [
 			'id_type' => $this->input->post('inventory_1'),
 			'id_category1' => $this->input->post('inventory_2'),
@@ -662,6 +686,8 @@ class Product_master extends Admin_Controller
 			'daya_tahan_gesekan' => $this->input->post('daya_tahan_gesekan'),
 			'anti_slip' => $this->input->post('anti_slip'),
 			'fire_resistance' => $this->input->post('fire_resistance'),
+			'id_product_refer' => $id_refer,
+			'nm_product_refer' => $nm_refer,
 			'diubah_oleh' => date('Y-m-d H:i:s'),
 			'diubah_tgl' => $this->auth->user_id()
 		], ['id_category3' => $post['id_category3']]);

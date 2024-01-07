@@ -169,6 +169,19 @@
  							<th></th>
  							<th></th>
  						</tr>
+ 						<tr>
+ 							<th>Refer Product</th>
+ 							<th colspan="5">
+ 								<select name="refer_product" id="" class="form-control form-control-sm select">
+									<option value="">- Refer Product -</option>
+									<?php  
+										foreach($results['inventory_4'] as $inven_4) :
+											echo '<option value="'.$inven_4->id_category3.'">'.$inven_4->nama.'</option>';
+										endforeach;
+									?>
+								</select>
+ 							</th>
+ 						</tr>
  					</table>
  					<table class="table" border="0">
  						<thead>
@@ -392,7 +405,7 @@
  	$(".autonum").autoNumeric();
 
  	$('.chosen-select').select2({
- 		dropdownParent: $('.box-primary'),
+ 		dropdownParent: $('#ModalView'),
  		selectOnClose: true,
  		width: '100%'
  	});
@@ -400,7 +413,7 @@
 
  	$('.select').select2({
  		placeholder: 'Choose one',
- 		dropdownParent: $('.box-primary'),
+ 		dropdownParent: $('#ModalView'),
  		width: "150px",
  		allowClear: true
  	});

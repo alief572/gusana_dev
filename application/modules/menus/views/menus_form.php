@@ -34,7 +34,7 @@
         <select name="parent_id" id="parent_id" class="select form-control parent_id">
             <option value=""></option>
             <?php if ($parent) foreach ($parent as $k => $par) : ?>
-            <option value="<?= $k; ?>" <?= ($k == $data->parent_id) ? 'selected' : ''; ?>><?= $par ; ?></option>
+            <option value="<?= $k; ?>" <?= (isset($data) && $k == $data->parent_id) ? 'selected' : ''; ?>><?= $par ; ?></option>
             <?php endforeach; ?>
         </select>
     </div>

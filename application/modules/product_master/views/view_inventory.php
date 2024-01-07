@@ -110,6 +110,13 @@ $ENABLE_DELETE  = has_permission('Product_Master.Delete');
 						</td>
 					</tr>
 					<tr>
+						<th>Refer Product</th>
+						<td>:</td>
+						<td colspan="4">
+							<?= $results['inventory_4']->nm_product_refer ?>
+						</td>
+					</tr>
+					<tr>
 						<th>Status</th>
 						<td>:</td>
 						<td colspan="4">

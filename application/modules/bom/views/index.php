@@ -1,8 +1,8 @@
 <?php
-$ENABLE_ADD     = has_permission('Bom.Add');
-$ENABLE_MANAGE  = has_permission('Bom.Manage');
-$ENABLE_VIEW    = has_permission('Bom.View');
-$ENABLE_DELETE  = has_permission('Bom.Delete');
+$ENABLE_ADD     = has_permission('Engineering.Add');
+$ENABLE_MANAGE  = has_permission('Engineering.Manage');
+$ENABLE_VIEW    = has_permission('Engineering.View');
+$ENABLE_DELETE  = has_permission('Engineering.Delete');
 ?>
 
 <div class="br-pagetitle">

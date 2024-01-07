@@ -170,6 +170,23 @@
 							<th colspan="4"></th>
 						</tr>
 						<tr>
+ 							<th>Refer Product</th>
+ 							<th colspan="5">
+ 								<select name="refer_product" id="" class="form-control form-control-sm select">
+									<option value="">- Refer Product -</option>
+									<?php  
+										foreach($results['all_inventory_4'] as $inven_4) :
+											$selected = '';
+											if($results['inventory_4']->id_product_refer == $inven_4->id_category3){
+												$selected = 'selected';
+											}
+											echo '<option value="'.$inven_4->id_category3.'" '.$selected.'>'.$inven_4->nama.'</option>';
+										endforeach;
+									?>
+								</select>
+ 							</th>
+ 						</tr>
+						<tr>
 							<td>Status</td>
 							<td colspan="5">
 								<input type="radio" name="aktif" class="ml-2" id="" value="1" <?= ($results['inventory_4']->aktif == "1") ? 'checked' : null ?>> Aktif
@@ -414,15 +431,13 @@
 
 	$('.select').select2({
 		placeholder: 'Choose one',
-		dropdownParent: $('#dialog-popup'),
-		width: "100%",
-		allowClear: true
+		dropdownParent: $('#ModalView'),
+		width: "100%"
 	});
 	$('.chosen_select').select2({
 		placeholder: 'Choose one',
-		dropdownParent: $('#dialog-popup'),
-		width: "150px",
-		allowClear: true
+		dropdownParent: $('#ModalView'),
+		width: "150px"
 	});
 
 	$(document).on('keyup', '#dimensi1', function() {
