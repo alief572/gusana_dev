@@ -13,10 +13,10 @@ if (!defined('BASEPATH')) {
 
 class Bom extends Admin_Controller
 {
-    protected $viewPermission     = 'Engineering.View';
-    protected $addPermission      = 'Engineering.Add';
-    protected $managePermission = 'Engineering.Manage';
-    protected $deletePermission = 'Engineering.Delete';
+    protected $viewPermission     = 'Bom.View';
+    protected $addPermission      = 'Bom.Add';
+    protected $managePermission = 'Bom.Manage';
+    protected $deletePermission = 'Bom.Delete';
 
     public function __construct()
     {
@@ -59,7 +59,7 @@ class Bom extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Bom');
+        $this->template->title('Bom | 配方');
         $this->template->render('index');
     }
 
@@ -321,6 +321,7 @@ class Bom extends Admin_Controller
                 b.unit_nm,
                 b.konversi,
                 b.nama as nm_product_master,
+                b.nama_mandarin as nm_product_master_mandarin,
                 d.full_name as nm_dibuat,
                 e.nm_packaging
             FROM 
@@ -336,6 +337,7 @@ class Bom extends Admin_Controller
                 b.unit_nm LIKE '" . $string . "' OR
                 b.konversi LIKE '" . $string . "' OR
                 b.nama LIKE '%" . $string . "%' OR
+                b.nama_mandarin LIKE '%" . $string . "%' OR
                 d.full_name LIKE '%" . $string . "%' OR
                 e.nm_packaging LIKE '%" . $string . "%' 
             )
@@ -390,11 +392,11 @@ class Bom extends Admin_Controller
             $nestedData   = array();
             $nestedData[]  = $nomor;
             $nestedData[]  = $row['nm_product_master'];
+            $nestedData[]  = $row['nm_product_master_mandarin'];
             $nestedData[]  = $row['variant'];
             $nestedData[]  = $row['qty_hopper'];
             $nestedData[]  = $row['nm_packaging'];
             $nestedData[]  = $row['konversi'];
-            $nestedData[]  = $row['unit_nm'];
             $nestedData[]  = $row['nm_dibuat'];
             $nestedData[]  = $last_date;
             $nestedData[]  = $buttons;

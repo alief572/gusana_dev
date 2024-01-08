@@ -1,8 +1,8 @@
 <?php
-$ENABLE_ADD     = has_permission('Divisi.Add');
-$ENABLE_MANAGE  = has_permission('Divisi.Manage');
-$ENABLE_VIEW    = has_permission('Divisi.View');
-$ENABLE_DELETE  = has_permission('Divisi.Delete');
+$ENABLE_ADD     = has_permission('Finish_Good.Add');
+$ENABLE_MANAGE  = has_permission('Finish_Good.Manage');
+$ENABLE_VIEW    = has_permission('Finish_Good.View');
+$ENABLE_DELETE  = has_permission('Finish_Good.Delete');
 ?>
 
 <div class="br-pagetitle">
@@ -93,14 +93,14 @@ $ENABLE_DELETE  = has_permission('Divisi.Delete');
     $(document).on('click', '.add', function() {
 
         var pilih = [];
-        $('.pilih:checked').each(function(){
+        $('.pilih:checked').each(function() {
             pilih.push({
                 'id_category3': $(this).val(),
                 'propose': $('.propose_' + $(this).val()).val()
             });
         });
         // console.log(pilih);
-        if($.isEmptyObject(pilih)){
+        if ($.isEmptyObject(pilih)) {
             Lobibox.notify('error', {
                 title: 'Error!!!',
                 icon: 'fa fa-times',
@@ -110,11 +110,11 @@ $ENABLE_DELETE  = has_permission('Divisi.Delete');
                 soundPath: '<?= base_url(); ?>themes/bracket/assets/lib/lobiani/sounds/',
                 msg: 'Please check at least one product to propose !'
             });
-        }else{
+        } else {
             $.ajax({
                 type: 'POST',
                 url: siteurl + thisController + 'add',
-                data : {
+                data: {
                     'list_id_category3': pilih
                 },
                 success: function(data) {
@@ -236,18 +236,18 @@ $ENABLE_DELETE  = has_permission('Divisi.Delete');
 
     })
 
-    $(document).on('change', '.pilih', function(){
+    $(document).on('change', '.pilih', function() {
         var id_category3 = $(this).data('id_category3')
         var moq = $(this).data('moq')
         var qty_asli = $(this).data('qty_asli')
         var min_stok = $(this).data('min_stok')
 
-        if($('.pilih_' + id_category3).is(':checked')){
+        if ($('.pilih_' + id_category3).is(':checked')) {
             $('.propose_' + id_category3).attr('readonly', false)
-            if(qty_asli < min_stok || qty_asli == 0){
+            if (qty_asli < min_stok || qty_asli == 0) {
                 $('.propose_' + id_category3).val(moq)
             }
-        }else{
+        } else {
             $('.propose_' + id_category3).val(0)
             $('.propose_' + id_category3).attr('readonly', true)
         }

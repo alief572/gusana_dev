@@ -4,8 +4,8 @@
         <input type="hidden" name="req_approval" class="req_approval" value="<?= (isset($request_approval)) ? $request_approval : null ?>">
         <div class="row">
             <div class="col-6">
-                <label for="">Customer Name</label>
-                <select name="customer" class="form-control  chosen-select customer" required>
+                <label for="">Customer Name <span class="text-danger">(客户名称)</span></label>
+                <select name="customer" class="form-control  chosen-select customer" disabled>
                     <option value="">- Customer Name -</option>
                     <?php
                     foreach ($list_customer as $customer) :
@@ -21,20 +21,20 @@
                 </select>
             </div>
             <div class="col-6">
-                <label for="">Quote Number</label>
+                <label for="">Quote Number <span class="text-danger">(报价编号)</span></label>
                 <input type="text" name="" id="" class="form-control " value="<?= (isset($data_penawaran)) ? $data_penawaran->id_penawaran : 'new' ?>" readonly>
             </div>
             <div class="col-6">
-                <label for="">Customer Address</label>
+                <label for="">Customer Address <span class="text-danger">(客户地址)</span></label>
                 <input type="text" name="address_cust" id="" class="form-control cust_address" value="<?= (isset($data_penawaran)) ? $data_penawaran->address_cust : null ?>" readonly>
             </div>
             <div class="col-6">
-                <label for="">Quote Date</label>
-                <input type="date" name="tgl_penawaran" id="" class="form-control " value="<?= (isset($data_penawaran)) ? $data_penawaran->tgl_penawaran : null ?>" required>
+                <label for="">Quote Date <span class="text-danger">(报价日期)</span></label>
+                <input type="date" name="tgl_penawaran" id="" class="form-control " value="<?= (isset($data_penawaran)) ? $data_penawaran->tgl_penawaran : null ?>" disabled>
             </div>
             <div class="col-6">
-                <label for="">Contact Person</label>
-                <select name="pic_cust" class="form-control  chosen-select pic_cust" required>
+                <label for="">Contact Person <span class="text-danger">(联系人)</span></label>
+                <select name="pic_cust" class="form-control  chosen-select pic_cust" disabled>
                     <option value="">- Contact Person -</option>
                     <?php
                     if (isset($data_penawaran)) {
@@ -50,20 +50,20 @@
                 </select>
             </div>
             <div class="col-6">
-                <label for="">Delivery Date</label>
-                <input type="date" name="deliver_date" id="" class="form-control" value="<?= (isset($data_penawaran)) ? $data_penawaran->deliver_date : null ?>" required>
+                <label for="">Delivery Date <span class="text-danger">(交货日期)</span></label>
+                <input type="date" name="deliver_date" id="" class="form-control" value="<?= (isset($data_penawaran)) ? $data_penawaran->deliver_date : null ?>" disabled>
             </div>
             <div class="col-6">
-                <label for="">Delivery Type</label>
-                <select name="deliver_type" id="" class="form-control" required>
+                <label for="">Delivery Type <span class="text-danger">(交货类型)</span></label>
+                <select name="deliver_type" id="" class="form-control" disabled>
                     <option value="">- Delivery Type -</option>
                     <option value="1" <?= (isset($data_penawaran) && $data_penawaran->deliver_type == 1) ? 'selected' : null ?>>Delivery</option>
                     <option value="2" <?= (isset($data_penawaran) && $data_penawaran->deliver_type == 2) ? 'selected' : null ?>>Self Pickup</option>
                 </select>
             </div>
             <div class="col-6">
-                <label for="">Sales</label>
-                <select name="sales_marketing" id="" class="form-control  chosen-select" required>
+                <label for="">Sales <span class="text-danger">(销售人员姓名)</span></label>
+                <select name="sales_marketing" id="" class="form-control  chosen-select" disabled>
                     <option value="">- Sales -</option>
                     <?php
                     foreach ($list_sales as $sales) :
@@ -84,7 +84,7 @@
             </div>
             <div class="col-6">
                 <label for="">PPN / Non PPN</label>
-                <select name="ppn_type" class="form-control  chosen-select ppn_type" required>
+                <select name="ppn_type" class="form-control  chosen-select ppn_type" disabled>
                     <option value="">- PPN / Non PPN -</option>
                     <option value="1" <?= (isset($data_penawaran) && $data_penawaran->ppn_type == 1) ? 'selected' : null ?>>PPN</option>
                     <option value="0" <?= (isset($data_penawaran) && $data_penawaran->ppn_type == 0) ? 'selected' : null ?>>Non PPN</option>
@@ -101,10 +101,10 @@
         </div>
 
         <div class="col-12">
-            <button type="button" class="btn btn-sm btn-success add_product" style="margin-top:20px;">
+            <!-- <button type="button" class="btn btn-sm btn-success add_product" style="margin-top:20px;">
                 <i class="fa fa-plus"></i>
                 Add Product
-            </button>
+            </button> -->
             <table class="table table-striped" id="table-product">
                 <thead>
                     <tr>
@@ -160,7 +160,7 @@
                     foreach ($list_penawaran_detail as $penawaran_detail) : $x++; ?>
                         <tr>
                             <td class="text-center"><?= $x ?></td>
-                            <td class="text-center"><?= $penawaran_detail->nm_product ?></td>
+                            <td class="text-center"><span class="text-danger"><?= $penawaran_detail->nama_mandarin ?></span> <br> <?= $penawaran_detail->nm_product ?></td>
                             <td class="text-center"><?= $penawaran_detail->kode_product ?></td>
                             <td class="text-center"><?= number_format($penawaran_detail->qty, 2) ?></td>
                             <td class="text-center"><?= number_format($penawaran_detail->weight, 2) ?></td>
@@ -173,9 +173,6 @@
                                 <button type="button" class="btn btn-sm btn-warning text-light edit_detail" data-id="<?= str_replace('/', '-', $penawaran_detail->id) ?>">
                                     <i class="fa fa-edit"></i>
                                 </button>
-                                <button type="button" class="btn btn-sm btn-danger del_detail" data-id="<?= str_replace('/', '-', $penawaran_detail->id) ?>">
-                                    <i class="fa fa-trash"></i>
-                                </button>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -183,19 +180,25 @@
                 <tbody>
                     <tr>
                         <td colspan="4"></td>
-                        <td class="text-left" colspan="3">Subtotal</td>
+                        <td class="text-left" colspan="3">Subtotal <span class="text-danger">(小计)</span></td>
                         <td class="text-right total_all_harga"><?= number_format($total_harga, 2) ?></td>
                     </tr>
                     <tr>
                         <td colspan="4"></td>
-                        <td class="">Biaya Pengiriman</td>
-                        <td class="" colspan="3">
+                        <td class="">Biaya Pengiriman <span class="text-danger">(交付成本)</span></td>
+                        <td class="">
                             <input type="text" name="biaya_pengiriman" id="" class="form-control  text-right biaya_pengiriman autonum" placeholder="Input Biaya Pengiriman" value="<?= (isset($data_penawaran)) ? number_format($data_penawaran->biaya_pengiriman, 2) : null ?>">
                         </td>
+                        <th>
+                            <input type="text" name="dari_tmp" id="" class="form-control" value="<?= (isset($data_penawaran)) ? $data_penawaran->dari_tmp : null ?>" placeholder="- Dari -" readonly>
+                        </th>
+                        <th>
+                            <input type="text" name="ke_tmp" id="" class="form-control" value="<?= (isset($data_penawaran)) ? $data_penawaran->ke_tmp : null ?>" placeholder="- Ke -" readonly>
+                        </th>
                     </tr>
                     <tr>
                         <td colspan="4"></td>
-                        <td class="text-center">Discount</td>
+                        <td class="text-center">Discount <span class="text-danger">(折扣)</span></td>
                         <td>
                             <table border="0">
                                 <tr>
@@ -223,7 +226,7 @@
                     </tr>
                     <tr>
                         <td colspan="4"></td>
-                        <td class="" colspan="3">Price After Discount</td>
+                        <td class="" colspan="3">Price After Discount <span class="text-danger">(折扣后价格)</span></td>
                         <td class="text-right total_after_disc">
                             <?= (isset($data_penawaran)) ? number_format($total_harga - $data_penawaran->nilai_disc, 2) : null ?>
                         </td>
@@ -241,7 +244,7 @@
                     <tr>
                         <td colspan="4"></td>
                         <td class="" colspan="3">
-                            <span style="font-weight:bold;">Grand Total</span>
+                            <span style="font-weight:bold;">Grand Total <span class="text-danger">(总计)</span></span>
                         </td>
                         <td class="text-right total_grand_total">
                             <?= (isset($data_penawaran)) ? number_format($total_harga - $data_penawaran->nilai_disc + $data_penawaran->ppn_num + $data_penawaran->biaya_pengiriman, 2) : null ?>
@@ -253,7 +256,7 @@
 
         <div class="col-5">
             <div class="form-group">
-                <label>Keterangan Approval/Reject</label>
+                <label>Keterangan Approval/Reject <span class="text-danger">(批准/拒絕說明)</span></label>
                 <textarea name="keterangan" class="form-control " cols="10" rows="5"></textarea>
             </div>
         </div>
@@ -283,7 +286,7 @@
                             </span>
                         </div>
                         <div class="col-4" style="margin-top: 10px;">
-                            <select name="produk_detail" id="" class="form-control produk_detail chosen-select2" style="width: 300px;" required>
+                            <select name="produk_detail" id="" class="form-control produk_detail chosen-select2" style="width: 300px;" disabled>
                                 <option value="">- Nama Produk -</option>
                                 <?php
                                 foreach ($list_produk as $produk) :
@@ -294,7 +297,7 @@
                         </div>
                         <div class="col-2 mt-15" style="margin-top: 10px;">
                             <span>
-                                Packaging Spec for Supporting Curing Agent (kg)
+                                Packaging Spec for Supporting Curing Agent (kg) 辅助固化剂包装规格（公斤）
                             </span>
                         </div>
                         <div class="col-4" style="margin-top: 10px;">
@@ -356,11 +359,11 @@
                         </div>
                         <div class="col-2 mt-15" style="margin-top: 10px;">
                             <span>
-                                Lot Size
+                                Lot Size 生产数量
                             </span>
                         </div>
                         <div class="col-4" style="margin-top: 10px;">
-                            <select name="lot_size_detail" id="" class="form-control lot_size_detail" required>
+                            <select name="lot_size_detail" id="" class="form-control lot_size_detail" disabled>
 
                             </select>
                         </div>

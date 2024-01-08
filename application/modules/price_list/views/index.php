@@ -20,31 +20,19 @@ $ENABLE_DELETE  = has_permission('Price_List.Delete');
             <table id="dataTable" class="table table-bordered display table-striped border-right-0 border-left-0" width="100%">
                 <thead>
                     <tr>
-                        <th width="10" class="text-center">No</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Kode Product</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Nama Product</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Packaging</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Lot Size</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Curing Agent</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Curing Agent Konversi</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Pricelist / Kg</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Pricelist / Kaleng</th>
+                        <th width="10" class="text-center">No <span class="text-danger">(不)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Kode Product <span class="text-danger">(产品型号)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Nama Product <span class="text-danger">(产品名称)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Nama Product (Mandarin) <span class="text-danger">(产品名称)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Packaging <span class="text-danger">(包装规格)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Lot Size <span class="text-danger">(生产数量)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Curing Agent <span class="text-danger">(配套固化剂)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Curing Agent Konversi <span class="text-danger">(辅助固化剂包装规格（公斤）)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Pricelist / Kg <span class="text-danger">(单价)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Pricelist / Kaleng <span class="text-danger">(每罐价格)</span></th>
                     </tr>
                 </thead>
                 <tbody></tbody>
-                <tfoot>
-                    <tr>
-                        <th width="10">#</th>
-                        <th>Kode Product</th>
-                        <th>Nama Product</th>
-                        <th>Packaging</th>
-                        <th>Lot Size</th>
-                        <th>Curing Agent</th>
-                        <th>Curing Agent Konversi</th>
-                        <th>Pricelist / Kg</th>
-                        <th>Pricelist / Kaleng</th>
-                    </tr>
-                </tfoot>
             </table>
         </div>
     </div>

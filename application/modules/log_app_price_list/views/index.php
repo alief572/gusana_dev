@@ -8,7 +8,7 @@ $ENABLE_DELETE  = has_permission('Log_Approval.Delete');
 <div class="br-pagetitle">
     <i class="tx-primary fa-4x <?= $template['page_icon']; ?>"></i>
     <div>
-        <h4>Log Approval Price List</h4>
+        <h4>Log Approval Price List | 审批记录</h4>
     </div>
 </div><!-- d-flex -->
 
@@ -24,33 +24,19 @@ $ENABLE_DELETE  = has_permission('Log_Approval.Delete');
                     <tr>
                         <th width="15" class="text-center">No</th>
                         <th class="desktop tablet mobile tx-bold tx-dark" width="">No. Bom</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Nama Product</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Log Size</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Product Costing</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Product Costing / Kg</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Propose Price List</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Price List Before</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Approval Type</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">App By</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">App Date</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Nama Product <span class="text-danger">(产品名称)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Nama Product (Mandarin) <span class="text-danger">(產品中文名稱)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Log Size <span class="text-danger">(生产数量)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Product Costing <span class="text-danger">(产品成本计算)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Product Costing / Kg <span class="text-danger">(产品每公斤成本)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Propose Price List <span class="text-danger">(建议价格表)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Price List Before <span class="text-danger">(之前的价格表)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Approval Type <span class="text-danger">(批准类型)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width="">App By <span class="text-danger">(批准者)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width="">App Date <span class="text-danger">(批准日期)</span></th>
                     </tr>
                 </thead>
                 <tbody></tbody>
-                <tfoot>
-                    <tr>
-                        <th>No</th>
-                        <th>No. Bom</th>
-                        <th>Nama Product</th>
-                        <th>Lot Size</th>
-                        <th>Product Costing</th>
-                        <th>Product Costing / Kg</th>
-                        <th>Propose Price List</th>
-                        <th>Price List Before</th>
-                        <th>Approval Type</th>
-                        <th>App By</th>
-                        <th>App Date</th>
-                    </tr>
-                </tfoot>
             </table>
         </div>
     </div>

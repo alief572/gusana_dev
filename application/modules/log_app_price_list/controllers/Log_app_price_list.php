@@ -51,6 +51,7 @@ class Log_app_price_list extends Admin_Controller
         SELECT 
             a.*,
             b.nama,
+            b.nama_mandarin,
             c.full_name
         FROM 
             ms_log_app_price_list a
@@ -112,18 +113,19 @@ class Log_app_price_list extends Admin_Controller
             $nestedData[]  = $nomor;
             $nestedData[]  = $row['id_bom'];
             $nestedData[]  = $row['nama'];
+            $nestedData[]  = $row['nama_mandarin'];
             $nestedData[]  = $get_bom->qty_hopper;
-            $nestedData[]  = number_format($row['product_costing'],2);
-            $nestedData[]  = number_format($row['product_costing_per_kg'],2);
-            $nestedData[]  = number_format($row['propose_price_list'],2);
-            $nestedData[]  = number_format($row['price_list_before'],2);
-            if($row['app_type'] == 1){
+            $nestedData[]  = number_format($row['product_costing'], 2);
+            $nestedData[]  = number_format($row['product_costing_per_kg'], 2);
+            $nestedData[]  = number_format($row['propose_price_list'], 2);
+            $nestedData[]  = number_format($row['price_list_before'], 2);
+            if ($row['app_type'] == 1) {
                 $nestedData[]  = '<div class="badge badge-success">Approved</div>';
-            }else{
+            } else {
                 $nestedData[]  = '<div class="badge badge-danger">Rejected</div>';
             }
             $nestedData[]  = $row['full_name'];
-            $nestedData[]  = date('d F Y',strtotime($row['approve_date']));
+            $nestedData[]  = date('d F Y', strtotime($row['approve_date']));
             $data[] = $nestedData;
             $urut1++;
             $urut2++;
@@ -142,7 +144,7 @@ class Log_app_price_list extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Log Approval Price List');
+        $this->template->title('Log Approval Price List | 审批记录');
         $this->template->render('index');
     }
 

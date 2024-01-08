@@ -59,11 +59,11 @@ foreach ($detail as $val => $valx) {
                 <tr>
                     <th class='text-center' width="5%">#</th>
                     <!-- <th class='text-center' width="5%">Code</th> -->
-                    <th class='text-center' width="25%">Element Costing</th>
-                    <th class='text-center' width="12%">Rate</th>
-                    <th class='text-right' width="12%">Price</th>
-                    <th class='text-center'>Keterangan</th>
-                    <th class='text-center' width="10%">Detail</th>
+                    <th class='text-center' width="25%">Element Costing <span class="text-danger">(元素成本)</span></th>
+                    <th class='text-center' width="12%">Rate <span class="text-danger">(费率)</span></th>
+                    <th class='text-right' width="12%">Price <span class="text-danger">(价格)</span></th>
+                    <th class='text-center'>Keterangan <span class="text-danger">(备注)</span></th>
+                    <th class='text-center' width="10%">Detail <span class="text-danger">(查看详情)</span></th>
                 </tr>
             </thead>
             <tbody>
@@ -74,7 +74,7 @@ foreach ($detail as $val => $valx) {
                         if ($value['judul'] == 'Material') {
                             echo "<tr>";
                             echo "<td class='text-center'>1</td>";
-                            echo "<td>" . $value['element_costing'] . "</td>";
+                            echo "<td>" . $value['element_costing'] . " <span class='text-danger'>(" . $value['element_costing_mandarin'] . ")</span></td>";
                             echo "<td></td>";
                             echo "<td class='text-right'>" . number_format($product_price[0]['price_material'], 2) . "</td>";
                             echo "<td>" . $value['keterangan'] . "</td>";
@@ -85,7 +85,7 @@ foreach ($detail as $val => $valx) {
                     echo "<tr>";
                     echo "<td class='text-center' rowspan='3'>2</td>";
                     // echo "<td class='text-center'></td>";
-                    echo "<td class='text-left text-bold' colspan='4'>Manpower</td>";
+                    echo "<td class='text-left text-bold' colspan='4'>Manpower <span class='text-danger'>(人力)</span></td>";
                     echo "</tr>";
                     foreach ($dataList as $key => $value) {
                         if ($value['judul'] == 'Manpower') {
@@ -101,7 +101,7 @@ foreach ($detail as $val => $valx) {
                             }
 
                             echo "<tr>";
-                            echo "<td>" . $value['element_costing'] . "</td>";
+                            echo "<td>" . $value['element_costing'] . " <span class='text-danger'>(" . $value['element_costing_mandarin'] . ")</span></td>";
                             echo "<td class='text-center'>" . $rate . "</td>";
                             echo "<td class='text-right'>" . number_format($man_power, 2) . "</td>";
                             echo "<td>" . $value['keterangan'] . "</td>";
@@ -112,7 +112,7 @@ foreach ($detail as $val => $valx) {
                     echo "<tr>";
                     echo "<td class='text-center' rowspan='3'>3</td>";
                     // echo "<td class='text-center'></td>";
-                    echo "<td class='text-left text-bold' colspan='4'>Mesin, cetakan, consumable</td>";
+                    echo "<td class='text-left text-bold' colspan='4'>Mesin, cetakan, consumable <span class='text-danger'>(机器, 模具, 消耗品)</span></td>";
                     echo "</tr>";
                     foreach ($dataList as $key => $value) {
                         if ($value['judul'] == 'Mesin, cetakan, consumable' && $value['element_costing'] !== '3.2. Mold/ Cetakan') {
@@ -132,7 +132,7 @@ foreach ($detail as $val => $valx) {
                                 $cost_machine     = $product_price[0]['cost_consumable'];
                                 $detRate = "";
                             }
-                            echo "<td>" . $value['element_costing'] . "</td>";
+                            echo "<td>" . $value['element_costing'] . " <span class='text-danger'>(" . $value['element_costing_mandarin'] . ")</span></td>";
                             echo "<td class='text-center'>" . $rate . "</td>";
                             echo "<td class='text-right'>" . number_format($cost_machine, 2) . "</td>";
                             echo "<td>" . $value['keterangan'] . "</td>";
@@ -143,7 +143,7 @@ foreach ($detail as $val => $valx) {
                     echo "<tr>";
                     echo "<td class='text-center' rowspan='3'>4</td>";
                     // echo "<td class='text-center'></td>";
-                    echo "<td class='text-left text-bold' colspan='4'>Logistik</td>";
+                    echo "<td class='text-left text-bold' colspan='4'>Logistik <span class='text-danger'>(消耗品)</span></td>";
                     echo "</tr>";
                     foreach ($dataList as $key => $value) {
                         if ($value['judul'] == 'Logistik') {
@@ -156,7 +156,7 @@ foreach ($detail as $val => $valx) {
                                 $rate         = '';
                                 $cost_packing     = $product_price[0]['cost_transport'];
                             }
-                            echo "<td>" . $value['element_costing'] . "</td>";
+                            echo "<td>" . $value['element_costing'] . " <span class='text-danger'>(" . $value['element_costing_mandarin'] . ")</span></td>";
                             echo "<td class='text-center'>" . $rate . "</td>";
                             echo "<td class='text-right'>" . number_format($cost_packing, 2) . "</td>";
                             echo "<td>" . $value['keterangan'] . "</td>";
@@ -233,16 +233,15 @@ foreach ($detail as $val => $valx) {
                                 $rate         = '';
 
                                 $get_product_set = $this->db->get_where('ms_product_set', ['id_product' => $product_price[0]['code_lv4']])->num_rows();
-                                if($get_product_set > 0){
+                                if ($get_product_set > 0) {
                                     $cost = '<div class="badge badge-success">Set</div>';
-                                }else{
+                                } else {
                                     $cost = '<div class="badge badge-danger">Not Set</div>';
                                 }
-                                
                             }
                             echo "<tr>";
                             echo "<td class='text-center'>" . $nomor . "</td>";
-                            echo "<td>" . $value['element_costing'] . "</td>";
+                            echo "<td>" . $value['element_costing'] . " <span class='text-danger'>(" . $value['element_costing_mandarin'] . ")</span></td>";
                             echo "<td class='text-center'>" . $rate . "</td>";
                             if ($value['code'] == '16') {
                                 echo "<td class='text-right'></td>";
@@ -253,40 +252,39 @@ foreach ($detail as $val => $valx) {
                                     echo "<td class='text-right selisih'>" . number_format($cost, 2) . "</td>";
                                 } else if ($value['code'] == '23') {
                                     echo "<td class='text-right persentase'>" . number_format($cost, 2) . "%</td>";
-                                }else if($value['code'] == '24'){
+                                } else if ($value['code'] == '24') {
                                     $hasil = '';
                                     $get_product_set = $this->db->get_where('ms_product_set', ['id_product' => $product_price[0]['code_lv4']])->num_rows();
-                                    if($get_product_set > 0){
+                                    if ($get_product_set > 0) {
                                         echo "
                                         <td class='text-center'>
                                             Set
                                         </td>";
-                                    }else{
+                                    } else {
                                         echo "
                                         <td class='text-center'>
                                             Not Set
                                         </td>";
                                     }
-                                }
-                                 else {
+                                } else {
                                     echo "<td class='text-right'>" . number_format($cost, 2) . "</td>";
                                 }
                             }
-                            if($value['code'] == 24){
+                            if ($value['code'] == 24) {
                                 $hasil = '';
                                 $get_product_set = $this->db->get_where('ms_product_set', ['id_product' => $product_price[0]['code_lv4']])->result();
                                 $x = 1;
-                                foreach($get_product_set as $product_set) :
-                                    if($x == 1){
+                                foreach ($get_product_set as $product_set) :
+                                    if ($x == 1) {
                                         $hasil = $hasil . $product_set->nama_product;
-                                    }else{
-                                        $hasil = $hasil . ' and '.$product_set->nama_product;
+                                    } else {
+                                        $hasil = $hasil . ' and ' . $product_set->nama_product;
                                     }
                                     $x++;
                                 endforeach;
-                                
-                                echo "<td class='text-left'>".$hasil."</td>";
-                            }else{
+
+                                echo "<td class='text-left'>" . $hasil . "</td>";
+                            } else {
                                 echo "<td>" . $value['keterangan'] . "</td>";
                             }
                             echo "<td></td>";

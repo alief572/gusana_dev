@@ -4,7 +4,7 @@
         <input type="hidden" name="req_approval" class="req_approval" value="<?= (isset($request_approval)) ? $request_approval : null ?>">
         <div class="row">
             <div class="col-6">
-                <label for="">Customer Name</label>
+                <label for="">Customer Name <span class="text-danger">(客户名称)</span></label>
                 <select name="customer" class="form-control  chosen-select customer" required>
                     <option value="">- Customer Name -</option>
                     <?php
@@ -21,40 +21,40 @@
                 </select>
             </div>
             <div class="col-6">
-                <label for="">Quote Number</label>
+                <label for="">Quote Number <span class="text-danger">(报价编号)</span></label>
                 <input type="text" name="" id="" class="form-control " value="<?= (isset($data_penawaran)) ? $data_penawaran->id_penawaran : 'new' ?>" readonly>
             </div>
             <div class="col-6">
-                <label for="">Customer Address</label>
+                <label for="">Customer Address <span class="text-danger">(客户地址)</span></label>
                 <input type="text" name="address_cust" id="" class="form-control cust_address" value="<?= (isset($data_penawaran)) ? $data_penawaran->address_cust : null ?>" readonly>
             </div>
             <div class="col-6">
-                <label for="">Quote Date</label>
+                <label for="">Quote Date <span class="text-danger">(报价日期)</span></label>
                 <input type="date" name="tgl_penawaran" id="" class="form-control " value="<?= (isset($data_penawaran)) ? $data_penawaran->tgl_penawaran : null ?>" required>
             </div>
             <div class="col-6">
-                <label for="">Contact Person</label>
+                <label for="">Contact Person <span class="text-danger">(联系人)</span></label>
                 <select name="pic_cust" class="form-control  chosen-select pic_cust" required>
                     <option value="">- Contact Person -</option>
                     <?php
                     if (isset($data_penawaran)) {
                         foreach ($list_pic as $pic) :
                             $selected = '';
-                            if($pic->id == $data_penawaran->id_pic_cust){
+                            if ($pic->id == $data_penawaran->id_pic_cust) {
                                 $selected = 'selected';
                             }
-                            echo '<option value="' . $pic->id . '" '.$selected.'>' . $pic->name . '</option>';
+                            echo '<option value="' . $pic->id . '" ' . $selected . '>' . $pic->name . '</option>';
                         endforeach;
                     }
                     ?>
                 </select>
             </div>
             <div class="col-6">
-                <label for="">Delivery Date</label>
-                <input type="date" name="deliver_date" id="" class="form-control" value="<?= (isset($data_penawaran)) ? $data_penawaran->deliver_date : null?>" required>
+                <label for="">Delivery Date <span class="text-danger">(交货日期)</span></label>
+                <input type="date" name="deliver_date" id="" class="form-control" value="<?= (isset($data_penawaran)) ? $data_penawaran->deliver_date : null ?>" required>
             </div>
             <div class="col-6">
-                <label for="">Delivery Type</label>
+                <label for="">Delivery Type <span class="text-danger">(交货类型)</span></label>
                 <select name="deliver_type" id="" class="form-control" required>
                     <option value="">- Delivery Type -</option>
                     <option value="1" <?= (isset($data_penawaran) && $data_penawaran->deliver_type == 1) ? 'selected' : null ?>>Delivery</option>
@@ -62,7 +62,7 @@
                 </select>
             </div>
             <div class="col-6">
-                <label for="">Sales</label>
+                <label for="">Sales <span class="text-danger">(销售人员姓名)</span></label>
                 <select name="sales_marketing" id="" class="form-control  chosen-select" required>
                     <option value="">- Sales -</option>
                     <?php
@@ -91,12 +91,15 @@
                 </select>
             </div>
         </div>
-    
+
         <div class="col-12">
-            <button type="button" class="btn btn-sm btn-success add_product" style="margin-top:20px;">
-                <i class="fa fa-plus"></i>
-                Add Product
-            </button>
+            <span>
+                <button type="button" class="btn btn-sm btn-success add_product" style="margin-top:20px;">
+                    <i class="fa fa-plus"></i>
+                    Add Product
+                </button>
+                <span class="text-danger">(添加产品)</span>
+            </span>
             <table class="table table-striped" id="table-product">
                 <thead>
                     <tr>
@@ -152,7 +155,7 @@
                     foreach ($list_penawaran_detail as $penawaran_detail) : $x++; ?>
                         <tr>
                             <td class="text-center"><?= $x ?></td>
-                            <td class="text-center"><?= $penawaran_detail->nm_product ?></td>
+                            <td class="text-center"><span class="text-danger"><?= $penawaran_detail->nama_mandarin ?></span> <br><?= $penawaran_detail->nm_product; ?> ?></td>
                             <td class="text-center"><?= $penawaran_detail->kode_product ?></td>
                             <td class="text-center"><?= number_format($penawaran_detail->qty, 2) ?></td>
                             <td class="text-center"><?= number_format($penawaran_detail->weight, 2) ?></td>
@@ -175,19 +178,25 @@
                 <tbody>
                     <tr>
                         <td colspan="4"></td>
-                        <td class="text-left" colspan="3">Subtotal</td>
+                        <td class="text-left" colspan="3">Subtotal <span class="text-danger">(小计)</span></td>
                         <td class="text-right total_all_harga"><?= number_format($total_harga, 2) ?></td>
                     </tr>
                     <tr>
                         <td colspan="4"></td>
-                        <td class="">Biaya Pengiriman</td>
-                        <td class="" colspan="3">
+                        <td class="">Biaya Pengiriman <span class="text-danger">(交付成本)</span></td>
+                        <td class="">
                             <input type="text" name="biaya_pengiriman" id="" class="form-control  text-right biaya_pengiriman autonum" placeholder="Input Biaya Pengiriman" value="<?= (isset($data_penawaran)) ? number_format($data_penawaran->biaya_pengiriman, 2) : null ?>">
                         </td>
+                        <th>
+                            <input type="text" name="dari_tmp" id="" class="form-control" value="<?= (isset($data_penawaran)) ? $data_penawaran->dari_tmp : null ?>" placeholder="- Dari -">
+                        </th>
+                        <th>
+                            <input type="text" name="ke_tmp" id="" class="form-control" value="<?= (isset($data_penawaran)) ? $data_penawaran->ke_tmp : null ?>" placeholder="- Ke -">
+                        </th>
                     </tr>
                     <tr>
                         <td colspan="4"></td>
-                        <td class="text-center">Discount</td>
+                        <td class="text-center">Discount <span class="text-danger">(折扣)</span></td>
                         <td>
                             <table border="0">
                                 <tr>
@@ -207,7 +216,7 @@
                                     <td>%</td>
                                 </tr>
                             </table>
-                            
+
                         </td>
                         <td class="text-right disc_harga">
                             <?= (isset($data_penawaran) ? number_format($data_penawaran->nilai_disc, 2) : null) ?>
@@ -215,7 +224,7 @@
                     </tr>
                     <tr>
                         <td colspan="4"></td>
-                        <td class="" colspan="3">Price After Discount</td>
+                        <td class="" colspan="3">Price After Discount <span class="text-danger">(折扣后价格)</span></td>
                         <td class="text-right total_after_disc">
                             <?= (isset($data_penawaran)) ? number_format($total_harga - $data_penawaran->nilai_disc, 2) : null ?>
                         </td>
@@ -233,7 +242,7 @@
                     <tr>
                         <td colspan="4"></td>
                         <td class="" colspan="3">
-                            <span style="font-weight:bold;">Grand Total</span>
+                            <span style="font-weight:bold;">Grand Total <span class="text-danger">(总计)</span></span>
                         </td>
                         <td class="text-right total_grand_total">
                             <?= (isset($data_penawaran)) ? number_format($total_harga - $data_penawaran->nilai_disc + $data_penawaran->ppn_num + $data_penawaran->biaya_pengiriman, 2) : null ?>
@@ -250,14 +259,14 @@
             </div>
         </div>
         <div class="text-right">
-            <?php 
-                if(isset($request_approval) && $request_approval == 1){
-                    echo '<button type="submit" class="btn btn-sm btn-warning" name="request_approval" id="request_approval">Request Approval</button>';
-                }else{
-                    echo '<button type="submit" class="btn btn-sm btn-primary" name="save" id="save">Save</button>';
-                }
+            <?php
+            if (isset($request_approval) && $request_approval == 1) {
+                echo '<button type="submit" class="btn btn-sm btn-warning" name="request_approval" id="request_approval">Request Approval</button>';
+            } else {
+                echo '<button type="submit" class="btn btn-sm btn-primary" name="save" id="save">Save</button>';
+            }
             ?>
-            
+
             <a href="<?= base_url('/penawaran') ?>" class="btn btn-sm btn-danger">Back</a>
         </div>
     </div>
@@ -270,7 +279,7 @@
             <input type="hidden" name="id_detail" class="id_detail">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title tx-bold text-dark" id="myModalLabel">Add Product</h4>
+                    <h4 class="modal-title tx-bold text-dark" id="myModalLabel">Add Product <span class="text-danger">(添加产品)</span></h4>
                     <button type="button" class="btn btn-default close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                 </div>
                 <div class="modal-body">
@@ -293,6 +302,7 @@
                         </div>
                         <div class="col-2 mt-15" style="margin-top: 10px;">
                             <span>
+                                辅助固化剂包装规格（公斤）<br>
                                 Packaging Spec for Supporting Curing Agent (kg)
                             </span>
                         </div>
@@ -355,12 +365,13 @@
                         </div>
                         <div class="col-2 mt-15" style="margin-top: 10px;">
                             <span>
+                                生产数量 <br>
                                 Lot Size
                             </span>
                         </div>
                         <div class="col-4" style="margin-top: 10px;">
                             <select name="lot_size_detail" id="" class="form-control lot_size_detail" required>
-                                
+
                             </select>
                         </div>
                         <div class="col-2 mt-15" style="margin-top: 10px;">
@@ -564,18 +575,18 @@
         });
     }
 
-    function refresh_table_product(){
+    function refresh_table_product() {
         var id_penawaran = $('.id_penawaran').val();
 
         $.ajax({
-            type : 'post',
+            type: 'post',
             url: siteurl + thisController + 'refresh_table_product',
             data: {
                 'id_penawaran': id_penawaran
             },
             cache: false,
             dataType: 'json',
-            success: function(result){
+            success: function(result) {
                 $('#table-product').html(result.hasil);
 
                 $('.autonum').autoNumeric();
@@ -609,11 +620,11 @@
         $('.weight').autoNumeric();
     });
 
-    $(document).on('click', '.add_product', function(){
+    $(document).on('click', '.add_product', function() {
         $('#add-product').modal();
 
         $('.id_detail').val('');
-        $('.produk_detail').val('').trigger('change.select2'); 
+        $('.produk_detail').val('').trigger('change.select2');
         $('.curing_agent_pack_spec').val('');
         $('.qty').val('');
         $('.ral_code').val('');
@@ -868,7 +879,7 @@
         });
     });
 
-    $(document).on('keyup', '.biaya_pengiriman', function(){
+    $(document).on('keyup', '.biaya_pengiriman', function() {
         hitung_all();
     });
 
@@ -878,7 +889,7 @@
         var req_approval = $('.req_approval').val();
         // alert(req_approval);
         var msg = 'Are you sure to save this data ?';
-        if(req_approval == '1'){
+        if (req_approval == '1') {
             msg = 'Are you sure to make request approval ?'
         }
 
@@ -953,7 +964,7 @@
         })
     });
 
-    $(document).on('click', '.edit_detail', function(){
+    $(document).on('click', '.edit_detail', function() {
         var id = $(this).data('id');
 
         $.ajax({
@@ -964,12 +975,12 @@
             },
             cache: false,
             dataType: 'json',
-            success: function(result){
+            success: function(result) {
                 $('#add-product').modal();
 
                 // $('.id_penawaran2').val(result.id_penawaran2);
                 $('.id_detail').val(result.id);
-                $('.produk_detail').val(result.id_product).trigger('change.select2'); 
+                $('.produk_detail').val(result.id_product).trigger('change.select2');
                 $('.curing_agent_pack_spec').val(result.curing_agent_pack_spec);
                 $('.qty').autoNumeric('set', result.qty);
                 $('.ral_code').val(result.ral_code);
@@ -996,7 +1007,7 @@
         var req_approval = $('.req_approval').val();
         // alert(req_approval);
         var msg = 'Are you sure to save this data ?';
-        if(req_approval == '1'){
+        if (req_approval == '1') {
             msg = 'Are you sure to make request approval ?'
         }
 
@@ -1052,7 +1063,7 @@
                         hideClass: 'zoomOut',
                         soundPath: '<?= base_url(); ?>themes/bracket/assets/lib/lobiani/sounds/',
                     });
-                    window.location.href='<?= base_url('/penawaran') ?>';
+                    window.location.href = '<?= base_url('/penawaran') ?>';
                 } else {
                     Lobibox.notify('warning', {
                         icon: 'fa fa-ban',

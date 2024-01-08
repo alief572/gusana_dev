@@ -136,7 +136,7 @@ class Product_master extends Admin_Controller
 		$deleted = '0';
 		$data = $this->Product_master_model->get_data_category3();
 		$this->template->set('results', $data);
-		$this->template->title('Product');
+		$this->template->title('Product Master | 产品主数据');
 		$this->template->render('list');
 	}
 	public function editInventory($id)
@@ -539,7 +539,7 @@ class Product_master extends Admin_Controller
 		$id_refer = $this->input->post('refer_product');
 		$nm_refer = '';
 		$check_refer = $this->db->get_where('ms_product_category3', ['id_category3' => $this->input->post('refer_product')])->num_rows();
-		if($check_refer > 0){
+		if ($check_refer > 0) {
 			$get_refer = $this->db->get_where('ms_product_category3', ['id_category3' => $this->input->post('refer_product')])->row();
 			$nm_refer = $get_refer->nama;
 		}
@@ -642,7 +642,7 @@ class Product_master extends Admin_Controller
 		$id_refer = $this->input->post('refer_product');
 		$nm_refer = '';
 		$check_refer = $this->db->get_where('ms_product_category3', ['id_category3' => $this->input->post('refer_product')])->num_rows();
-		if($check_refer > 0){
+		if ($check_refer > 0) {
 			$get_refer = $this->db->get_where('ms_product_category3', ['id_category3' => $this->input->post('refer_product')])->row();
 			$nm_refer = $get_refer->nama;
 		}
@@ -1164,17 +1164,17 @@ class Product_master extends Admin_Controller
 	}
 
 	public function getData()
-    {
-        $requestData    = $_REQUEST;
-        $status         = $requestData['status'];
-        $search         = $requestData['search']['value'];
-        $column         = $requestData['order'][0]['column'];
-        $dir            = $requestData['order'][0]['dir'];
-        $start          = $requestData['start'];
-        $length         = $requestData['length'];
+	{
+		$requestData    = $_REQUEST;
+		$status         = $requestData['status'];
+		$search         = $requestData['search']['value'];
+		$column         = $requestData['order'][0]['column'];
+		$dir            = $requestData['order'][0]['dir'];
+		$start          = $requestData['start'];
+		$length         = $requestData['length'];
 
-        $string = $this->db->escape_like_str($search);
-        $sql = "SELECT a.*, b.nama as nama_material_1, c.nama as nama_material_2, d.nama as nama_material_3, e.nm_packaging FROM ms_product_category3 a 
+		$string = $this->db->escape_like_str($search);
+		$sql = "SELECT a.*, b.nama as nama_material_1, c.nama as nama_material_2, d.nama as nama_material_3, e.nm_packaging FROM ms_product_category3 a 
 		LEFT JOIN ms_product_type b ON b.id_type = a.id_type
 		LEFT JOIN ms_product_category1 c ON c.id_category1 = a.id_category1
 		LEFT JOIN ms_product_category2 d ON d.id_category2 = a.id_category2
@@ -1182,90 +1182,90 @@ class Product_master extends Admin_Controller
 		WHERE 
 			1=1 AND
 			(
-				a.id_category3 LIKE '%".$string."%' OR 
-				a.nama LIKE '%".$string."%' OR 
-				b.nama LIKE '%".$string."%' OR 
-				c.nama LIKE '%".$string."%' OR 
-				d.nama LIKE '%".$string."%' OR 
-				e.nm_packaging LIKE '%".$string."%' OR 
-				a.konversi LIKE '%".$string."%' OR 
-				a.unit_nm LIKE '%".$string."%'
+				a.id_category3 LIKE '%" . $string . "%' OR 
+				a.nama LIKE '%" . $string . "%' OR 
+				b.nama LIKE '%" . $string . "%' OR 
+				c.nama LIKE '%" . $string . "%' OR 
+				d.nama LIKE '%" . $string . "%' OR 
+				e.nm_packaging LIKE '%" . $string . "%' OR 
+				a.konversi LIKE '%" . $string . "%' OR 
+				a.unit_nm LIKE '%" . $string . "%'
 			)
 		GROUP BY a.id_category3
 		";
 
-        $totalData = $this->db->query($sql)->num_rows();
-        $totalFiltered = $this->db->query($sql)->num_rows();
+		$totalData = $this->db->query($sql)->num_rows();
+		$totalFiltered = $this->db->query($sql)->num_rows();
 
-        $columns_order_by = array(
-            0 => 'id',
-        );
+		$columns_order_by = array(
+			0 => 'id',
+		);
 
-        // $sql .= " ORDER BY " . $columns_order_by[$column] . " " . $dir . " ";
-        $sql .= " LIMIT " . $start . " ," . $length . " ";
-        $query  = $this->db->query($sql);
+		// $sql .= " ORDER BY " . $columns_order_by[$column] . " " . $dir . " ";
+		$sql .= " LIMIT " . $start . " ," . $length . " ";
+		$query  = $this->db->query($sql);
 
-        $data  = array();
-        $urut1  = 1;
-        $urut2  = 0;
+		$data  = array();
+		$urut1  = 1;
+		$urut2  = 0;
 
-        foreach ($query->result_array() as $row) {
-            $buttons = '';
-            $total_data     = $totalData;
-            $start_dari     = $start;
-            $asc_desc       = $dir;
-            if (
-                $asc_desc == 'asc'
-            ) {
-                $nomor = $urut1 + $start_dari;
-            }
-            if (
-                $asc_desc == 'desc'
-            ) {
-                $nomor = ($total_data - $start_dari) - $urut2;
-            }
+		foreach ($query->result_array() as $row) {
+			$buttons = '';
+			$total_data     = $totalData;
+			$start_dari     = $start;
+			$asc_desc       = $dir;
+			if (
+				$asc_desc == 'asc'
+			) {
+				$nomor = $urut1 + $start_dari;
+			}
+			if (
+				$asc_desc == 'desc'
+			) {
+				$nomor = ($total_data - $start_dari) - $urut2;
+			}
 
-            $view         = '<a class="btn btn-primary btn-sm view" href="javascript:void(0)" title="View" data-id_inventory3="'.$row['id_category3'].'"><i class="fa fa-eye"></i>
+			$view         = '<a class="btn btn-primary btn-sm view" href="javascript:void(0)" title="View" data-id_inventory3="' . $row['id_category3'] . '"><i class="fa fa-eye"></i>
 			</a>';
-            $edit         = '<a class="btn btn-success btn-sm edit" href="javascript:void(0)" title="Edit" data-id_inventory3="'.$row['id_category3'].'" data-id_type="'.$row['id_type'].'"><i class="fa fa-edit"></i>
+			$edit         = '<a class="btn btn-success btn-sm edit" href="javascript:void(0)" title="Edit" data-id_inventory3="' . $row['id_category3'] . '" data-id_type="' . $row['id_type'] . '"><i class="fa fa-edit"></i>
 			</a>';
-            $delete     = '<a class="btn btn-danger btn-sm delete" href="javascript:void(0)" title="Delete" data-id_inventory3="'.$row['id_category3'].'"><i class="fa fa-trash"></i>
+			$delete     = '<a class="btn btn-danger btn-sm delete" href="javascript:void(0)" title="Delete" data-id_inventory3="' . $row['id_category3'] . '"><i class="fa fa-trash"></i>
 			</a>';
-            $buttons     = $view . "&nbsp;" . $edit . "&nbsp;" . $delete;
+			$buttons     = $view . "&nbsp;" . $edit . "&nbsp;" . $delete;
 
-			if($row['aktif'] == 1){
+			if ($row['aktif'] == 1) {
 				$status = '<div class="badge badge-success">Aktif</div>';
-			}else{
+			} else {
 				$status = '<div class="badge badge-danger">Non Aktif</div>';
 			}
 
-            $nestedData   = array();
-            $nestedData[]  = $row['id_category3'];
-            $nestedData[]  = $row['nama_material_1'];
-            $nestedData[]  = $row['nama_material_2'];
-            $nestedData[]  = $row['nama_material_3'];
-            $nestedData[]  = $row['nama_mandarin'];
-            $nestedData[]  = $row['nama'];
-            $nestedData[]  = $row['nm_packaging'];
-            $nestedData[]  = $row['konversi'];
-            $nestedData[]  = $row['unit_nm'];
-            $nestedData[]  = $status;
-            // $nestedData[]  = $row['email'];
-            // $nestedData[]  = $row['address'];
-            // $nestedData[]  = $status[$row['status']];
-            $nestedData[]  = $buttons;
-            $data[] = $nestedData;
-            $urut1++;
-            $urut2++;
-        }
+			$nestedData   = array();
+			$nestedData[]  = $row['id_category3'];
+			$nestedData[]  = $row['nama_material_1'];
+			$nestedData[]  = $row['nama_material_2'];
+			$nestedData[]  = $row['nama_material_3'];
+			$nestedData[]  = $row['nama_mandarin'];
+			$nestedData[]  = $row['nama'];
+			$nestedData[]  = $row['nm_packaging'];
+			$nestedData[]  = $row['konversi'];
+			$nestedData[]  = $row['unit_nm'];
+			$nestedData[]  = $status;
+			// $nestedData[]  = $row['email'];
+			// $nestedData[]  = $row['address'];
+			// $nestedData[]  = $status[$row['status']];
+			$nestedData[]  = $buttons;
+			$data[] = $nestedData;
+			$urut1++;
+			$urut2++;
+		}
 
-        $json_data = array(
-            "draw"              => intval($requestData['draw']),
-            "recordsTotal"      => intval($totalData),
-            "recordsFiltered"   => intval($totalFiltered),
-            "data"              => $data
-        );
+		$json_data = array(
+			"draw"              => intval($requestData['draw']),
+			"recordsTotal"      => intval($totalData),
+			"recordsFiltered"   => intval($totalFiltered),
+			"data"              => $data
+		);
 
-        echo json_encode($json_data);
-    }
+		echo json_encode($json_data);
+	}
 }

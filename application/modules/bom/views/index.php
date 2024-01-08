@@ -8,7 +8,7 @@ $ENABLE_DELETE  = has_permission('Engineering.Delete');
 <div class="br-pagetitle">
     <i class="tx-primary fa-4x <?= $template['page_icon']; ?>"></i>
     <div>
-        <h4>Bill of Material</h4>
+        <h4>Bill of Material | 配方</h4>
         <p class="mg-b-0">Lorem ipsum dolor sit amet.</p>
     </div>
 </div><!-- d-flex -->
@@ -16,7 +16,7 @@ $ENABLE_DELETE  = has_permission('Engineering.Delete');
 <div class="d-flex align-items-center justify-content-between pd-x-20 pd-sm-x-30 pd-t-25 mg-b-20 mg-sm-b-30">
     <?php echo Template::message(); ?>
     <?php if ($ENABLE_ADD) : ?>
-        <button class="btn btn-primary btn-oblong add" href="javascript:void(0)" title="Add"><i class="fa fa-plus">&nbsp;</i>Add New BOM</button>
+        <button class="btn btn-primary btn-oblong add" href="javascript:void(0)" title="Add"><i class="fa fa-plus">&nbsp;</i>Add New BOM (添新配方)</button>
         <!-- <button type="button" class="btn btn-success btn-oblong" onclick="loadData()" title="Add"><i class="fa fa-plus">&nbsp;</i>Refresh</button> -->
     <?php endif; ?>
 </div>
@@ -27,13 +27,13 @@ $ENABLE_DELETE  = has_permission('Engineering.Delete');
             <table id="dataTable" width="100%" class="table display table-bordered table-hover table-striped border-left-0 border-right-0">
                 <thead>
                     <tr>
-                        <th width="15" class="text-center">No</th>
-                        <th>Product Master</th>
-                        <th>Product Code</th>
-                        <th>Lot Size (Kg)</th>
-                        <th>Packaging</th>
-                        <th>Conversion</th>
-                        <th>Unit Measurement</th>
+                        <th width="15" class="text-center">No <span class="text-danger">(不)</span></th>
+                        <th>Product Master <span class="text-danger">(产品名称)</span></th>
+                        <th>Product Master (Mandarin) <span class="text-danger">(产品名称)</span></th>
+                        <th>Product Code <span class="text-danger">(产品型号)</span></th>
+                        <th>Lot Size (Kg) <span class="text-danger">(生产数量)</span></th>
+                        <th>Packaging <span class="text-danger">(单位)</span></th>
+                        <th>Conversion <span class="text-danger">(包装规格)</span></th>
                         <th>Last By</th>
                         <th>Last Date</th>
                         <?php if ($ENABLE_MANAGE) : ?>
@@ -42,22 +42,6 @@ $ENABLE_DELETE  = has_permission('Engineering.Delete');
                     </tr>
                 </thead>
                 <tbody></tbody>
-                <tfoot>
-                    <tr>
-                        <th>No</th>
-                        <th>Product Master</th>
-                        <th>Product Code</th>
-                        <th>Total Weight (Kg)</th>
-                        <th>Packaging</th>
-                        <th>Conversion</th>
-                        <th>Unit Measurement</th>
-                        <th>Last By</th>
-                        <th>Last Date</th>
-                        <?php if ($ENABLE_MANAGE) : ?>
-                            <th>Action</th>
-                        <?php endif; ?>
-                    </tr>
-                </tfoot>
             </table>
         </div>
     </div>
@@ -86,22 +70,21 @@ $ENABLE_DELETE  = has_permission('Engineering.Delete');
 
 <!-- page script -->
 <script type="text/javascript">
-
     $(document).ready(function() {
         loadData()
     });
 
-    $(document).on("change",".get_product_code",function(){
+    $(document).on("change", ".get_product_code", function() {
         var product_master = $(this).val();
 
         $.ajax({
-            type : 'POST',
-            url : siteurl + thisController + 'get_product_code',
-            data : {
-                'product_master' : product_master
+            type: 'POST',
+            url: siteurl + thisController + 'get_product_code',
+            data: {
+                'product_master': product_master
             },
-            dataType : 'JSON',
-            success : function(result){
+            dataType: 'JSON',
+            success: function(result) {
                 $(".product_code").val(result.product_code);
             }
         });
@@ -112,7 +95,7 @@ $ENABLE_DELETE  = has_permission('Engineering.Delete');
             type: 'POST',
             url: siteurl + thisController + 'add',
             success: function(data) {
-                $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Add New BOM")
+                $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Add New BOM <span class='text-danger'>(添新配方)</span>")
                 $('#dialog-popup .modal-dialog').css({
                     'max-width': '90%'
                 })
@@ -129,7 +112,7 @@ $ENABLE_DELETE  = has_permission('Engineering.Delete');
             type: 'GET',
             url: siteurl + thisController + 'edit/' + id,
             success: function(data) {
-                $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Edit BOM")
+                $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Edit BOM <span class='text-danger'>(编辑物料清单)</span>")
                 $('#dialog-popup .modal-dialog').css({
                     'max-width': '90%'
                 })
@@ -146,7 +129,7 @@ $ENABLE_DELETE  = has_permission('Engineering.Delete');
             type: 'GET',
             url: siteurl + thisController + 'view/' + id,
             success: function(data) {
-                $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;View BOM")
+                $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;View BOM <span class='text-danger'>(查看物料清单)</span>")
                 $('#dialog-popup .modal-dialog').css({
                     'max-width': '75%'
                 })
@@ -344,23 +327,23 @@ $ENABLE_DELETE  = has_permission('Engineering.Delete');
         }
     });
 
-    $(document).on("click",".del_material_detail",function(e){
+    $(document).on("click", ".del_material_detail", function(e) {
         var id = $(this).data('id');
         var id_bom = $(".id_bom").val();
 
         $.ajax({
-            type : 'POST',
-            url : siteurl + thisController + 'del_material_detail',
-            data : {
-                'id' : id,
-                'id_bom' : id_bom
+            type: 'POST',
+            url: siteurl + thisController + 'del_material_detail',
+            data: {
+                'id': id,
+                'id_bom': id_bom
             },
-            cache : true,
-            dataType : 'JSON',
-            success : function(results){
-                if(results.valid == 1){
+            cache: true,
+            dataType: 'JSON',
+            success: function(results) {
+                if (results.valid == 1) {
                     $(".list_detail_material").html(results.hasil);
-                }else{
+                } else {
                     Lobibox.notify('warning', {
                         icon: 'fa fa-ban',
                         msg: 'Maaf, hapus detail material gagal !',

@@ -48,7 +48,7 @@ class Loss_Penawaran extends Admin_Controller
 
         $string = $this->db->escape_like_str($search);
         $sql = "SELECT *
-        FROM ms_penawaran WHERE 1=1 AND sts = 'rejected'
+        FROM ms_penawaran WHERE 1=1 AND sts = 'loss'
         AND (
             id_penawaran LIKE '%$string%' OR
             id_quote LIKE '%$string%' OR
@@ -118,18 +118,7 @@ class Loss_Penawaran extends Admin_Controller
             //     $buttons = $view;
             // }
 
-            $status = '';
-            if ($row['sts'] == 'send') {
-                $status = '<div class="badge badge-warning text-light">Send</div>';
-            } else if ($row['sts'] == 'request_approval') {
-                $status = '<div class="badge badge-info">Request Approval</div>';
-            } else if ($row['sts'] == 'approved') {
-                $status = '<div class="badge badge-success text-light">Approved</div>';
-            } else if ($row['sts'] == 'rejected') {
-                $status = '<div class="badge badge-danger text-light">Reject</div>';
-            } else {
-                $status = '<div class="badge badge-warning text-light">Draft</div>';
-            }
+            $status = '<div class="badge badge-danger">Loss</div>';
 
             if ($row['id_quote'] !== null && $row['id_quote'] !== '') {
                 $id = $row['id_quote'];
@@ -144,6 +133,7 @@ class Loss_Penawaran extends Admin_Controller
             $nestedData[]  = $row['nm_marketing'];
             $nestedData[]  = number_format($row['nilai_penawaran'], 2);
             $nestedData[]  = date('d F Y', strtotime($row['tgl_penawaran']));
+            $nestedData[]  = $row['keterangan_app'];
             $nestedData[]  = $row['revisi'];
             $nestedData[]  = $status;
             $nestedData[]  = $buttons;
@@ -165,7 +155,7 @@ class Loss_Penawaran extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Penawaran');
+        $this->template->title('Loss Penawaran | 丢失报价');
         $this->template->render('index');
     }
 
@@ -269,9 +259,16 @@ class Loss_Penawaran extends Admin_Controller
         // print_r($id);
         // echo'</pre>';
         // exit;
-        $get_penawaran_detail = $this->db->get_where('ms_penawaran_detail', ['id_penawaran' => $id])->result();
+
+
+        $this->db->select('a.*, b.nama_mandarin');
+        $this->db->from('ms_penawaran_detail a');
+        $this->db->join('ms_product_category3 b', 'b.id_category3 = a.id_product', 'left');
+        $this->db->where('a.id_penawaran', $id);
+        $get_penawaran_detail = $this->db->get()->result();
 
         $this->template->set([
+            'id_penawaran' => $id,
             'data_penawaran' => $get_penawaran,
             'data_penawaran_detail' => $get_penawaran_detail
         ]);

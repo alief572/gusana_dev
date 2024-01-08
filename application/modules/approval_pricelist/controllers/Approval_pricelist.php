@@ -27,7 +27,7 @@ class Approval_pricelist extends Admin_Controller
             'Aktifitas/aktifitas_model',
         ));
         $this->load->helper(['url', 'json']);
-        $this->template->title('Approval_pricelist');
+        $this->template->title('Approval Price | 审批价格');
         $this->template->page_icon('fas fa-user-tie');
 
         date_default_timezone_set('Asia/Bangkok');
@@ -51,6 +51,7 @@ class Approval_pricelist extends Admin_Controller
             SELECT
                 a.*,
                 b.nama, 
+                b.nama_mandarin, 
                 c.full_name
             FROM
                 ms_bom a
@@ -160,6 +161,7 @@ class Approval_pricelist extends Admin_Controller
             $nestedData[]  = $nomor;
             $nestedData[]  = $row['variant'];
             $nestedData[]  = $row['nama'];
+            $nestedData[]  = $row['nama_mandarin'];
             $nestedData[]  = number_format($row['qty_hopper'], 2);
             $nestedData[]  = number_format($row['price_list'], 2);
             $nestedData[]  = $expired_date;
@@ -190,7 +192,7 @@ class Approval_pricelist extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Approval Pricelist');
+        $this->template->title('Approval Price | 审批价格');
         $this->template->render('index');
     }
 
@@ -301,7 +303,7 @@ class Approval_pricelist extends Admin_Controller
                 'price_list' => str_replace(',', '', $post['price_approve']),
                 'propose_price_list' => 0,
                 'sts_price_list' => $post['approval_action'],
-                'dist_price' => str_replace(',','',$post['dist_price']),
+                'dist_price' => str_replace(',', '', $post['dist_price']),
                 'req_app' => 0,
                 'expired_date' => $post['expired_date'],
                 'reason' => $post['reason'],

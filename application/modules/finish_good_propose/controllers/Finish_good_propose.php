@@ -84,14 +84,13 @@ class Finish_good_propose extends Admin_Controller
 
 
 
-        
+
         // $nomor = 1;
         foreach ($query->result_array() as $row) {
             $check_data = $this->db->query('SELECT id_so FROM ms_so WHERE id_product = "' . $row['id_category3'] . '" AND batch <> released')->row();
-            
+
             if (!empty($check_data)) {
-               
-            }else{
+            } else {
 
                 $buttons = '';
                 $total_data     = $totalData;
@@ -194,9 +193,9 @@ class Finish_good_propose extends Admin_Controller
 
             $get_bom_product = $this->db->get_where('ms_bom', ['id_product' => $category3['id_category3']])->result();
             $list_bom_product = '';
-            
-            foreach($get_bom_product as $bom_product) :
-                $list_bom_product .= '<option value="'.$bom_product->id.'">'.$bom_product->qty_hopper.'</option>';
+
+            foreach ($get_bom_product as $bom_product) :
+                $list_bom_product .= '<option value="' . $bom_product->id . '">' . $bom_product->qty_hopper . '</option>';
             endforeach;
 
             $data[] = '
@@ -222,9 +221,9 @@ class Finish_good_propose extends Admin_Controller
                         <input type="hidden" name="propose_val_' . $category3['id_category3'] . '" value="' . $category3['propose'] . '">
                     </td>
                     <td class="text-center">
-                        <select class="form-control form-control-sm" name="bom_'.$category3['id_category3'].'">
+                        <select class="form-control form-control-sm" name="bom_' . $category3['id_category3'] . '" required>
                             <option value="">- Lot Size (Kg) -</option>
-                            '.$list_bom_product.'
+                            ' . $list_bom_product . '
                         </select>
                     </td>
                     <td class="text-center">
@@ -300,71 +299,104 @@ class Finish_good_propose extends Admin_Controller
         $this->auth->restrict($this->addPermission);
         $post = $this->input->post();
 
+        $val_propose = 1;
 
         $this->db->trans_begin();
         $list_id_category3 = explode(",", $this->input->post('list_id_category3'));
         foreach ($list_id_category3 as $category3) {
 
-            $code_so = $this->db->query("SELECT MAX(id_so) as max_id_so FROM ms_so WHERE id_so LIKE '%SO/" . date('Y') . "/" . date('m') . "/" . date('d') . "%'")->row();
-            $kodeBarang = $code_so->max_id_so;
-            $urutan = (int) substr($kodeBarang, 14, 6);
-            $urutan++;
-            $tahun = date('Y/m/d/');
-            $huruf = "SO/";
-            $kode_so = $huruf . $tahun . sprintf("%06s", $urutan);
-
-            $id_so = $kode_so;
-            $nm_product_so = $this->input->post('nm_product_so_' . $category3);
-            $propose_val = $this->input->post('propose_val_' . $category3);
-            $product_packaging = $this->input->post('product_packaging_' . $category3);
-            $due_date = $this->input->post('due_date_' . $category3);
-            $bom = $this->input->post('bom_' . $category3);
-
-            $get_product = $this->db->get_where('ms_product_category3', ['id_category3' => $category3])->row();
-            $get_bom = $this->db->get_where('ms_bom', ['id' => $bom])->row();
-
-            $this->db->insert('ms_so', [
-                'id_so' => $id_so,
-                'id_product' => $category3,
-                'packaging' => $product_packaging,
-                'konversi' => $get_product->konversi,
-                'propose' => $propose_val,
-                'due_date' => $due_date,
-                'released' => 0,
-                'sisa_so' => $propose_val,
-                'id_bom' => $bom,
-                'batch' => ($propose_val / $get_bom->qty_hopper),
-                'dibuat_oleh' => $this->auth->user_id(),
-                'dibuat_tgl' => date('Y-m-d H:i:s')
-            ]);
-
-            // Logging
-            $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
-
-            $desc = "New SO Data " . $id_so . " - " . $nm_product_so;
-            $device_name = $this->agent->mobile(); // Returns the mobile device name
-            if ($this->agent->is_browser()) {
-                $device_name = $this->agent->browser(); // Returns the browser name
-            } elseif ($this->agent->is_robot()) {
-                $device_name = $this->agent->robot(); // Returns the robot/crawler name
-            } elseif ($this->agent->is_mobile()) {
-                $device_name = $this->agent->mobile(); // Returns the mobile device name
-            } else {
-                $device_name = 'Unidentified Device';
+            if ($post['propose_val_' . $category3] < 1) {
+                $val_propose = 0;
             }
 
-            $id_user = $this->auth->user_id();
-            $id_menu = $get_menu->id;
-            $nm_menu = $get_menu->title;
-            $device_type = $this->agent->platform();
-            $os_type = $this->agent->browser();
-            log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
+            if ($post['bom_' . $category3] == '') {
+                $val_propose = 3;
+            }
+
+            if ($post['bom_' . $category3]) {
+                $this->db->select('a.qty_hopper');
+                $this->db->from('ms_bom a');
+                $this->db->where('id', $post['bom_' . $category3]);
+                $get_lot_size = $this->db->get()->row();
+
+                if ($post['propose_val_' . $category3] < $get_lot_size->qty_hopper) {
+                    $val_propose = 2;
+                }
+            }
         }
 
-        if ($this->db->trans_status() === FALSE) {
+        if ($val_propose == 1) {
+            foreach ($list_id_category3 as $category3) {
+                $code_so = $this->db->query("SELECT MAX(id_so) as max_id_so FROM ms_so WHERE id_so LIKE '%SO/" . date('Y') . "/" . date('m') . "/" . date('d') . "%'")->row();
+                $kodeBarang = $code_so->max_id_so;
+                $urutan = (int) substr($kodeBarang, 14, 6);
+                $urutan++;
+                $tahun = date('Y/m/d/');
+                $huruf = "SO/";
+                $kode_so = $huruf . $tahun . sprintf("%06s", $urutan);
+
+                $id_so = $kode_so;
+                $nm_product_so = $this->input->post('nm_product_so_' . $category3);
+                $propose_val = $this->input->post('propose_val_' . $category3);
+                $product_packaging = $this->input->post('product_packaging_' . $category3);
+                $due_date = $this->input->post('due_date_' . $category3);
+                $bom = $this->input->post('bom_' . $category3);
+
+                $get_product = $this->db->get_where('ms_product_category3', ['id_category3' => $category3])->row();
+                $get_bom = $this->db->get_where('ms_bom', ['id' => $bom])->row();
+
+                $this->db->insert('ms_so', [
+                    'id_so' => $id_so,
+                    'id_product' => $category3,
+                    'packaging' => $product_packaging,
+                    'konversi' => $get_product->konversi,
+                    'propose' => $propose_val,
+                    'due_date' => $due_date,
+                    'released' => 0,
+                    'sisa_so' => $propose_val,
+                    'id_bom' => $bom,
+                    'batch' => ($propose_val / $get_bom->qty_hopper),
+                    'dibuat_oleh' => $this->auth->user_id(),
+                    'dibuat_tgl' => date('Y-m-d H:i:s')
+                ]);
+
+                // Logging
+                $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
+
+                $desc = "New SO Data " . $id_so . " - " . $nm_product_so;
+                $device_name = $this->agent->mobile(); // Returns the mobile device name
+                if ($this->agent->is_browser()) {
+                    $device_name = $this->agent->browser(); // Returns the browser name
+                } elseif ($this->agent->is_robot()) {
+                    $device_name = $this->agent->robot(); // Returns the robot/crawler name
+                } elseif ($this->agent->is_mobile()) {
+                    $device_name = $this->agent->mobile(); // Returns the mobile device name
+                } else {
+                    $device_name = 'Unidentified Device';
+                }
+
+                $id_user = $this->auth->user_id();
+                $id_menu = $get_menu->id;
+                $nm_menu = $get_menu->title;
+                $device_type = $this->agent->platform();
+                $os_type = $this->agent->browser();
+                log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
+            }
+        }
+
+        if ($this->db->trans_status() === FALSE || $val_propose !== 1) {
             $this->db->trans_rollback();
+            if ($val_propose == 0) {
+                $msg = 'Maaf, mohon pastikan semua kolom propose sudah terisi';
+            } else if ($val_propose == 2) {
+                $msg = 'Maaf, pastikan nilai propose tidak dibawah nilai lot size';
+            } else if ($val_propose == 3) {
+                $msg = 'Maaf, pastikan kolom Lot Size sudah terisi semua';
+            } else {
+                $msg = 'Failed to create Product SO.  Please try again.';
+            }
             $return    = array(
-                'msg'        => 'Failed to create Product SO.  Please try again.',
+                'msg'        => $msg,
                 'status'    => 0
             );
             $keterangan     = "Failed to create Product SO";

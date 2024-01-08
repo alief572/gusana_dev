@@ -8,7 +8,7 @@ $ENABLE_DELETE  = has_permission('Request_Approval.Delete');
 <div class="br-pagetitle">
     <i class="tx-primary fa-4x <?= $template['page_icon']; ?>"></i>
     <div>
-        <h4>Request Approval Penawaran</h4>
+        <h4>Request Approval Penawaran | 申请批准</h4>
     </div>
 </div><!-- d-flex -->
 
@@ -24,6 +24,7 @@ $ENABLE_DELETE  = has_permission('Request_Approval.Delete');
                         <th class="desktop tablet mobile tx-bold tx-dark" width="">Nama Marketing</th>
                         <th class="desktop tablet mobile tx-bold tx-dark" width="">Nilai Penawaran</th>
                         <th class="desktop tablet mobile tx-bold tx-dark" width="">Tanggal Penawaran</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Keterangan</th>
                         <th class="desktop tablet mobile tx-bold tx-dark" width="">Revisi</th>
                         <th class="desktop tablet mobile tx-bold tx-dark" width="">Status</th>
                         <?php if ($ENABLE_MANAGE) : ?>
@@ -40,6 +41,7 @@ $ENABLE_DELETE  = has_permission('Request_Approval.Delete');
                         <th>Nama Marketing</th>
                         <th>Nilai Penawaran</th>
                         <th>Tanggal Penawaran</th>
+                        <th>Keterangan</th>
                         <th>Revisi</th>
                         <th>Status</th>
                         <?php if ($ENABLE_MANAGE) : ?>

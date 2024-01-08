@@ -8,17 +8,9 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 <div class="br-pagetitle">
     <i class="tx-primary fa-4x <?= $template['page_icon']; ?>"></i>
     <div>
-        <h4>Penawaran</h4>
+        <h4>Loss Penawaran | 丢失报价</h4>
     </div>
 </div><!-- d-flex -->
-
-<div class="d-flex align-items-center justify-content-between pd-x-20 pd-sm-x-30 pd-t-25 mg-b-20 mg-sm-b-30">
-    <?php echo Template::message(); ?>
-    <?php if ($ENABLE_ADD) : ?>
-        <a class="btn btn-primary btn-oblong add" href="penawaran/add/new" title="Add"><i class="fa fa-plus">&nbsp;</i>Add Penawaran</a>
-        <!-- <button type="button" class="btn btn-success btn-oblong" onclick="loadData()" title="Add"><i class="fa fa-plus">&nbsp;</i>Refresh</button> -->
-    <?php endif; ?>
-</div>
 
 <div class="br-pagebody pd-x-20 pd-sm-x-30 mg-y-3">
     <div class="card bd-gray-400">
@@ -26,35 +18,22 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             <table id="dataTable" width="100%" class="table display table-bordered table-hover table-striped border-left-0 border-right-0">
                 <thead>
                     <tr>
-                        <th width="15" class="text-center">No</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">No. Penawaran</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Nama Customer</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Nama Marketing</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Nilai Penawaran</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Tanggal Penawaran</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Revisi</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Status</th>
+                        <th width="15" class="text-center">No <span class="text-danger">(不)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width="">No. Penawaran <span class="text-danger">(报价编号)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Nama Customer <span class="text-danger">(客户姓名)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Nama Marketing <span class="text-danger">(销售姓名)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Nilai Penawaran <span class="text-danger">(报价金额)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Tanggal Penawaran <span class="text-danger">(报价日期)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Keterangan Loss</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Revisi <span class="text-danger">(修订号码)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Status <span class="text-danger">(状态)</span></th>
                         <?php if ($ENABLE_MANAGE) : ?>
-                            <th class="desktop text-center no-sort" width="110">Action</th>
+                            <th class="desktop text-center no-sort" width="110">Action <span class="text-danger">(操作)</span></th>
                         <?php endif; ?>
                     </tr>
                 </thead>
                 <tbody></tbody>
-                <tfoot>
-                    <tr>
-                        <th>No</th>
-                        <th>No. Penawaran</th>
-                        <th>Nama Customer</th>
-                        <th>Nama Marketing</th>
-                        <th>Nilai Penawaran</th>
-                        <th>Tanggal Penawaran</th>
-                        <th>Revisi</th>
-                        <th>Status</th>
-                        <?php if ($ENABLE_MANAGE) : ?>
-                            <th>Action</th>
-                        <?php endif; ?>
-                    </tr>
-                </tfoot>
+
             </table>
         </div>
     </div>
@@ -85,15 +64,12 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
 <!-- page script -->
 <script type="text/javascript">
-
-    
-    
     $(document).ready(function() {
         loadData()
     })
 
     $(document).on('click', '.add', function() {
-        
+
         $.ajax({
             type: 'POST',
             url: siteurl + thisController + 'add',
@@ -249,7 +225,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         var req_approval = $('.req_approval').val();
         // alert(req_approval);
         var msg = 'Are you sure to save this data ?';
-        if(req_approval == '1'){
+        if (req_approval == '1') {
             msg = 'Are you sure to make request approval ?'
         }
 
@@ -325,7 +301,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
     });
 
-    $(document).on('click','.print_penawaran', function(){
+    $(document).on('click', '.print_penawaran', function() {
         var id = $(this).data('id');
 
         window.open(siteurl + thisController + 'print_penawaran/' + id, '_blank');

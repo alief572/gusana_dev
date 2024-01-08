@@ -80,16 +80,16 @@ class Product_price_model extends BF_Model
 
 			$check_product_set = $this->db->get_where('ms_product_set', ['id_product' => $row['code_lv4']])->num_rows();
 
-			if($check_product_set > 0){
+			if ($check_product_set > 0) {
 				$status = '<div class="text-light badge badge-success">Set</div>';
-			}else{
+			} else {
 				$status = '<div class="text-light badge badge-warning">Not Set</div>';
 			}
 
 			$nestedData 	= array();
 			$nestedData[]	= "<div align='center'>" . $nomor . "</div>";
-			// $nestedData[]	= "<div align='left'>".strtoupper(strtolower($row['nama_level1']))."</div>";
 			$nestedData[]	= "<div align='left'>" . strtoupper(strtolower($row['product_master'])) . "</div>";
+			$nestedData[]	= "<div align='left'>" . strtoupper(strtolower($row['nama_level4_mandarin'])) . "</div>";
 
 			$nestedData[]	= "<div align='right'>" . number_format($row['berat_material'], 2) . " Kg</div>";
 			$nestedData[]	= "<div align='right'>" . number_format($row['price_material'], 2) . "</div>";
@@ -134,6 +134,7 @@ class Product_price_model extends BF_Model
 					(@row:=@row+1) AS nomor,
 					a.*,
 					b.nama AS nama_level4,
+					b.nama_mandarin AS nama_level4_mandarin,
 					c.sts_price_list
 				FROM
 					product_price a 

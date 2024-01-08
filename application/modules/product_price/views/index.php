@@ -15,12 +15,12 @@ $ENABLE_DELETE  = has_permission('Product_Price.Delete');
 <div class="box">
 	<div class="box-header">
 		<span class="pull-left">
-			<button type='button' class='btn btn-sm btn-primary' id='btnUpdate'>Update Product Price</button>
+			<button type='button' class='btn btn-sm btn-primary' id='btnUpdate'>Update Product Price</button> <span class="text-danger">(更新品价)</span>
 			<br>
 			<span class='text-bold text-red'><?= $last_update; ?></span> <br>
 			<button type="button" class="btn btn-sm btn-success add_product_set">
 				<i class="fa fa-plus"></i> Add Product Set
-			</button>
+			</button> <span class="text-danger">(添加品价)</span>
 		</span>
 	</div>
 	<!-- /.box-header -->
@@ -30,11 +30,12 @@ $ENABLE_DELETE  = has_permission('Product_Price.Delete');
 				<tr>
 					<th>#</th>
 					<!-- <th>Product Type</th> -->
-					<th>Product Master</th>
-					<th class='text-right'>Lot Size</th>
-					<th class='text-right'>Price Material</th>
-					<th class='text-right'>Price MP</th>
-					<th class='text-right'>Price Total</th>
+					<th>Product Master <span class="text-danger">(产品全名)</span></th>
+					<th>Product Master (Mandarin) <span class="text-danger">(產品中文名稱)</span></th>
+					<th class='text-right'>Lot Size <span class="text-danger">(产品名称)</span></th>
+					<th class='text-right'>Material Price <span class="text-danger">(材料价格)</span></th>
+					<th class='text-right'>Manpower Price <span class="text-danger">(人力成本)</span></th>
+					<th class='text-right'>Price Total <span class="text-danger">(总价格)</span></th>
 					<th class='text-center'>Status</th>
 					<th>Action</th>
 				</tr>
@@ -138,7 +139,7 @@ $ENABLE_DELETE  = has_permission('Product_Price.Delete');
 		})
 	});
 
-	$(document).on('click', '.save_price', function(){
+	$(document).on('click', '.save_price', function() {
 		$('#dialog-popup').modal('hide');
 		DataTables();
 	});
