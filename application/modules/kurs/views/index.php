@@ -1,8 +1,8 @@
 <?php
-$ENABLE_ADD     = has_permission('Kurs.Add');
-$ENABLE_MANAGE  = has_permission('Kurs.Manage');
-$ENABLE_VIEW    = has_permission('Kurs.View');
-$ENABLE_DELETE  = has_permission('Kurs.Delete');
+$ENABLE_ADD     = has_permission('Master_Kurs.Add');
+$ENABLE_MANAGE  = has_permission('Master_Kurs.Manage');
+$ENABLE_VIEW    = has_permission('Master_Kurs.View');
+$ENABLE_DELETE  = has_permission('Master_Kurs.Delete');
 ?>
 <div class="br-pagetitle">
     <i class="tx-primary fa-4x <?= $template['page_icon']; ?>"></i>

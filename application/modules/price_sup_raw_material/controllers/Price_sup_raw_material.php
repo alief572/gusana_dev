@@ -6,10 +6,10 @@ if (!defined('BASEPATH')) {
 class Price_sup_raw_material extends Admin_Controller
 {
   //Permission
-  protected $viewPermission   = 'Raw_Material.View';
-  protected $addPermission    = 'Raw_Material.Add';
-  protected $managePermission = 'Raw_Material.Manage';
-  protected $deletePermission = 'Raw_Material.Delete';
+  protected $viewPermission   = 'Sup_Raw_Material.View';
+  protected $addPermission    = 'Sup_Raw_Material.Add';
+  protected $managePermission = 'Sup_Raw_Material.Manage';
+  protected $deletePermission = 'Sup_Raw_Material.Delete';
 
   public function __construct()
   {
@@ -135,7 +135,8 @@ class Price_sup_raw_material extends Admin_Controller
     }
   }
 
-  public function get_kurs(){
+  public function get_kurs()
+  {
     $get_kurs_usd = $this->Price_sup_raw_material_model->get_kurs_usd();
     $get_kurs_rmb = $this->Price_sup_raw_material_model->get_kurs_rmb();
 

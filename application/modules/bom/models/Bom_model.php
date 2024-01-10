@@ -43,7 +43,7 @@ class Bom_model extends BF_Model
 
     public function get_material_category()
     {
-        $getData = $this->db->get_where('ms_inventory_category1',['deleted' => 0])->result();
+        $getData = $this->db->get_where('ms_inventory_category1', ['deleted' => 0])->result();
         return $getData;
     }
 
@@ -55,7 +55,7 @@ class Bom_model extends BF_Model
 
     public function get_product_master_by_id($id)
     {
-        $getData = $this->db->get_where('ms_product_category3',['id_category3' => $id])->row();
+        $getData = $this->db->get_where('ms_product_category3', ['id_category3' => $id])->row();
         return $getData;
     }
 
@@ -84,7 +84,7 @@ class Bom_model extends BF_Model
                 LEFT JOIN ms_inventory_category1 c ON c.id_category1 = a.id_category1
             WHERE
                 a.id_bom = '" . $id . "'
-            ORDER BY a.id_proses ASC
+            ORDER BY a.id ASC
         ")->result();
         return $getData;
     }
@@ -105,7 +105,8 @@ class Bom_model extends BF_Model
         return $getData;
     }
 
-    public function get_proses(){
+    public function get_proses()
+    {
         $getData = $this->db->get('m_proses')->result();
 
         return $getData;

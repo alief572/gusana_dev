@@ -1,8 +1,8 @@
 <?php
-$ENABLE_ADD     = has_permission('Divisi.Add');
-$ENABLE_MANAGE  = has_permission('Divisi.Manage');
-$ENABLE_VIEW    = has_permission('Divisi.View');
-$ENABLE_DELETE  = has_permission('Divisi.Delete');
+$ENABLE_ADD     = has_permission('Master_Sales.Add');
+$ENABLE_MANAGE  = has_permission('Master_Sales.Manage');
+$ENABLE_VIEW    = has_permission('Master_Sales.View');
+$ENABLE_DELETE  = has_permission('Master_Sales.Delete');
 ?>
 
 <div class="br-pagetitle">
@@ -80,7 +80,7 @@ $ENABLE_DELETE  = has_permission('Divisi.Delete');
             success: function(data) {
                 $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Add New Divisi")
                 $('#dialog-popup .modal-dialog').css({
-                    
+
                 })
                 $("#dialog-popup").modal();
                 $("#dialog-popup .modal-body").html(data);
@@ -97,7 +97,7 @@ $ENABLE_DELETE  = has_permission('Divisi.Delete');
             success: function(data) {
                 $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Edit Kode Sales")
                 $('#dialog-popup .modal-dialog').css({
-                    
+
                 })
                 $("#dialog-popup").modal();
                 $("#dialog-popup .modal-body").html(data);

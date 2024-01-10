@@ -6,10 +6,10 @@ if (!defined('BASEPATH')) {
 class Master_barang_stok extends Admin_Controller
 {
 
-    // protected $viewPermission     = 'Barang Stok.View';
-    // protected $addPermission      = 'Barang Stok.Add';
-    // protected $managePermission = 'Barang Stok.Manage';
-    // protected $deletePermission = 'Barang Stok.Delete';
+    protected $viewPermission     = 'Master_Barang_Stok.View';
+    protected $addPermission      = 'Master_Barang_Stok.Add';
+    protected $managePermission = 'Master_Barang_Stok.Manage';
+    protected $deletePermission = 'Master_Barang_Stok.Delete';
 
     public function __construct()
     {

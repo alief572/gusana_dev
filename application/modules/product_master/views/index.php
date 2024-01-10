@@ -1,8 +1,8 @@
 <?php
-$ENABLE_ADD     = has_permission('Level_4.Add');
-$ENABLE_MANAGE  = has_permission('Level_4.Manage');
-$ENABLE_VIEW    = has_permission('Level_4.View');
-$ENABLE_DELETE  = has_permission('Level_4.Delete');
+$ENABLE_ADD     = has_permission('Product_Master.Add');
+$ENABLE_MANAGE  = has_permission('Product_Master.Manage');
+$ENABLE_VIEW    = has_permission('Product_Master.View');
+$ENABLE_DELETE  = has_permission('Product_Master.Delete');
 
 ?>
 <style type="text/css">

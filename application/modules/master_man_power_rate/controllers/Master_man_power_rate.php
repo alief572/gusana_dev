@@ -6,10 +6,10 @@ if (!defined('BASEPATH')) {
 class Master_man_power_rate extends Admin_Controller
 {
 
-    // protected $viewPermission     = 'Packaging.View';
-    // protected $addPermission      = 'Packaging.Add';
-    // protected $managePermission = 'Packaging.Manage';
-    // protected $deletePermission = 'Packaging.Delete';
+    protected $viewPermission     = 'Master_Komponen_Man_Power_Rate.View';
+    protected $addPermission      = 'Master_Komponen_Man_Power_Rate.Add';
+    protected $managePermission = 'Master_Komponen_Man_Power_Rate.Manage';
+    protected $deletePermission = 'Master_Komponen_Man_Power_Rate.Delete';
 
     public function __construct()
     {

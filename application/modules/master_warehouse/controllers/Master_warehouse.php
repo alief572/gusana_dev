@@ -6,10 +6,10 @@ if (!defined('BASEPATH')) {
 class Master_warehouse extends Admin_Controller
 {
 
-    // protected $viewPermission     = 'Warehouse.View';
-    // protected $addPermission      = 'Warehouse.Add';
-    // protected $managePermission = 'Warehouse.Manage';
-    // protected $deletePermission = 'Warehouse.Delete';
+    protected $viewPermission     = 'Master_Warehouse.View';
+    protected $addPermission      = 'Master_Warehouse.Add';
+    protected $managePermission = 'Master_Warehouse.Manage';
+    protected $deletePermission = 'Master_Warehouse.Delete';
 
     public function __construct()
     {

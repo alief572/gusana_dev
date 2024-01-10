@@ -1,8 +1,8 @@
 <?php
-$ENABLE_ADD     = has_permission('Raw_Material.Add');
-$ENABLE_MANAGE  = has_permission('Raw_Material.Manage');
-$ENABLE_VIEW    = has_permission('Raw_Material.View');
-$ENABLE_DELETE  = has_permission('Raw_Material.Delete');
+$ENABLE_ADD     = has_permission('Sup_Raw_Material.Add');
+$ENABLE_MANAGE  = has_permission('Sup_Raw_Material.Manage');
+$ENABLE_VIEW    = has_permission('Sup_Raw_Material.View');
+$ENABLE_DELETE  = has_permission('Sup_Raw_Material.Delete');
 ?>
 <style type="text/css">
 	thead input {

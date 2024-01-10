@@ -1,8 +1,8 @@
 <?php
-$ENABLE_ADD     = has_permission('Menu_SPK.Add');
-$ENABLE_MANAGE  = has_permission('Menu_SPK.Manage');
-$ENABLE_VIEW    = has_permission('Menu_SPK.View');
-$ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
+$ENABLE_ADD     = has_permission('LHP_Filling.Add');
+$ENABLE_MANAGE  = has_permission('LHP_Filling.Manage');
+$ENABLE_VIEW    = has_permission('LHP_Filling.View');
+$ENABLE_DELETE  = has_permission('LHP_Filling.Delete');
 ?>
 
 <div class="br-pagetitle">
@@ -98,7 +98,7 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
         // $("#save").removeClass('d-none');
     });
 
-    $(document).on('click', '.create_spk', function(){
+    $(document).on('click', '.create_spk', function() {
         var id_so = $(this).data('id_so');
         var id_proses = $(this).data('id_proses');
         var batch_ke = $(this).data('batch_ke');

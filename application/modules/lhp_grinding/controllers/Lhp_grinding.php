@@ -13,10 +13,10 @@ if (!defined('BASEPATH')) {
 
 class Lhp_grinding extends Admin_Controller
 {
-    protected $viewPermission     = 'Grinding.View';
-    protected $addPermission      = 'Grinding.Add';
-    protected $managePermission = 'Grinding.Manage';
-    protected $deletePermission = 'Grinding.Delete';
+    protected $viewPermission     = 'LHP_Grinding.View';
+    protected $addPermission      = 'LHP_Grinding.Add';
+    protected $managePermission = 'LHP_Grinding.Manage';
+    protected $deletePermission = 'LHP_Grinding.Delete';
     public function __construct()
     {
         parent::__construct();
@@ -278,7 +278,7 @@ class Lhp_grinding extends Admin_Controller
         // echo'</pre>';
         // exit;
 
-        foreach($get_material_tambahan as $material_tambahan){
+        foreach ($get_material_tambahan as $material_tambahan) {
             $qty_aktual_material_tambahan = $this->input->post('qty_aktual_material_tambahan_' . $material_tambahan->id_category1);
 
             $check_qty_aktual = $this->db->get_where('ms_lhp_aktual_qty', [
@@ -353,7 +353,7 @@ class Lhp_grinding extends Admin_Controller
             'a.id_proses' => $id_proses
         ]);
         $this->db->group_by('a.id_category1');
-        
+
         $get_data_material_tambahan = $this->db->get()->result();
 
         $this->db->trans_begin();
@@ -364,20 +364,19 @@ class Lhp_grinding extends Admin_Controller
                 $check_stock_material = $this->db->get_where('ms_stock_material', ['id_category1' => $list_data->id_category1])->row();
                 if (empty($check_stock_material)) {
                     $valid = 2;
-                }else{
-                    if($list_data->aktual_qty <= $list_data->qty_stock){
+                } else {
+                    if ($list_data->aktual_qty <= $list_data->qty_stock) {
                         $valid = 1;
-                    }else{
+                    } else {
                         $valid = 0;
                     }
                 }
             }
 
-            if($valid == 1){
+            if ($valid == 1) {
                 $qty_akhir = ($list_data->qty_stock - $list_data->aktual_qty);
 
                 $this->db->update('ms_stock_material', ['qty_stock' => $qty_akhir], ['id_category1' => $list_data->id_category1]);
-
             }
         endforeach;
 
@@ -386,24 +385,23 @@ class Lhp_grinding extends Admin_Controller
                 $check_stock_material = $this->db->get_where('ms_stock_material', ['id_category1' => $list_data_material_tambahan->id_category1])->row();
                 if (empty($check_stock_material)) {
                     $valid = 2;
-                }else{
-                    if($list_data_material_tambahan->jumlah <= $list_data_material_tambahan->stock_material){
+                } else {
+                    if ($list_data_material_tambahan->jumlah <= $list_data_material_tambahan->stock_material) {
                         $valid = 1;
-                    }else{
+                    } else {
                         $valid = 0;
                     }
                 }
             }
 
-            if($valid == 1){
+            if ($valid == 1) {
                 $qty_akhir = ($list_data_material_tambahan->stock_material - $list_data_material_tambahan->jumlah);
 
                 $this->db->update('ms_stock_material', ['qty_stock' => $qty_akhir], ['id_category1' => $list_data_material_tambahan->id_category1]);
-
             }
         endforeach;
 
-        if($this->db->trans_status() === FALSE || $valid !== 1){
+        if ($this->db->trans_status() === FALSE || $valid !== 1) {
             $this->db->trans_rollback();
             $msg = 'Maaf, ada material yang kurang dari aktual stock !';
 
@@ -411,7 +409,7 @@ class Lhp_grinding extends Admin_Controller
                 'status' => $valid,
                 'msg' => $msg
             ];
-        }else{
+        } else {
             $msg = 'Selamat, LHP telah di closing !';
 
             $this->db->insert('ms_closing_lhp', [
@@ -424,7 +422,7 @@ class Lhp_grinding extends Admin_Controller
             ]);
 
             $this->db->trans_commit();
-            
+
             $hasil = [
                 'status' => $valid,
                 'msg' => $msg
@@ -467,8 +465,8 @@ class Lhp_grinding extends Admin_Controller
                 ms_spk_material_tambahan a
                 LEFT JOIN ms_lhp_aktual_qty b ON b.id_spk = a.id_spk AND b.id_so = a.id_so AND b.id_proses = a.id_proses AND b.id_material = a.id_category1
             WHERE
-                a.id_spk = "'.$id_spk.'"
-                AND a.id_so = "'.$get_data_spk->id_so.'"
+                a.id_spk = "' . $id_spk . '"
+                AND a.id_so = "' . $get_data_spk->id_so . '"
                 AND a.id_proses = "3"
             GROUP BY a.id_category1
 
@@ -476,7 +474,7 @@ class Lhp_grinding extends Admin_Controller
 
         $closing_spk = 0;
         $check_closing_spk = $this->db->get_where('ms_closing_lhp', ['id_spk' => $id_spk, 'id_so' => $get_data_spk->id_so, 'id_proses' => 3])->num_rows();
-        if($check_closing_spk > 0){
+        if ($check_closing_spk > 0) {
             $closing_spk = 1;
         }
 

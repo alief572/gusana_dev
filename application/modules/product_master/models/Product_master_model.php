@@ -87,7 +87,7 @@ class Product_master_model extends BF_Model
 	function level_3($id_inventory2)
 	{
 		$search = "id_category1='" . $id_inventory2 . "'";
-		$this->db->where($search);
+		$this->db->where('id_category1', $id_inventory2);
 		$this->db->order_by('id_category2', 'ASC');
 		return $this->db->from('ms_product_category2')
 			->get()

@@ -13,10 +13,10 @@ if (!defined('BASEPATH')) {
 
 class Lhp_filling extends Admin_Controller
 {
-    protected $viewPermission     = 'Filling.View';
-    protected $addPermission      = 'Filling.Add';
-    protected $managePermission = 'Filling.Manage';
-    protected $deletePermission = 'Filling.Delete';
+    protected $viewPermission     = 'LHP_Filling.View';
+    protected $addPermission      = 'LHP_Filling.Add';
+    protected $managePermission = 'LHP_Filling.Manage';
+    protected $deletePermission = 'LHP_Filling.Delete';
     public function __construct()
     {
         parent::__construct();
@@ -293,14 +293,14 @@ class Lhp_filling extends Admin_Controller
         $get_product = $this->db->get_where('ms_product_category3', ['id_category3' => $get_so->id_product])->row();
 
         $check_stock_product = $this->db->get_where('ms_stock_product', ['id_product' => $get_so->id_product])->num_rows();
-        if($check_stock_product < 1){
+        if ($check_stock_product < 1) {
             $this->db->insert('ms_stock_product', [
                 'id_product' => $get_so->id_product,
                 'qty_asli' => ($aktual_qty * $get_product->konversi),
                 'dibuat_oleh' => $this->auth->user_id(),
                 'dibuat_tgl' => date('Y-m-d H:i:s')
             ]);
-        }else{
+        } else {
             $get_stock = $this->db->get_where('ms_stock_product', ['id_product' => $get_so->id_product])->row();
 
             $this->db->update('ms_stock_product', [
@@ -369,7 +369,7 @@ class Lhp_filling extends Admin_Controller
 
         $get_material_tambahan = $this->db->get_where('ms_spk_material_tambahan', ['id_spk' => $id_spk, 'id_proses' => '-'])->result();
 
-        $get_product_so = $this->db->query("SELECT b.konversi, b.packaging, b.propose FROM ms_create_spk a JOIN ms_so b ON b.id_so = a.id_so WHERE a.id_spk = '" . $id_spk . "'")->row();
+        $get_product_so = $this->db->query("SELECT b.konversi, b.packaging, b.propose FROM ms_create_spk a JOIN ms_so b ON b.id_so = a.id_so WHERE a.id_spk = '" . $id_spk . "' AND a.id_so = '" . $get_data_spk->id_so . "'")->row();
 
         $closing_spk = 0;
         $check_closing_spk = $this->db->get_where('ms_closing_lhp', ['id_spk' => $id_spk, 'id_so' => $get_data_spk->id_so, 'id_proses' => '-'])->num_rows();
@@ -424,7 +424,7 @@ class Lhp_filling extends Admin_Controller
 
         $get_material_tambahan = $this->db->get_where('ms_spk_material_tambahan', ['id_spk' => $id_spk, 'id_proses' => '-'])->result();
 
-        $get_user = $this->db->query("SELECT b.full_name, b.username FROM ms_create_spk a LEFT JOIN users b ON b.id_user = a.ditarik_oleh WHERE a.id_spk = '" . $id_spk . "'")->row();
+        $get_user = $this->db->query("SELECT b.full_name, b.username FROM ms_create_spk a LEFT JOIN users b ON b.id_user = a.ditarik_oleh WHERE a.id_spk = '" . $id_spk . "' AND a.id_so = '" . $get_data_spk->id_so . "'")->row();
 
         $no_cetak = $get_data_spk->batch_ke . '/' . date('d-m-Y') . '/' . $get_user->username;
 

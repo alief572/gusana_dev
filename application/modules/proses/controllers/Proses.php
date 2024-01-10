@@ -5,6 +5,10 @@ if (!defined('BASEPATH')) {
 
 class Proses extends Admin_Controller
 {
+    protected $viewPermission     = 'Proses.View';
+    protected $addPermission      = 'Proses.Add';
+    protected $managePermission = 'Proses.Manage';
+    protected $deletePermission = 'Proses.Delete';
     public function __construct()
     {
         parent::__construct();

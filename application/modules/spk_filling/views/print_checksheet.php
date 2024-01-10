@@ -92,7 +92,7 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
                     <td class="text-center">1</td>
                     <td class="text-center"><?= $results['data_product_so']->konversi . ' ' . $results['data_product_so']->packaging ?></td>
                     <td class="text-center"><?= $results['data_product_so']->packaging ?></td>
-                    <td class="text-center"><?= number_format(($results['data_product_so']->propose / $results['data_product_so']->konversi / ($results['data_product_so']->propose / $results['data_bom']->qty_hopper)), 2).' '.$results['data_product_so']->packaging ?></td>
+                    <td class="text-center"><?= number_format(($results['data_product_so']->propose / $results['data_product_so']->konversi / ($results['data_product_so']->propose / $results['data_bom']->qty_hopper)), 2) . ' ' . $results['data_product_so']->packaging ?></td>
                     <td class="text-center"></td>
                     <td class="text-center"></td>
                 </tbody>

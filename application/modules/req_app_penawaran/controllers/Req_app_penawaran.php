@@ -264,7 +264,7 @@ class Req_app_penawaran extends Admin_Controller
         $this->auth->restrict($this->addPermission);
         $post = $this->input->post();
 
-        $check_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $post['id_penawaran']])->num_rows();
+        // $check_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $post['id_penawaran']])->num_rows();
         $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $post['id_penawaran']])->row();
 
         $get_marketing = $this->db->get_where('employees', ['id' => $get_penawaran->id_marketing])->row();
@@ -291,9 +291,18 @@ class Req_app_penawaran extends Admin_Controller
         $valid_stock = 1;
 
         $valid_sales = 1;
+        $this->db->select('a.id');
+        $this->db->from('ms_kode_sales a');
+        $this->db->where('a.id_sales LIKE', '%' . $get_penawaran->id_marketing . '%');
+        $this->db->where('a.kode_angka !=', '');
+        $this->db->where('a.kode_nama !=', '');
+        $check_sales = $this->db->get()->num_rows();
+        if ($check_sales < 1) {
+            $valid_sales = 0;
+        }
 
         $id_quote = '';
-        if ($post['req_action'] == 1) {
+        if ($post['req_action'] == '1') {
 
             $get_kode_sales = $this->db->get_where('ms_kode_sales', ['id_sales' => $get_penawaran->id_marketing])->row();
             $get_customer = $this->db->get('customers')->result();
@@ -303,8 +312,7 @@ class Req_app_penawaran extends Admin_Controller
             $this->db->where('id_cust', $get_penawaran->id_cust);
             $this->db->where('sts', 'approved');
             $this->db->where('id_quote LIKE', '%' . date('Ymd') . '%');
-            $this->db->get();
-            $num_pesanan = $this->db->num_rows();
+            $num_pesanan = $this->db->get()->num_rows();
 
             $jum_pesanan = sprintf('%02s', ($num_pesanan + 1));
 

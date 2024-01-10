@@ -22,7 +22,7 @@
  							<th colspan="5">
  								<select id="inventory_2" name="inventory_2" class="form-control form-control-sm inv_lv_2 gabung_nama chosen-select" onchange="get_inv3()" required>
  									<option value="">-- Pilih Product Category --</option>
- 									<?php foreach ($results['inv_2'] as $iv_2) : ?>
+ 									<?php foreach ($results['inventory_2'] as $iv_2) : ?>
  										<option value="<?= $iv_2->id_category1 ?>"><?= $iv_2->nama ?></option>
  									<?php endforeach; ?>
  								</select>
@@ -42,12 +42,12 @@
  								<input type="text" name="nm_lv_4" id="" class="form-control form-control-sm nm_lv_4" placeholder="Product Master">
  							</th>
  						</tr>
-						 <tr style="border:none !important;">
-							<th>Product Master (Mandarin)</th>
-							<th colspan="5">
-								<input type="text" name="nm_lv_4_mandarin" id="" class="form-control form-control-sm" placeholder="Product Master (Mandarin)" value="">
-							</th>
-						</tr>
+ 						<tr style="border:none !important;">
+ 							<th>Product Master (Mandarin)</th>
+ 							<th colspan="5">
+ 								<input type="text" name="nm_lv_4_mandarin" id="" class="form-control form-control-sm" placeholder="Product Master (Mandarin)" value="">
+ 							</th>
+ 						</tr>
  						<tr style="border:none !important;">
  							<th>Product Code</th>
  							<th>
@@ -55,12 +55,12 @@
  							</th>
  							<th>Curing Agent</th>
  							<th>
-								<select name="curing_agent" id="" class="form-control form-control-sm select" placeholder="Curing Agent">
-									<option value="">- Curing Agent -</option>
-									<?php foreach($results['list_curing_agent'] as $curing_agent) : ?>
-										<option value="<?= $curing_agent->id_category3 ?>"><?= $curing_agent->nama ?></option>
-									<?php endforeach; ?>
-								</select>
+ 								<select name="curing_agent" id="" class="form-control form-control-sm select" placeholder="Curing Agent">
+ 									<option value="">- Curing Agent -</option>
+ 									<?php foreach ($results['list_curing_agent'] as $curing_agent) : ?>
+ 										<option value="<?= $curing_agent->id_category3 ?>"><?= $curing_agent->nama ?></option>
+ 									<?php endforeach; ?>
+ 								</select>
  								<!-- <input type="text" name="trade_name" id="" class="form-control form-control-sm" placeholder="Trade Name"> -->
  							</th>
  							<th>
@@ -173,13 +173,13 @@
  							<th>Refer Product</th>
  							<th colspan="5">
  								<select name="refer_product" id="" class="form-control form-control-sm select">
-									<option value="">- Refer Product -</option>
-									<?php  
-										foreach($results['inventory_4'] as $inven_4) :
-											echo '<option value="'.$inven_4->id_category3.'">'.$inven_4->nama.'</option>';
+ 									<option value="">- Refer Product -</option>
+ 									<?php
+										foreach ($results['inventory_4'] as $inven_4) :
+											echo '<option value="' . $inven_4->id_category3 . '">' . $inven_4->nama . '</option>';
 										endforeach;
-									?>
-								</select>
+										?>
+ 								</select>
  							</th>
  						</tr>
  					</table>

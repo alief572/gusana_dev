@@ -6,10 +6,10 @@ if (!defined('BASEPATH')) {
 class Master_packaging extends Admin_Controller
 {
 
-    // protected $viewPermission     = 'Packaging.View';
-    // protected $addPermission      = 'Packaging.Add';
-    // protected $managePermission = 'Packaging.Manage';
-    // protected $deletePermission = 'Packaging.Delete';
+    protected $viewPermission     = 'Packaging.View';
+    protected $addPermission      = 'Packaging.Add';
+    protected $managePermission = 'Packaging.Manage';
+    protected $deletePermission = 'Packaging.Delete';
 
     public function __construct()
     {
@@ -184,50 +184,50 @@ class Master_packaging extends Admin_Controller
             $this->db->update('master_packaging', $data, ['id' => $post['id']]);
 
             // Logging
-        $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
+            $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
 
-        $desc = "Update Packaging Data " . $data['id'] . " - " . $data['nm_packaging'];
-        $device_name = $this->agent->mobile(); // Returns the mobile device name
-        if ($this->agent->is_browser()) {
-            $device_name = $this->agent->browser(); // Returns the browser name
-        } elseif ($this->agent->is_robot()) {
-            $device_name = $this->agent->robot(); // Returns the robot/crawler name
-        } elseif ($this->agent->is_mobile()) {
+            $desc = "Update Packaging Data " . $data['id'] . " - " . $data['nm_packaging'];
             $device_name = $this->agent->mobile(); // Returns the mobile device name
-        } else {
-            $device_name = 'Unidentified Device';
-        }
+            if ($this->agent->is_browser()) {
+                $device_name = $this->agent->browser(); // Returns the browser name
+            } elseif ($this->agent->is_robot()) {
+                $device_name = $this->agent->robot(); // Returns the robot/crawler name
+            } elseif ($this->agent->is_mobile()) {
+                $device_name = $this->agent->mobile(); // Returns the mobile device name
+            } else {
+                $device_name = 'Unidentified Device';
+            }
 
-        $id_user = $this->auth->user_id();
-        $id_menu = $get_menu->id;
-        $nm_menu = $get_menu->title;
-        $device_type = $this->agent->platform();
-        $os_type = $this->agent->browser();
-        log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
+            $id_user = $this->auth->user_id();
+            $id_menu = $get_menu->id;
+            $nm_menu = $get_menu->title;
+            $device_type = $this->agent->platform();
+            $os_type = $this->agent->browser();
+            log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
         } else {
             $this->db->insert('master_packaging', $data);
 
             // Logging
-        $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
+            $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
 
-        $desc = "Insert New Packaging Data " . $data['id'] . " - " . $data['nm_packaging'];
-        $device_name = $this->agent->mobile(); // Returns the mobile device name
-        if ($this->agent->is_browser()) {
-            $device_name = $this->agent->browser(); // Returns the browser name
-        } elseif ($this->agent->is_robot()) {
-            $device_name = $this->agent->robot(); // Returns the robot/crawler name
-        } elseif ($this->agent->is_mobile()) {
+            $desc = "Insert New Packaging Data " . $data['id'] . " - " . $data['nm_packaging'];
             $device_name = $this->agent->mobile(); // Returns the mobile device name
-        } else {
-            $device_name = 'Unidentified Device';
-        }
+            if ($this->agent->is_browser()) {
+                $device_name = $this->agent->browser(); // Returns the browser name
+            } elseif ($this->agent->is_robot()) {
+                $device_name = $this->agent->robot(); // Returns the robot/crawler name
+            } elseif ($this->agent->is_mobile()) {
+                $device_name = $this->agent->mobile(); // Returns the mobile device name
+            } else {
+                $device_name = 'Unidentified Device';
+            }
 
-        $id_user = $this->auth->user_id();
-        $id_menu = $get_menu->id;
-        $nm_menu = $get_menu->title;
-        $device_type = $this->agent->platform();
-        $os_type = $this->agent->browser();
-        log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
+            $id_user = $this->auth->user_id();
+            $id_menu = $get_menu->id;
+            $nm_menu = $get_menu->title;
+            $device_type = $this->agent->platform();
+            $os_type = $this->agent->browser();
+            log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
         }
 
         if ($this->db->trans_status() === FALSE) {

@@ -1,8 +1,8 @@
 <?php
-$ENABLE_ADD     = has_permission('Kategori_Customer.Add');
-$ENABLE_MANAGE  = has_permission('Kategori_Customer.Manage');
-$ENABLE_VIEW    = has_permission('Kategori_Customer.View');
-$ENABLE_DELETE  = has_permission('Kategori_Customer.Delete');
+$ENABLE_ADD     = has_permission('Product_Type.Add');
+$ENABLE_MANAGE  = has_permission('Product_Type.Manage');
+$ENABLE_VIEW    = has_permission('Product_Type.View');
+$ENABLE_DELETE  = has_permission('Product_Type.Delete');
 ?>
 <div class="br-pagetitle">
 	<i class="tx-primary fa-4x <?= $template['page_icon']; ?>"></i>

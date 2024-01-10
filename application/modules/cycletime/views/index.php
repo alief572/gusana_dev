@@ -1,8 +1,8 @@
 <?php
-$ENABLE_ADD     = has_permission('Cycletime.Add');
-$ENABLE_MANAGE  = has_permission('Cycletime.Manage');
-$ENABLE_VIEW    = has_permission('Cycletime.View');
-$ENABLE_DELETE  = has_permission('Cycletime.Delete');
+$ENABLE_ADD     = has_permission('Cycletime_Detail.Add');
+$ENABLE_MANAGE  = has_permission('Cycletime_Detail.Manage');
+$ENABLE_VIEW    = has_permission('Cycletime_Detail.View');
+$ENABLE_DELETE  = has_permission('Cycletime_Detail.Delete');
 
 // print_r($get_by);
 ?>
@@ -194,12 +194,12 @@ $ENABLE_DELETE  = has_permission('Cycletime.Delete');
 						success: function(result) {
 							if (result.status == '1') {
 								new swal({
-										title: "Sukses",
-										text: "Data berhasil dihapus.",
-										type: "success"
-									}).then((hasil1) => {
-										window.location.reload(true);
-									});
+									title: "Sukses",
+									text: "Data berhasil dihapus.",
+									type: "success"
+								}).then((hasil1) => {
+									window.location.reload(true);
+								});
 							} else {
 								new swal({
 									title: "Error",

@@ -1,8 +1,8 @@
 <?php
-$ENABLE_ADD     = has_permission('Barang_Stok.Add');
-$ENABLE_MANAGE  = has_permission('Barang_Stok.Manage');
-$ENABLE_VIEW    = has_permission('Barang_Stok.View');
-$ENABLE_DELETE  = has_permission('Barang_Stok.Delete');
+$ENABLE_ADD     = has_permission('Prf_Barang_Stok.Add');
+$ENABLE_MANAGE  = has_permission('Prf_Barang_Stok.Manage');
+$ENABLE_VIEW    = has_permission('Prf_Barang_Stok.View');
+$ENABLE_DELETE  = has_permission('Prf_Barang_Stok.Delete');
 ?>
 <style type="text/css">
 	thead input {
@@ -178,14 +178,14 @@ $ENABLE_DELETE  = has_permission('Barang_Stok.Delete');
 						success: function(data) {
 							if (data.status == '1') {
 								new swal({
-										title: "Sukses",
-										text: data.pesan,
-										type: "success"
-									}).then((hasil1) => {
-										if(hasil1.isConfirmed){
-											window.location.reload(true);
-										}
-									});
+									title: "Sukses",
+									text: data.pesan,
+									type: "success"
+								}).then((hasil1) => {
+									if (hasil1.isConfirmed) {
+										window.location.reload(true);
+									}
+								});
 							} else {
 								new swal({
 									title: "Error",

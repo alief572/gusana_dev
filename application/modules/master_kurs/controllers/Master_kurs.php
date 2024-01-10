@@ -14,10 +14,10 @@ if (!defined('BASEPATH')) {
 class Master_kurs extends Admin_Controller
 {
 	//Permission
-	protected $viewPermission 	= 'Master_lme.View';
-	protected $addPermission  	= 'Master_lme.Add';
-	protected $managePermission = 'Master_lme.Manage';
-	protected $deletePermission = 'Master_lme.Delete';
+	protected $viewPermission 	= 'Master_Kurs.View';
+	protected $addPermission  	= 'Master_Kurs.Add';
+	protected $managePermission = 'Master_Kurs.Manage';
+	protected $deletePermission = 'Master_Kurs.Delete';
 
 	public function __construct()
 	{

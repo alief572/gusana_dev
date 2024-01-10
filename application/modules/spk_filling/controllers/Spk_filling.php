@@ -294,7 +294,7 @@ class Spk_filling extends Admin_Controller
 
         $get_material_tambahan = $this->db->get_where('ms_spk_material_tambahan', ['id_spk' => $id_spk, 'id_proses' => '-'])->result();
 
-        $get_product_so = $this->db->query("SELECT b.konversi, b.packaging, b.propose FROM ms_create_spk a JOIN ms_so b ON b.id_so = a.id_so WHERE a.id_spk = '".$id_spk."'")->row();
+        $get_product_so = $this->db->query("SELECT b.konversi, b.packaging, b.propose FROM ms_create_spk a JOIN ms_so b ON b.id_so = a.id_so WHERE a.id_spk = '" . $id_spk . "' AND a.id_so = '" . $get_data_spk->id_so . "'")->row();
 
         $data = [
             'data_spk' => $get_data_spk,
@@ -342,11 +342,11 @@ class Spk_filling extends Admin_Controller
 
         $get_material_tambahan = $this->db->get_where('ms_spk_material_tambahan', ['id_spk' => $id_spk, 'id_proses' => '-'])->result();
 
-        $get_user = $this->db->query("SELECT b.full_name, b.username FROM ms_create_spk a LEFT JOIN users b ON b.id_user = a.ditarik_oleh WHERE a.id_spk = '".$id_spk."'")->row();
+        $get_user = $this->db->query("SELECT b.full_name, b.username FROM ms_create_spk a LEFT JOIN users b ON b.id_user = a.ditarik_oleh WHERE a.id_spk = '" . $id_spk . "'")->row();
 
-        $no_cetak = $get_data_spk->batch_ke.'/'.date('d-m-Y').'/'.$get_user->username;
+        $no_cetak = $get_data_spk->batch_ke . '/' . date('d-m-Y') . '/' . $get_user->username;
 
-        $get_product_so = $this->db->query("SELECT b.konversi, b.packaging, b.propose FROM ms_create_spk a JOIN ms_so b ON b.id_so = a.id_so WHERE a.id_spk = '".$id_spk."'")->row();
+        $get_product_so = $this->db->query("SELECT b.konversi, b.packaging, b.propose FROM ms_create_spk a JOIN ms_so b ON b.id_so = a.id_so WHERE a.id_spk = '" . $id_spk . "' AND a.id_so = '" . $get_data_spk->id_so . "'")->row();
 
         $data = [
             'data_spk' => $get_data_spk,
@@ -604,7 +604,7 @@ class Spk_filling extends Admin_Controller
         $list_data = $this->db->select('a.id_spk, a.tgl_tarik, b.full_name');
         $list_data = $this->db->from('ms_create_spk a');
         $list_data = $this->db->join('users b', 'b.id_user = a.ditarik_oleh', 'left');
-        $list_data = $this->db->where(['id_so' => str_replace('-','/',$id_so), 'id_proses' => '-']);
+        $list_data = $this->db->where(['id_so' => str_replace('-', '/', $id_so), 'id_proses' => '-']);
         $list_data = $this->db->group_by('a.id_spk');
         $list_data = $this->db->get()->result();
 

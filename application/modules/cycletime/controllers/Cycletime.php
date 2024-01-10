@@ -6,10 +6,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class Cycletime extends Admin_Controller
 {
   //Permission
-  protected $viewPermission   = 'Cycletime.View';
-  protected $addPermission    = 'Cycletime.Add';
-  protected $managePermission = 'Cycletime.Manage';
-  protected $deletePermission = 'Cycletime.Delete';
+  protected $viewPermission   = 'Cycletime_Detail.View';
+  protected $addPermission    = 'Cycletime_Detail.Add';
+  protected $managePermission = 'Cycletime_Detail.Manage';
+  protected $deletePermission = 'Cycletime_Detail.Delete';
 
   public function __construct()
   {
@@ -233,7 +233,7 @@ class Cycletime extends Admin_Controller
     $d_Header .= "</td>";
     $d_Header .= "<td align='left'>";
     $d_Header .= "<input type='text' name='Detail[" . $id . "][detail][" . $no . "][note]' class='form-control input-md' placeholder='Information'  data-decimal='.' data-thousand='' data-precision='0' data-allow-zero=''>";
-    $d_Header .= "<select class='form-control' name='Detail[".$id."][detail][".$no."][va_nva]'>";
+    $d_Header .= "<select class='form-control' name='Detail[" . $id . "][detail][" . $no . "][va_nva]'>";
     $d_Header .= "<option value=''>- Pilih VA / NVA</option>";
     $d_Header .= "<option value='1'>VA</option>";
     $d_Header .= "<option value='2'>NVA</option>";

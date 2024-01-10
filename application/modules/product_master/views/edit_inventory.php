@@ -1,6 +1,6 @@
 <div class="box box-primary">
 	<div class="box-body">
-		<form action="<?= base_url('material_master/saveEditInventory'); ?>" id="edit-form" method="post" enctype="multipart/form-data">
+		<form action="<?= base_url('product_master/saveEditInventory'); ?>" id="edit-form" method="post" enctype="multipart/form-data">
 			<div class="col-sm-12">
 				<div class="input_fields_wrap2">
 					<input type="hidden" name="id_category3" class="id_category3" value="<?= (isset($results['inventory_4'])) ? $results['inventory_4']->id_category3 : null ?>">
@@ -22,7 +22,7 @@
 							<th colspan="5">
 								<select id="inventory_2" name="inventory_2" class="form-control form-control-sm inv_lv_2 gabung_nama select" onchange="get_inv3()" required>
 									<option value="">-- Pilih Product Category --</option>
-									<?php foreach ($results['inventory_2'] as $iv_2) : ?>
+									<?php foreach ($results['inventory_22'] as $iv_2) : ?>
 										<option value="<?= $iv_2->id_category1 ?>" <?= (isset($results['inventory_4']) && $results['inventory_4']->id_category1 == $iv_2->id_category1) ? 'selected' : null ?>><?= $iv_2->nama ?></option>
 									<?php endforeach; ?>
 								</select>
@@ -57,18 +57,18 @@
 								<input type="text" name="product_code" id="" class="form-control form-control-sm" placeholder="Product Code" value="<?= $results['inventory_4']->product_code ?>">
 							</th>
 							<th>Curing Agent</th>
- 							<th>
+							<th>
 								<select name="curing_agent" id="" class="form-control form-control-sm chosen_select" placeholder="Curing Agent">
 									<option value="">- Curing Agent -</option>
-									<?php foreach($results['list_curing_agent'] as $curing_agent) : ?>
+									<?php foreach ($results['list_curing_agent'] as $curing_agent) : ?>
 										<option value="<?= $curing_agent->id_category3 ?>" <?= ($results['inventory_4']->curing_agent == $curing_agent->id_category3) ? 'selected' : null ?>><?= $curing_agent->nama ?></option>
 									<?php endforeach; ?>
 								</select>
- 								<!-- <input type="text" name="trade_name" id="" class="form-control form-control-sm" placeholder="Trade Name"> -->
- 							</th>
- 							<th>
- 								<input type="text" name="curing_agent_konversi" id="" class="form-control form-control-sm text-right autonum" placeholder="Curing Agent Konversi (Kg)" value="<?= $results['inventory_4']->curing_agent_konversi ?>">
- 							</th>
+								<!-- <input type="text" name="trade_name" id="" class="form-control form-control-sm" placeholder="Trade Name"> -->
+							</th>
+							<th>
+								<input type="text" name="curing_agent_konversi" id="" class="form-control form-control-sm text-right autonum" placeholder="Curing Agent Konversi (Kg)" value="<?= $results['inventory_4']->curing_agent_konversi ?>">
+							</th>
 							<th>
 								<input type="text" name="moq" id="" class="form-control form-control-sm" placeholder="MOQ" value="<?= $results['inventory_4']->moq ?>">
 							</th>
@@ -170,22 +170,22 @@
 							<th colspan="4"></th>
 						</tr>
 						<tr>
- 							<th>Refer Product</th>
- 							<th colspan="5">
- 								<select name="refer_product" id="" class="form-control form-control-sm select">
+							<th>Refer Product</th>
+							<th colspan="5">
+								<select name="refer_product" id="" class="form-control form-control-sm select">
 									<option value="">- Refer Product -</option>
-									<?php  
-										foreach($results['all_inventory_4'] as $inven_4) :
-											$selected = '';
-											if($results['inventory_4']->id_product_refer == $inven_4->id_category3){
-												$selected = 'selected';
-											}
-											echo '<option value="'.$inven_4->id_category3.'" '.$selected.'>'.$inven_4->nama.'</option>';
-										endforeach;
+									<?php
+									foreach ($results['all_inventory_4'] as $inven_4) :
+										$selected = '';
+										if ($results['inventory_4']->id_product_refer == $inven_4->id_category3) {
+											$selected = 'selected';
+										}
+										echo '<option value="' . $inven_4->id_category3 . '" ' . $selected . '>' . $inven_4->nama . '</option>';
+									endforeach;
 									?>
 								</select>
- 							</th>
- 						</tr>
+							</th>
+						</tr>
 						<tr>
 							<td>Status</td>
 							<td colspan="5">
@@ -530,7 +530,7 @@
 			e.preventDefault();
 			var deskripsi = $('#deskripsi').val();
 			var image = $('#image').val();
-			var idtype = $('#material_master').val();
+			var idtype = $('#product_master').val();
 
 			var data, xhr;
 			new swal({
@@ -546,7 +546,7 @@
 			}).then((hasil) => {
 				if (hasil.isConfirmed) {
 					var formData = new FormData(this);
-					var baseurl = siteurl + 'material_master/saveEditInventory';
+					var baseurl = siteurl + 'product_master/saveEditInventory';
 					$.ajax({
 						url: baseurl,
 						type: "POST",
@@ -624,7 +624,7 @@
 		var inventory_2 = $("#inventory_2").val();
 		$.ajax({
 			type: "GET",
-			url: siteurl + 'material_master/get_compotition',
+			url: siteurl + 'product_master/get_compotition',
 			data: "inventory_2=" + inventory_2,
 			success: function(html) {
 				$("#list_compotition").html(html);
@@ -637,7 +637,7 @@
 		var inventory_1 = $("#inventory_1").val();
 		$.ajax({
 			type: "GET",
-			url: siteurl + 'material_master/get_inven2',
+			url: siteurl + 'product_master/get_inven2',
 			data: "inventory_1=" + inventory_1,
 			success: function(html) {
 				$("#inventory_2").html(html);
@@ -649,7 +649,7 @@
 		var inventory_1 = $("#inventory_3").val();
 		$.ajax({
 			type: "POST",
-			url: siteurl + 'material_master/get_namainven2',
+			url: siteurl + 'product_master/get_namainven2',
 			data: "inventory_1=" + inventory_1,
 			success: function(html) {
 				$("#alloy").val(html);
@@ -661,7 +661,7 @@
 		var id_bentuk = $("#id_bentuk").val();
 		$.ajax({
 			type: "GET",
-			url: siteurl + 'material_master/get_dimensi',
+			url: siteurl + 'product_master/get_dimensi',
 			data: "id_bentuk=" + id_bentuk,
 			success: function(html) {
 				$("#list_dimensi").html(html);
@@ -677,7 +677,7 @@
 		var nm_inventory = $("#nm_inventory").val();
 		$.ajax({
 			type: "GET",
-			url: siteurl + 'material_master/get_olddata',
+			url: siteurl + 'product_master/get_olddata',
 			data: "id_bentuk=" + id_bentuk,
 			success: function(html) {
 				$("#list_dimensi").html(html);
@@ -689,7 +689,7 @@
 		var inventory_2 = $("#inventory_2").val();
 		$.ajax({
 			type: "GET",
-			url: siteurl + 'material_master/get_inven3',
+			url: siteurl + 'product_master/get_inven3',
 			data: "inventory_2=" + inventory_2,
 			success: function(html) {
 				$("#inventory_3").html(html);
@@ -702,7 +702,7 @@
 		var idsurface = $(".idsurface").val();
 		$.ajax({
 			type: "GET",
-			url: siteurl + 'material_master/get_surface',
+			url: siteurl + 'product_master/get_surface',
 			data: "idsurface=" + idsurface,
 			success: function(data) {
 				$(".surface").val(data);

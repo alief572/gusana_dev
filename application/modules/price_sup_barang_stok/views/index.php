@@ -1,8 +1,8 @@
 <?php
-$ENABLE_ADD     = has_permission('Barang_Stok.Add');
-$ENABLE_MANAGE  = has_permission('Barang_Stok.Manage');
-$ENABLE_VIEW    = has_permission('Barang_Stok.View');
-$ENABLE_DELETE  = has_permission('Barang_Stok.Delete');
+$ENABLE_ADD     = has_permission('Sup_Barang_Stok.Add');
+$ENABLE_MANAGE  = has_permission('Sup_Barang_Stok.Manage');
+$ENABLE_VIEW    = has_permission('Sup_Barang_Stok.View');
+$ENABLE_DELETE  = has_permission('Sup_Barang_Stok.Delete');
 ?>
 <style type="text/css">
 	thead input {

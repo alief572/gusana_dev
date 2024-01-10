@@ -151,6 +151,7 @@ class Product_master extends Admin_Controller
 
 		$inventory_4 = $this->Product_master_model->get_data_category3_where($id);
 		$inventory_1 = $this->Product_master_model->get_data('ms_product_type');
+		$inventory_22 = $this->db->get('ms_product_category1')->result();
 		$inventory_2 = $this->db->get_where('ms_product_category1', ['id_type' => $inventory_4->id_type])->result();
 		$inventory_3 = $this->db->get_where('ms_product_category2', ['id_category1' => $inventory_4->id_category1])->result();
 		$inv_4_alt = $this->db->get_where('ms_product_category3', ['id_category2' => $inventory_4->id_category2])->result();
@@ -167,6 +168,7 @@ class Product_master extends Admin_Controller
 
 		$data = [
 			'inventory_1' => $inventory_1,
+			'inventory_22' => $inventory_22,
 			'inventory_2' => $inventory_2,
 			'inventory_3' => $inventory_3,
 			'inventory_4' => $inventory_4,
@@ -384,7 +386,7 @@ class Product_master extends Admin_Controller
 		$unit = $this->Product_master_model->get_data('m_unit');
 		$inventory_4 = $this->Product_master_model->get_data('ms_product_category3');
 		$inventory_3 = $this->Product_master_model->get_data('ms_product_category2');
-		$inventory_2 = $this->Product_master_model->get_data('ms_product_category1');
+		$inventory_2 = $this->db->get('ms_product_category1')->result();
 		$kategori_fg = $this->Product_master_model->get_data('kategori_finish_goods');
 		$inv_lv_1 = "";
 		if (isset($post['inv_lv_1'])) {
@@ -499,7 +501,7 @@ class Product_master extends Admin_Controller
 	function get_inven3()
 	{
 		$inventory_2 = $_GET['inventory_2'];
-		$data = $this->Product_master_model->level_3($inventory_2);
+		$data = $this->db->get_where('ms_product_category2', ['id_category1' => $inventory_2])->result();
 
 		// print_r($data);
 		// exit();

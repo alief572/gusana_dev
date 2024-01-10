@@ -6,10 +6,10 @@ if (!defined('BASEPATH')) {
 class Price_ref_barang_stok extends Admin_Controller
 {
   //Permission
-  protected $viewPermission   = 'Barang_Stok.View';
-  protected $addPermission    = 'Barang_Stok.Add';
-  protected $managePermission = 'Barang_Stok.Manage';
-  protected $deletePermission = 'Barang_Stok.Delete';
+  protected $viewPermission   = 'Prf_Barang_Stok.View';
+  protected $addPermission    = 'Prf_Barang_Stok.Add';
+  protected $managePermission = 'Prf_Barang_Stok.Manage';
+  protected $deletePermission = 'Prf_Barang_Stok.Delete';
 
   public function __construct()
   {
@@ -139,7 +139,8 @@ class Price_ref_barang_stok extends Admin_Controller
     }
   }
 
-  public function get_kurs(){
+  public function get_kurs()
+  {
     $get_kurs_usd = $this->Price_ref_barang_stok_model->get_kurs_usd();
     $get_kurs_rmb = $this->Price_ref_barang_stok_model->get_kurs_rmb();
 

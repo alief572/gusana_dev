@@ -5,6 +5,12 @@ if (!defined('BASEPATH')) {
 
 class Kategori_customer extends Admin_Controller
 {
+
+    protected $viewPermission     = 'Kategori_Customer.View';
+    protected $addPermission      = 'Kategori_Customer.Add';
+    protected $managePermission = 'Kategori_Customer.Manage';
+    protected $deletePermission = 'Kategori_Customer.Delete';
+
     public function __construct()
     {
         parent::__construct();

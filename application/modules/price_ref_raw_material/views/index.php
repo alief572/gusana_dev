@@ -1,8 +1,8 @@
 <?php
-$ENABLE_ADD     = has_permission('Raw_Material.Add');
-$ENABLE_MANAGE  = has_permission('Raw_Material.Manage');
-$ENABLE_VIEW    = has_permission('Raw_Material.View');
-$ENABLE_DELETE  = has_permission('Raw_Material.Delete');
+$ENABLE_ADD     = has_permission('Prf_Raw_Material.Add');
+$ENABLE_MANAGE  = has_permission('Prf_Raw_Material.Manage');
+$ENABLE_VIEW    = has_permission('Prf_Raw_Material.View');
+$ENABLE_DELETE  = has_permission('Prf_Raw_Material.Delete');
 ?>
 <style type="text/css">
 	thead input {
@@ -166,54 +166,54 @@ $ENABLE_DELETE  = has_permission('Raw_Material.Delete');
 			// alert(data);
 
 			new swal({
-					title: "Anda Yakin?",
-					text: "Data akan diproses!",
-					type: "warning",
-					showCancelButton: true,
-					confirmButtonClass: "btn-info",
-					confirmButtonText: "Yes",
-					cancelButtonText: "No",
-					closeOnConfirm: false
-				}).then((hasil) => {
-					if(hasil.isConfirmed){
-						var form_data = new FormData($(this)[0]);
-						$.ajax({
-							type: 'POST',
-							url: siteurl + thisController + 'add',
-							dataType: "json",
-							data: form_data,
-							processData: false,
-							contentType: false,
-							success: function(data) {
-								if (data.status == '1') {
-									new swal({
-											title: "Sukses",
-											text: data.pesan,
-											type: "success"
-										}).then((hasil1) => {
-											if(hasil1.isConfirmed){
-												window.location.reload(true);
-											}
-										});
-								} else {
-									new swal({
-										title: "Error",
-										text: data.pesan,
-										type: "error"
-									})
-
-								}
-							},
-							error: function() {
+				title: "Anda Yakin?",
+				text: "Data akan diproses!",
+				type: "warning",
+				showCancelButton: true,
+				confirmButtonClass: "btn-info",
+				confirmButtonText: "Yes",
+				cancelButtonText: "No",
+				closeOnConfirm: false
+			}).then((hasil) => {
+				if (hasil.isConfirmed) {
+					var form_data = new FormData($(this)[0]);
+					$.ajax({
+						type: 'POST',
+						url: siteurl + thisController + 'add',
+						dataType: "json",
+						data: form_data,
+						processData: false,
+						contentType: false,
+						success: function(data) {
+							if (data.status == '1') {
+								new swal({
+									title: "Sukses",
+									text: data.pesan,
+									type: "success"
+								}).then((hasil1) => {
+									if (hasil1.isConfirmed) {
+										window.location.reload(true);
+									}
+								});
+							} else {
 								new swal({
 									title: "Error",
-									text: "Error proccess !",
+									text: data.pesan,
 									type: "error"
 								})
+
 							}
-						});
-					}
-				});
+						},
+						error: function() {
+							new swal({
+								title: "Error",
+								text: "Error proccess !",
+								type: "error"
+							})
+						}
+					});
+				}
+			});
 
 		})
 

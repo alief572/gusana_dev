@@ -5,6 +5,10 @@ if (!defined('BASEPATH')) {
 
 class Category_suppliers extends Admin_Controller
 {
+    protected $viewPermission     = 'Category_Suppliers.View';
+    protected $addPermission      = 'Category_Suppliers.Add';
+    protected $managePermission = 'Category_Suppliers.Manage';
+    protected $deletePermission = 'Category_Suppliers.Delete';
     public function __construct()
     {
         parent::__construct();

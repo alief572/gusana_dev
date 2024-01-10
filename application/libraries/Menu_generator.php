@@ -18,7 +18,7 @@ class Menu_generator
 		$this->ci->load->helper('app');
 		//$this->ci->load->model('menus/users_model');
 		$this->ci->load->library('users/auth');
-		$this->user_id 	= $this->ci->auth->user_id();
+		$this->user_id     = $this->ci->auth->user_id();
 		$this->is_admin = $this->ci->auth->is_admin();
 	}
 
@@ -59,12 +59,12 @@ class Menu_generator
 			// exit;
 			if (is_array($menu) && count($menu)) {
 				foreach ($menu as $rw) {
-					$id 		= $rw->id;
+					$id         = $rw->id;
 					// echo $id."<br>";
-					$title 		= $rw->title;
-					$link 		= $rw->link;
-					$icon 		= $rw->icon;
-					$target 	= $rw->target;
+					$title         = $rw->title;
+					$link         = $rw->link;
+					$icon         = $rw->icon;
+					$target     = $rw->target;
 					$submenu = $this->ci->db->select("t1.*")
 						->from("menus as t1")
 						->where("t1.parent_id", $id)
@@ -83,7 +83,7 @@ class Menu_generator
 					// echo '</pre>';
 					// exit;
 					if (count($submenu) == 0) {
-						
+
 						if ($link !== "#") {
 							if (!in_array($rw->permission_id, $auth) && $this->is_admin === FALSE) {
 								goto end_for;
@@ -107,7 +107,7 @@ class Menu_generator
 									}
 								}
 							}
-							
+
 							$html .= "<li class='{$active}'><a href='" . ($link == '#' ? '#' : site_url($link)) . "' " . ($target == '_blank' ? "target='_blank'" : "") . "><i class='{$icon}'></i> <span>" . ucwords($title) . "</span></a></li>";
 						}
 						goto end_for;
@@ -144,10 +144,10 @@ class Menu_generator
                       </a>
                       <ul class='br-menu-sub'>";
 
-					  	// echo '<pre>'; 
-						// print_r($submenu);
-						// echo '</pre>';
-						// exit;
+					// echo '<pre>'; 
+					// print_r($submenu);
+					// echo '</pre>';
+					// exit;
 
 					//Make Sub Menu
 					// if($rw->id == 81){
@@ -157,11 +157,11 @@ class Menu_generator
 					// 	exit;
 					// }
 					foreach ($submenu as $sub) {
-						$subid 		= $sub->id;
-						$subtitle 	= $sub->title;
-						$sublink 	= $sub->link;
-						$subicon 	= $sub->icon;
-						$subtarget 	= $sub->target;
+						$subid         = $sub->id;
+						$subtitle     = $sub->title;
+						$sublink     = $sub->link;
+						$subicon     = $sub->icon;
+						$subtarget     = $sub->target;
 						$subtarget = "";
 						if ($subtarget == '_blank') {
 							$subtarget = "target='_blank'";
@@ -216,7 +216,7 @@ class Menu_generator
 								break;
 							}
 						}
-						
+
 						$html .= "
 	            			  <li class='br-menu-item'>
 								<a href='#' class='br-menu-link with-sub {$active}'>
@@ -225,13 +225,13 @@ class Menu_generator
 								</a>
 								<ul class='br-menu-sub'>";
 						//Make Sub Menu
-						
+
 						foreach ($submenusub as $subsub) {
-							$subidsub 		= $subsub->id;
-							$subtitlesub 	= $subsub->title;
-							$sublinksub 	= $subsub->link;
-							$subiconsub 	= $subsub->icon;
-							$subtargetsub 	= $subsub->target;
+							$subidsub         = $subsub->id;
+							$subtitlesub     = $subsub->title;
+							$sublinksub     = $subsub->link;
+							$subiconsub     = $subsub->icon;
+							$subtargetsub     = $subsub->target;
 							$subtargetsub = "";
 							if ($subtargetsub == '_blank') {
 								$subtargetsub = "target='_blank'";
@@ -307,11 +307,11 @@ class Menu_generator
 
 			if (is_array($menu) && count($menu)) {
 				foreach ($menu as $rw) {
-					$id 		= $rw->id;
-					$title 		= $rw->title;
-					$link 		= $rw->link;
-					$icon 		= $rw->icon;
-					$target 	= $rw->target;
+					$id         = $rw->id;
+					$title         = $rw->title;
+					$link         = $rw->link;
+					$icon         = $rw->icon;
+					$target     = $rw->target;
 					$submenu = $this->ci->db->select("t1.*")
 						->from("menus as t1")
 						->where("t1.parent_id", $id)
@@ -359,11 +359,11 @@ class Menu_generator
 
 					//Make Sub Menu
 					foreach ($submenu as $sub) {
-						$subid 		= $sub->id;
-						$subtitle 	= $sub->title;
-						$sublink 	= $sub->link;
-						$subicon 	= $sub->icon;
-						$subtarget 	= $sub->target;
+						$subid         = $sub->id;
+						$subtitle     = $sub->title;
+						$sublink     = $sub->link;
+						$subicon     = $sub->icon;
+						$subtarget     = $sub->target;
 						$subtarget = "";
 						if ($subtarget == '_blank') {
 							$subtarget = "target='_blank'";
