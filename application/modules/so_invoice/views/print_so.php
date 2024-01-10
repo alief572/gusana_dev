@@ -1,8 +1,8 @@
 <?php
-$ENABLE_ADD     = has_permission('Penawaran.Add');
-$ENABLE_MANAGE  = has_permission('Penawaran.Manage');
-$ENABLE_VIEW    = has_permission('Penawaran.View');
-$ENABLE_DELETE  = has_permission('Penawaran.Delete');
+$ENABLE_ADD     = has_permission('So_Invoice.Add');
+$ENABLE_MANAGE  = has_permission('So_Invoice.Manage');
+$ENABLE_VIEW    = has_permission('So_Invoice.View');
+$ENABLE_DELETE  = has_permission('So_Invoice.Delete');
 ?>
 
 <style>
@@ -42,7 +42,12 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         <table class="w-100">
             <tr class="non-bordered">
                 <th class="non-bordered text-center" colspan="6">
-                    <h2>Gusana 订单</h2>
+                    <h2>
+                        <span>
+                            Gusana 订单 <br>
+                            Sales Order
+                        </span>
+                    </h2>
                 </th>
             </tr>
             <tr class="non-bordered">
@@ -141,12 +146,6 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         <span>重量<br>Weight (Kg)</span>
                     </th>
                     <th class="text-center">
-                        <span>单价<br>Harga Satuan (Rp/kg)</span>
-                    </th>
-                    <th class="text-center">
-                        <span>金额<br>Total Harga</span>
-                    </th>
-                    <th class="text-center">
                         <span>备注<br>Keterangan</span>
                     </th>
                 </tr>
@@ -164,60 +163,17 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                                 <td class="text-center">' . $penawaran_detail->kode_product . '</td>
                                 <td class="text-center">' . $penawaran_detail->konversi . '</td>
                                 <td class="text-center">' . $penawaran_detail->nm_curing_agent . '</td>
-                                <td class="text-center">' . $penawaran_detail->package_spec_curing_agent . '</td>
+                                <td class="text-center">' . str_replace(' Kg', '', $penawaran_detail->package_spec_curing_agent) . '</td>
                                 <td class="text-center">' . $penawaran_detail->ral_code . '</td>
                                 <td class="text-center">' . $penawaran_detail->nm_packaging . '</td>
                                 <td class="text-center">' . $penawaran_detail->qty . '</td>
                                 <td class="text-center">' . $penawaran_detail->weight . '</td>
-                                <td class="text-right">Rp. ' . number_format($penawaran_detail->harga_satuan, 2) . '</td>
-                                <td class="text-right">Rp. ' . number_format($penawaran_detail->total_harga, 2) . '</td>
                                 <td class="text-right"></td>
                             </tr>
                         ';
                     $ttl_harga += $penawaran_detail->total_harga;
                 endforeach;
                 ?>
-            </tbody>
-            <tbody>
-                <tr class="non-bordered">
-                    <th colspan="11" class="text-right">
-                        <span>
-                            运输费 <br>
-                            Biaya Pengiriman
-                        </span>
-                    </th>
-                    <td class="text-right">Rp. <?= number_format($data_penawaran->biaya_pengiriman, 2) ?></td>
-                </tr>
-                <tr class="non-bordered">
-                    <th colspan="11" class="text-right">
-                        Discount <?= ($data_penawaran->disc_persen > 0) ? $data_penawaran->disc_persen . '%' : null ?>
-                    </th>
-                    <td class="text-right">Rp. <?= number_format($data_penawaran->nilai_disc, 2) ?></td>
-                </tr>
-                <tr class="non-bordered">
-                    <th colspan="11" class="text-right">
-                        <span>
-                            合计 <br>
-                            Subtotal
-                        </span>
-                    </th>
-                    <td class="text-right">Rp. <?= number_format($ttl_harga, 2) ?></td>
-                </tr>
-                <tr class="non-bordered">
-                    <th colspan="11" class="text-right">
-                        增值税PPN11%
-                    </th>
-                    <td class="text-right">Rp. <?= number_format($data_penawaran->ppn_num, 2) ?></td>
-                </tr>
-                <tr class="non-bordered">
-                    <th colspan="11" class="text-right">
-                        <span>
-                            总金额 <br>
-                            Total
-                        </span>
-                    </th>
-                    <td class="text-right">Rp. <?= number_format($ttl_harga - $data_penawaran->nilai_disc + $data_penawaran->ppn_num + $data_penawaran->biaya_pengiriman, 2) ?></td>
-                </tr>
             </tbody>
         </table>
         <table class=" w-100">

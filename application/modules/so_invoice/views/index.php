@@ -1,24 +1,17 @@
 <?php
-$ENABLE_ADD     = has_permission('Penawaran.Add');
-$ENABLE_MANAGE  = has_permission('Penawaran.Manage');
-$ENABLE_VIEW    = has_permission('Penawaran.View');
-$ENABLE_DELETE  = has_permission('Penawaran.Delete');
+$ENABLE_ADD     = has_permission('So_Invoice.Add');
+$ENABLE_MANAGE  = has_permission('So_Invoice.Manage');
+$ENABLE_VIEW    = has_permission('So_Invoice.View');
+$ENABLE_DELETE  = has_permission('So_Invoice.Delete');
+
 ?>
 
 <div class="br-pagetitle">
     <i class="tx-primary fa-4x <?= $template['page_icon']; ?>"></i>
     <div>
-        <h4>Penawaran Harga (报价)</h4>
+        <h4>SO Invoice</h4>
     </div>
 </div><!-- d-flex -->
-
-<div class="d-flex align-items-center justify-content-between pd-x-20 pd-sm-x-30 pd-t-25 mg-b-20 mg-sm-b-30">
-    <?php echo Template::message(); ?>
-    <?php if ($ENABLE_ADD) : ?>
-        <a class="btn btn-primary btn-oblong add" href="penawaran/add/new" title="Add"><i class="fa fa-plus">&nbsp;</i>Add Penawaran <span class="">(添加报价)</span></a>
-        <!-- <button type="button" class="btn btn-success btn-oblong" onclick="loadData()" title="Add"><i class="fa fa-plus">&nbsp;</i>Refresh</button> -->
-    <?php endif; ?>
-</div>
 
 <div class="br-pagebody pd-x-20 pd-sm-x-30 mg-y-3">
     <div class="card bd-gray-400">
@@ -26,21 +19,20 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             <table id="dataTable" width="100%" class="table display table-bordered table-hover table-striped border-left-0 border-right-0">
                 <thead>
                     <tr>
-                        <th width="15" class="text-center">No <span class="text-danger">(不)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">No. Penawaran <span class="text-danger">(报价编号)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Nama Customer <span class="text-danger">(客户姓名)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Nama Marketing <span class="text-danger">(销售姓名)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Nilai Penawaran <span class="text-danger">(报价金额)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Tanggal Penawaran <span class="text-danger">(报价日期)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Keterangan <span class="text-danger">(备注)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Revisi <span class="text-danger">(修订)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Status <span class="text-danger">(状态)</span></th>
+                        <th width="15" class="text-center">No</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">No. SO</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">Nama Customer</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">Marketing</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">Nilai Penawaran</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">PO</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">Penawaran Deal</th>
                         <?php if ($ENABLE_MANAGE) : ?>
-                            <th class="desktop text-center no-sort" width="110">Action <span class="text-danger">(操作)</span></th>
+                            <th class="desktop text-center no-sort" width="110">Action</th>
                         <?php endif; ?>
                     </tr>
                 </thead>
                 <tbody></tbody>
+
             </table>
         </div>
     </div>
@@ -49,7 +41,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
 <div class="modal fade effect-scale" id="dialog-popup" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <form id="data-form" method="post" enctype="multipart/form-data" data-parsley-validate>
+        <form id="data-form" method="post" data-parsley-validate>
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title tx-bold text-dark" id="myModalLabel"></h4>
@@ -225,145 +217,6 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         })
     })
 
-    $(document).on('click', '.send_penawaran', function() {
-        // var id = $(this).data('id');
-
-        var swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-                confirmButton: 'btn btn-primary mg-r-10 wd-100',
-                cancelButton: 'btn btn-danger wd-100'
-            },
-            buttonsStyling: false
-        })
-        let id = $(this).data('id');
-        swalWithBootstrapButtons.fire({
-            title: "Confirm!",
-            text: "Are you sure to send this data?",
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonText: "<i class='fa fa-check'></i> Yes",
-            cancelButtonText: "<i class='fa fa-ban'></i> No",
-            showLoaderOnConfirm: true,
-            preConfirm: () => {
-                return $.ajax({
-                    type: 'POST',
-                    url: siteurl + thisController + 'send_penawaran',
-                    dataType: "JSON",
-                    data: {
-                        'id': id
-                    },
-                    error: function() {
-                        Lobibox.notify('error', {
-                            title: 'Error!!!',
-                            icon: 'fa fa-times',
-                            position: 'top right',
-                            showClass: 'zoomIn',
-                            hideClass: 'zoomOut',
-                            soundPath: '<?= base_url(); ?>themes/bracket/assets/lib/lobiani/sounds/',
-                            msg: 'Internal server error. Ajax process failed.'
-                        });
-                    }
-                })
-            },
-            allowOutsideClick: true
-        }).then((val) => {
-            if (val.isConfirmed) {
-                if (val.value.status == '1') {
-                    Lobibox.notify('success', {
-                        title: 'Success',
-                        icon: 'fa fa-check',
-                        position: 'top right',
-                        showClass: 'zoomIn',
-                        hideClass: 'zoomOut',
-                        soundPath: '<?= base_url(); ?>themes/bracket/assets/lib/lobiani/sounds/',
-                        msg: val.value.msg
-                    });
-                    // $('#dialog-popup').modal('hide')
-                    loadData()
-                } else {
-                    Lobibox.notify('warning', {
-                        title: 'Warning',
-                        icon: 'fa fa-ban',
-                        position: 'top right',
-                        showClass: 'zoomIn',
-                        hideClass: 'zoomOut',
-                        soundPath: '<?= base_url(); ?>themes/bracket/assets/lib/lobiani/sounds/',
-                        msg: val.value.msg
-                    });
-                };
-            }
-        })
-    });
-
-    $(document).on('click', '.revisi', function() {
-        var id = $(this).data('id');
-
-        $.ajax({
-            type: 'post',
-            url: siteurl + thisController + 'revisi',
-            data: {
-                'id': id
-            },
-            cache: false,
-            dataType: 'json',
-            success: function(result) {
-                if (result.valid == 1) {
-                    window.location.href = siteurl + thisController + 'add/' + id;
-                } else {
-                    Lobibox.notify('warning', {
-                        title: 'Warning',
-                        icon: 'fa fa-ban',
-                        position: 'top right',
-                        showClass: 'zoomIn',
-                        hideClass: 'zoomOut',
-                        soundPath: '<?= base_url(); ?>themes/bracket/assets/lib/lobiani/sounds/',
-                        msg: 'Sorry, please try again !'
-                    });
-                }
-            }
-        });
-    });
-
-    $(document).on('click', '.loss_penawaran', function() {
-        var id = $(this).data('id');
-        id = id.split('/').join('-');
-        $.ajax({
-            type: 'GET',
-            url: siteurl + thisController + 'loss_penawaran/' + id,
-            success: function(data) {
-                $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Loss Penawaran")
-                $('#dialog-popup .modal-dialog').css({
-                    'max-width': '75%'
-                })
-                $("#dialog-popup").modal();
-                $("#dialog-popup .modal-body").html(data);
-                // $("#save").addClass('d-none');
-            }
-        })
-    });
-
-    $(document).on('click', '.create_so', function() {
-        var id = $(this).data('id');
-        id = id.split('/').join('-');
-        $.ajax({
-            type: 'GET',
-            url: siteurl + thisController + 'create_so/' + id,
-            success: function(data) {
-                $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Create SO")
-                $('#dialog-popup .modal-dialog').css({
-                    'max-width': '75%'
-                })
-                $("#dialog-popup").modal();
-                $("#dialog-popup .modal-body").html(data);
-                // $("#save").addClass('d-none');
-
-                $("#save").removeClass('btn-primary');
-                $("#save").addClass('btn-warning');
-                $("#save").html('<i class="fa fa-plus"></i> Create SO');
-            }
-        })
-    });
-
 
     $(document).on('submit', '#data-form', function(e) {
         e.preventDefault();
@@ -447,10 +300,10 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 
     });
 
-    $(document).on('click', '.print_penawaran', function() {
+    $(document).on('click', '.print_so', function() {
         var id = $(this).data('id');
 
-        window.open(siteurl + thisController + 'print_penawaran/' + id, '_blank');
+        window.open(siteurl + thisController + 'print_so/' + id, '_blank');
         // window.location.href = siteurl + thisController + 'print_penawaran/' + id;
     });
 

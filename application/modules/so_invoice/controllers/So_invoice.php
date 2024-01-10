@@ -11,23 +11,23 @@
  * This is controller for Master Employee
  */
 
-class Req_app_penawaran extends Admin_Controller
+class So_Invoice extends Admin_Controller
 {
-    protected $viewPermission     = 'Request_Approval.View';
-    protected $addPermission      = 'Request_Approval.Add';
-    protected $managePermission = 'Request_Approval.Manage';
-    protected $deletePermission = 'Request_Approval.Delete';
+    protected $viewPermission     = 'So_Invoice.View';
+    protected $addPermission      = 'So_Invoice.Add';
+    protected $managePermission = 'So_Invoice.Manage';
+    protected $deletePermission = 'So_Invoice.Delete';
     public function __construct()
     {
         parent::__construct();
 
         $this->load->library(array('upload', 'Image_lib', 'user_agent', 'uri'));
         $this->load->model(array(
-            'Penawaran/Penawaran_model',
+            'So_Invoice/So_Invoice_model',
             'Aktifitas/aktifitas_model',
         ));
         $this->load->helper(['url', 'json']);
-        $this->template->title('Request Approval Penawaran');
+        $this->template->title('Penawaran');
         $this->template->page_icon('fas fa-user-tie');
 
         date_default_timezone_set('Asia/Bangkok');
@@ -48,14 +48,12 @@ class Req_app_penawaran extends Admin_Controller
 
         $string = $this->db->escape_like_str($search);
         $sql = "SELECT *
-        FROM ms_penawaran WHERE 1=1 AND sts = 'request_approval' 
+        FROM ms_penawaran WHERE 1=1 AND sts = 'so_created'
         AND (
-            id_penawaran LIKE '%$string%' OR
+            id_quote LIKE '%$string%' OR
             nm_cust LIKE '%$string%' OR
             nm_marketing LIKE '%$string%' OR
-            nilai_penawaran LIKE '%$string%' OR
-            tgl_penawaran LIKE '%$string%' OR
-            revisi LIKE '%$string%'
+            nilai_penawaran LIKE '%$string%'
         )";
 
         $totalData = $this->db->query($sql)->num_rows();
@@ -93,8 +91,7 @@ class Req_app_penawaran extends Admin_Controller
                 $nomor = ($total_data - $start_dari) - $urut2;
             }
 
-            // $view         = '<button type="button" class="btn btn-primary btn-sm view" data-toggle="tooltip" title="View" data-id="' . str_replace('/', '-', $row['id_penawaran']) . '"><i class="fa fa-eye"></i></button>';
-            $view         = '<a href="req_app_penawaran/add/' . str_replace('/', '-', $row['id_penawaran']) . '" class="btn btn-info btn-sm" data-toggle="tooltip" title="View"><i class="fa fa-eye"></i></a>';
+            $view         = '<button type="button" class="btn btn-primary btn-sm view" data-toggle="tooltip" title="View" data-id="' . str_replace('/', '-', $row['id_penawaran']) . '"><i class="fa fa-eye"></i></button>';
 
             $edit         = '<a href="penawaran/add/' . str_replace('/', '-', $row['id_penawaran']) . '" class="btn btn-success btn-sm" data-toggle="tooltip" title="Edit"><i class="fa fa-edit"></i></a>';
 
@@ -108,22 +105,42 @@ class Req_app_penawaran extends Admin_Controller
 
             $buttons     = $view;
 
-            $status = '';
-            if ($row['sts'] == "request_approval") {
-                $status = '<div class="badge badge-info">Waiting Approval</div>';
+            // if ($row['sts'] == '' || $row['sts'] == null) {
+            //     $buttons = $edit . ' ' . $request . ' ' . $print;
+            // }
+            // if ($row['sts'] == 'approved') {
+            //     $buttons = $print . ' ' . $view . ' ' . $send;
+            // }
+            // if ($row['sts'] == 'request_approval') {
+            //     $buttons = $view;
+            // }
+
+            $status = '<div class="badge badge-danger">Loss</div>';
+
+            if ($row['id_quote'] !== null && $row['id_quote'] !== '') {
+                $id = $row['id_quote'];
+            } else {
+                $id = $row['id_penawaran'];
+            }
+
+            $view_penawaran_deal = '';
+            $view_po = '';
+            if (file_exists($row['upload_po'])) {
+                $view_po = '<a href="' . base_url($row['upload_po']) . '" target="_blank" class="btn btn-sm btn-info" download>View</a>';
+            }
+            if (file_exists('.' . $row['upload_penawaran_deal'])) {
+                $view_penawaran_deal = '<a href="' . base_url($row['upload_penawaran_deal']) . '" target="_blank" class="btn btn-sm btn-info" download>View</a>';
             }
 
             $nestedData   = array();
             $nestedData[]  = $nomor;
-            $nestedData[]  = $row['id_penawaran'];
+            $nestedData[]  = $row['id_quote'];
             $nestedData[]  = $row['nm_cust'];
             $nestedData[]  = $row['nm_marketing'];
-            $nestedData[]  = number_format($row['nilai_penawaran'], 2);
-            $nestedData[]  = date('d F Y', strtotime($row['tgl_penawaran']));
-            $nestedData[]  = $row['keterangan'];
-            $nestedData[]  = $row['revisi'];
-            $nestedData[]  = $status;
-            $nestedData[]  = $buttons;
+            $nestedData[]  = 'Rp. ' . number_format($row['nilai_penawaran'], 2);
+            $nestedData[]  = $view_po;
+            $nestedData[]  = $view_penawaran_deal;
+            $nestedData[]  = '<button type="button" class="btn btn-sm btn-primary print_so" data-id="' . str_replace('/', '-', $row['id_penawaran']) . '">Print SO</button>';
             $data[] = $nestedData;
             $urut1++;
             $urut2++;
@@ -142,7 +159,7 @@ class Req_app_penawaran extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Request Approval Penawaran | 申请批准');
+        $this->template->title('SO Invoice');
         $this->template->render('index');
     }
 
@@ -161,12 +178,7 @@ class Req_app_penawaran extends Admin_Controller
         $get_cust = $this->db->get('customers')->result();
         $get_produk = $this->db->get_where('ms_product_category3', ['aktif' => 1])->result();
         $get_sales = $this->db->get_where('employees', ['deleted_at' => null])->result();
-
-        $this->db->select('a.*, b.nama_mandarin');
-        $this->db->from('ms_penawaran_detail a');
-        $this->db->join('ms_product_category3 b', 'b.id_category3 = a.id_product', 'left');
-        $this->db->where('a.id_penawaran', $id_penawaran);
-        $get_penawaran_detail = $this->db->get()->result();
+        $get_penawaran_detail = $this->db->get_where('ms_penawaran_detail', ['id_penawaran' => $id_penawaran])->result();
 
         $this->db->select('SUM(a.total_harga) AS ttl_harga');
         $this->db->from('ms_penawaran_detail a');
@@ -203,7 +215,7 @@ class Req_app_penawaran extends Admin_Controller
             ];
         }
 
-        $this->template->title('Request Approval Penawaran | 申请批准');
+
         $this->template->set($data);
         $this->template->render('form');
     }
@@ -244,15 +256,23 @@ class Req_app_penawaran extends Admin_Controller
     {
         $this->auth->restrict($this->managePermission);
         $id = str_replace('-', '/', $id);
+        $id = str_replace('SP/', 'SP-', $id);
 
         $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id])->row();
         // echo '<pre>';
         // print_r($id);
         // echo'</pre>';
         // exit;
-        $get_penawaran_detail = $this->db->get_where('ms_penawaran_detail', ['id_penawaran' => $id])->result();
+
+
+        $this->db->select('a.*, b.nama_mandarin');
+        $this->db->from('ms_penawaran_detail a');
+        $this->db->join('ms_product_category3 b', 'b.id_category3 = a.id_product', 'left');
+        $this->db->where('a.id_penawaran', $id);
+        $get_penawaran_detail = $this->db->get()->result();
 
         $this->template->set([
+            'id_penawaran' => $id,
             'data_penawaran' => $get_penawaran,
             'data_penawaran_detail' => $get_penawaran_detail
         ]);
@@ -264,12 +284,11 @@ class Req_app_penawaran extends Admin_Controller
         $this->auth->restrict($this->addPermission);
         $post = $this->input->post();
 
-        // $check_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $post['id_penawaran']])->num_rows();
-        $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $post['id_penawaran']])->row();
+        $check_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $post['id_penawaran']])->num_rows();
 
-        $get_marketing = $this->db->get_where('employees', ['id' => $get_penawaran->id_marketing])->row();
-        $get_customer = $this->db->get_where('customers', ['id_customer' => $get_penawaran->id_cust])->row();
-        $get_pic_cust = $this->db->get_where('customer_pic', ['id' => $get_penawaran->id_pic_cust])->row();
+        $get_marketing = $this->db->get_where('employees', ['id' => $post['sales_marketing']])->row();
+        $get_customer = $this->db->get_where('customers', ['id_customer' => $post['customer']])->row();
+        $get_pic_cust = $this->db->get_where('customer_pic', ['id' => $post['pic_cust']])->row();
 
         $this->db->select('SUM(a.total_harga) AS ttl_harga');
         $this->db->from('ms_penawaran_detail a');
@@ -291,72 +310,204 @@ class Req_app_penawaran extends Admin_Controller
         $valid_stock = 1;
 
         $valid_sales = 1;
-        $this->db->select('a.id');
-        $this->db->from('ms_kode_sales a');
-        $this->db->where('a.id_sales LIKE', '%' . $get_penawaran->id_marketing . '%');
-        $this->db->where('a.kode_angka !=', '');
-        $this->db->where('a.kode_nama !=', '');
-        $check_sales = $this->db->get()->num_rows();
-        if ($check_sales < 1) {
-            $valid_sales = 0;
-        }
-
-        $id_quote = '';
-        // if ($post['req_action'] == '1') {
-
-        //     $get_kode_sales = $this->db->get_where('ms_kode_sales', ['id_sales' => $get_penawaran->id_marketing])->row();
-        //     $get_customer = $this->db->get('customers')->result();
-
-        //     $this->db->select('a.*');
-        //     $this->db->from('ms_penawaran a');
-        //     $this->db->where('id_cust', $get_penawaran->id_cust);
-        //     $this->db->where('sts', 'approved');
-        //     $this->db->where('id_quote LIKE', '%' . date('Ymd') . '%');
-        //     $num_pesanan = $this->db->get()->num_rows();
-
-        //     $jum_pesanan = sprintf('%02s', ($num_pesanan + 1));
-
-        //     // print_r($jum_pesanan);
-        //     // exit;
-
-        //     $kode_cust = '';
-        //     $x = 1;
-        //     foreach ($get_customer as $customer) :
-        //         if ($customer->id_customer == $get_penawaran->id_cust) {
-        //             $kode_cust = $x;
-        //         }
-        //         $x++;
-        //     endforeach;
-
-
-        //     $id_quote = 'G' . $get_kode_sales->kode_angka . $kode_cust . $jum_pesanan . date('Ymd');
-        // }
-
-        $get_customer = $this->db->get_where('customers', ['id_customer' => $get_penawaran->id_cust])->row();
-
-        if ($post['req_action'] == 1) {
-            $req_action = 'approved';
-        } else {
-            $req_action = 'rejected';
-        }
 
         $this->db->trans_begin();
-        $this->db->update('ms_penawaran', [
-            'nilai_penawaran' => $get_total_harga->ttl_harga,
-            'total' => $get_total_harga->ttl_harga,
-            'disc_num' => $post['disc_val'],
-            'disc_persen' => $post['disc_per'],
-            'nilai_disc' => $nilai_disc,
-            'ppn_num' => $ppn_num,
-            'biaya_pengiriman' => str_replace(',', '', $post['biaya_pengiriman']),
-            'grand_total' => $grand_total,
-            'sts' => $req_action,
-            'keterangan_app' => $post['keterangan'],
-            'diubah_oleh' => $this->auth->user_id(),
-            'diubah_tgl' => date('Y-m-d H:i:s')
-        ], [
-            'id_penawaran' => $post['id_penawaran']
-        ]);
+        if ($check_penawaran > 0) {
+            $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $post['id_penawaran']])->row();
+            $revisi = $get_penawaran->revisi + 1;
+
+            if ($post['req_approval'] == 1) {
+                $this->db->update('ms_penawaran', [
+                    'id_marketing' => $post['sales_marketing'],
+                    'nm_marketing' => $get_marketing->name,
+                    'id_cust' => $post['customer'],
+                    'nm_cust' => $get_customer->customer_name,
+                    'id_pic_cust' => $post['pic_cust'],
+                    'nm_pic_cust' => $get_pic_cust->name,
+                    'nilai_penawaran' => $get_total_harga->ttl_harga,
+                    'tgl_penawaran' => $post['tgl_penawaran'],
+                    'ppn_type' => $post['ppn_type'],
+                    'total' => $get_total_harga->ttl_harga,
+                    'disc_num' => $post['disc_val'],
+                    'disc_persen' => $post['disc_per'],
+                    'nilai_disc' => $nilai_disc,
+                    'ppn_persen' => $post['persen_ppn'],
+                    'ppn_num' => $ppn_num,
+                    'biaya_pengiriman' => str_replace(',', '', $post['biaya_pengiriman']),
+                    'grand_total' => $grand_total,
+                    'sts' => 'request_approval',
+                    'keterangan' => $post['keterangan'],
+                    'deliver_date' => $post['deliver_date'],
+                    'deliver_type' => $post['deliver_type'],
+                    'address_cust' => $post['address_cust'],
+                    'diubah_oleh' => $this->auth->user_id(),
+                    'diubah_tgl' => date('Y-m-d H:i:s')
+                ], [
+                    'id_penawaran' => $post['id_penawaran']
+                ]);
+            } else {
+                $this->db->update('ms_penawaran', [
+                    'id_marketing' => $post['sales_marketing'],
+                    'nm_marketing' => $get_marketing->name,
+                    'id_cust' => $post['customer'],
+                    'nm_cust' => $get_customer->customer_name,
+                    'id_pic_cust' => $post['pic_cust'],
+                    'nm_pic_cust' => $get_pic_cust->name,
+                    'nilai_penawaran' => $get_total_harga->ttl_harga,
+                    'tgl_penawaran' => $post['tgl_penawaran'],
+                    'ppn_type' => $post['ppn_type'],
+                    'total' => $get_total_harga->ttl_harga,
+                    'disc_num' => $post['disc_val'],
+                    'disc_persen' => $post['disc_per'],
+                    'nilai_disc' => $nilai_disc,
+                    'ppn_persen' => $post['persen_ppn'],
+                    'ppn_num' => $ppn_num,
+                    'biaya_pengiriman' => str_replace(',', '', $post['biaya_pengiriman']),
+                    'grand_total' => $grand_total,
+                    'revisi' => $revisi,
+                    'deliver_date' => $post['deliver_date'],
+                    'deliver_type' => $post['deliver_type'],
+                    'address_cust' => $post['address_cust'],
+                    'diubah_oleh' => $this->auth->user_id(),
+                    'diubah_tgl' => date('Y-m-d H:i:s')
+                ], [
+                    'id_penawaran' => $post['id_penawaran']
+                ]);
+            }
+
+
+            // Logging
+            $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
+
+            $desc = "Update Penawaran Data - " . $post['id_penawaran'];
+            $device_name = $this->agent->mobile(); // Returns the mobile device name
+            if ($this->agent->is_browser()) {
+                $device_name = $this->agent->browser(); // Returns the browser name
+            } elseif ($this->agent->is_robot()) {
+                $device_name = $this->agent->robot(); // Returns the robot/crawler name
+            } elseif ($this->agent->is_mobile()) {
+                $device_name = $this->agent->mobile(); // Returns the mobile device name
+            } else {
+                $device_name = 'Unidentified Device';
+            }
+
+            $id_user = $this->auth->user_id();
+            $id_menu = $get_menu->id;
+            $nm_menu = $get_menu->title;
+            $device_type = $this->agent->platform();
+            $os_type = $this->agent->browser();
+            log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
+        } else {
+
+            $kode_sales = '';
+
+            $this->db->select('a.kode_angka, a.kode_nama');
+            $this->db->from('ms_kode_sales a');
+            $this->db->where('a.id_sales =', $post['sales_marketing']);
+            $this->db->where('a.kode_nama !=', '');
+            $this->db->where('a.kode_nama !=', null);
+            $this->db->where('a.kode_angka !=', '');
+            $this->db->where('a.kode_angka !=', null);
+            $check_kode_sales = $this->db->get()->num_rows();
+
+            // echo '<pre>'; 
+            // print_r($check_kode_sales);
+            // echo'</pre>';
+            // exit;
+
+            if ($check_kode_sales > 0) {
+
+                // echo '<pre>'; 
+                // print_r($check_kode_sales);
+                // echo'</pre>';
+                // exit;
+
+                $this->db->select('a.kode_angka, a.kode_nama');
+                $this->db->from('ms_kode_sales a');
+                $this->db->where('a.id_sales =', $post['sales_marketing']);
+                $this->db->where('a.kode_nama !=', '');
+                $this->db->where('a.kode_nama !=', null);
+                $this->db->where('a.kode_angka !=', '');
+                $this->db->where('a.kode_angka !=', null);
+                $get_kode_sales = $this->db->get()->row();
+
+
+
+                $kode_sales = '';
+                $code_pen = $this->db->query("SELECT MAX(id_penawaran) as max_id_penawaran FROM ms_penawaran WHERE id_penawaran LIKE '%/SP-" . $get_kode_sales->kode_nama . "/" . date('m') . '/' . date('Y') . "%'")->row();
+                $kodeBarang = $code_pen->max_id_penawaran;
+                $urutan = (int) substr($kodeBarang, 0, 3);
+                $urutan++;
+                $tahun = date('Y/m/d/');
+                $huruf = "PN/";
+                $kode_pn = sprintf("%03s", $urutan) . '/SP-' . $get_kode_sales->kode_nama . "/" . date('m') . '/' . date('Y');
+
+                $this->db->insert('ms_penawaran', [
+                    'id_penawaran' => $kode_pn,
+                    'id_marketing' => $post['sales_marketing'],
+                    'nm_marketing' => $get_marketing->name,
+                    'id_cust' => $post['customer'],
+                    'nm_cust' => $get_customer->customer_name,
+                    'id_pic_cust' => $post['pic_cust'],
+                    'nm_pic_cust' => $get_pic_cust->name,
+                    'nilai_penawaran' => $get_total_harga->ttl_harga,
+                    'tgl_penawaran' => $post['tgl_penawaran'],
+                    'ppn_type' => $post['ppn_type'],
+                    'total' => $get_total_harga->ttl_harga,
+                    'disc_num' => $post['disc_val'],
+                    'disc_persen' => $post['disc_per'],
+                    'nilai_disc' => $nilai_disc,
+                    'ppn_persen' => $post['persen_ppn'],
+                    'ppn_num' => $ppn_num,
+                    'grand_total' => $grand_total,
+                    'deliver_date' => $post['deliver_date'],
+                    'deliver_type' => $post['deliver_type'],
+                    'address_cust' => $post['address_cust'],
+                    'dibuat_oleh' => $this->auth->user_id(),
+                    'dibuat_tgl' => date('Y-m-d H:i:s')
+                ]);
+
+                $get_detail = $this->db->get_where('ms_penawaran_detail', ['id_penawaran' => $this->auth->user_id()])->result();
+                foreach ($get_detail as $detail) :
+                    $check_stock = $this->db->get_where('ms_stock_product', ['id_product' => $detail->id_product])->num_rows();
+                    if ($check_stock > 0 && $valid_stock == 1) {
+                        $get_stock = $this->db->get_where('ms_stock_product', ['id_product' => $detail->id_product])->row();
+                        if ($get_stock->qty_asli >= $detail->weight) {
+                            $qty_akhir = ($get_stock->qty_asli - $detail->weight);
+                            $this->db->update('ms_stock_product', ['qty_asli' => $qty_akhir], ['id_product' => $detail->id_product]);
+                        } else {
+                            // $valid_stock = 0;
+                        }
+                    }
+                endforeach;
+
+                $this->db->update('ms_penawaran_detail', ['id_penawaran' => $kode_pn], ['id_penawaran' => $this->auth->user_id()]);
+
+                // Logging
+                $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
+
+                $desc = "Insert New Penawaran Data - " . $kode_pn;
+                $device_name = $this->agent->mobile(); // Returns the mobile device name
+                if ($this->agent->is_browser()) {
+                    $device_name = $this->agent->browser(); // Returns the browser name
+                } elseif ($this->agent->is_robot()) {
+                    $device_name = $this->agent->robot(); // Returns the robot/crawler name
+                } elseif ($this->agent->is_mobile()) {
+                    $device_name = $this->agent->mobile(); // Returns the mobile device name
+                } else {
+                    $device_name = 'Unidentified Device';
+                }
+
+                $id_user = $this->auth->user_id();
+                $id_menu = $get_menu->id;
+                $nm_menu = $get_menu->title;
+                $device_type = $this->agent->platform();
+                $os_type = $this->agent->browser();
+                log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
+            } else {
+                $valid_sales = 0;
+            }
+        }
 
         // if ($this->db->trans_status() === FALSE || $valid_stock !== 1) {
         if ($this->db->trans_status() === FALSE || $valid_sales != 1) {
@@ -382,9 +533,9 @@ class Req_app_penawaran extends Admin_Controller
         } else {
             $this->db->trans_commit();
 
-            $msg = 'Success Approve Penawaran.';
-            if ($post['req_action'] == 2) {
-                $msg = 'Success Reject Penawaran';
+            $msg = 'Success Save data Penawaran.';
+            if ($post['req_approval'] == 1) {
+                $msg = 'Request Approval success';
             }
             $return    = array(
                 'msg'        => $msg,
@@ -890,12 +1041,7 @@ class Req_app_penawaran extends Admin_Controller
         $get_cust = $this->db->get('customers')->result();
         $get_produk = $this->db->get_where('ms_product_category3', ['aktif' => 1])->result();
         $get_sales = $this->db->get_where('employees', ['deleted_at' => null])->result();
-
-        $this->db->select('a.*, b.nama_mandarin');
-        $this->db->from('ms_penawaran_detail a');
-        $this->db->join('ms_product_category3 b', 'b.id_category3 = a.id_product', 'left');
-        $this->db->where('a.id_penawaran', $id);
-        $get_penawaran_detail = $this->db->get()->result();
+        $get_penawaran_detail = $this->db->get_where('ms_penawaran_detail', ['id_penawaran' => $id])->result();
 
         $this->db->select('SUM(a.total_harga) AS ttl_harga');
         $this->db->from('ms_penawaran_detail a');
@@ -1198,17 +1344,9 @@ class Req_app_penawaran extends Admin_Controller
             $x = 0;
             $ttl_harga = 0;
             foreach ($get_penawaran_detail as $penawaran_detail) : $x++;
-
-                $this->db->select('a.nama_mandarin');
-                $this->db->from('ms_product_cateogory3 a');
-                $this->db->where('a.id_category3', $penawaran_detail->id_product);
-                $get_nama_mandarin = $this->db->get()->row();
-
                 $hasil = $hasil . '<tr>
                     <td class="text-center">' . $x . '</td>
-                    <td class="text-center">
-                        <span class="text-danger">' . $get_nama_mandarin->nama_mandarin . '</span> <br> ' . $penawaran_detail->nm_product . '
-                    </td>
+                    <td class="text-center">' . $penawaran_detail->nm_product . '</td>
                     <td class="text-center">' . $penawaran_detail->kode_product . '</td>
                     <td class="text-center">' . number_format($penawaran_detail->qty, 2) . '</td>
                     <td class="text-center">' . number_format($penawaran_detail->weight, 2) . '</td>
@@ -1219,6 +1357,9 @@ class Req_app_penawaran extends Admin_Controller
                     <td class="text-center">
                         <button type="button" class="btn btn-sm btn-warning text-light edit_detail" data-id="' . str_replace('/', '-', $penawaran_detail->id) . '">
                             <i class="fa fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger del_detail" data-id="' . str_replace('/', '-', $penawaran_detail->id) . '">
+                            <i class="fa fa-trash"></i>
                         </button>
                     </td>
                 </tr>';
@@ -1247,8 +1388,6 @@ class Req_app_penawaran extends Admin_Controller
             $nilai_ppn = 0;
 
             $biaya_pengiriman = 0;
-            $dari_tmp = '';
-            $ke_tmp = '';
             if (isset($data_penawaran)) {
                 $disc_val = $data_penawaran->disc_num;
                 $disc_persen = $data_penawaran->disc_persen;
@@ -1266,8 +1405,6 @@ class Req_app_penawaran extends Admin_Controller
                 }
 
                 $biaya_pengiriman = $data_penawaran->biaya_pengiriman;
-                $dari_tmp = $data_penawaran->dari_tmp;
-                $ke_tmp = $data_penawaran->ke_tmp;
             }
 
             $hasil = $hasil . '</tbody>';
@@ -1275,25 +1412,19 @@ class Req_app_penawaran extends Admin_Controller
             <tbody>
                 <tr>
                     <td colspan="4"></td>
-                    <td class="text-left" colspan="3">Subtotal <span class="text-danger">(小计)</span></td>
+                    <td class="text-left" colspan="3">Subtotal</td>
                     <td class="text-right total_all_harga">' . number_format($ttl_harga, 2) . '</td>
                 </tr>
                 <tr>
                     <td colspan="4"></td>
-                    <td class="">Biaya Pengiriman <span class="text-danger">(交付成本)</span></td>
-                    <td class="">
+                    <td class="">Biaya Pengiriman</td>
+                    <td class="" colspan="3">
                         <input type="text" name="biaya_pengiriman" id="" class="form-control  text-right biaya_pengiriman autonum" placeholder="Input Biaya Pengiriman" value="' . $biaya_pengiriman . '">
-                    </td>
-                    <td>
-                        <input type="text" name="dari_tmp" id="" class="form-control" value="' . $dari_tmp . '" placeholder="- Dari -" readonly>
-                    </td>
-                    <td>
-                        <input type="text" name="ke_tmp" id="" class="form-control" value="' . $ke_tmp . '" placeholder="- Ke -" readonly>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="4"></td>
-                    <td class="text-center">Discount <span class="text-danger">(折扣)</span></td>
+                    <td class="text-center">Discount</td>
                     <td>
                         <table border="0">
                             <tr>
@@ -1321,7 +1452,7 @@ class Req_app_penawaran extends Admin_Controller
                 </tr>
                 <tr>
                     <td colspan="4"></td>
-                    <td class="" colspan="3">Price After Discount <span class="text-danger">(折扣后价格)</span></td>
+                    <td class="" colspan="3">Price After Discount</td>
                     <td class="text-right total_after_disc">
                         ' . number_format($nilai_after_disc, 2) . '
                     </td>
@@ -1339,7 +1470,7 @@ class Req_app_penawaran extends Admin_Controller
                 <tr>
                     <td colspan="4"></td>
                     <td class="" colspan="3">
-                        <span style="font-weight:bold;">Grand Total <span class="text-danger">(总计)</span></span>
+                        <span style="font-weight:bold;">Grand Total</span>
                     </td>
                     <td class="text-right total_grand_total">
                         ' . number_format($ttl_harga - $nilai_disc + $nilai_ppn + $biaya_pengiriman, 2) . '
@@ -1403,25 +1534,19 @@ class Req_app_penawaran extends Admin_Controller
         <tbody>
                 <tr>
                     <td colspan="4"></td>
-                    <td class="text-left" colspan="3">Subtotal <span class="text-danger">(小计)</span></td>
+                    <td class="text-left" colspan="3">Subtotal</td>
                     <td class="text-right total_all_harga">0</td>
                 </tr>
                 <tr>
                     <td colspan="4"></td>
-                    <td class="">Biaya Pengiriman <span class="text-danger">(交付成本)</span></td>
-                    <td class="">
+                    <td class="">Biaya Pengiriman</td>
+                    <td class="" colspan="3">
                         <input type="text" name="biaya_pengiriman" id="" class="form-control  text-right biaya_pengiriman autonum" placeholder="Input Biaya Pengiriman" value="">
-                    </td>
-                    <td>
-                        <input type="text" name="dari_tmp" id="" class="form-control" value="" placeholder="- Dari -" readonly>
-                    </td>
-                    <td>
-                        <input type="text" name="ke_tmp" id="" class="form-control" value="" placeholder="- Ke -" readonly>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="4"></td>
-                    <td class="text-center">Discount <span class="text-danger">(折扣)</span></td>
+                    <td class="text-center">Discount</td>
                     <td>
                         <table border="0">
                             <tr>
@@ -1449,7 +1574,7 @@ class Req_app_penawaran extends Admin_Controller
                 </tr>
                 <tr>
                     <td colspan="4"></td>
-                    <td class="" colspan="3">Price After Discount <span class="text-danger">(折扣后价格)</span></td>
+                    <td class="" colspan="3">Price After Discount</td>
                     <td class="text-right total_after_disc">
                         
                     </td>
@@ -1467,7 +1592,7 @@ class Req_app_penawaran extends Admin_Controller
                 <tr>
                     <td colspan="4"></td>
                     <td class="" colspan="3">
-                        <span style="font-weight:bold;">Grand Total <span class="text-danger">(总计)</span></span>
+                        <span style="font-weight:bold;">Grand Total</span>
                     </td>
                     <td class="text-right total_grand_total">
                         
@@ -1482,7 +1607,7 @@ class Req_app_penawaran extends Admin_Controller
         ]);
     }
 
-    public function print_penawaran($id_penawaran)
+    public function print_so($id_penawaran)
     {
         $id_penawaran = str_replace('-', '/', $id_penawaran);
         $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
@@ -1490,10 +1615,11 @@ class Req_app_penawaran extends Admin_Controller
         $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id_penawaran])->row();
         // $get_penawaran_detail = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id_penawaran])->result();
 
-        $this->db->select('a.*, b.nama nm_curing_agent, c.nama_mandarin, c.konversi, c.unit_nm');
+        $this->db->select('a.*, c.nama_mandarin, c.unit_nm, d.nm_packaging');
         $this->db->from('ms_penawaran_detail a');
         $this->db->join('ms_product_category3 b', 'b.curing_agent = a.id_product', 'left');
-        $this->db->join('ms_product_category3 c', 'b.id_category3 = a.id_product', 'left');
+        $this->db->join('ms_product_category3 c', 'c.id_category3 = a.id_product', 'left');
+        $this->db->join('master_packaging d', 'd.id = c.packaging', 'left');
         $this->db->where('a.id_penawaran =', $id_penawaran);
         $this->db->group_by('a.id_product');
         $get_penawaran_detail = $this->db->get()->result();
@@ -1514,12 +1640,12 @@ class Req_app_penawaran extends Admin_Controller
 
 
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Print Penawaran');
+        $this->template->title('Print SO');
         $this->template->set([
             'data_penawaran' => $get_penawaran,
             'data_penawaran_detail' => $get_penawaran_detail,
             'pic_phone' => $pic_phone
         ]);
-        $this->template->render('print_penawaran');
+        $this->template->render('print_so');
     }
 }
