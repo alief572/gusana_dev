@@ -124,7 +124,7 @@ class Penawaran extends Admin_Controller
                 $buttons = $view;
             }
             if ($row['sts'] == 'send') {
-                $buttons = $revisi . ' ' . $create_so . ' ' . $loss;
+                $buttons = $revisi . ' ' . $print . ' ' . $create_so . ' ' . $loss;
             }
 
             $status = '';
@@ -284,9 +284,10 @@ class Penawaran extends Admin_Controller
         // print_r($id);
         // echo'</pre>';
         // exit;
-        $this->db->select('a.*, b.nama_mandarin');
+        $this->db->select('a.*, b.nama_mandarin, c.nm_packaging');
         $this->db->from('ms_penawaran_detail a');
         $this->db->join('ms_product_category3 b', 'b.id_category3 = a.id_product', 'left');
+        $this->db->join('master_packaging c', 'c.id = b.packaging', 'left');
         $this->db->where('a.id_penawaran', $id);
         $get_penawaran_detail = $this->db->get()->result();
 
@@ -320,7 +321,7 @@ class Penawaran extends Admin_Controller
             $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
 
             $config['upload_path'] = './uploads/po'; //path folder
-            $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp|doc|docx|xls|xlsx|ppt|pptx|pdf|rar|zip|vsd'; //type yang dapat diakses bisa anda sesuaikan
+            $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp|pdf'; //type yang dapat diakses bisa anda sesuaikan
             $config['max_size'] = 10000; // Maximum file size in kilobytes (2MB).
             $config['encrypt_name'] = FALSE; // Encrypt the uploaded file's name.
             $config['remove_spaces'] = FALSE; // Remove spaces from the file name.
@@ -446,34 +447,66 @@ class Penawaran extends Admin_Controller
                             'id_penawaran' => $post['id_penawaran']
                         ]);
                     } else {
-                        $this->db->update('ms_penawaran', [
-                            'id_marketing' => $post['sales_marketing'],
-                            'nm_marketing' => $get_marketing->name,
-                            'id_cust' => $post['customer'],
-                            'nm_cust' => $get_customer->customer_name,
-                            'id_pic_cust' => $post['pic_cust'],
-                            'nm_pic_cust' => $get_pic_cust->name,
-                            'nilai_penawaran' => $get_total_harga->ttl_harga,
-                            'tgl_penawaran' => $post['tgl_penawaran'],
-                            'ppn_type' => $post['ppn_type'],
-                            'total' => $get_total_harga->ttl_harga,
-                            'disc_num' => $post['disc_val'],
-                            'disc_persen' => $post['disc_per'],
-                            'nilai_disc' => $nilai_disc,
-                            'ppn_persen' => $post['persen_ppn'],
-                            'ppn_num' => $ppn_num,
-                            'biaya_pengiriman' => str_replace(',', '', $post['biaya_pengiriman']),
-                            'grand_total' => $grand_total,
-                            'deliver_date' => $post['deliver_date'],
-                            'deliver_type' => $post['deliver_type'],
-                            'address_cust' => $post['address_cust'],
-                            'dari_tmp' => $post['dari_tmp'],
-                            'ke_tmp' => $post['ke_tmp'],
-                            'diubah_oleh' => $this->auth->user_id(),
-                            'diubah_tgl' => date('Y-m-d H:i:s')
-                        ], [
-                            'id_penawaran' => $post['id_penawaran']
-                        ]);
+                        if($get_penawaran->sts == 'send'){
+                            $this->db->update('ms_penawaran', [
+                                'id_marketing' => $post['sales_marketing'],
+                                'nm_marketing' => $get_marketing->name,
+                                'id_cust' => $post['customer'],
+                                'nm_cust' => $get_customer->customer_name,
+                                'id_pic_cust' => $post['pic_cust'],
+                                'nm_pic_cust' => $get_pic_cust->name,
+                                'nilai_penawaran' => $get_total_harga->ttl_harga,
+                                'tgl_penawaran' => $post['tgl_penawaran'],
+                                'ppn_type' => $post['ppn_type'],
+                                'total' => $get_total_harga->ttl_harga,
+                                'disc_num' => $post['disc_val'],
+                                'disc_persen' => $post['disc_per'],
+                                'nilai_disc' => $nilai_disc,
+                                'ppn_persen' => $post['persen_ppn'],
+                                'ppn_num' => $ppn_num,
+                                'biaya_pengiriman' => str_replace(',', '', $post['biaya_pengiriman']),
+                                'grand_total' => $grand_total,
+                                'deliver_date' => $post['deliver_date'],
+                                'deliver_type' => $post['deliver_type'],
+                                'address_cust' => $post['address_cust'],
+                                'dari_tmp' => $post['dari_tmp'],
+                                'ke_tmp' => $post['ke_tmp'],
+                                'revisi' => ($get_penawaran->revisi + 1),
+                                'diubah_oleh' => $this->auth->user_id(),
+                                'diubah_tgl' => date('Y-m-d H:i:s')
+                            ], [
+                                'id_penawaran' => $post['id_penawaran']
+                            ]);
+                        }else{
+                            $this->db->update('ms_penawaran', [
+                                'id_marketing' => $post['sales_marketing'],
+                                'nm_marketing' => $get_marketing->name,
+                                'id_cust' => $post['customer'],
+                                'nm_cust' => $get_customer->customer_name,
+                                'id_pic_cust' => $post['pic_cust'],
+                                'nm_pic_cust' => $get_pic_cust->name,
+                                'nilai_penawaran' => $get_total_harga->ttl_harga,
+                                'tgl_penawaran' => $post['tgl_penawaran'],
+                                'ppn_type' => $post['ppn_type'],
+                                'total' => $get_total_harga->ttl_harga,
+                                'disc_num' => $post['disc_val'],
+                                'disc_persen' => $post['disc_per'],
+                                'nilai_disc' => $nilai_disc,
+                                'ppn_persen' => $post['persen_ppn'],
+                                'ppn_num' => $ppn_num,
+                                'biaya_pengiriman' => str_replace(',', '', $post['biaya_pengiriman']),
+                                'grand_total' => $grand_total,
+                                'deliver_date' => $post['deliver_date'],
+                                'deliver_type' => $post['deliver_type'],
+                                'address_cust' => $post['address_cust'],
+                                'dari_tmp' => $post['dari_tmp'],
+                                'ke_tmp' => $post['ke_tmp'],
+                                'diubah_oleh' => $this->auth->user_id(),
+                                'diubah_tgl' => date('Y-m-d H:i:s')
+                            ], [
+                                'id_penawaran' => $post['id_penawaran']
+                            ]);
+                        }
                     }
                 }
 
@@ -810,7 +843,7 @@ class Penawaran extends Admin_Controller
             'spesifikasi_kemasan' => $get_produk->konversi . ' ' . $get_produk->unit_nm,
             'ral_code' => $get_produk->ral_code,
             'free_stock' => $free_stock,
-            'unit_nm' => $get_produk->unit_nm,
+            'unit_nm' => $get_produk->nm_packaging,
             'supporting_curing_agent' => $get_produk->curing_agent,
             'curing_agent_pack_spec' => $get_produk->curing_agent_konversi . ' Kg'
         ]);
@@ -1328,9 +1361,10 @@ class Penawaran extends Admin_Controller
     {
         $post = $this->input->post();
 
-        $this->db->select('a.*, b.unit_nm');
+        $this->db->select('a.*, b.unit_nm, c.nm_packaging');
         $this->db->from('ms_penawaran_detail a');
         $this->db->join('ms_product_category3 b', 'b.id_category3 = a.id_product', 'left');
+        $this->db->join('master_packaging c', 'c.id = b.packaging', 'left');
         $this->db->where('a.id', str_replace('-', '/', str_replace(',', '', $post['id'])));
         $get_penawaran_detail = $this->db->get()->row();
 
@@ -1378,8 +1412,8 @@ class Penawaran extends Admin_Controller
             'qty' => $get_penawaran_detail->qty,
             'ral_code' => $get_penawaran_detail->ral_code,
             'product_code' => $get_penawaran_detail->kode_product,
-            'unit' => $get_penawaran_detail->unit_nm,
-            'packaging_spec' => $get_penawaran_detail->konversi . ' ' . $get_penawaran_detail->packaging,
+            'unit' => $get_penawaran_detail->nm_packaging,
+            'packaging_spec' => $get_penawaran_detail->konversi . ' ' . $get_penawaran_detail->nm_packaging,
             'weight' => $get_penawaran_detail->weight,
             'list_lot_size' => $list_lot_size,
             'lot_size_detail' => ((isset($get_lot_size->id)) ? $get_lot_size->id : ''),
@@ -1860,17 +1894,19 @@ class Penawaran extends Admin_Controller
         $this->db->where('a.id_penawaran', $id);
         $get_revisi = $this->db->get()->row();
 
-        $this->db->trans_begin();
+        $valid = 1;
 
-        $this->db->update('ms_penawaran', ['revisi' => ($get_revisi->revisi + 1)], ['id_penawaran' => $id]);
+        // $this->db->trans_begin();
 
-        if ($this->db->trans_status() === FALSE) {
-            $this->db->trans_rollback();
-            $valid = 0;
-        } else {
-            $this->db->trans_commit();
-            $valid = 1;
-        }
+        // $this->db->update('ms_penawaran', ['revisi' => ($get_revisi->revisi + 1)], ['id_penawaran' => $id]);
+
+        // if ($this->db->trans_status() === FALSE) {
+        //     $this->db->trans_rollback();
+        //     $valid = 0;
+        // } else {
+        //     $this->db->trans_commit();
+        //     $valid = 1;
+        // }
 
         echo json_encode([
             'valid' => $valid

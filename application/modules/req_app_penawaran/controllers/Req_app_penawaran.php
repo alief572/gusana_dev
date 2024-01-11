@@ -1063,9 +1063,10 @@ class Req_app_penawaran extends Admin_Controller
     {
         $post = $this->input->post();
 
-        $this->db->select('a.*, b.unit_nm');
+        $this->db->select('a.*, b.unit_nm, c.nm_packaging');
         $this->db->from('ms_penawaran_detail a');
         $this->db->join('ms_product_category3 b', 'b.id_category3 = a.id_product', 'left');
+        $this->db->join('master_packaging c', 'c.id = b.packaging', 'left');
         $this->db->where('a.id', str_replace('-', '/', str_replace(',', '', $post['id'])));
         $get_penawaran_detail = $this->db->get()->row();
 
@@ -1113,7 +1114,7 @@ class Req_app_penawaran extends Admin_Controller
             'qty' => $get_penawaran_detail->qty,
             'ral_code' => $get_penawaran_detail->ral_code,
             'product_code' => $get_penawaran_detail->kode_product,
-            'unit' => $get_penawaran_detail->unit_nm,
+            'unit' => $get_penawaran_detail->nm_packaging,
             'packaging_spec' => $get_penawaran_detail->konversi . ' ' . $get_penawaran_detail->packaging,
             'weight' => $get_penawaran_detail->weight,
             'list_lot_size' => $list_lot_size,
