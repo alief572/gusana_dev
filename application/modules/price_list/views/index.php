@@ -28,6 +28,7 @@ $ENABLE_DELETE  = has_permission('Price_List.Delete');
                         <th class="desktop tablet mobile tx-bold tx-dark text-center">Lot Size <span class="text-danger">(生产数量)</span></th>
                         <th class="desktop tablet mobile tx-bold tx-dark text-center">Curing Agent <span class="text-danger">(配套固化剂)</span></th>
                         <th class="desktop tablet mobile tx-bold tx-dark text-center">Curing Agent Konversi <span class="text-danger">(辅助固化剂包装规格（公斤）)</span></th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Distibutor Price<span class="text-danger">(经销商价格)</span></th>
                         <th class="desktop tablet mobile tx-bold tx-dark text-center">Pricelist / Kg <span class="text-danger">(单价)</span></th>
                         <th class="desktop tablet mobile tx-bold tx-dark text-center">Pricelist / Kaleng <span class="text-danger">(每罐价格)</span></th>
                     </tr>

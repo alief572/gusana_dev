@@ -59,6 +59,7 @@ class Price_list extends Admin_Controller
                     b.nama LIKE '%" . $string . "%' OR
                     c.nm_packaging LIKE '%" . $string . "%' OR
                     a.qty_hopper LIKE '%" . $string . "%' OR
+                    a.dist_price LIKE '%" . $string . "%' OR
                     a.price_list LIKE '%" . $string . "%' OR
                     (a.price_list * b.konversi) LIKE '%" . $string . "%' OR
                     d.nama LIKE '%" . $string . "%' OR
@@ -111,6 +112,7 @@ class Price_list extends Admin_Controller
             $nestedData[]  = number_format($row['qty_hopper'], 2);
             $nestedData[]  = $row['nm_curing_agent'];
             $nestedData[]  = number_format($row['curing_agent_konversi'], 2);
+            $nestedData[]  = number_format($row['dist_price'], 2);
             $nestedData[]  = number_format($row['price_list'], 2);
             $nestedData[]  = number_format(($row['price_list'] * $row['konversi']), 2);
             // $nestedData[]  = $row['email'];
