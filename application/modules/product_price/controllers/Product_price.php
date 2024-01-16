@@ -177,6 +177,7 @@ class Product_price extends Admin_Controller
 			$TOTAL_PRICE_ALL = 0;
 			$TOTAL_BERAT_BERSIH = $value['qty_hopper'];
 			//default
+			
 			if (!empty($detail)) {
 				// print_r($detail);
 				// exit;
@@ -190,6 +191,10 @@ class Product_price extends Admin_Controller
 
 					$code_lv2		= (!empty($GET_LEVEL4[$valx['id_category1']]['id_category1'])) ? $GET_LEVEL4[$valx['id_category1']]['id_category1'] : '-';
 					$price_ref      = (!empty($GET_PRICE_REF[$valx['id_category1']]['price_ref_idr'])) ? $GET_PRICE_REF[$valx['id_category1']]['price_ref_idr'] : 0;
+					if($no_bom == 'PRO1-01-24000013'){
+						print_r($valx['id_category1']);
+						exit;
+					}
 					// $get_material_price_ref = $this->Product_price_model->get_material_price_ref();
 					$nm_category = strtolower(get_name('ms_inventory_category1', 'nama', 'id_category1', $code_lv2));
 					$berat_pengurang_additive = ($nm_category == 'resin') ? $BERAT_MINUS : 0;
@@ -915,7 +920,7 @@ class Product_price extends Admin_Controller
 		$this->db->where('a.id_type !=', 'P231100013');
 		$get_product = $this->db->get()->result();
 
-		$get_product_set = $this->db->get_where('ms_product_category3', ['aktif' => 1, 'id_type' => 'P231100013'])->result();
+		$get_product_set = $this->db->get_where('ms_product_category3', ['aktif' => 1])->result();
 
 		$data = array();
 		$data = [
@@ -943,6 +948,16 @@ class Product_price extends Admin_Controller
 		$get_set_product = $this->db->get()->row();
 
 		$this->db->trans_begin();
+
+		// $this->db->select('a.*');
+		// $this->db->from('ms_bom a');
+		// $this->db->where('a.id', $post['lot_size']);
+		// $get_data_bom = $this->db->get()->row();
+
+		// $this->db->select('a.*');
+		// $this->db->from('ms_bom_detail_material');
+		// $this->db->where('a.id_bom', $get_data_bom->id);
+		// $get_data_detail_material = $this->db->get()->result();
 
 		$this->db->insert('ms_product_set', [
 			'id_product' => $post['product_master'],
@@ -1011,7 +1026,32 @@ class Product_price extends Admin_Controller
 			$x++;
 		endforeach;
 
-		echo json_encode(['hasil' => $data]);
+		$data_lot_size = array();
+		$this->db->select('a.id, a.qty_hopper');
+		$this->db->from('ms_bom a');
+		$this->db->where('a.id_product', $post['product_master']);
+		$get_lot_size = $this->db->get()->result();
+		if (count($get_lot_size) < 1) {
+			$this->db->select('a.id_product_refer');
+			$this->db->from('ms_product_category3 a');
+			$this->db->where('a.id_category3', $post['product_master']);
+			$get_id_category3 = $this->db->get()->row();
+
+			$this->db->select('a.id, a.qty_hopper');
+			$this->db->from('ms_bom a');
+			$this->db->where('a.id_product', $get_id_category3->id_product_refer);
+			$get_lot_size = $this->db->get()->result();
+
+			// echo '<pre>'; 
+			// print_r($get_id_category3);
+			// echo'</pre>';
+			// exit;
+		}
+		foreach ($get_lot_size as $lot_size) :
+			$data_lot_size[] = '<option value="' . $lot_size->id . '">' . $lot_size->qty_hopper . '</option>';
+		endforeach;
+
+		echo json_encode(['hasil' => $data, 'list_lot_size' => $data_lot_size]);
 	}
 
 	public function del_set_product()
@@ -1050,5 +1090,75 @@ class Product_price extends Admin_Controller
 		endforeach;
 
 		echo json_encode(['hasil' => $data]);
+	}
+
+	public function add_product_set2()
+	{
+		$post = $this->input->post();
+
+		$this->db->select('a.*');
+		$this->db->from('ms_bom a');
+		$this->db->where('a.id', $post['lot_size']);
+		$get_lot_size = $this->db->get()->row();
+
+		$this->db->select('a.*');
+		$this->db->from('ms_bom_detail_material a');
+		$this->db->where('a.id_bom', $get_lot_size->id);
+		$get_lot_size_detail = $this->db->get()->result();
+
+		$id_bom_new = $this->Product_price_model->generate_id_bom();
+		// print_r($id_bom_new);
+		// exit;
+
+		$this->db->trans_begin();
+
+		$this->db->select('a.id');
+		$this->db->from('ms_bom a');
+		$this->db->where('a.id_product', $post['product_master']);
+		$get_bom_before = $this->db->get()->result();
+		foreach($get_bom_before as $bom_before):
+			$this->db->delete('ms_bom_detail_material', ['id_bom' => $bom_before->id]);
+		endforeach;
+
+		$this->db->delete('ms_bom', ['id_product' => $post['product_master']]);
+
+		$this->db->insert('ms_bom', [
+			'id' => $id_bom_new,
+			'id_product' => $post['product_master'],
+			'variant' => $get_lot_size->variant,
+			'qty_hopper' => $get_lot_size->qty_hopper,
+			'waste_product' => $get_lot_size->waste_product,
+			'waste_set_clean' => $get_lot_size->waste_set_clean,
+			'product_set' => 1,
+			'dibuat_oleh' => $this->auth->user_id(),
+			'dibuat_tgl' => date('Y-m-d H:i:s')
+		]);
+
+		foreach ($get_lot_size_detail as $lot_size_detail) :
+			$this->db->insert('ms_bom_detail_material', [
+				'id' => $this->Product_price_model->generate_id_bom_detail(),
+				'id_bom' => $id_bom_new,
+				'id_proses' => $lot_size_detail->id_proses,
+				'id_category1' => $lot_size_detail->id_category1,
+				'weight' => $lot_size_detail->weight
+			]);
+		endforeach;
+
+		if ($this->db->trans_status() === FALSE) {
+			$this->db->trans_rollback();
+			$valid = 0;
+			$msg = 'Sorry, saving product set is failed !';
+		} else {
+			
+
+			$this->db->trans_commit();
+			$valid = 1;
+			$msg = 'Success, your product set has been saved !';
+		}
+
+		echo json_encode([
+			'hasil' => $valid,
+			'msg' => $msg
+		]);
 	}
 }

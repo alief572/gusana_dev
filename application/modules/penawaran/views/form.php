@@ -226,7 +226,7 @@
                         <td colspan="4"></td>
                         <td class="" colspan="3">Price After Discount <span class="text-danger">(折扣后价格)</span></td>
                         <td class="text-right total_after_disc">
-                            <?= (isset($data_penawaran)) ? number_format($total_harga - $data_penawaran->nilai_disc, 2) : null ?>
+                            <?= (isset($data_penawaran)) ? number_format($total_harga + $data_penawaran->biaya_pengiriman - $data_penawaran->nilai_disc, 2) : null ?>
                         </td>
                     </tr>
                     <tr>

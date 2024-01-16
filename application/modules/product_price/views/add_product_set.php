@@ -3,13 +3,19 @@
         <div class="col-md-12">
             <div class="form-group">
                 <label for="">Product Master</label>
-                <select name="product_master" id="" class="form-control form-control-sm product_master select">
+                <select name="product_master" id="" class="form-control form-control-sm product_master select" required>
                     <option value="">- Product Master -</option>
                     <?php
                     foreach ($results['list_product'] as $product) :
                         echo '<option value="' . $product->id_category3 . '">' . $product->nama . '</option>';
                     endforeach;
                     ?>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="">Lot Size</label>
+                <select name="lot_size" id="" class="form-control form-control-sm lot_size select" required>
+
                 </select>
             </div>
             <table class="table table-striped">
@@ -99,12 +105,15 @@
                 cache: false,
                 dataType: 'json',
                 success: function(result) {
+                    console.log(result);
+
                     $('.list_set_product').html(result.hasil);
+                    $('.lot_size').html(result.list_lot_size);
                 }
             });
         });
 
-        $(document).on('click', '.del_set_product', function(){
+        $(document).on('click', '.del_set_product', function() {
             var id = $(this).data('id');
             var product_master = $('.product_master').val();
 

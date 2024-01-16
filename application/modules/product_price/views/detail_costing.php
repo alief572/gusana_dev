@@ -54,6 +54,7 @@ foreach ($detail as $val => $valx) {
 <div class="box">
     <div class="box-body">
         <!-- <form id="data-form" method="post"> -->
+        <p>Product Name : <?= $product_price[0]['product_master'] ?></p>
         <table id="example1" class="table table-sm table-bordered">
             <thead>
                 <tr>
@@ -215,7 +216,10 @@ foreach ($detail as $val => $valx) {
                             }
                             if ($value['code'] == '20') {
                                 $rate         = '';
-                                $cost        = ($product_price[0]['cost_price_final'] / $product_price[0]['qty_hopper']);
+                                $cost = 0;
+                                if($product_price[0]['cost_price_final'] > 0 && $product_price[0]['qty_hopper'] > 0){
+                                    $cost        = ($product_price[0]['cost_price_final'] / $product_price[0]['qty_hopper']);
+                                }
                             }
                             if ($value['code'] == '21') {
                                 $rate         = '';
@@ -223,11 +227,17 @@ foreach ($detail as $val => $valx) {
                             }
                             if ($value['code'] == '22') {
                                 $rate         = '';
-                                $cost        = ($product_price[0]['propose_costing'] - ($product_price[0]['cost_price_final'] / $product_price[0]['qty_hopper']));
+                                $cost = 0;
+                                if($product_price[0]['cost_price_final'] > 0 && $product_price[0]['qty_hopper'] > 0){
+                                    $cost        = ($product_price[0]['propose_costing'] - ($product_price[0]['cost_price_final'] / $product_price[0]['qty_hopper']));
+                                }
                             }
                             if ($value['code'] == '23') {
                                 $rate         = '';
-                                $cost        = ($product_price[0]['propose_costing'] / ($product_price[0]['cost_price_final'] / $product_price[0]['qty_hopper']) * 100);
+                                $cost = 0;
+                                if($product_price[0]['propose_costing'] > 0 && $product_price[0]['cost_price_final'] > 0 && $product_price[0]['qty_hopper']){
+                                    $cost        = ($product_price[0]['propose_costing'] / ($product_price[0]['cost_price_final'] / $product_price[0]['qty_hopper']) * 100);
+                                }
                             }
                             if ($value['code'] == '24') {
                                 $rate         = '';

@@ -15,6 +15,32 @@ class Product_price_model extends BF_Model
 		parent::__construct();
 	}
 
+	public function generate_id_bom()
+    {
+        $generate_id = $this->db->query("SELECT MAX(id) AS max_id FROM ms_bom WHERE id LIKE '%PRO1-" . date('m-y') . "%'")->row();
+        $kodeBarang = $generate_id->max_id;
+        $urutan = (int) substr($kodeBarang, 11, 5);
+        $urutan++;
+        $tahun = date('m-y');
+        $huruf = "PRO1-";
+        $kodecollect = $huruf . $tahun . sprintf("%06s", $urutan);
+
+        return $kodecollect;
+    }
+
+	public function generate_id_bom_detail()
+    {
+        $generate_id = $this->db->query("SELECT MAX(id) AS max_id FROM ms_bom_detail_material WHERE id LIKE '%PRO2-" . date('m-y') . "%'")->row();
+        $kodeBarang = $generate_id->max_id;
+        $urutan = (int) substr($kodeBarang, 11, 5);
+        $urutan++;
+        $tahun = date('m-y');
+        $huruf = "PRO2-";
+        $kodecollect = $huruf . $tahun . sprintf("%06s", $urutan);
+
+        return $kodecollect;
+    }
+
 	public function get_data($table, $where_field = '', $where_value = '')
 	{
 		if ($where_field != '' && $where_value != '') {
@@ -78,7 +104,9 @@ class Product_price_model extends BF_Model
 				$nomor = ($total_data - $start_dari) - $urut2;
 			}
 
-			$check_product_set = $this->db->get_where('ms_product_set', ['id_product' => $row['code_lv4']])->num_rows();
+			// $check_product_set = $this->db->get_where('ms_product_set', ['id_product' => $row['code_lv4']])->num_rows();
+			$check_product_set = $this->db->get_where('ms_bom', ['id' => $row['no_bom'], 'sts_price_list' => 1])->num_rows();
+
 
 			if ($check_product_set > 0) {
 				$status = '<div class="text-light badge badge-success">Set</div>';

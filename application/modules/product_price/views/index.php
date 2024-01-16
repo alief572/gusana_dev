@@ -140,8 +140,59 @@ $ENABLE_DELETE  = has_permission('Product_Price.Delete');
 	});
 
 	$(document).on('click', '.save_price', function() {
-		$('#dialog-popup').modal('hide');
-		DataTables();
+
+		var product_master = $('.product_master').val();
+		var lot_size = $('.lot_size').val();
+
+		if (product_master == '' || lot_size == '') {
+			new swal({
+				title: "Please make sure Product Master and Lot Size is filled !",
+				text: data.pesan,
+				type: "warning",
+				timer: 1500,
+				showCancelButton: false,
+				showConfirmButton: false,
+				allowOutsideClick: false
+			});
+		} else {
+			$.ajax({
+				type: 'post',
+				url: siteurl + thisController + 'add_product_set2',
+				data: {
+					'product_master': product_master,
+					'lot_size': lot_size
+				},
+				cache: false,
+				dataType: 'json',
+				success: function(result) {
+					
+					if (result.hasil == 1) {
+						new swal({
+							title: "Save Success !",
+							text: result.msg,
+							type: "success",
+							timer: 1500,
+							showCancelButton: false,
+							showConfirmButton: false,
+							allowOutsideClick: false
+						});
+					} else {
+						new swal({
+							title: "Save Failed !",
+							text: result.msg,
+							type: "warning",
+							timer: 1500,
+							showCancelButton: false,
+							showConfirmButton: false,
+							allowOutsideClick: false
+						});
+					}
+					$('#dialog-popup').modal('hide');
+					DataTables();
+				}
+			});
+		}
+
 	});
 
 

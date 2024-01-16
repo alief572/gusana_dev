@@ -329,7 +329,7 @@ class Bom extends Admin_Controller
                 LEFT JOIN ms_product_category3 b ON b.id_category3 = a.id_product
                 LEFT JOIN users d ON d.id_user = a.dibuat_oleh
                 LEFT JOIN master_packaging e ON e.id = b.packaging
-            WHERE 1=1  
+            WHERE 1=1  AND a.product_set IS NULL
             AND (
                 a.id_product LIKE '%" . $string . "%' OR
                 a.variant LIKE '%" . $string . "%' OR

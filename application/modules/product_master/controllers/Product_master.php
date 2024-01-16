@@ -164,7 +164,10 @@ class Product_master extends Admin_Controller
 		$this->db->where('a.id_category3 !=', $id);
 		$get_all_inven_4 = $this->db->get()->result();
 
-		$list_curing_agent = $this->Product_master_model->get_data('ms_product_category3', 'id_type', 'P231100013');
+		$this->db->select('a.*');
+		$this->db->from('ms_product_category3 a');
+		$this->db->where_in('a.id_type', ['P231100013', 'P240100015']);
+		$list_curing_agent = $this->db->get()->result();
 
 		$data = [
 			'inventory_1' => $inventory_1,
@@ -393,7 +396,14 @@ class Product_master extends Admin_Controller
 			$inv_lv_1 = $this->input->post('inv_lv_1');
 		}
 
-		$list_curing_agent = $this->Product_master_model->get_data('ms_product_category3', 'id_type', 'P231100013');
+
+
+		$this->db->select('a.*');
+		$this->db->from('ms_product_category3 a');
+		$this->db->where_in('a.id_type', ['P231100013', 'P240100015']);
+		$list_curing_agent = $this->db->get()->result();
+
+
 
 
 		$data = [

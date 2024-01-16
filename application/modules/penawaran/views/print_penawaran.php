@@ -123,9 +123,6 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         <span>包装规格<br>Packaging Spec (Kg)</span>
                     </th>
                     <th class="text-center">
-                        <span>Curing Agent Name</span>
-                    </th>
-                    <th class="text-center">
                         <span>配套固化剂<br>Supporting Curing Agent</span>
                     </th>
                     <th class="text-center">
@@ -163,7 +160,6 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                                 <td class="text-center"><span>' . $penawaran_detail->nama_mandarin . '<br>' . $penawaran_detail->nm_product . '</span></td>
                                 <td class="text-center">' . $penawaran_detail->kode_product . '</td>
                                 <td class="text-center">' . $penawaran_detail->konversi . '</td>
-                                <td class="text-center">' . $penawaran_detail->nm_curing_agent . '</td>
                                 <td class="text-center">' . $penawaran_detail->package_spec_curing_agent . '</td>
                                 <td class="text-center">' . $penawaran_detail->ral_code . '</td>
                                 <td class="text-center">' . $penawaran_detail->nm_packaging . '</td>
@@ -180,7 +176,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             </tbody>
             <tbody>
                 <tr class="non-bordered">
-                    <th colspan="11" class="text-right">
+                    <th colspan="10" class="text-right">
                         <span>
                             运输费 <br>
                             Biaya Pengiriman
@@ -189,28 +185,28 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     <td class="text-right">Rp. <?= number_format($data_penawaran->biaya_pengiriman, 2) ?></td>
                 </tr>
                 <tr class="non-bordered">
-                    <th colspan="11" class="text-right">
+                    <th colspan="10" class="text-right">
                         Discount <?= ($data_penawaran->disc_persen > 0) ? $data_penawaran->disc_persen . '%' : null ?>
                     </th>
                     <td class="text-right">Rp. <?= number_format($data_penawaran->nilai_disc, 2) ?></td>
                 </tr>
                 <tr class="non-bordered">
-                    <th colspan="11" class="text-right">
+                    <th colspan="10" class="text-right">
                         <span>
                             合计 <br>
                             Subtotal
                         </span>
                     </th>
-                    <td class="text-right">Rp. <?= number_format($ttl_harga, 2) ?></td>
+                    <td class="text-right">Rp. <?= number_format($ttl_harga + $data_penawaran->biaya_pengiriman - $data_penawaran->nilai_disc, 2) ?></td>
                 </tr>
                 <tr class="non-bordered">
-                    <th colspan="11" class="text-right">
+                    <th colspan="10" class="text-right">
                         增值税PPN11%
                     </th>
                     <td class="text-right">Rp. <?= number_format($data_penawaran->ppn_num, 2) ?></td>
                 </tr>
                 <tr class="non-bordered">
-                    <th colspan="11" class="text-right">
+                    <th colspan="10" class="text-right">
                         <span>
                             总金额 <br>
                             Total

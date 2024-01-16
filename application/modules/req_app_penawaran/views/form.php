@@ -228,7 +228,7 @@
                         <td colspan="4"></td>
                         <td class="" colspan="3">Price After Discount <span class="text-danger">(折扣后价格)</span></td>
                         <td class="text-right total_after_disc">
-                            <?= (isset($data_penawaran)) ? number_format($total_harga - $data_penawaran->nilai_disc, 2) : null ?>
+                            <?= (isset($data_penawaran)) ? number_format($total_harga - $data_penawaran->nilai_disc + $data_penawaran->biaya_pengiriman, 2) : null ?>
                         </td>
                     </tr>
                     <tr>
@@ -238,7 +238,7 @@
                             <input type="number" name="persen_ppn" id="" class="form-control  text-right persen_ppn" placeholder="Input PPN Percent" value="11" readonly>
                         </td>
                         <td class="text-right nilai_ppn">
-                            <?= (isset($data_penawaran)) ? number_format($data_penawaran->ppn_num, 2) : null ?>
+                            <?= (isset($data_penawaran)) ? number_format(($total_harga - $data_penawaran->nilai_disc + $data_penawaran->biaya_pengiriman) * 11 / 100, 2) : null ?>
                         </td>
                     </tr>
                     <tr>
@@ -247,7 +247,7 @@
                             <span style="font-weight:bold;">Grand Total <span class="text-danger">(总计)</span></span>
                         </td>
                         <td class="text-right total_grand_total">
-                            <?= (isset($data_penawaran)) ? number_format($total_harga - $data_penawaran->nilai_disc + $data_penawaran->ppn_num + $data_penawaran->biaya_pengiriman, 2) : null ?>
+                            <?= (isset($data_penawaran)) ? number_format($total_harga - $data_penawaran->nilai_disc + (($total_harga - $data_penawaran->nilai_disc + $data_penawaran->biaya_pengiriman) * 11 / 100) + $data_penawaran->biaya_pengiriman, 2) : null ?>
                         </td>
                     </tr>
                 </tbody>

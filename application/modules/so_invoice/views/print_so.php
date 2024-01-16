@@ -128,9 +128,6 @@ $ENABLE_DELETE  = has_permission('So_Invoice.Delete');
                         <span>包装规格<br>Packaging Spec (Kg)</span>
                     </th>
                     <th class="text-center">
-                        <span>Curing Agent Name</span>
-                    </th>
-                    <th class="text-center">
                         <span>配套固化剂<br>Supporting Curing Agent</span>
                     </th>
                     <th class="text-center">
@@ -162,7 +159,6 @@ $ENABLE_DELETE  = has_permission('So_Invoice.Delete');
                                 <td class="text-center"><span>' . $penawaran_detail->nama_mandarin . '<br>' . $penawaran_detail->nm_product . '</span></td>
                                 <td class="text-center">' . $penawaran_detail->kode_product . '</td>
                                 <td class="text-center">' . $penawaran_detail->konversi . '</td>
-                                <td class="text-center">' . $penawaran_detail->nm_curing_agent . '</td>
                                 <td class="text-center">' . str_replace(' Kg', '', $penawaran_detail->package_spec_curing_agent) . '</td>
                                 <td class="text-center">' . $penawaran_detail->ral_code . '</td>
                                 <td class="text-center">' . $penawaran_detail->nm_packaging . '</td>

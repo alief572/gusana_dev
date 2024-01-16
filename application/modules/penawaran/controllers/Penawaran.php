@@ -374,9 +374,9 @@ class Penawaran extends Admin_Controller
                 $nilai_disc = ($get_total_harga->ttl_harga * $post['disc_per'] / 100);
             }
 
-            $ppn_num = (($get_total_harga->ttl_harga - ($nilai_disc)) * $post['persen_ppn'] / 100);
+            $ppn_num = (($get_total_harga->ttl_harga + str_replace(',', '', $post['biaya_pengiriman']) - ($nilai_disc)) * $post['persen_ppn'] / 100);
 
-            $grand_total = ($get_total_harga->ttl_harga - $nilai_disc + $ppn_num);
+            $grand_total = ($get_total_harga->ttl_harga + str_replace(',', '', $post['biaya_pengiriman']) - $nilai_disc + $ppn_num);
 
             $valid_stock = 1;
 
@@ -447,7 +447,7 @@ class Penawaran extends Admin_Controller
                             'id_penawaran' => $post['id_penawaran']
                         ]);
                     } else {
-                        if($get_penawaran->sts == 'send'){
+                        if ($get_penawaran->sts == 'send') {
                             $this->db->update('ms_penawaran', [
                                 'id_marketing' => $post['sales_marketing'],
                                 'nm_marketing' => $get_marketing->name,
@@ -477,7 +477,7 @@ class Penawaran extends Admin_Controller
                             ], [
                                 'id_penawaran' => $post['id_penawaran']
                             ]);
-                        }else{
+                        } else {
                             $this->db->update('ms_penawaran', [
                                 'id_marketing' => $post['sales_marketing'],
                                 'nm_marketing' => $get_marketing->name,
@@ -1081,14 +1081,14 @@ class Penawaran extends Admin_Controller
             $nilai_disc = ($get_ttl_harga->ttl_harga * $disc_per / 100);
         }
 
-        $total_after_disc = ($get_ttl_harga->ttl_harga - $nilai_disc);
+        $total_after_disc = ($get_ttl_harga->ttl_harga + $biaya_pengiriman - $nilai_disc);
 
-        $nilai_ppn = ($total_after_disc * $persen_ppn / 100);
+        $nilai_ppn = (($total_after_disc * $persen_ppn / 100));
         if ($ppn_type !== '1') {
             $nilai_ppn = 0;
         }
 
-        $total_grand_total = ($total_after_disc + $nilai_ppn + $biaya_pengiriman);
+        $total_grand_total = ($total_after_disc + $nilai_ppn);
 
         echo json_encode([
             'total_harga' => $total_harga,
@@ -1286,49 +1286,95 @@ class Penawaran extends Admin_Controller
         if ($post['id_detail'] !== "") {
             // echo '1';
             // exit;
-            $this->db->update('ms_penawaran_detail', [
-                'id_product' => $produk_detail,
-                'nm_product' => $get_produk->nama,
-                'kode_product' => $get_produk->product_code,
-                'konversi' => $get_produk->konversi,
-                'packaging' => $get_produk->nm_packaging,
-                'ral_code' => $get_produk->ral_code,
-                'qty' => $qty_detail,
-                'weight' => ($qty_detail * $get_produk->konversi),
-                'harga_satuan' => $price_list,
-                'total_harga' => ($price_list * ($qty_detail * $get_produk->konversi)),
-                'lot_size' => $get_qty_hopper->qty_hopper,
-                'keterangan' => $keterangan,
-                'keterangan' => $keterangan,
-                'id_curing_agent' => $supporting_curing_agent,
-                'nm_curing_agent' => $nm_curing_agent,
-                'package_spec_curing_agent' => $curing_agent_pack_spec
-            ], [
-                'id' => $id_detail
-            ]);
+            if (count($get_qty_hopper) > 0) {
+                $this->db->update('ms_penawaran_detail', [
+                    'id_product' => $produk_detail,
+                    'nm_product' => $get_produk->nama,
+                    'kode_product' => $get_produk->product_code,
+                    'konversi' => $get_produk->konversi,
+                    'packaging' => $get_produk->nm_packaging,
+                    'ral_code' => $get_produk->ral_code,
+                    'qty' => $qty_detail,
+                    'weight' => ($qty_detail * $get_produk->konversi),
+                    'harga_satuan' => $price_list,
+                    'total_harga' => ($price_list * ($qty_detail * $get_produk->konversi)),
+                    'lot_size' => $get_qty_hopper->qty_hopper,
+                    'keterangan' => $keterangan,
+                    'keterangan' => $keterangan,
+                    'id_curing_agent' => $supporting_curing_agent,
+                    'nm_curing_agent' => $nm_curing_agent,
+                    'package_spec_curing_agent' => $curing_agent_pack_spec
+                ], [
+                    'id' => $id_detail
+                ]);
+            } else {
+                $this->db->update('ms_penawaran_detail', [
+                    'id_product' => $produk_detail,
+                    'nm_product' => $get_produk->nama,
+                    'kode_product' => $get_produk->product_code,
+                    'konversi' => $get_produk->konversi,
+                    'packaging' => $get_produk->nm_packaging,
+                    'ral_code' => $get_produk->ral_code,
+                    'qty' => $qty_detail,
+                    'weight' => ($qty_detail * $get_produk->konversi),
+                    'harga_satuan' => $price_list,
+                    'total_harga' => ($price_list * ($qty_detail * $get_produk->konversi)),
+                    'keterangan' => $keterangan,
+                    'keterangan' => $keterangan,
+                    'id_curing_agent' => $supporting_curing_agent,
+                    'nm_curing_agent' => $nm_curing_agent,
+                    'package_spec_curing_agent' => $curing_agent_pack_spec
+                ], [
+                    'id' => $id_detail
+                ]);
+            }
         } else {
-            $this->db->insert('ms_penawaran_detail', [
-                'id' => $kode_pd,
-                'id_penawaran' => $id_penawaran,
-                'id_product' => $produk_detail,
-                'nm_product' => $get_produk->nama,
-                'kode_product' => $get_produk->product_code,
-                'konversi' => $get_produk->konversi,
-                'packaging' => $get_produk->nm_packaging,
-                'ral_code' => $get_produk->ral_code,
-                'qty' => $qty_detail,
-                'weight' => ($qty_detail * $get_produk->konversi),
-                'harga_satuan' => $price_list,
-                'total_harga' => ($price_list * ($qty_detail * $get_produk->konversi)),
-                'free_stock' => $free_stock,
-                'lot_size' => $get_qty_hopper->qty_hopper,
-                'keterangan' => $keterangan,
-                'id_curing_agent' => $supporting_curing_agent,
-                'nm_curing_agent' => $nm_curing_agent,
-                'package_spec_curing_agent' => $curing_agent_pack_spec,
-                'dibuat_oleh' => $this->auth->user_id(),
-                'dibuat_tgl' => date('Y-m-d H:i:s')
-            ]);
+            if (count($get_qty_hopper) > 0) {
+                $this->db->insert('ms_penawaran_detail', [
+                    'id' => $kode_pd,
+                    'id_penawaran' => $id_penawaran,
+                    'id_product' => $produk_detail,
+                    'nm_product' => $get_produk->nama,
+                    'kode_product' => $get_produk->product_code,
+                    'konversi' => $get_produk->konversi,
+                    'packaging' => $get_produk->nm_packaging,
+                    'ral_code' => $get_produk->ral_code,
+                    'qty' => $qty_detail,
+                    'weight' => ($qty_detail * $get_produk->konversi),
+                    'harga_satuan' => $price_list,
+                    'total_harga' => ($price_list * ($qty_detail * $get_produk->konversi)),
+                    'free_stock' => $free_stock,
+                    'lot_size' => $get_qty_hopper->qty_hopper,
+                    'keterangan' => $keterangan,
+                    'id_curing_agent' => $supporting_curing_agent,
+                    'nm_curing_agent' => $nm_curing_agent,
+                    'package_spec_curing_agent' => $curing_agent_pack_spec,
+                    'dibuat_oleh' => $this->auth->user_id(),
+                    'dibuat_tgl' => date('Y-m-d H:i:s')
+                ]);
+            } else {
+                $this->db->insert('ms_penawaran_detail', [
+                    'id' => $kode_pd,
+                    'id_penawaran' => $id_penawaran,
+                    'id_product' => $produk_detail,
+                    'nm_product' => $get_produk->nama,
+                    'kode_product' => $get_produk->product_code,
+                    'konversi' => $get_produk->konversi,
+                    'packaging' => $get_produk->nm_packaging,
+                    'ral_code' => $get_produk->ral_code,
+                    'qty' => $qty_detail,
+                    'weight' => ($qty_detail * $get_produk->konversi),
+                    'harga_satuan' => $price_list,
+                    'total_harga' => ($price_list * ($qty_detail * $get_produk->konversi)),
+                    'free_stock' => $free_stock,
+                    'keterangan' => $keterangan,
+                    'id_curing_agent' => $supporting_curing_agent,
+                    'nm_curing_agent' => $nm_curing_agent,
+                    'package_spec_curing_agent' => $curing_agent_pack_spec,
+                    'dibuat_oleh' => $this->auth->user_id(),
+                    'dibuat_tgl' => date('Y-m-d H:i:s')
+                ]);
+            }
         }
 
         $valid = 1;
@@ -1561,13 +1607,15 @@ class Penawaran extends Admin_Controller
                     $nilai_disc = ($ttl_harga * $disc_persen / 100);
                 }
 
-                $nilai_after_disc = ($ttl_harga - $nilai_disc);
+                $biaya_pengiriman = $data_penawaran->biaya_pengiriman;
+
+                $nilai_after_disc = ($ttl_harga + $biaya_pengiriman - $nilai_disc);
 
                 if ($data_penawaran->ppn_type == 1) {
                     $nilai_ppn = ($nilai_after_disc * 11 / 100);
                 }
 
-                $biaya_pengiriman = $data_penawaran->biaya_pengiriman;
+
                 $dari_tmp = $data_penawaran->dari_tmp;
                 $ke_tmp = $data_penawaran->ke_tmp;
             }
@@ -1954,5 +2002,31 @@ class Penawaran extends Admin_Controller
         ]);
 
         $this->template->render('create_so');
+    }
+
+    public function ppn_autoload()
+    {
+        $this->db->select('a.id_penawaran, a.biaya_pengiriman');
+        $this->db->from('ms_penawaran a');
+        $this->db->where('a.ppn_type', '1');
+        $get_all_id_penawaran = $this->db->get()->result();
+
+        $this->db->trans_begin();
+
+        foreach ($get_all_id_penawaran as $penawaran) :
+            $this->db->select('SUM(a.total_harga) AS ttl_harga');
+            $this->db->from('ms_penawaran_detail a');
+            $this->db->where('a.id_penawaran', $penawaran->id_penawaran);
+            $get_ttl_harga = $this->db->get()->row();
+
+            $nilai_ppn = (($get_ttl_harga->ttl_harga - $penawaran->nilai_disc + $penawaran->biaya_pengiriman) * 11 / 100);
+
+            $this->db->update('ms_penawaran', [
+                'ppn_num' => $nilai_ppn,
+                'grand_total' => ($penawaran->total - $penawaran->nilai_disc + $penawaran->biaya_pengiriman + $nilai_ppn)
+            ],['id_penawaran' => $penawaran->id_penawaran]);
+        endforeach;
+
+        $this->db->trans_commit();
     }
 }

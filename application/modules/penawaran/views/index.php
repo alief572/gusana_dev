@@ -16,6 +16,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
     <?php echo Template::message(); ?>
     <?php if ($ENABLE_ADD) : ?>
         <a class="btn btn-primary btn-oblong add" href="penawaran/add/new" title="Add"><i class="fa fa-plus">&nbsp;</i>Add Penawaran <span class="">(添加报价)</span></a>
+        <!-- <a class="btn btn-primary btn-oblong ppn_autoload" href="javascript:void(0);" title="PPn Autoload"><i class="fa fa-plus">&nbsp;</i>PPn Autoload </a> -->
         <!-- <button type="button" class="btn btn-success btn-oblong" onclick="loadData()" title="Add"><i class="fa fa-plus">&nbsp;</i>Refresh</button> -->
     <?php endif; ?>
 </div>
@@ -445,6 +446,24 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             }
         })
 
+    });
+
+    $(document).on('click', '.ppn_autoload', function() {
+        $.ajax({
+            type: 'post',
+            url: siteurl + thisController + 'ppn_autoload',
+            cache: false,
+            success: function(result) {
+                Lobibox.notify('success', {
+                    icon: 'fa fa-check',
+                    msg: 'PPn telah berhasil dihitung ulang !',
+                    position: 'top right',
+                    showClass: 'zoomIn',
+                    hideClass: 'zoomOut',
+                    soundPath: '<?= base_url(); ?>themes/bracket/assets/lib/lobiani/sounds/',
+                });
+            }
+        });
     });
 
     $(document).on('click', '.print_penawaran', function() {
