@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-6">
                 <label for="">Customer Name <span class="text-danger">(客户名称)</span></label>
-                <select name="customer" class="form-control  chosen-select customer" disabled>
+                <select name="customer" class="form-control  chosen-select customer" required>
                     <option value="">- Customer Name -</option>
                     <?php
                     foreach ($list_customer as $customer) :
@@ -30,11 +30,11 @@
             </div>
             <div class="col-6">
                 <label for="">Quote Date <span class="text-danger">(报价日期)</span></label>
-                <input type="date" name="tgl_penawaran" id="" class="form-control " value="<?= (isset($data_penawaran)) ? $data_penawaran->tgl_penawaran : null ?>" disabled>
+                <input type="date" name="tgl_penawaran" id="" class="form-control " value="<?= (isset($data_penawaran)) ? $data_penawaran->tgl_penawaran : null ?>" required>
             </div>
             <div class="col-6">
                 <label for="">Contact Person <span class="text-danger">(联系人)</span></label>
-                <select name="pic_cust" class="form-control  chosen-select pic_cust" disabled>
+                <select name="pic_cust" class="form-control  chosen-select pic_cust" required>
                     <option value="">- Contact Person -</option>
                     <?php
                     if (isset($data_penawaran)) {
@@ -51,11 +51,11 @@
             </div>
             <div class="col-6">
                 <label for="">Delivery Date <span class="text-danger">(交货日期)</span></label>
-                <input type="date" name="deliver_date" id="" class="form-control" value="<?= (isset($data_penawaran)) ? $data_penawaran->deliver_date : null ?>" disabled>
+                <input type="date" name="deliver_date" id="" class="form-control" value="<?= (isset($data_penawaran)) ? $data_penawaran->deliver_date : null ?>" required>
             </div>
             <div class="col-6">
                 <label for="">Delivery Type <span class="text-danger">(交货类型)</span></label>
-                <select name="deliver_type" id="" class="form-control" disabled>
+                <select name="deliver_type" id="" class="form-control" required>
                     <option value="">- Delivery Type -</option>
                     <option value="1" <?= (isset($data_penawaran) && $data_penawaran->deliver_type == 1) ? 'selected' : null ?>>Delivery</option>
                     <option value="2" <?= (isset($data_penawaran) && $data_penawaran->deliver_type == 2) ? 'selected' : null ?>>Self Pickup</option>
@@ -63,7 +63,7 @@
             </div>
             <div class="col-6">
                 <label for="">Sales <span class="text-danger">(销售人员姓名)</span></label>
-                <select name="sales_marketing" id="" class="form-control  chosen-select" disabled>
+                <select name="sales_marketing" id="" class="form-control  chosen-select" required>
                     <option value="">- Sales -</option>
                     <?php
                     foreach ($list_sales as $sales) :
@@ -84,27 +84,22 @@
             </div>
             <div class="col-6">
                 <label for="">PPN / Non PPN</label>
-                <select name="ppn_type" class="form-control  chosen-select ppn_type" disabled>
+                <select name="ppn_type" class="form-control  chosen-select ppn_type" required>
                     <option value="">- PPN / Non PPN -</option>
                     <option value="1" <?= (isset($data_penawaran) && $data_penawaran->ppn_type == 1) ? 'selected' : null ?>>PPN</option>
                     <option value="0" <?= (isset($data_penawaran) && $data_penawaran->ppn_type == 0) ? 'selected' : null ?>>Non PPN</option>
                 </select>
             </div>
-            <div class="col-12"></div>
-            <div class="col-6">
-                <label for="">Action</label>
-                <select name="req_action" id="" class="form-control">
-                    <option value="1">Approve</option>
-                    <option value="2">Reject</option>
-                </select>
-            </div>
         </div>
 
         <div class="col-12">
-            <!-- <button type="button" class="btn btn-sm btn-success add_product" style="margin-top:20px;">
-                <i class="fa fa-plus"></i>
-                Add Product
-            </button> -->
+            <span>
+                <button type="button" class="btn btn-sm btn-success add_product" style="margin-top:20px;">
+                    <i class="fa fa-plus"></i>
+                    Add Product
+                </button>
+                <span class="text-danger">(添加产品)</span>
+            </span>
             <table class="table table-striped" id="table-product">
                 <thead>
                     <tr>
@@ -160,7 +155,7 @@
                     foreach ($list_penawaran_detail as $penawaran_detail) : $x++; ?>
                         <tr>
                             <td class="text-center"><?= $x ?></td>
-                            <td class="text-center"><span class="text-danger"><?= $penawaran_detail->nama_mandarin ?></span> <br> <?= $penawaran_detail->nm_product ?></td>
+                            <td class="text-center"><span class="text-danger"><?= $penawaran_detail->nama_mandarin ?></span> <br><?= $penawaran_detail->nm_product; ?></td>
                             <td class="text-center"><?= $penawaran_detail->kode_product ?></td>
                             <td class="text-center"><?= number_format($penawaran_detail->qty, 2) ?></td>
                             <td class="text-center"><?= number_format($penawaran_detail->weight, 2) ?></td>
@@ -228,7 +223,7 @@
                         <td colspan="4"></td>
                         <td class="" colspan="3">Price After Discount <span class="text-danger">(折扣后价格)</span></td>
                         <td class="text-right total_after_disc">
-                            <?= (isset($data_penawaran)) ? number_format($total_harga - $data_penawaran->nilai_disc + $data_penawaran->biaya_pengiriman, 2) : null ?>
+                            <?= (isset($data_penawaran)) ? number_format($total_harga + $data_penawaran->biaya_pengiriman - $data_penawaran->nilai_disc, 2) : null ?>
                         </td>
                     </tr>
                     <tr>
@@ -238,7 +233,7 @@
                             <input type="number" name="persen_ppn" id="" class="form-control  text-right persen_ppn" placeholder="Input PPN Percent" value="11" readonly>
                         </td>
                         <td class="text-right nilai_ppn">
-                            <?= (isset($data_penawaran)) ? number_format(($total_harga - $data_penawaran->nilai_disc + $data_penawaran->biaya_pengiriman) * 11 / 100, 2) : null ?>
+                            <?= (isset($data_penawaran)) ? number_format($data_penawaran->ppn_num, 2) : null ?>
                         </td>
                     </tr>
                     <tr>
@@ -247,22 +242,29 @@
                             <span style="font-weight:bold;">Grand Total <span class="text-danger">(总计)</span></span>
                         </td>
                         <td class="text-right total_grand_total">
-                            <?= (isset($data_penawaran)) ? number_format($total_harga - $data_penawaran->nilai_disc + (($total_harga - $data_penawaran->nilai_disc + $data_penawaran->biaya_pengiriman) * 11 / 100) + $data_penawaran->biaya_pengiriman, 2) : null ?>
+                            <?= (isset($data_penawaran)) ? number_format($total_harga - $data_penawaran->nilai_disc + $data_penawaran->ppn_num + $data_penawaran->biaya_pengiriman, 2) : null ?>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <div class="col-5">
+        <div class="col-5 <?= (isset($request_approval) && $request_approval == 1) ? '' : 'd-none' ?>">
             <div class="form-group">
-                <label>Keterangan Approval/Reject <span class="text-danger">(批准/拒絕說明)</span></label>
-                <textarea name="keterangan" class="form-control " cols="10" rows="5"></textarea>
+                <label>Keterangan Request Approval</label>
+                <textarea name="keterangan" class="form-control " cols="10" rows="10"></textarea>
             </div>
         </div>
         <div class="text-right">
-            <button type="submit" class="btn btn-sm btn-primary" name="save" id="save">Save</button>
-            <a href="<?= base_url('/req_app_penawaran') ?>" class="btn btn-sm btn-danger">Back</a>
+            <?php
+            if (isset($request_approval) && $request_approval == 1) {
+                echo '<button type="submit" class="btn btn-sm btn-warning" name="request_approval" id="request_approval">Request Approval</button>';
+            } else {
+                echo '<button type="submit" class="btn btn-sm btn-primary" name="save" id="save">Save</button>';
+            }
+            ?>
+
+            <a href="<?= base_url('/penawaran') ?>" class="btn btn-sm btn-danger">Back</a>
         </div>
     </div>
 </form>
@@ -274,134 +276,171 @@
             <input type="hidden" name="id_detail" class="id_detail">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title tx-bold text-dark" id="myModalLabel">Add Product</h4>
+                    <h4 class="modal-title tx-bold text-dark" id="myModalLabel">Add Product <span class="text-danger">(添加产品)</span></h4>
                     <button type="button" class="btn btn-default close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-2 mt-15" style="margin-top: 10px;">
-                            <span>
-                                产品名称 <br>
-                                Product Name
-                            </span>
-                        </div>
-                        <div class="col-4" style="margin-top: 10px;">
-                            <select name="produk_detail" id="" class="form-control produk_detail chosen-select2" style="width: 300px;" disabled>
-                                <option value="">- Nama Produk -</option>
-                                <?php
-                                foreach ($list_produk as $produk) :
-                                    echo '<option value="' . $produk->id_category3 . '">' . $produk->nama . '</option>';
-                                endforeach;
-                                ?>
-                            </select>
-                        </div>
-                        <div class="col-2 mt-15" style="margin-top: 10px;">
-                            <span>
-                                Packaging Spec for Supporting Curing Agent (kg) 辅助固化剂包装规格（公斤）
-                            </span>
-                        </div>
-                        <div class="col-4" style="margin-top: 10px;">
-                            <input type="text" name="curing_agent_pack_spec" id="" class="form-control  curing_agent_pack_spec" placeholder="" readonly>
-                        </div>
-                        <div class="col-2 mt-15" style="margin-top: 10px;">
-                            <span>
-                                数量 <br>
-                                Qty
-                            </span>
-                        </div>
-                        <div class="col-4" style="margin-top: 10px;">
-                            <input type="text" name="qty" id="" class="form-control qty" required>
-                        </div>
-                        <div class="col-2 mt-15" style="margin-top: 10px;">
-                            <span>
-                                色标 <br>
-                                RAL Code
-                            </span>
-                        </div>
-                        <div class="col-4" style="margin-top: 10px;">
-                            <input type="text" name="ral_code" id="" class="form-control  ral_code" readonly>
-                        </div>
-                        <div class="col-2 mt-15" style="margin-top: 10px;">
-                            <span>
-                                产品型号 <br>
-                                Product Code
-                            </span>
-                        </div>
-                        <div class="col-4" style="margin-top: 10px;">
-                            <input type="text" name="product_code" id="" class="form-control  product_code" readonly>
-                        </div>
-                        <div class="col-2 mt-15" style="margin-top: 10px;">
-                            <span>
-                                单位 <br>
-                                Unit
-                            </span>
-                        </div>
-                        <div class="col-4" style="margin-top: 10px;">
-                            <input type="text" name="unit" id="" class="form-control  unit" readonly>
-                        </div>
-                        <div class="col-2 mt-15" style="margin-top: 10px;">
-                            <span>
-                                包装规格 <br>
-                                Packaging Spec (Kg)
-                            </span>
-                        </div>
-                        <div class="col-4" style="margin-top: 10px;">
-                            <input type="text" name="packaging_spec" id="" class="form-control  packaging_spec" readonly>
-                        </div>
-                        <div class="col-2 mt-15" style="margin-top: 10px;">
-                            <span>
-                                重量 <br>
-                                Weight (Kg)
-                            </span>
-                        </div>
-                        <div class="col-4" style="margin-top: 10px;">
-                            <input type="text" name="weight" id="" class="form-control text-right weight" readonly>
-                        </div>
-                        <div class="col-2 mt-15" style="margin-top: 10px;">
-                            <span>
-                                Lot Size 生产数量
-                            </span>
-                        </div>
-                        <div class="col-4" style="margin-top: 10px;">
-                            <select name="lot_size_detail" id="" class="form-control lot_size_detail" disabled>
 
-                            </select>
+
+
+
+
+
+
+
+
+
+
+
+                    </div>
+                    <div class="row">
+                        <div class="col-6 row">
+                            <div class="col-4 mt-15" style="margin-top: 10px;">
+                                <span>
+                                    产品名称 <br>
+                                    Product Name
+                                </span>
+                            </div>
+                            <div class="col-8" style="margin-top: 10px;">
+                                <select name="produk_detail" id="" class="form-control produk_detail chosen-select2" style="width: 300px;" readonly>
+                                    <option value="">- Nama Produk -</option>
+                                    <?php
+                                    foreach ($list_produk as $produk) :
+                                        echo '<option value="' . $produk->id_category3 . '">' . $produk->nama . '</option>';
+                                    endforeach;
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="col-4 mt-15" style="margin-top: 10px;">
+                                <span>
+                                    数量 <br>
+                                    Qty
+                                </span>
+                            </div>
+                            <div class="col-8" style="margin-top: 10px;">
+                                <input type="text" name="qty" id="" class="form-control qty" required>
+                            </div>
+                            <div class="col-4 mt-15" style="margin-top: 10px;">
+                                <span>
+                                    产品型号 <br>
+                                    Product Code
+                                </span>
+                            </div>
+                            <div class="col-8" style="margin-top: 10px;">
+                                <input type="text" name="product_code" id="" class="form-control  product_code" readonly>
+                            </div>
+                            <div class="col-4 mt-15" style="margin-top: 10px;">
+                                <span>
+                                    包装规格 <br>
+                                    Packaging Spec (Kg)
+                                </span>
+                            </div>
+                            <div class="col-8" style="margin-top: 10px;">
+                                <input type="text" name="packaging_spec" id="" class="form-control  packaging_spec" readonly>
+                            </div>
+                            <div class="col-4 mt-15" style="margin-top: 10px;">
+                                <span>
+                                    生产数量 <br>
+                                    Lot Size
+                                </span>
+                            </div>
+                            <div class="col-8" style="margin-top: 10px;">
+                                <select name="lot_size_detail" id="" class="form-control lot_size_detail">
+
+                                </select>
+                            </div>
+                            <div class="col-4 mt-15" style="margin-top: 10px;">
+                                <span>
+                                    配套固化剂 <br>
+                                    Supporting Curing Agent
+                                </span>
+                            </div>
+                            <div class="col-8" style="margin-top: 10px;">
+                                <input type="text" name="supporting_curing_agent" id="" class="form-control  supporting_curing_agent" readonly>
+                            </div>
+                            <div class="col-4 mt-15" style="margin-top: 10px;">
+                                <span>
+                                    备注 <br>
+                                    Keterangan
+                                </span>
+                            </div>
+                            <div class="col-8" style="margin-top: 10px;">
+                                <textarea name="keterangan" id="" cols="30" rows="5" class="form-control form-control-sm keterangan"></textarea>
+                            </div>
                         </div>
-                        <div class="col-2 mt-15" style="margin-top: 10px;">
-                            <span>
-                                单价 <br>
-                                Harga Satuan (Rp/Kg)
-                            </span>
-                        </div>
-                        <div class="col-4" style="margin-top: 10px;">
-                            <input type="text" name="harga_satuan" id="" class="form-control  harga_satuan text-right autonum" required>
-                        </div>
-                        <div class="col-2 mt-15" style="margin-top: 10px;">
-                            <span>
-                                配套固化剂 <br>
-                                Supporting Curing Agent
-                            </span>
-                        </div>
-                        <div class="col-4" style="margin-top: 10px;">
-                            <input type="text" name="supporting_curing_agent" id="" class="form-control  supporting_curing_agent" readonly>
-                        </div>
-                        <div class="col-2 mt-15" style="margin-top: 10px;">
-                            <span>
-                                金额 <br>
-                                Total Harga
-                            </span>
-                        </div>
-                        <div class="col-4" style="margin-top: 10px;">
-                            <input type="text" name="total_harga" id="" class="form-control text-right autonum total_harga" readonly>
-                        </div>
-                        <div class="col-2 mt-15" style="margin-top: 10px;">
-                            <span>
-                                备注 <br>
-                                Keterangan
-                            </span>
-                        </div>
-                        <div class="col-4" style="margin-top: 10px;">
-                            <textarea name="keterangan" id="" cols="30" rows="5" class="form-control form-control-sm keterangan"></textarea>
+                        <div class="col-6 row">
+                            <div class="col-4 mt-15" style="margin-top: 10px;">
+                                <span>
+                                    辅助固化剂包装规格（公斤）<br>
+                                    Packaging Spec for Supporting Curing Agent (kg)
+                                </span>
+                            </div>
+                            <div class="col-8" style="margin-top: 10px;">
+                                <input type="text" name="curing_agent_pack_spec" id="" class="form-control  curing_agent_pack_spec" placeholder="" readonly>
+                            </div>
+                            <div class="col-4 mt-15" style="margin-top: 10px;">
+                                <span>
+                                    色标 <br>
+                                    RAL Code
+                                </span>
+                            </div>
+                            <div class="col-8" style="margin-top: 10px;">
+                                <input type="text" name="ral_code" id="" class="form-control  ral_code" readonly>
+                            </div>
+                            <div class="col-4 mt-15" style="margin-top: 10px;">
+                                <span>
+                                    单位 <br>
+                                    Unit
+                                </span>
+                            </div>
+                            <div class="col-8" style="margin-top: 10px;">
+                                <input type="text" name="unit" id="" class="form-control  unit" readonly>
+                            </div>
+                            <div class="col-4 mt-15" style="margin-top: 10px;">
+                                <span>
+                                    重量 <br>
+                                    Weight (Kg)
+                                </span>
+                            </div>
+                            <div class="col-8" style="margin-top: 10px;">
+                                <input type="text" name="weight" id="" class="form-control text-right weight" readonly>
+                            </div>
+                            <div class="col-4 mt-15" style="margin-top: 10px;">
+                                <span>
+                                    单价 <br>
+                                    Harga Satuan (Rp/Kg)
+                                </span>
+                            </div>
+                            <div class="col-8" style="margin-top: 10px;">
+                                <input type="text" name="harga_satuan" id="" class="form-control  harga_satuan text-right autonum" required>
+                            </div>
+                            <div class="col-4 mt-15" style="margin-top: 10px;">
+                                <span>
+                                    金额 <br>
+                                    Total Harga
+                                </span>
+                            </div>
+                            <div class="col-8" style="margin-top: 10px;">
+                                <input type="text" name="total_harga" id="" class="form-control text-right autonum total_harga" readonly>
+                            </div>
+                            <div class="col-4 mt-15" style="margin-top: 10px;">
+                                <span>
+                                    Free Stock
+                                </span>
+                            </div>
+                            <div class="col-8" style="margin-top: 10px;">
+                                <input type="number" name="free_stock" id="" class="form-control text-right autonum free_stock" readonly>
+                            </div>
+
+                            <div class="col-4 mt-15" style="margin-top: 10px;">
+                                <span>
+                                    Request Produksi
+                                </span>
+                            </div>
+                            <div class="col-8" style="margin-top: 10px;">
+                                <input type="number" name="request_produksi" id="" class="form-control text-right autonum request_produksi" readonly>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -658,6 +697,7 @@
 
     $(document).on('change', '.produk_detail', function() {
         var produk = $(this).val();
+        var qty = parseFloat($('.qty').val());
 
         $.ajax({
             type: 'POST',
@@ -675,6 +715,12 @@
                 $('.unit').val(result.unit_nm);
                 $('.supporting_curing_agent').val(result.supporting_curing_agent);
                 $('.curing_agent_pack_spec').val(result.curing_agent_pack_spec);
+                $('.free_stock').val(result.free_stock);
+
+                var request_produksi = parseFloat(result.free_stock - qty);
+                $('.request_produksi').val(request_produksi);
+
+
                 // $('.free_stock').html(result.free_stock);
 
                 get_harga_satuan();
@@ -703,6 +749,13 @@
 
         var produk_detail = $('.produk_detail').val();
         var lot_size_detail = $('.lot_size_detail').val();
+
+        var free_stock = $('.free_stock').val();
+        free_stock = free_stock.split(',').join('');
+        free_stock = parseFloat(free_stock);
+
+        var request_produksi = parseFloat(free_stock - qty);
+        $('.request_produksi').val(request_produksi);
 
         get_harga_satuan();
         hitung_weight();
@@ -990,6 +1043,9 @@
                 $('.total_harga').autoNumeric('set', result.total_harga);
 
                 $('.keterangan').val(result.keterangan);
+
+                $('.request_produksi').val(result.request_produksi);
+                $('.free_stock').val(result.free_stock);
             }
         });
     });
@@ -1056,7 +1112,7 @@
                         hideClass: 'zoomOut',
                         soundPath: '<?= base_url(); ?>themes/bracket/assets/lib/lobiani/sounds/',
                     });
-                    window.location.href = '<?= base_url('/req_app_penawaran') ?>';
+                    window.location.href = '<?= base_url('/penawaran') ?>';
                 } else {
                     Lobibox.notify('warning', {
                         icon: 'fa fa-ban',

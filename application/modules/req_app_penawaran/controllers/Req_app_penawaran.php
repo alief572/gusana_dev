@@ -1008,7 +1008,7 @@ class Req_app_penawaran extends Admin_Controller
         if ($post['id_detail'] !== "") {
             // echo '1';
             // exit;
-            if(count($get_qty_hopper) > 0){
+            if (count($get_qty_hopper) > 0) {
                 $this->db->update('ms_penawaran_detail', [
                     'id_product' => $produk_detail,
                     'nm_product' => $get_produk->nama,
@@ -1028,7 +1028,7 @@ class Req_app_penawaran extends Admin_Controller
                 ], [
                     'id' => $id_detail
                 ]);
-            }else{
+            } else {
                 $this->db->update('ms_penawaran_detail', [
                     'id_product' => $produk_detail,
                     'nm_product' => $get_produk->nama,
@@ -1049,7 +1049,7 @@ class Req_app_penawaran extends Admin_Controller
                 ]);
             }
         } else {
-            if(count($get_qty_hopper) > 0){
+            if (count($get_qty_hopper) > 0) {
                 $this->db->insert('ms_penawaran_detail', [
                     'id' => $kode_pd,
                     'id_penawaran' => $id_penawaran,
@@ -1072,7 +1072,7 @@ class Req_app_penawaran extends Admin_Controller
                     'dibuat_oleh' => $this->auth->user_id(),
                     'dibuat_tgl' => date('Y-m-d H:i:s')
                 ]);
-            }else{
+            } else {
                 $this->db->insert('ms_penawaran_detail', [
                     'id' => $kode_pd,
                     'id_penawaran' => $id_penawaran,
@@ -1170,10 +1170,27 @@ class Req_app_penawaran extends Admin_Controller
             $list_lot_size .= '<option value="' . $lot_size->id . '">' . $lot_size->qty_hopper . '</option>';
         endforeach;
 
-        $lot_size_id = '';
-        if(count($get_lot_size) > 0){
-            $lot_size_id = $get_lot_size->id;
+        $get_produk = $this->db->get_where('ms_product_category3', ['id_category3' => $id_product])->row();
+
+        $num_free_stock = $this->db->get_where('ms_stock_product', ['id_product' => $id_product])->num_rows();
+
+        if ($num_free_stock < 1) {
+            $free_stock = 0;
+        } else {
+            $get_free_stock = $this->db->get_where('ms_stock_product', ['id_product' => $id_product])->row();
+
+            $free_stock = ($get_free_stock->qty_asli / $get_produk->konversi);
         }
+
+        $this->db->select('SUM(a.qty) AS ttl_booking');
+        $this->db->from('ms_penawaran_detail a');
+        $this->db->join('ms_penawaran b', 'b.id_penawaran = a.id_penawaran');
+        $this->db->where('a.id_product', $id_product);
+        $this->db->where('b.sts !=', 'loss');
+        $booking_stock = $this->db->get()->row();
+
+        $free_stock -= $booking_stock->ttl_booking;
+
         echo json_encode([
             'id' => str_replace('/', '-', $get_penawaran_detail->id),
             'id_product' => $get_penawaran_detail->id_product,
@@ -1183,13 +1200,15 @@ class Req_app_penawaran extends Admin_Controller
             'ral_code' => $get_penawaran_detail->ral_code,
             'product_code' => $get_penawaran_detail->kode_product,
             'unit' => $get_penawaran_detail->nm_packaging,
-            'packaging_spec' => $get_penawaran_detail->konversi . ' ' . $get_penawaran_detail->packaging,
+            'packaging_spec' => $get_penawaran_detail->konversi . ' ' . $get_penawaran_detail->nm_packaging,
             'weight' => $get_penawaran_detail->weight,
             'list_lot_size' => $list_lot_size,
-            'lot_size_detail' => $lot_size_id,
+            'lot_size_detail' => ((isset($get_lot_size->id)) ? $get_lot_size->id : ''),
             'harga_satuan' => $get_penawaran_detail->harga_satuan,
             'total_harga' => $get_penawaran_detail->total_harga,
-            'keterangan' => $get_penawaran_detail->keterangan
+            'keterangan' => $get_penawaran_detail->keterangan,
+            'free_stock' => $free_stock,
+            'request_produksi' => ($free_stock - $get_penawaran_detail->qty)
         ]);
     }
 

@@ -42,7 +42,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         <table class="w-100">
             <tr class="non-bordered">
                 <th class="non-bordered text-center" colspan="6">
-                    <h2>Gusana 订单</h2>
+                    <h2><span>报价单 <br> Quotation</span></h2>
                 </th>
             </tr>
             <tr class="non-bordered">
@@ -135,16 +135,16 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         <span>数量<br>Qty</span>
                     </th>
                     <th class="text-center">
-                        <span>重量<br>Weight (Kg)</span>
+                        <span>重量<br>Total Weight (Kg)</span>
                     </th>
                     <th class="text-center">
-                        <span>单价<br>Harga Satuan (Rp/kg)</span>
+                        <span>单价<br>Unit Price (Rp/kg)</span>
                     </th>
                     <th class="text-center">
-                        <span>金额<br>Total Harga</span>
+                        <span>金额<br>Total Price</span>
                     </th>
                     <th class="text-center">
-                        <span>备注<br>Keterangan</span>
+                        <span>备注<br>Remark</span>
                     </th>
                 </tr>
             </thead>
@@ -179,14 +179,14 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     <th colspan="10" class="text-right">
                         <span>
                             运输费 <br>
-                            Biaya Pengiriman
+                            Shipping Fee
                         </span>
                     </th>
                     <td class="text-right">Rp. <?= number_format($data_penawaran->biaya_pengiriman, 2) ?></td>
                 </tr>
                 <tr class="non-bordered">
                     <th colspan="10" class="text-right">
-                        Discount <?= ($data_penawaran->disc_persen > 0) ? $data_penawaran->disc_persen . '%' : null ?>
+                       <span>打折扣 <br> Discount <?= ($data_penawaran->disc_persen > 0) ? $data_penawaran->disc_persen . '%' : null ?></span>
                     </th>
                     <td class="text-right">Rp. <?= number_format($data_penawaran->nilai_disc, 2) ?></td>
                 </tr>
@@ -209,7 +209,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                     <th colspan="10" class="text-right">
                         <span>
                             总金额 <br>
-                            Total
+                            Total Amount
                         </span>
                     </th>
                     <td class="text-right">Rp. <?= number_format($ttl_harga - $data_penawaran->nilai_disc + $data_penawaran->ppn_num + $data_penawaran->biaya_pengiriman, 2) ?></td>

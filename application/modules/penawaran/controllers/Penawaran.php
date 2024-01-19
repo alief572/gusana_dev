@@ -824,17 +824,14 @@ class Penawaran extends Admin_Controller
             $free_stock = ($get_free_stock->qty_asli / $get_produk->konversi);
         }
 
-        // echo '<pre>'; 
-        // print_r([
-        //     'list_lot_size' => $list_lot_size,
-        //     'kode_produk' => $get_produk->product_code,
-        //     'konversi' => $get_produk->konversi,
-        //     'spesifikasi_kemasan' => $get_produk->konversi.' '.$get_produk->unit_nm,
-        //     'ral_code' => $get_produk->ral_code,
-        //     'free_stock' => $free_stock
-        // ]);
-        // echo'</pre>';
-        // exit;
+        $this->db->select('SUM(a.qty) AS ttl_booking');
+        $this->db->from('ms_penawaran_detail a');
+        $this->db->join('ms_penawaran b', 'b.id_penawaran = a.id_penawaran');
+        $this->db->where('a.id_product', $produk);
+        $this->db->where('b.sts !=', 'loss');
+        $booking_stock = $this->db->get()->row();
+
+        $free_stock -= $booking_stock->ttl_booking;
 
         echo json_encode([
             'list_lot_size' => $list_lot_size,
@@ -1450,6 +1447,27 @@ class Penawaran extends Admin_Controller
             $list_lot_size .= '<option value="' . $lot_size->id . '">' . $lot_size->qty_hopper . '</option>';
         endforeach;
 
+        $get_produk = $this->db->get_where('ms_product_category3', ['id_category3' => $id_product])->row();
+
+        $num_free_stock = $this->db->get_where('ms_stock_product', ['id_product' => $id_product])->num_rows();
+
+        if ($num_free_stock < 1) {
+            $free_stock = 0;
+        } else {
+            $get_free_stock = $this->db->get_where('ms_stock_product', ['id_product' => $id_product])->row();
+
+            $free_stock = ($get_free_stock->qty_asli / $get_produk->konversi);
+        }
+
+        $this->db->select('SUM(a.qty) AS ttl_booking');
+        $this->db->from('ms_penawaran_detail a');
+        $this->db->join('ms_penawaran b', 'b.id_penawaran = a.id_penawaran');
+        $this->db->where('a.id_product', $id_product);
+        $this->db->where('b.sts !=', 'loss');
+        $booking_stock = $this->db->get()->row();
+
+        $free_stock -= $booking_stock->ttl_booking;
+
         echo json_encode([
             'id' => str_replace('/', '-', $get_penawaran_detail->id),
             'id_product' => $get_penawaran_detail->id_product,
@@ -1465,7 +1483,9 @@ class Penawaran extends Admin_Controller
             'lot_size_detail' => ((isset($get_lot_size->id)) ? $get_lot_size->id : ''),
             'harga_satuan' => $get_penawaran_detail->harga_satuan,
             'total_harga' => $get_penawaran_detail->total_harga,
-            'keterangan' => $get_penawaran_detail->keterangan
+            'keterangan' => $get_penawaran_detail->keterangan,
+            'free_stock' => $free_stock,
+            'request_produksi' => ($free_stock - $get_penawaran_detail->qty)
         ]);
     }
 
@@ -2024,7 +2044,7 @@ class Penawaran extends Admin_Controller
             $this->db->update('ms_penawaran', [
                 'ppn_num' => $nilai_ppn,
                 'grand_total' => ($penawaran->total - $penawaran->nilai_disc + $penawaran->biaya_pengiriman + $nilai_ppn)
-            ],['id_penawaran' => $penawaran->id_penawaran]);
+            ], ['id_penawaran' => $penawaran->id_penawaran]);
         endforeach;
 
         $this->db->trans_commit();
