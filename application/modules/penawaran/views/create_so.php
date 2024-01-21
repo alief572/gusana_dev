@@ -30,7 +30,11 @@
                 </tr>
                 <tr>
                     <th class="text-left">PPN/Non PPN</th>
-                    <th class="text-left" colspan="6">: <?= ($data_penawaran->ppn_type == 1) ? '<div class="badge badge-success">PPN</div>' : '<div class="badge badge-danger">Non PPN</div>' ?></th>
+                    <th class="text-left">: <?= ($data_penawaran->ppn_type == 1) ? '<div class="badge badge-success">PPN</div>' : '<div class="badge badge-danger">Non PPN</div>' ?></th>
+                    <th class="text-left">Delivery Date</th>
+                    <th class="text-left">
+                        <input type="date" name="deliver_date" id="" class="form-control">
+                    </th>
                 </tr>
                 <tr>
                     <th>Upload PO</th>
@@ -68,7 +72,7 @@
                                 Weight (Kg)
                             </span>
                         </th>
-                        <th class="text-center">
+                        <!-- <th class="text-center">
                             <span>
                                 单价 <br>
                                 Harga Satuan (Rp/Kg)
@@ -79,11 +83,21 @@
                                 金额 <br>
                                 Total Harga
                             </span>
-                        </th>
+                        </th> -->
                         <th class="text-center">
                             <span>
                                 备注 <br>
                                 Keterangan
+                            </span>
+                        </th>
+                        <th class="text-center">
+                            <span>
+                                Free Stock
+                            </span>
+                        </th>
+                        <th class="text-center">
+                            <span>
+                                Request Production
                             </span>
                         </th>
                     </tr>
@@ -92,21 +106,48 @@
                     <?php
                     $x = 0;
                     $ttl_harga = 0;
-                    foreach ($data_penawaran_detail as $penawaran_detail) : $x++; ?>
+                    foreach ($data_penawaran_detail as $penawaran_detail) {
+                        $x++;
+                        $this->db->select('IF(b.qty_asli / c.konversi > 0, (b.qty_asli / c.konversi), 0) AS qty_all');
+                        $this->db->from('ms_penawaran_detail a');
+                        $this->db->join('ms_stock_product b', 'b.id_product = a.id_product', 'left');
+                        $this->db->join('ms_product_category3 c', 'c.id_category3 = a.id_product', 'left');
+                        $this->db->where('a.id_product', $penawaran_detail->id_product);
+                        $this->db->where('a.id_penawaran !=', $penawaran_detail->id_product);
+                        $get_free_stock = $this->db->get()->row();
+
+                        $this->db->select('SUM(a.weight / b.konversi) AS stock_booking');
+                        $this->db->from('ms_penawaran_detail a');
+                        $this->db->join('ms_product_category3 b', 'b.id_category3 = a.id_product');
+                        $this->db->join('ms_penawaran c', 'c.id_penawaran = a.id_penawaran');
+                        $this->db->where('a.id_product', $penawaran_detail->id_product);
+                        $this->db->where('c.sts !=', 'loss');
+                        $this->db->where('c.sts !=', 'so_created');
+                        $get_stock_booking = $this->db->get()->row();
+
+                        $free_stock = ($get_free_stock->qty_all);
+                        $request_production = ($penawaran_detail->qty - $free_stock);
+                        if ($free_stock > $penawaran_detail->qty) {
+                            $request_production = 0;
+                        }
+
+                    ?>
                         <tr>
                             <td class="text-center"><?= $x ?></td>
                             <td class="text-center"><?= $penawaran_detail->nm_product ?></td>
                             <td class="text-center"><?= number_format($penawaran_detail->qty, 2) ?></td>
                             <td class="text-center"><?= number_format($penawaran_detail->weight, 2) ?></td>
-                            <td class="text-center"><?= number_format($penawaran_detail->harga_satuan, 2) ?></td>
-                            <td class="text-center"><?= number_format($penawaran_detail->total_harga, 2) ?></td>
+                            <!-- <td class="text-center"><?= number_format($penawaran_detail->harga_satuan, 2) ?></td>
+                            <td class="text-center"><?= number_format($penawaran_detail->total_harga, 2) ?></td> -->
                             <td class="text-center"><?= $penawaran_detail->keterangan ?></td>
+                            <td class="text-center"><?= number_format($free_stock, 2) ?></td>
+                            <td class="text-center"><?= number_format($request_production, 2) ?></td>
                         </tr>
                     <?php
                         $ttl_harga += $penawaran_detail->total_harga;
-                    endforeach;
+                    };
                     ?>
-                    <tr>
+                    <!-- <tr>
                         <td colspan="3"></td>
                         <td colspan="3" class="">Biaya Pengiriman</td>
                         <td class="text-right"><?= number_format($data_penawaran->biaya_pengiriman, 2) ?></td>
@@ -145,7 +186,7 @@
                         <td colspan="3"></td>
                         <td colspan="3" class="">Grand Total</td>
                         <td class="text-right"><?= number_format(($ttl_harga - $data_penawaran->nilai_disc + $data_penawaran->ppn_num + $data_penawaran->biaya_pengiriman), 2) ?></td>
-                    </tr>
+                    </tr> -->
                 </tbody>
             </table>
         </div>

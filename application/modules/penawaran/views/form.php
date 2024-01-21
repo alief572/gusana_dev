@@ -50,10 +50,6 @@
                 </select>
             </div>
             <div class="col-6">
-                <label for="">Delivery Date <span class="text-danger">(交货日期)</span></label>
-                <input type="date" name="deliver_date" id="" class="form-control" value="<?= (isset($data_penawaran)) ? $data_penawaran->deliver_date : null ?>" required>
-            </div>
-            <div class="col-6">
                 <label for="">Delivery Type <span class="text-danger">(交货类型)</span></label>
                 <select name="deliver_type" id="" class="form-control" required>
                     <option value="">- Delivery Type -</option>
@@ -427,22 +423,22 @@
                             <div class="col-8" style="margin-top: 10px;">
                                 <input type="text" name="total_harga" id="" class="form-control text-right autonum total_harga" readonly>
                             </div>
-                            <div class="col-4 mt-15" style="margin-top: 10px;">
+                            <div class="col-4 mt-15 " style="margin-top: 10px;">
                                 <span>
                                     Free Stock
                                 </span>
                             </div>
-                            <div class="col-8" style="margin-top: 10px;">
+                            <div class="col-8 " style="margin-top: 10px;">
                                 <input type="number" name="free_stock" id="" class="form-control text-right autonum free_stock" readonly>
                             </div>
 
-                            <div class="col-4 mt-15" style="margin-top: 10px;">
+                            <div class="col-4 mt-15 d-none" style="margin-top: 10px;">
                                 <span>
                                     Request Produksi
                                 </span>
                             </div>
-                            <div class="col-8" style="margin-top: 10px;">
-                                <input type="number" name="request_produksi" id="" class="form-control text-right autonum request_produksi" readonly>
+                            <div class="col-8 d-none" style="margin-top: 10px;">
+                                <input type="hidden" name="request_produksi" id="" class="form-control text-right autonum request_produksi" readonly>
                             </div>
                         </div>
                     </div>

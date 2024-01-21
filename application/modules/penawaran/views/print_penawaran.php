@@ -86,14 +86,6 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 <th class="non-bordered">:</th>
                 <th class="non-bordered"><?= ($data_penawaran->deliver_type == 1) ? '(送貨 Delivery)' : '(自己提货 Self Pickup)' ?>
                 </th>
-                <th class="non-bordered">
-                    <span>
-                        交货日期 <br>
-                        Delivery Date
-                    </span>
-                </th>
-                <th class="non-bordered">:</th>
-                <th class="non-bordered" style="min-width: 300px; max-width: 300px;"><?= $data_penawaran->deliver_date ?></th>
             </tr>
             <tr class="non-bordered">
                 <th class="non-bordered">
@@ -186,7 +178,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 </tr>
                 <tr class="non-bordered">
                     <th colspan="10" class="text-right">
-                       <span>打折扣 <br> Discount <?= ($data_penawaran->disc_persen > 0) ? $data_penawaran->disc_persen . '%' : null ?></span>
+                        <span>打折扣 <br> Discount <?= ($data_penawaran->disc_persen > 0) ? $data_penawaran->disc_persen . '%' : null ?></span>
                     </th>
                     <td class="text-right">Rp. <?= number_format($data_penawaran->nilai_disc, 2) ?></td>
                 </tr>

@@ -347,6 +347,7 @@ class Penawaran extends Admin_Controller
                 $valid_create_so = 0;
             } else {
                 $this->db->update('ms_penawaran', [
+                    'deliver_date' => $post['deliver_date'],
                     'upload_po' => $data_upload_po,
                     'upload_penawaran_deal' => $data_upload_penawaran_deal,
                     'sts' => 'so_created'
@@ -405,7 +406,6 @@ class Penawaran extends Admin_Controller
                         'grand_total' => $grand_total,
                         'sts' => 'request_approval',
                         'keterangan' => $post['keterangan'],
-                        'deliver_date' => $post['deliver_date'],
                         'deliver_type' => $post['deliver_type'],
                         'address_cust' => $post['address_cust'],
                         'dari_tmp' => $post['dari_tmp'],
@@ -435,7 +435,6 @@ class Penawaran extends Admin_Controller
                             'ppn_num' => $ppn_num,
                             'biaya_pengiriman' => str_replace(',', '', $post['biaya_pengiriman']),
                             'grand_total' => $grand_total,
-                            'deliver_date' => $post['deliver_date'],
                             'deliver_type' => $post['deliver_type'],
                             'address_cust' => $post['address_cust'],
                             'dari_tmp' => $post['dari_tmp'],
@@ -466,7 +465,6 @@ class Penawaran extends Admin_Controller
                                 'ppn_num' => $ppn_num,
                                 'biaya_pengiriman' => str_replace(',', '', $post['biaya_pengiriman']),
                                 'grand_total' => $grand_total,
-                                'deliver_date' => $post['deliver_date'],
                                 'deliver_type' => $post['deliver_type'],
                                 'address_cust' => $post['address_cust'],
                                 'dari_tmp' => $post['dari_tmp'],
@@ -496,7 +494,6 @@ class Penawaran extends Admin_Controller
                                 'ppn_num' => $ppn_num,
                                 'biaya_pengiriman' => str_replace(',', '', $post['biaya_pengiriman']),
                                 'grand_total' => $grand_total,
-                                'deliver_date' => $post['deliver_date'],
                                 'deliver_type' => $post['deliver_type'],
                                 'address_cust' => $post['address_cust'],
                                 'dari_tmp' => $post['dari_tmp'],
@@ -595,7 +592,6 @@ class Penawaran extends Admin_Controller
                         'ppn_persen' => $post['persen_ppn'],
                         'ppn_num' => $ppn_num,
                         'grand_total' => $grand_total,
-                        'deliver_date' => $post['deliver_date'],
                         'deliver_type' => $post['deliver_type'],
                         'address_cust' => $post['address_cust'],
                         'dari_tmp' => $post['dari_tmp'],
@@ -829,6 +825,7 @@ class Penawaran extends Admin_Controller
         $this->db->join('ms_penawaran b', 'b.id_penawaran = a.id_penawaran');
         $this->db->where('a.id_product', $produk);
         $this->db->where('b.sts !=', 'loss');
+        $this->db->where('b.sts !=', 'so_created');
         $booking_stock = $this->db->get()->row();
 
         $free_stock -= $booking_stock->ttl_booking;
@@ -1464,6 +1461,7 @@ class Penawaran extends Admin_Controller
         $this->db->join('ms_penawaran b', 'b.id_penawaran = a.id_penawaran');
         $this->db->where('a.id_product', $id_product);
         $this->db->where('b.sts !=', 'loss');
+        $this->db->where('b.sts !=', 'so_created');
         $booking_stock = $this->db->get()->row();
 
         $free_stock -= $booking_stock->ttl_booking;
@@ -2007,6 +2005,7 @@ class Penawaran extends Admin_Controller
         $id_pen = str_replace('SP/', 'SP-', $id_pen);
 
         $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id_pen])->row();
+
         $get_penawaran_detail = $this->db->get_where('ms_penawaran_detail', ['id_penawaran' => $id_pen])->result();
 
         $id_quote = $get_penawaran->id_penawaran;

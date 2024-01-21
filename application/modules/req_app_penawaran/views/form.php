@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-6">
                 <label for="">Customer Name <span class="text-danger">(客户名称)</span></label>
-                <select name="customer" class="form-control  chosen-select customer" required>
+                <select name="customer" class="form-control  chosen-select customer" disabled>
                     <option value="">- Customer Name -</option>
                     <?php
                     foreach ($list_customer as $customer) :
@@ -30,11 +30,11 @@
             </div>
             <div class="col-6">
                 <label for="">Quote Date <span class="text-danger">(报价日期)</span></label>
-                <input type="date" name="tgl_penawaran" id="" class="form-control " value="<?= (isset($data_penawaran)) ? $data_penawaran->tgl_penawaran : null ?>" required>
+                <input type="date" name="tgl_penawaran" id="" class="form-control " value="<?= (isset($data_penawaran)) ? $data_penawaran->tgl_penawaran : null ?>" readonly>
             </div>
             <div class="col-6">
                 <label for="">Contact Person <span class="text-danger">(联系人)</span></label>
-                <select name="pic_cust" class="form-control  chosen-select pic_cust" required>
+                <select name="pic_cust" class="form-control  chosen-select pic_cust" disabled>
                     <option value="">- Contact Person -</option>
                     <?php
                     if (isset($data_penawaran)) {
@@ -49,13 +49,10 @@
                     ?>
                 </select>
             </div>
-            <div class="col-6">
-                <label for="">Delivery Date <span class="text-danger">(交货日期)</span></label>
-                <input type="date" name="deliver_date" id="" class="form-control" value="<?= (isset($data_penawaran)) ? $data_penawaran->deliver_date : null ?>" required>
-            </div>
+
             <div class="col-6">
                 <label for="">Delivery Type <span class="text-danger">(交货类型)</span></label>
-                <select name="deliver_type" id="" class="form-control" required>
+                <select name="deliver_type" id="" class="form-control" disabled>
                     <option value="">- Delivery Type -</option>
                     <option value="1" <?= (isset($data_penawaran) && $data_penawaran->deliver_type == 1) ? 'selected' : null ?>>Delivery</option>
                     <option value="2" <?= (isset($data_penawaran) && $data_penawaran->deliver_type == 2) ? 'selected' : null ?>>Self Pickup</option>
@@ -63,7 +60,7 @@
             </div>
             <div class="col-6">
                 <label for="">Sales <span class="text-danger">(销售人员姓名)</span></label>
-                <select name="sales_marketing" id="" class="form-control  chosen-select" required>
+                <select name="sales_marketing" id="" class="form-control  chosen-select" disabled>
                     <option value="">- Sales -</option>
                     <?php
                     foreach ($list_sales as $sales) :
@@ -84,22 +81,23 @@
             </div>
             <div class="col-6">
                 <label for="">PPN / Non PPN</label>
-                <select name="ppn_type" class="form-control  chosen-select ppn_type" required>
+                <select name="ppn_type" class="form-control  chosen-select ppn_type" disabled>
                     <option value="">- PPN / Non PPN -</option>
                     <option value="1" <?= (isset($data_penawaran) && $data_penawaran->ppn_type == 1) ? 'selected' : null ?>>PPN</option>
                     <option value="0" <?= (isset($data_penawaran) && $data_penawaran->ppn_type == 0) ? 'selected' : null ?>>Non PPN</option>
                 </select>
             </div>
+            <div class="col-6">
+                <label for="">PPN / Non PPN</label>
+                <select name="req_action" class="form-control  chosen-select ">
+                    <option value="1">Approve</option>
+                    <option value="0">Reject</option>
+                </select>
+            </div>
         </div>
 
         <div class="col-12">
-            <span>
-                <button type="button" class="btn btn-sm btn-success add_product" style="margin-top:20px;">
-                    <i class="fa fa-plus"></i>
-                    Add Product
-                </button>
-                <span class="text-danger">(添加产品)</span>
-            </span>
+
             <table class="table table-striped" id="table-product">
                 <thead>
                     <tr>
@@ -260,7 +258,7 @@
             if (isset($request_approval) && $request_approval == 1) {
                 echo '<button type="submit" class="btn btn-sm btn-warning" name="request_approval" id="request_approval">Request Approval</button>';
             } else {
-                echo '<button type="submit" class="btn btn-sm btn-primary" name="save" id="save">Save</button>';
+                echo '<button type="submit" class="btn btn-sm btn-success" name="save" id="save">Approve</button>';
             }
             ?>
 
@@ -424,22 +422,22 @@
                             <div class="col-8" style="margin-top: 10px;">
                                 <input type="text" name="total_harga" id="" class="form-control text-right autonum total_harga" readonly>
                             </div>
-                            <div class="col-4 mt-15" style="margin-top: 10px;">
+                            <div class="col-4 mt-15 " style="margin-top: 10px;">
                                 <span>
                                     Free Stock
                                 </span>
                             </div>
-                            <div class="col-8" style="margin-top: 10px;">
+                            <div class="col-8 " style="margin-top: 10px;">
                                 <input type="number" name="free_stock" id="" class="form-control text-right autonum free_stock" readonly>
                             </div>
 
-                            <div class="col-4 mt-15" style="margin-top: 10px;">
+                            <div class="col-4 mt-15 d-none" style="margin-top: 10px;">
                                 <span>
                                     Request Produksi
                                 </span>
                             </div>
-                            <div class="col-8" style="margin-top: 10px;">
-                                <input type="number" name="request_produksi" id="" class="form-control text-right autonum request_produksi" readonly>
+                            <div class="col-8 d-none" style="margin-top: 10px;">
+                                <input type="hidden" name="request_produksi" id="" class="form-control text-right autonum request_produksi" readonly>
                             </div>
                         </div>
                     </div>
