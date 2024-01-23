@@ -65,7 +65,7 @@ class Request_develop_model extends BF_Model
 
 	function generate_id($kode = '')
 	{
-		$id_bm1 = $this->db->query("SELECT MAX(id_category3) AS max_id FROM ms_request_develop")->row();
+		$id_bm1 = $this->db->query("SELECT MAX(id) AS max_id FROM ms_request_develop")->row();
 		$kodeBarang = $id_bm1->max_id;
 		$urutan = (int) substr($kodeBarang, 4, 5);
 		$urutan++;

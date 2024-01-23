@@ -8,7 +8,7 @@ $ENABLE_DELETE  = has_permission('Request_Approval.Delete');
 <div class="br-pagetitle">
     <i class="tx-primary fa-4x <?= $template['page_icon']; ?>"></i>
     <div>
-        <h4>Request Approval Penawaran | 申请批准</h4>
+        <h4>Request for Quote | 报价申请</h4>
     </div>
 </div><!-- d-flex -->
 
@@ -18,37 +18,22 @@ $ENABLE_DELETE  = has_permission('Request_Approval.Delete');
             <table id="dataTable" width="100%" class="table display table-bordered table-hover table-striped border-left-0 border-right-0">
                 <thead>
                     <tr>
-                        <th width="15" class="text-center">No</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">No. Penawaran</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Nama Customer</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Nama Marketing</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Nilai Penawaran</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Tanggal Penawaran</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Keterangan</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Revisi</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Status</th>
+                        <th width="15" class="text-center"><span class="text-danger">序号</span> <br> No </th>
+                        <th class="desktop tablet text-center mobile tx-bold tx-dark" width=""><span class="text-danger"> 报价号</span> <br> Quote Number</th>
+                        <th class="desktop tablet text-center mobile tx-bold tx-dark" width=""><span class="text-danger"> 客户名称</span> <br> Customer Name</th>
+                        <th class="desktop tablet text-center mobile tx-bold tx-dark" width=""><span class="text-danger"> 销售员</span> <br> Salesperson</th>
+                        <th class="desktop tablet text-center mobile tx-bold tx-dark" width=""><span class="text-danger"> 报价金额</span> <br> Quote Amount</th>
+                        <th class="desktop tablet text-center mobile tx-bold tx-dark" width=""><span class="text-danger"> 报价日期</span> <br> Quote Date</th>
+                        <th class="desktop tablet text-center mobile tx-bold tx-dark" width=""> <span class="text-danger"> 备注</span> <br> Remark</th>
+                        <th class="desktop tablet text-center mobile tx-bold tx-dark" width=""> <span class="text-danger"> 修订</span> <br> Revise</th>
+                        <th class="desktop tablet text-center mobile tx-bold tx-dark" width=""> <span class="text-danger"> 状态</span> <br> Status</th>
                         <?php if ($ENABLE_MANAGE) : ?>
-                            <th class="desktop text-center no-sort" width="110">Action</th>
+                            <th class="desktop text-center no-sort" width="110"> <span class="text-danger">行动</span> <br> Action</th>
                         <?php endif; ?>
                     </tr>
                 </thead>
                 <tbody></tbody>
-                <tfoot>
-                    <tr>
-                        <th>No</th>
-                        <th>No. Penawaran</th>
-                        <th>Nama Customer</th>
-                        <th>Nama Marketing</th>
-                        <th>Nilai Penawaran</th>
-                        <th>Tanggal Penawaran</th>
-                        <th>Keterangan</th>
-                        <th>Revisi</th>
-                        <th>Status</th>
-                        <?php if ($ENABLE_MANAGE) : ?>
-                            <th>Action</th>
-                        <?php endif; ?>
-                    </tr>
-                </tfoot>
+
             </table>
         </div>
     </div>

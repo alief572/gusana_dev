@@ -9,7 +9,7 @@ $ENABLE_DELETE  = has_permission('So_Invoice.Delete');
 <div class="br-pagetitle">
     <i class="tx-primary fa-4x <?= $template['page_icon']; ?>"></i>
     <div>
-        <h4>SO Invoice</h4>
+        <h4>Sales Order | 销售订单</h4>
     </div>
 </div><!-- d-flex -->
 
@@ -19,15 +19,15 @@ $ENABLE_DELETE  = has_permission('So_Invoice.Delete');
             <table id="dataTable" width="100%" class="table display table-bordered table-hover table-striped border-left-0 border-right-0">
                 <thead>
                     <tr>
-                        <th width="15" class="text-center">No</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">No. SO</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">Nama Customer</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">Marketing</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">Nilai Penawaran</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">PO</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">Penawaran Deal</th>
+                        <th width="15" class="text-center"> <span class="text-danger">序号</span> <br> No</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width=""> <span class="text-danger">销售单号</span> <br> No. SO</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width=""> <span class="text-danger">客户名称</span> <br> Customer Name</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width=""> <span class="text-danger">销售员</span> <br> Salesperson</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width=""> <span class="text-danger">报价金额</span> <br> Quote Amount</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width=""> <span class="text-danger">订单</span> <br> PO</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width=""> <span class="text-danger">审批价格</span> <br> Approval Price</th>
                         <?php if ($ENABLE_MANAGE) : ?>
-                            <th class="desktop text-center no-sort" width="110">Action</th>
+                            <th class="desktop text-center no-sort" width="110"> <span class="text-danger">行动</span> <br> Action</th>
                         <?php endif; ?>
                     </tr>
                 </thead>

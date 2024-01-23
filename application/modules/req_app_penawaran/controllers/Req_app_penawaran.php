@@ -142,7 +142,7 @@ class Req_app_penawaran extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Request Approval Penawaran | 申请批准');
+        $this->template->title('Request for Quote | 报价申请');
         $this->template->render('index');
     }
 

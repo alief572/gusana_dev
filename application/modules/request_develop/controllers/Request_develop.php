@@ -173,6 +173,8 @@ class Request_develop extends Admin_Controller
 
 		$data = [
 			'product_type' => $product_type,
+			'product_category' => $product_category,
+			'product_jenis' => $product_jenis,
 			'id_supplier' => $id_supplier,
 			'supplier' => $supplier,
 			'packaging' => $packaging,
@@ -327,9 +329,6 @@ class Request_develop extends Admin_Controller
 		$kategori_fg = $this->Request_develop_model->get_data('kategori_finish_goods');
 		$inv_lv_1 = "";
 
-
-
-
 		$this->db->select('a.*');
 		$this->db->from('ms_product_category3 a');
 		$this->db->where_in('a.id_type', ['P231100013', 'P240100015']);
@@ -340,6 +339,8 @@ class Request_develop extends Admin_Controller
 
 		$data = [
 			'product_type' => $product_type,
+			'product_category' => $product_category,
+			'product_jenis' => $product_jenis,
 			'id_supplier' => $id_supplier,
 			'supplier' => $supplier,
 			'packaging' => $packaging,
@@ -479,15 +480,28 @@ class Request_develop extends Admin_Controller
 		//$head = $_POST['hd1'];
 		$this->db->insert('ms_request_develop', [
 			'id' => $code,
-			'id_type' => $post['nm_type'],
-			'nm_type' => $get_product_type->nama,
-			'id_category1' => $post['nm_category1'],
-			'nm_category1' => $get_product_category1->nama,
-			'id_category2' => $post['nm_category2'],
-			'nm_category2' => $get_product_category2->nama,
+			'nm_type' => $post['nm_type'],
+			'nm_category1' => $post['nm_category1'],
+			'nm_category2' => $post['nm_category2'],
 			'packaging' => $post['jenis_packaging'],
 			'konversi' => $post['spek_packaging'],
 			'keterangan' => $post['keterangan'],
+			'unit_nm' => $post['unit'],
+			'aplikasi_penggunaan_cat' => $post['aplikasi_penggunaan_cat'],
+			'water_resistance' => $post['water_resistance'],
+			'weather_uv_resistance' => $post['weather_uv_resistance'],
+			'corrosion_resistance' => $post['corrosion_resistance'],
+			'heat_resistance' => $post['heat_resistance'],
+			'daya_rekat' => $post['daya_rekat'],
+			'lama_pengeringan' => $post['lama_pengeringan'],
+			'permukaan' => $post['permukaan'],
+			'anti_jamur_lumut' => $post['anti_jamur_lumut'],
+			'mudah_dibersihkan' => $post['mudah_dibersihkan'],
+			'anti_bakteri' => $post['anti_bakteri'],
+			'daya_tahan_gesekan' => $post['daya_tahan_gesekan'],
+			'anti_slip' => $post['anti_slip'],
+			'fire_resistance' => $post['fire_resistance'],
+			'ketahanan_bahan_kimia' => $post['ketahanan_bahan_kimia'],
 			'dibuat_oleh' => $this->auth->user_id(),
 			'dibuat_tgl' => date('Y-m-d H:i:s')
 		]);
@@ -609,6 +623,7 @@ class Request_develop extends Admin_Controller
 					'nm_category2' => $get_product_jenis->nama,
 					'packaging' => $post['jenis_packaging'],
 					'konversi' => $post['spek_packaging'],
+					'unit_nm' => $post['unit_sales'],
 					'diubah_oleh' => $this->auth->user_id(),
 					'diubah_tgl' => date('Y-m-d H:i:s'),
 					'sts' => 'approved',
@@ -625,6 +640,7 @@ class Request_develop extends Admin_Controller
 					'nm_category2' => $get_product_jenis->nama,
 					'packaging' => $post['jenis_packaging'],
 					'konversi' => $post['spek_packaging'],
+					'unit_nm' => $post['unit_sales'],
 					'diubah_oleh' => $this->auth->user_id(),
 					'diubah_tgl' => date('Y-m-d H:i:s'),
 					'sts' => 'rejected',

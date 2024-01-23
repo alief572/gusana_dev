@@ -4,7 +4,7 @@
         <input type="hidden" name="req_approval" class="req_approval" value="<?= (isset($request_approval)) ? $request_approval : null ?>">
         <div class="row">
             <div class="col-6">
-                <label for="">Customer Name <span class="text-danger">(客户名称)</span></label>
+                <label for="">Customer Name <span class="text-danger">客户名称</span></label>
                 <select name="customer" class="form-control  chosen-select customer" disabled>
                     <option value="">- Customer Name -</option>
                     <?php
@@ -21,19 +21,19 @@
                 </select>
             </div>
             <div class="col-6">
-                <label for="">Quote Number <span class="text-danger">(报价编号)</span></label>
+                <label for="">Quote Number <span class="text-danger">报价号</span></label>
                 <input type="text" name="" id="" class="form-control " value="<?= (isset($data_penawaran)) ? $data_penawaran->id_penawaran : 'new' ?>" readonly>
             </div>
             <div class="col-6">
-                <label for="">Customer Address <span class="text-danger">(客户地址)</span></label>
+                <label for="">Customer Address <span class="text-danger">客户地址</span></label>
                 <input type="text" name="address_cust" id="" class="form-control cust_address" value="<?= (isset($data_penawaran)) ? $data_penawaran->address_cust : null ?>" readonly>
             </div>
             <div class="col-6">
-                <label for="">Quote Date <span class="text-danger">(报价日期)</span></label>
+                <label for="">Quote Date <span class="text-danger">报价日期</span></label>
                 <input type="date" name="tgl_penawaran" id="" class="form-control " value="<?= (isset($data_penawaran)) ? $data_penawaran->tgl_penawaran : null ?>" readonly>
             </div>
             <div class="col-6">
-                <label for="">Contact Person <span class="text-danger">(联系人)</span></label>
+                <label for="">Contact Person <span class="text-danger">联系人</span></label>
                 <select name="pic_cust" class="form-control  chosen-select pic_cust" disabled>
                     <option value="">- Contact Person -</option>
                     <?php
@@ -51,7 +51,7 @@
             </div>
 
             <div class="col-6">
-                <label for="">Delivery Type <span class="text-danger">(交货类型)</span></label>
+                <label for="">Delivery Type <span class="text-danger">发货种类</span></label>
                 <select name="deliver_type" id="" class="form-control" disabled>
                     <option value="">- Delivery Type -</option>
                     <option value="1" <?= (isset($data_penawaran) && $data_penawaran->deliver_type == 1) ? 'selected' : null ?>>Delivery</option>
@@ -59,7 +59,7 @@
                 </select>
             </div>
             <div class="col-6">
-                <label for="">Sales <span class="text-danger">(销售人员姓名)</span></label>
+                <label for="">Sales <span class="text-danger">销售</span></label>
                 <select name="sales_marketing" id="" class="form-control  chosen-select" disabled>
                     <option value="">- Sales -</option>
                     <?php
@@ -88,7 +88,9 @@
                 </select>
             </div>
             <div class="col-6">
-                <label for="">PPN / Non PPN</label>
+                <label for="">
+                    <span class="text-danger">行动</span> <br> Action
+                </label>
                 <select name="req_action" class="form-control  chosen-select ">
                     <option value="1">Approve</option>
                     <option value="0">Reject</option>
@@ -109,7 +111,7 @@
                         </th>
                         <th class="text-center">
                             <span>
-                                产品名称 <br>
+                                成品名称 <br>
                                 Product Name
                             </span>
                         </th>
@@ -134,17 +136,17 @@
                         <th class="text-center">
                             <span>
                                 单价 <br>
-                                Harga Satuan (Rp/Kg)
+                                Unit Price (Rp/Kg)
                             </span>
                         </th>
                         <th class="text-center">
                             <span>
                                 金额 <br>
-                                Total Harga
+                                Total Price
                             </span>
                         </th>
                         <th class="text-center">
-                            <span>备注 <br> Keterangan</span>
+                            <span>备注 <br> Remark</span>
                         </th>
                     </tr>
                 </thead>
@@ -173,12 +175,12 @@
                 <tbody>
                     <tr>
                         <td colspan="4"></td>
-                        <td class="text-left" colspan="3">Subtotal <span class="text-danger">(小计)</span></td>
+                        <td class="text-left" colspan="3">Subtotal <span class="text-danger">合计</span></td>
                         <td class="text-right total_all_harga"><?= number_format($total_harga, 2) ?></td>
                     </tr>
                     <tr>
                         <td colspan="4"></td>
-                        <td class="">Biaya Pengiriman <span class="text-danger">(交付成本)</span></td>
+                        <td class="">Delivery Fee <span class="text-danger">运输费</span></td>
                         <td class="">
                             <input type="text" name="biaya_pengiriman" id="" class="form-control  text-right biaya_pengiriman autonum" placeholder="Input Biaya Pengiriman" value="<?= (isset($data_penawaran)) ? number_format($data_penawaran->biaya_pengiriman, 2) : null ?>">
                         </td>
@@ -191,14 +193,14 @@
                     </tr>
                     <tr>
                         <td colspan="4"></td>
-                        <td class="text-center">Discount <span class="text-danger">(折扣)</span></td>
+                        <td class="text-center">Discount <span class="text-danger">打折扣</span></td>
                         <td>
                             <table border="0">
                                 <tr>
                                     <td>
                                         <input type="text" name="disc_val" id="" class="form-control  text-right autonum disc_input disc_val" data-disc_type="val" placeholder="Input Disc Value (Rp)" <?= (isset($data_penawaran) && $data_penawaran->disc_persen > 0) ? 'readonly' : null ?> value="<?= (isset($data_penawaran)) ? $data_penawaran->disc_num : null ?>">
                                     </td>
-                                    <td>(Rp)</td>
+                                    <td>Rp</td>
                                 </tr>
                             </table>
                         </td>
@@ -219,7 +221,7 @@
                     </tr>
                     <tr>
                         <td colspan="4"></td>
-                        <td class="" colspan="3">Price After Discount <span class="text-danger">(折扣后价格)</span></td>
+                        <td class="" colspan="3">Price After Discount <span class="text-danger">折扣后价格</span></td>
                         <td class="text-right total_after_disc">
                             <?= (isset($data_penawaran)) ? number_format($total_harga + $data_penawaran->biaya_pengiriman - $data_penawaran->nilai_disc, 2) : null ?>
                         </td>
@@ -237,7 +239,7 @@
                     <tr>
                         <td colspan="4"></td>
                         <td class="" colspan="3">
-                            <span style="font-weight:bold;">Grand Total <span class="text-danger">(总计)</span></span>
+                            <span style="font-weight:bold;">Total Amount <span class="text-danger">总金额</span></span>
                         </td>
                         <td class="text-right total_grand_total">
                             <?= (isset($data_penawaran)) ? number_format($total_harga - $data_penawaran->nilai_disc + $data_penawaran->ppn_num + $data_penawaran->biaya_pengiriman, 2) : null ?>
@@ -274,22 +276,11 @@
             <input type="hidden" name="id_detail" class="id_detail">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title tx-bold text-dark" id="myModalLabel">Add Product <span class="text-danger">(添加产品)</span></h4>
+                    <h4 class="modal-title tx-bold text-dark" id="myModalLabel">Add Product <span class="text-danger">添加产品</span></h4>
                     <button type="button" class="btn btn-default close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
-
-
-
-
-
-
-
-
-
-
-
 
                     </div>
                     <div class="row">

@@ -172,7 +172,7 @@ $id_bentuk = $this->uri->segment(3);
 	});
 	$(document).on('click', '.add', function() {
 		var id = $(this).data('id_bentuk');
-		$("#head_title").html("<i class='fa fa-list-alt'></i><b>Tambah Inventory</b>");
+		$("#head_title").html("<i class='fa fa-list-alt'></i><b>Add Request Development</b>");
 		$.ajax({
 			type: 'POST',
 			url: siteurl + 'request_develop/addInventory/' + id,

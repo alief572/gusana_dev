@@ -11,49 +11,19 @@
 							<tr style="border:none !important;">
 								<th>Product Type</th>
 								<th colspan="5">
-									<select id="nm_type" name="nm_type" class="form-control form-control-sm get_lv_1 chosen-select" disabled>
-										<option value="">-- Pilih Product Type --</option>
-										<?php foreach ($results['product_type'] as $product_type) {
-											$selected = '';
-											if ($results['request_develop']->id_type == $product_type->id_type) {
-												$selected = 'selected';
-											}
-										?>
-											<option value="<?= $product_type->id_type ?>" <?= $selected ?>><?= ucfirst(strtolower($product_type->nama)) ?></option>
-										<?php } ?>
-									</select>
+									<input type="text" name="" id="" class="form-control form-control-sm" value="<?= (isset($results['request_develop'])) ? $results['request_develop']->nm_type : null ?>" readonly>
 								</th>
 							</tr>
 							<tr style="border:none !important;">
 								<th>Product Category</th>
 								<th colspan="5">
-									<select id="nm_category1" name="nm_category1" class="form-control form-control-sm get_lv_2 product_category1 chosen-select" disabled>
-										<option value="">-- Pilih Product Category --</option>
-										<?php foreach ($results['product_category'] as $product_category) {
-											$selected = '';
-											if ($results['request_develop']->id_category1 == $product_category->id_category1) {
-												$selected = 'selected';
-											}
-										?>
-											<option value="<?= $product_category->id_category1 ?>" <?= $selected ?>><?= ucfirst(strtolower($product_category->nama)) ?></option>
-										<?php } ?>
-									</select>
+									<input type="text" name="" id="" class="form-control form-control-sm" value="<?= (isset($results['request_develop'])) ? $results['request_develop']->nm_category1 : null ?>" readonly>
 								</th>
 							</tr>
 							<tr style="border:none !important;">
 								<th>Product Jenis</th>
 								<th colspan="5">
-									<select id="nm_category2" name="nm_category2" class="form-control form-control-sm product_category2 chosen-select" disabled>
-										<option value="">-- Pilih Product Jenis --</option>
-										<?php foreach ($results['product_jenis'] as $product_jenis) {
-											$selected = '';
-											if ($results['request_develop']->id_category2 == $product_jenis->id_category2) {
-												$selected = 'selected';
-											}
-										?>
-											<option value="<?= $product_jenis->id_category2 ?>" <?= $selected ?>><?= ucfirst(strtolower($product_jenis->nama)) ?></option>
-										<?php } ?>
-									</select>
+									<input type="text" name="" id="" class="form-control form-control-sm" value="<?= (isset($results['request_develop'])) ? $results['request_develop']->nm_type : null ?>" readonly>
 								</th>
 							</tr>
 							<tr style="border:none !important;">
@@ -61,6 +31,12 @@
 								<th>
 									<input type="number" name="spek_packaging" class="form-control " id="" value="<?= (isset($results['request_develop'])) ? $results['request_develop']->konversi : null ?>" readonly>
 								</th>
+								<th>Unit</th>
+								<th>
+									<input type="text" name="" id="" class="form-control form-control-sm" value="<?= (isset($results['request_develop'])) ? $results['request_develop']->unit_nm : null ?>" readonly>
+								</th>
+							</tr>
+							<tr>
 								<th>Jenis Packaging</th>
 								<th>
 									<select name="jenis_packaging" id="" class="form-control jenis_packaging chosen-select" disabled>
@@ -84,10 +60,10 @@
 							</tr>
 						</tbody>
 					</table>
-					<div class="product_form <?= (isset($results['request_develop']) && $results['request_develop']->sts == 'approved') ? '' : 'd-none' ?>">
+					<div class="">
 						<h5>Input R&D</h5>
 						<hr>
-						<table class="table">
+						<table class="table product_form <?= (isset($results['request_develop']) && $results['request_develop']->sts == 'approved') ? '' : 'd-none' ?>">
 							<tbody>
 								<tr style="border:none !important;">
 									<th>Product Type</th>
@@ -154,7 +130,7 @@
 										<input type="text" name="curing_agent_konversi" id="" class="form-control form-control-sm text-right autonum" placeholder="Curing Agent Konversi (Kg)" value="<?= (isset($results['product_master'])) ? $results['product_master']->curing_agent_konversi : null ?>" readonly>
 									</th>
 									<th>
-										<input type="text" name="moq" id="" class="form-control form-control-sm" placeholder="MOQ" value="<?=(isset($results['product_master'])) ? $results['product_master']->moq : null ?>" readonly>
+										<input type="text" name="moq" id="" class="form-control form-control-sm" placeholder="MOQ" value="<?= (isset($results['product_master'])) ? $results['product_master']->moq : null ?>" readonly>
 									</th>
 								</tr>
 								<tr style="border:none !important;">
@@ -165,7 +141,7 @@
 												<option value="">-- Packaging --</option>
 												<?php
 												foreach ($results['packaging'] as $pack) {
-													echo '<option value="' . $pack->id . '" '.(isset($results['product_master']) && $results['product_master']->packaging == $pack->id) ? 'selected' : null.'>' . $pack->nm_packaging . '</option>';
+													echo '<option value="' . $pack->id . '" ' . (isset($results['product_master']) && $results['product_master']->packaging == $pack->id) ? 'selected' : null . '>' . $pack->nm_packaging . '</option>';
 												}
 												?>
 											</select>
@@ -183,7 +159,7 @@
 												<option value="">-- Unit --</option>
 												<?php
 												foreach ($results['unit'] as $unit) {
-													echo '<option value="' . $unit->id_unit . '" '.(isset($results['product_master']) && $results['product_master']->unit_id == $unit->id_unit) ? 'selected' : null.'>' . $unit->nm_unit . '</option>';
+													echo '<option value="' . $unit->id_unit . '" ' . (isset($results['product_master']) && $results['product_master']->unit_id == $unit->id_unit) ? 'selected' : null . '>' . $unit->nm_unit . '</option>';
 												}
 												?>
 											</select>
@@ -198,16 +174,16 @@
 									</th>
 									<th>Minimum Stok</th>
 									<th>
-										<input type="number" name="min_stok" id="" class="form-control form-control-sm" step="0.01" value="<?= (isset($results['product_master'])) ? $results['product_master']->min_stock: null ?>" readonly>
+										<input type="number" name="min_stok" id="" class="form-control form-control-sm" step="0.01" value="<?= (isset($results['product_master'])) ? $results['product_master']->min_stock : null ?>" readonly>
 									</th>
 									<th colspan="2"></th>
 								</tr>
 								<tr style="border:none !important;">
 									<th>PDS</th>
 									<th>
-									<?php if (file_exists('.' . $results['request_develop']->pds)) : ?>
-										<a href="<?= '.' . $results['request_develop']->pds ?>" target="_blank"><?= str_replace('/uploads/', '', $results['request_develop']->pds); ?></a>
-									<?php endif; ?>
+										<?php if (file_exists('.' . $results['request_develop']->pds)) : ?>
+											<a href="<?= '.' . $results['request_develop']->pds ?>" target="_blank"><?= str_replace('/uploads/', '', $results['request_develop']->pds); ?></a>
+										<?php endif; ?>
 									</th>
 									<th colspan="4"></th>
 								</tr>
@@ -265,7 +241,7 @@
 											<option value="">- Refer Product -</option>
 											<?php
 											foreach ($results['inventory_4'] as $inven_4) :
-												echo '<option value="' . $inven_4->id_category3 . '" '.(isset($results['product_master']) && $results['product_master']->id_product_refer == $inven_4->id_category3) ? 'selected' : null.'>' . $inven_4->nama . '</option>';
+												echo '<option value="' . $inven_4->id_category3 . '" ' . (isset($results['product_master']) && $results['product_master']->id_product_refer == $inven_4->id_category3) ? 'selected' : null . '>' . $inven_4->nama . '</option>';
 											endforeach;
 											?>
 										</select>
@@ -285,33 +261,33 @@
 										<label for="">Aplikasi penggunaan cat dan coating</label>
 										<select name="aplikasi_penggunaan_cat" id="" class="form-control form-control-sm" disabled>
 											<option value="">- Aplikasi penggunaan cat dan coating -</option>
-											<option value="1" <?= ($results['product_master']->aplikasi_penggunaan_cat == 1) ? 'selected' : null ?>>Steel/Besi</option>
-											<option value="2" <?= ($results['product_master']->aplikasi_penggunaan_cat == 2) ? 'selected' : null ?>>Kayu</option>
-											<option value="3" <?= ($results['product_master']->aplikasi_penggunaan_cat == 3) ? 'selected' : null ?>>Tembok</option>
-											<option value="4" <?= ($results['product_master']->aplikasi_penggunaan_cat == 4) ? 'selected' : null ?>>Lantai</option>
-											<option value="5" <?= ($results['product_master']->aplikasi_penggunaan_cat == 5) ? 'selected' : null ?>>Batu/Bata</option>
-											<option value="6" <?= ($results['product_master']->aplikasi_penggunaan_cat == 6) ? 'selected' : null ?>>Gypsum</option>
-											<option value="7" <?= ($results['product_master']->aplikasi_penggunaan_cat == 7) ? 'selected' : null ?>>Polymer</option>
-											<option value="8" <?= ($results['product_master']->aplikasi_penggunaan_cat == 8) ? 'selected' : null ?>>Beton</option>
-											<option value="9" <?= ($results['product_master']->aplikasi_penggunaan_cat == 9) ? 'selected' : null ?>>Baja</option>
-											<option value="10" <?= ($results['product_master']->aplikasi_penggunaan_cat == 10) ? 'selected' : null ?>>Semen</option>
-											<option value="11" <?= ($results['product_master']->aplikasi_penggunaan_cat == 11) ? 'selected' : null ?>>Keramik dan Kaca</option>
+											<option value="1" <?= ($results['request_develop']->aplikasi_penggunaan_cat == 1) ? 'selected' : null ?>>Steel/Besi</option>
+											<option value="2" <?= ($results['request_develop']->aplikasi_penggunaan_cat == 2) ? 'selected' : null ?>>Kayu</option>
+											<option value="3" <?= ($results['request_develop']->aplikasi_penggunaan_cat == 3) ? 'selected' : null ?>>Tembok</option>
+											<option value="4" <?= ($results['request_develop']->aplikasi_penggunaan_cat == 4) ? 'selected' : null ?>>Lantai</option>
+											<option value="5" <?= ($results['request_develop']->aplikasi_penggunaan_cat == 5) ? 'selected' : null ?>>Batu/Bata</option>
+											<option value="6" <?= ($results['request_develop']->aplikasi_penggunaan_cat == 6) ? 'selected' : null ?>>Gypsum</option>
+											<option value="7" <?= ($results['request_develop']->aplikasi_penggunaan_cat == 7) ? 'selected' : null ?>>Polymer</option>
+											<option value="8" <?= ($results['request_develop']->aplikasi_penggunaan_cat == 8) ? 'selected' : null ?>>Beton</option>
+											<option value="9" <?= ($results['request_develop']->aplikasi_penggunaan_cat == 9) ? 'selected' : null ?>>Baja</option>
+											<option value="10" <?= ($results['request_develop']->aplikasi_penggunaan_cat == 10) ? 'selected' : null ?>>Semen</option>
+											<option value="11" <?= ($results['request_develop']->aplikasi_penggunaan_cat == 11) ? 'selected' : null ?>>Keramik dan Kaca</option>
 										</select>
 									</td>
 									<td>
 										<label for="">Water Resistance</label>
 										<select name="water_resistance" id="" class="form-control form-control-sm" disabled>
 											<option value="">- Water Resistance -</option>
-											<option value="1" <?= ($results['product_master']->water_resistance == 1) ? 'selected' : null ?>>Yes</option>
-											<option value="2" <?= ($results['product_master']->water_resistance == 2) ? 'selected' : null ?>>No</option>
+											<option value="1" <?= ($results['request_develop']->water_resistance == 1) ? 'selected' : null ?>>Yes</option>
+											<option value="2" <?= ($results['request_develop']->water_resistance == 2) ? 'selected' : null ?>>No</option>
 										</select>
 									</td>
 									<td>
 										<label for="">Weather & UV resistance</label>
 										<select name="weather_uv_resistance" id="" class="form-control form-control-sm" disabled>
 											<option value="">- Weather & UV resistance -</option>
-											<option value="1" <?= ($results['product_master']->weather_uv_resistance == 1) ? 'selected' : null ?>>Yes</option>
-											<option value="2" <?= ($results['product_master']->weather_uv_resistance == 2) ? 'selected' : null ?>>No</option>
+											<option value="1" <?= ($results['request_develop']->weather_uv_resistance == 1) ? 'selected' : null ?>>Yes</option>
+											<option value="2" <?= ($results['request_develop']->weather_uv_resistance == 2) ? 'selected' : null ?>>No</option>
 										</select>
 									</td>
 								</tr>
@@ -320,30 +296,30 @@
 										<label for="">Corrosion Resistance</label>
 										<select name="corrosion_resistance" id="" class="form-control form-control-sm" disabled>
 											<option value="">- Corrosion Resistance -</option>
-											<option value="1" <?= ($results['product_master']->corrosion_resistance == 1) ? 'selected' : null ?>>High</option>
-											<option value="2" <?= ($results['product_master']->corrosion_resistance == 2) ? 'selected' : null ?>>Medium</option>
-											<option value="3" <?= ($results['product_master']->corrosion_resistance == 3) ? 'selected' : null ?>>Low</option>
+											<option value="1" <?= ($results['request_develop']->corrosion_resistance == 1) ? 'selected' : null ?>>High</option>
+											<option value="2" <?= ($results['request_develop']->corrosion_resistance == 2) ? 'selected' : null ?>>Medium</option>
+											<option value="3" <?= ($results['request_develop']->corrosion_resistance == 3) ? 'selected' : null ?>>Low</option>
 										</select>
 									</td>
 									<td>
 										<label for="">Heat Resistance</label>
 										<select name="heat_resistance" id="" class="form-control form-control-sm" disabled>
 											<option value="">- Heat Resistance -</option>
-											<option value="1" <?= ($results['product_master']->heat_resistance == 1) ? 'selected' : null ?>>Up to 200 °C</option>
-											<option value="2" <?= ($results['product_master']->heat_resistance == 2) ? 'selected' : null ?>>Up to 300 °C</option>
-											<option value="3" <?= ($results['product_master']->heat_resistance == 3) ? 'selected' : null ?>>Up to 400 °C</option>
-											<option value="4" <?= ($results['product_master']->heat_resistance == 4) ? 'selected' : null ?>>Up to 500 °C</option>
-											<option value="5" <?= ($results['product_master']->heat_resistance == 5) ? 'selected' : null ?>>Up to 600 °C</option>
-											<option value="6" <?= ($results['product_master']->heat_resistance == 6) ? 'selected' : null ?>>Up to 800 °C</option>
+											<option value="1" <?= ($results['request_develop']->heat_resistance == 1) ? 'selected' : null ?>>Up to 200 °C</option>
+											<option value="2" <?= ($results['request_develop']->heat_resistance == 2) ? 'selected' : null ?>>Up to 300 °C</option>
+											<option value="3" <?= ($results['request_develop']->heat_resistance == 3) ? 'selected' : null ?>>Up to 400 °C</option>
+											<option value="4" <?= ($results['request_develop']->heat_resistance == 4) ? 'selected' : null ?>>Up to 500 °C</option>
+											<option value="5" <?= ($results['request_develop']->heat_resistance == 5) ? 'selected' : null ?>>Up to 600 °C</option>
+											<option value="6" <?= ($results['request_develop']->heat_resistance == 6) ? 'selected' : null ?>>Up to 800 °C</option>
 										</select>
 									</td>
 									<td>
 										<label for="">Daya Rekat (Adhesi)</label>
 										<select name="daya_rekat" id="" class="form-control form-control-sm" disabled>
 											<option value="">- Daya Rekat -</option>
-											<option value="1" <?= ($results['product_master']->daya_rekat == 1) ? 'selected' : null ?>>High</option>
-											<option value="2" <?= ($results['product_master']->daya_rekat == 2) ? 'selected' : null ?>>Medium</option>
-											<option value="3" <?= ($results['product_master']->daya_rekat == 3) ? 'selected' : null ?>>Low</option>
+											<option value="1" <?= ($results['request_develop']->daya_rekat == 1) ? 'selected' : null ?>>High</option>
+											<option value="2" <?= ($results['request_develop']->daya_rekat == 2) ? 'selected' : null ?>>Medium</option>
+											<option value="3" <?= ($results['request_develop']->daya_rekat == 3) ? 'selected' : null ?>>Low</option>
 										</select>
 									</td>
 								</tr>
@@ -352,25 +328,25 @@
 										<label for="">Lama Pengeringan</label>
 										<select name="lama_pengeringan" id="" class="form-control form-control-sm" disabled>
 											<option value="">- Lama Pengeringan -</option>
-											<option value="1" <?= ($results['product_master']->lama_pengeringan == 1) ? 'selected' : null ?>>Cepat</option>
-											<option value="2" <?= ($results['product_master']->lama_pengeringan == 2) ? 'selected' : null ?>>Lambat</option>
+											<option value="1" <?= ($results['request_develop']->lama_pengeringan == 1) ? 'selected' : null ?>>Cepat</option>
+											<option value="2" <?= ($results['request_develop']->lama_pengeringan == 2) ? 'selected' : null ?>>Lambat</option>
 										</select>
 									</td>
 									<td>
 										<label for="">Permukaan</label>
 										<select name="permukaan" id="" class="form-control form-control-sm" disabled>
 											<option value="">- Permukaan -</option>
-											<option value="1" <?= ($results['product_master']->permukaan == 1) ? 'selected' : null ?>>Glossy</option>
-											<option value="2" <?= ($results['product_master']->permukaan == 2) ? 'selected' : null ?>>Matte</option>
-											<option value="3" <?= ($results['product_master']->permukaan == 3) ? 'selected' : null ?>>Semi Matte</option>
+											<option value="1" <?= ($results['request_develop']->permukaan == 1) ? 'selected' : null ?>>Glossy</option>
+											<option value="2" <?= ($results['request_develop']->permukaan == 2) ? 'selected' : null ?>>Matte</option>
+											<option value="3" <?= ($results['request_develop']->permukaan == 3) ? 'selected' : null ?>>Semi Matte</option>
 										</select>
 									</td>
 									<td>
 										<label for="">Anti Jamur dan Lumut</label>
 										<select name="anti_jamur_lumut" id="" class="form-control form-control-sm" disabled>
 											<option value="">- Anti Jamur dan Lumut -</option>
-											<option value="1" <?= ($results['product_master']->anti_jamur_lumut == 1) ? 'selected' : null ?>>Yes</option>
-											<option value="2" <?= ($results['product_master']->anti_jamur_lumut == 2) ? 'selected' : null ?>>No</option>
+											<option value="1" <?= ($results['request_develop']->anti_jamur_lumut == 1) ? 'selected' : null ?>>Yes</option>
+											<option value="2" <?= ($results['request_develop']->anti_jamur_lumut == 2) ? 'selected' : null ?>>No</option>
 										</select>
 									</td>
 								</tr>
@@ -379,24 +355,24 @@
 										<label for="">Mudah dibersihkan (Dirt Resistant)</label>
 										<select name="mudah_dibersihkan" id="" class="form-control form-control-sm" disabled>
 											<option value="">- Mudah dibersihkan (Dirt Resistant) -</option>
-											<option value="1" <?= ($results['product_master']->mudah_dibersihkan == 1) ? 'selected' : null ?>>Yes</option>
-											<option value="2" <?= ($results['product_master']->mudah_dibersihkan == 2) ? 'selected' : null ?>>No</option>
+											<option value="1" <?= ($results['request_develop']->mudah_dibersihkan == 1) ? 'selected' : null ?>>Yes</option>
+											<option value="2" <?= ($results['request_develop']->mudah_dibersihkan == 2) ? 'selected' : null ?>>No</option>
 										</select>
 									</td>
 									<td>
 										<label for="">Anti Bakteri</label>
 										<select name="anti_bakteri" id="" class="form-control form-control-sm" disabled>
 											<option value="">- Anti Bakteri -</option>
-											<option value="1" <?= ($results['product_master']->anti_bakteri == 1) ? 'selected' : null ?>>Yes</option>
-											<option value="2" <?= ($results['product_master']->anti_bakteri == 2) ? 'selected' : null ?>>No</option>
+											<option value="1" <?= ($results['request_develop']->anti_bakteri == 1) ? 'selected' : null ?>>Yes</option>
+											<option value="2" <?= ($results['request_develop']->anti_bakteri == 2) ? 'selected' : null ?>>No</option>
 										</select>
 									</td>
 									<td>
 										<label for="">Daya tahan gesekan</label>
 										<select name="daya_tahan_gesekan" id="" class="form-control form-control-sm" disabled>
 											<option value="">- Daya tahan gesekan -</option>
-											<option value="1" <?= ($results['product_master']->daya_tahan_gesekan == 1) ? 'selected' : null ?>>Yes</option>
-											<option value="2" <?= ($results['product_master']->daya_tahan_gesekan == 2) ? 'selected' : null ?>>No</option>
+											<option value="1" <?= ($results['request_develop']->daya_tahan_gesekan == 1) ? 'selected' : null ?>>Yes</option>
+											<option value="2" <?= ($results['request_develop']->daya_tahan_gesekan == 2) ? 'selected' : null ?>>No</option>
 										</select>
 									</td>
 								</tr>
@@ -405,24 +381,24 @@
 										<label for="">Anti Slip</label>
 										<select name="anti_slip" id="" class="form-control form-control-sm" disabled>
 											<option value="">- Anti Slip -</option>
-											<option value="1" <?= ($results['product_master']->anti_slip == 1) ? 'selected' : null ?>>Yes</option>
-											<option value="2" <?= ($results['product_master']->anti_slip == 2) ? 'selected' : null ?>>No</option>
+											<option value="1" <?= ($results['request_develop']->anti_slip == 1) ? 'selected' : null ?>>Yes</option>
+											<option value="2" <?= ($results['request_develop']->anti_slip == 2) ? 'selected' : null ?>>No</option>
 										</select>
 									</td>
 									<td>
 										<label for="">Fire Resistance</label>
 										<select name="fire_resistance" id="" class="form-control form-control-sm" disabled>
 											<option value="">- Fire Resistance -</option>
-											<option value="1" <?= ($results['product_master']->fire_resistance == 1) ? 'selected' : null ?>>Yes</option>
-											<option value="2" <?= ($results['product_master']->fire_resistance == 2) ? 'selected' : null ?>>No</option>
+											<option value="1" <?= ($results['request_develop']->fire_resistance == 1) ? 'selected' : null ?>>Yes</option>
+											<option value="2" <?= ($results['request_develop']->fire_resistance == 2) ? 'selected' : null ?>>No</option>
 										</select>
 									</td>
 									<td>
 										<label for="">Ketahanan Bahan Kimia</label>
 										<select name="ketahanan_bahan_kimia" id="" class="form-control form-control-sm" disabled>
 											<option value="">- Ketahanan Bahan Kimia -</option>
-											<option value="1" <?= ($results['product_master']->ketahanan_bahan_kimia == 1) ? 'selected' : null ?>>Yes</option>
-											<option value="2" <?= ($results['product_master']->ketahanan_bahan_kimia == 2) ? 'selected' : null ?>>No</option>
+											<option value="1" <?= ($results['request_develop']->ketahanan_bahan_kimia == 1) ? 'selected' : null ?>>Yes</option>
+											<option value="2" <?= ($results['request_develop']->ketahanan_bahan_kimia == 2) ? 'selected' : null ?>>No</option>
 										</select>
 									</td>
 								</tr>

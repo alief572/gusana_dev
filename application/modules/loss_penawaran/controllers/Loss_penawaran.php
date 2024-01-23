@@ -155,7 +155,7 @@ class Loss_Penawaran extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Loss Penawaran | 丢失报价');
+        $this->template->title('Deadweight Loss | 额外损失');
         $this->template->render('index');
     }
 

@@ -159,7 +159,7 @@ class So_Invoice extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('SO Invoice');
+        $this->template->title('Sales Order | 销售订单');
         $this->template->render('index');
     }
 

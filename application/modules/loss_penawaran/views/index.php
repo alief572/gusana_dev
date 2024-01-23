@@ -1,14 +1,14 @@
 <?php
-$ENABLE_ADD     = has_permission('Penawaran.Add');
-$ENABLE_MANAGE  = has_permission('Penawaran.Manage');
-$ENABLE_VIEW    = has_permission('Penawaran.View');
-$ENABLE_DELETE  = has_permission('Penawaran.Delete');
+$ENABLE_ADD     = has_permission('Loss_Penawaran.Add');
+$ENABLE_MANAGE  = has_permission('Loss_Penawaran.Manage');
+$ENABLE_VIEW    = has_permission('Loss_Penawaran.View');
+$ENABLE_DELETE  = has_permission('Loss_Penawaran.Delete');
 ?>
 
 <div class="br-pagetitle">
     <i class="tx-primary fa-4x <?= $template['page_icon']; ?>"></i>
     <div>
-        <h4>Loss Penawaran | 丢失报价</h4>
+        <h4>Deadweight Loss | 额外损失</h4>
     </div>
 </div><!-- d-flex -->
 
@@ -18,17 +18,17 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             <table id="dataTable" width="100%" class="table display table-bordered table-hover table-striped border-left-0 border-right-0">
                 <thead>
                     <tr>
-                        <th width="15" class="text-center">No <span class="text-danger">(不)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">No. Penawaran <span class="text-danger">(报价编号)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Nama Customer <span class="text-danger">(客户姓名)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Nama Marketing <span class="text-danger">(销售姓名)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Nilai Penawaran <span class="text-danger">(报价金额)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Tanggal Penawaran <span class="text-danger">(报价日期)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Keterangan Loss</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Revisi <span class="text-danger">(修订号码)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Status <span class="text-danger">(状态)</span></th>
+                        <th width="15" class="text-center"><span class="text-danger">序号</span> <br> No</th>
+                        <th class="desktop text-center tablet mobile tx-bold tx-dark" width=""><span class="text-danger"> 报价号</span> <br> Quote Number</th>
+                        <th class="desktop text-center tablet mobile tx-bold tx-dark" width=""><span class="text-danger"> 客户名称</span> <br> Customer Name</th>
+                        <th class="desktop text-center tablet mobile tx-bold tx-dark" width=""><span class="text-danger"> 销售员</span> <br> Salesperson</th>
+                        <th class="desktop text-center tablet mobile tx-bold tx-dark" width=""><span class="text-danger"> 报价金额</span> <br> Quote Amount</th>
+                        <th class="desktop text-center tablet mobile tx-bold tx-dark" width=""><span class="text-danger"> 报价日期</span> <br> Quote Date</th>
+                        <th class="desktop text-center tablet mobile tx-bold tx-dark" width=""><span class="text-danger">备注</span> <br> Remark</th>
+                        <th class="desktop text-center tablet mobile tx-bold tx-dark" width=""><span class="text-danger"> 修订</span> <br> Revise</th>
+                        <th class="desktop text-center tablet mobile tx-bold tx-dark" width=""><span class="text-danger"> 状态</span> <br> Status</th>
                         <?php if ($ENABLE_MANAGE) : ?>
-                            <th class="desktop text-center no-sort" width="110">Action <span class="text-danger">(操作)</span></th>
+                            <th class="desktop text-center no-sort" width="110"><span class="text-danger"> 行动</span> <br> Action</th>
                         <?php endif; ?>
                     </tr>
                 </thead>
@@ -74,7 +74,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             type: 'POST',
             url: siteurl + thisController + 'add',
             success: function(data) {
-                // $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Add Penawaran")
+                // $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Add Offer")
                 // $('#dialog-popup .modal-dialog').css({
                 //     'max-width': '90%'
                 // })
@@ -95,7 +95,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             type: 'GET',
             url: siteurl + thisController + 'edit/' + id,
             success: function(data) {
-                $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Edit Penawaran")
+                $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Edit Offer")
                 $('#dialog-popup .modal-dialog').css({
                     'max-width': '90%'
                 })
@@ -116,7 +116,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             type: 'GET',
             url: siteurl + thisController + 'request_approval/' + id,
             success: function(data) {
-                // $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Request Approval Penawaran")
+                // $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;Request Approval Offer")
                 // $('#dialog-popup .modal-dialog').css({
                 //     'max-width': '90%'
                 // })
@@ -137,7 +137,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             type: 'GET',
             url: siteurl + thisController + 'view/' + id,
             success: function(data) {
-                $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;View Penawaran")
+                $('#dialog-popup .modal-title').html("<span class='<?= $template['page_icon']; ?>'></span>&nbsp;View Offer")
                 $('#dialog-popup .modal-dialog').css({
                     'max-width': '75%'
                 })

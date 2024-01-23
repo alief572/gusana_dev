@@ -8,14 +8,14 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
 <div class="br-pagetitle">
     <i class="tx-primary fa-4x <?= $template['page_icon']; ?>"></i>
     <div>
-        <h4>Penawaran Harga (报价)</h4>
+        <h4>Quotation | 报价</h4>
     </div>
 </div><!-- d-flex -->
 
 <div class="d-flex align-items-center justify-content-between pd-x-20 pd-sm-x-30 pd-t-25 mg-b-20 mg-sm-b-30">
     <?php echo Template::message(); ?>
     <?php if ($ENABLE_ADD) : ?>
-        <a class="btn btn-primary btn-oblong add" href="penawaran/add/new" title="Add"><i class="fa fa-plus">&nbsp;</i>Add Penawaran <span class="">(添加报价)</span></a>
+        <a class="btn btn-primary btn-oblong add" href="penawaran/add/new" title="Add"><i class="fa fa-plus">&nbsp;</i>Add Offer <span class="">添加报价</span></a>
         <!-- <a class="btn btn-primary btn-oblong ppn_autoload" href="javascript:void(0);" title="PPn Autoload"><i class="fa fa-plus">&nbsp;</i>PPn Autoload </a> -->
         <!-- <button type="button" class="btn btn-success btn-oblong" onclick="loadData()" title="Add"><i class="fa fa-plus">&nbsp;</i>Refresh</button> -->
     <?php endif; ?>
@@ -27,17 +27,17 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             <table id="dataTable" width="100%" class="table display table-bordered table-hover table-striped border-left-0 border-right-0">
                 <thead>
                     <tr>
-                        <th width="15" class="text-center">No <span class="text-danger">(不)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">No. Penawaran <span class="text-danger">(报价编号)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Nama Customer <span class="text-danger">(客户姓名)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Nama Marketing <span class="text-danger">(销售姓名)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Nilai Penawaran <span class="text-danger">(报价金额)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Tanggal Penawaran <span class="text-danger">(报价日期)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Keterangan <span class="text-danger">(备注)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Revisi <span class="text-danger">(修订)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Status <span class="text-danger">(状态)</span></th>
+                        <th width="15" class="text-center"><span class="text-danger">序号</span> <br> No </th>
+                        <th class="desktop tablet text-center mobile tx-bold tx-dark" width=""><span class="text-danger"> 报价号</span> <br> Quote Number</th>
+                        <th class="desktop tablet text-center mobile tx-bold tx-dark" width=""><span class="text-danger"> 客户名称</span> <br> Customer Name</th>
+                        <th class="desktop tablet text-center mobile tx-bold tx-dark" width=""><span class="text-danger"> 销售员</span> <br> Salesperson</th>
+                        <th class="desktop tablet text-center mobile tx-bold tx-dark" width=""><span class="text-danger"> 报价金额</span> <br> Quote Amount</th>
+                        <th class="desktop tablet text-center mobile tx-bold tx-dark" width=""><span class="text-danger"> 报价日期</span> <br> Quote Date</th>
+                        <th class="desktop tablet text-center mobile tx-bold tx-dark" width=""> <span class="text-danger"> 备注</span> <br> Remark</th>
+                        <th class="desktop tablet text-center mobile tx-bold tx-dark" width=""> <span class="text-danger"> 修订</span> <br> Revise</th>
+                        <th class="desktop tablet text-center mobile tx-bold tx-dark" width=""> <span class="text-danger"> 状态</span> <br> Status</th>
                         <?php if ($ENABLE_MANAGE) : ?>
-                            <th class="desktop text-center no-sort" width="110">Action <span class="text-danger">(操作)</span></th>
+                            <th class="desktop text-center no-sort" width="110"> <span class="text-danger"> 行动</span> <br> Action</th>
                         <?php endif; ?>
                     </tr>
                 </thead>

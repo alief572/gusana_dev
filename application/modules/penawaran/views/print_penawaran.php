@@ -42,7 +42,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         <table class="w-100">
             <tr class="non-bordered">
                 <th class="non-bordered text-center" colspan="6">
-                    <h2><span>报价单 <br> Quotation</span></h2>
+                    <h2><span>报价 <br> Quotation</span></h2>
                 </th>
             </tr>
             <tr class="non-bordered">
@@ -56,7 +56,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 <th class="non-bordered"><?= $data_penawaran->nm_cust ?></th>
                 <th class="non-bordered">
                     <span>
-                        报价编号 <br>
+                        报价号
+                        <br>
                         Quote Number
                     </span>
                 </th>
@@ -82,7 +83,11 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                 <th class="non-bordered" style="min-width: 300px; max-width: 300px;"><?= $data_penawaran->tgl_penawaran ?></th>
             </tr>
             <tr class="non-bordered">
-                <th class="non-bordered">联系人</th>
+                <th class="non-bordered">
+                    <span>
+                        发货种类 <br>Delivery Type
+                    </span>
+                </th>
                 <th class="non-bordered">:</th>
                 <th class="non-bordered"><?= ($data_penawaran->deliver_type == 1) ? '(送貨 Delivery)' : '(自己提货 Self Pickup)' ?>
                 </th>
@@ -90,6 +95,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             <tr class="non-bordered">
                 <th class="non-bordered">
                     <span>
+                        销售员 <br>
                         Contact Person
                     </span>
                 </th>

@@ -175,7 +175,7 @@ class Penawaran extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Penawaran Harga (报价)');
+        $this->template->title('Quotation | 报价');
         $this->template->render('index');
     }
 
@@ -346,6 +346,36 @@ class Penawaran extends Admin_Controller
             if ($data_upload_po == 'Upload Error' && $data_upload_penawaran_deal == 'Upload Error') {
                 $valid_create_so = 0;
             } else {
+
+                $get_penawaran_detail = $this->db->get_where('ms_penawaran_detail', ['id_penawaran' => $id_penawaran])->result();
+                foreach ($get_penawaran_detail as $penawaran_detail) :
+                    $get_stock = $this->db->get_where('ms_stock_product', ['id_product' => $penawaran_detail->id_product])->row();
+
+                    $this->db->select('a.id_product_refer');
+                    $this->db->from('ms_product_category3 a');
+                    $this->db->where('a.id_category3', $penawaran_detail->id_product);
+                    $get_refer_product = $this->db->get()->row();
+
+
+                    if ($get_refer_product->id_product_refer !== '') {
+                        $get_stock = $this->db->get_where('ms_stock_product', ['id_product' => $get_refer_product->id_product_refer])->row();
+
+                        if (count($get_stock) > 0) {
+                            $stock = $get_stock->qty_asli;
+                        } else {
+                            $stock = 0;
+                        }
+                    } else {
+                        if (count($get_stock) > 0) {
+                            $stock = $get_stock->qty_asli;
+                        } else {
+                            $stock = 0;
+                        }
+                    }
+
+                    $this->db->update('ms_stock_product', ['qty_asli' => ($stock - $penawaran_detail->weight)], ['id_product' => $penawaran_detail->id_product]);
+                endforeach;
+
                 $this->db->update('ms_penawaran', [
                     'deliver_date' => $post['deliver_date'],
                     'upload_po' => $data_upload_po,
