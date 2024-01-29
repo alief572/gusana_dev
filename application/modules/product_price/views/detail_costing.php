@@ -60,11 +60,11 @@ foreach ($detail as $val => $valx) {
                 <tr>
                     <th class='text-center' width="5%">#</th>
                     <!-- <th class='text-center' width="5%">Code</th> -->
-                    <th class='text-center' width="25%">Element Costing <span class="text-danger">(元素成本)</span></th>
+                    <th class='text-center' width="25%">Element Costing <span class="text-danger">(因素成本)</span></th>
                     <th class='text-center' width="12%">Rate <span class="text-danger">(费率)</span></th>
                     <th class='text-right' width="12%">Price <span class="text-danger">(价格)</span></th>
                     <th class='text-center'>Keterangan <span class="text-danger">(备注)</span></th>
-                    <th class='text-center' width="10%">Detail <span class="text-danger">(查看详情)</span></th>
+                    <th class='text-center' width="10%">Detail <span class="text-danger">(详情)</span></th>
                 </tr>
             </thead>
             <tbody>
@@ -113,7 +113,7 @@ foreach ($detail as $val => $valx) {
                     echo "<tr>";
                     echo "<td class='text-center' rowspan='3'>3</td>";
                     // echo "<td class='text-center'></td>";
-                    echo "<td class='text-left text-bold' colspan='4'>Mesin, cetakan, consumable <span class='text-danger'>(机器, 模具, 消耗品)</span></td>";
+                    echo "<td class='text-left text-bold' colspan='4'>Mesin, cetakan, consumable <span class='text-danger'>(机器，耗材)</span></td>";
                     echo "</tr>";
                     foreach ($dataList as $key => $value) {
                         if ($value['judul'] == 'Mesin, cetakan, consumable' && $value['element_costing'] !== '3.2. Mold/ Cetakan') {
@@ -144,7 +144,7 @@ foreach ($detail as $val => $valx) {
                     echo "<tr>";
                     echo "<td class='text-center' rowspan='3'>4</td>";
                     // echo "<td class='text-center'></td>";
-                    echo "<td class='text-left text-bold' colspan='4'>Logistik <span class='text-danger'>(消耗品)</span></td>";
+                    echo "<td class='text-left text-bold' colspan='4'>Logistik <span class='text-danger'>(物流)</span></td>";
                     echo "</tr>";
                     foreach ($dataList as $key => $value) {
                         if ($value['judul'] == 'Logistik') {
@@ -217,7 +217,7 @@ foreach ($detail as $val => $valx) {
                             if ($value['code'] == '20') {
                                 $rate         = '';
                                 $cost = 0;
-                                if($product_price[0]['cost_price_final'] > 0 && $product_price[0]['qty_hopper'] > 0){
+                                if ($product_price[0]['cost_price_final'] > 0 && $product_price[0]['qty_hopper'] > 0) {
                                     $cost        = ($product_price[0]['cost_price_final'] / $product_price[0]['qty_hopper']);
                                 }
                             }
@@ -228,14 +228,14 @@ foreach ($detail as $val => $valx) {
                             if ($value['code'] == '22') {
                                 $rate         = '';
                                 $cost = 0;
-                                if($product_price[0]['cost_price_final'] > 0 && $product_price[0]['qty_hopper'] > 0){
+                                if ($product_price[0]['cost_price_final'] > 0 && $product_price[0]['qty_hopper'] > 0) {
                                     $cost        = ($product_price[0]['propose_costing'] - ($product_price[0]['cost_price_final'] / $product_price[0]['qty_hopper']));
                                 }
                             }
                             if ($value['code'] == '23') {
                                 $rate         = '';
                                 $cost = 0;
-                                if($product_price[0]['propose_costing'] > 0 && $product_price[0]['cost_price_final'] > 0 && $product_price[0]['qty_hopper']){
+                                if ($product_price[0]['propose_costing'] > 0 && $product_price[0]['cost_price_final'] > 0 && $product_price[0]['qty_hopper']) {
                                     $cost        = ($product_price[0]['propose_costing'] / ($product_price[0]['cost_price_final'] / $product_price[0]['qty_hopper']) * 100);
                                 }
                             }

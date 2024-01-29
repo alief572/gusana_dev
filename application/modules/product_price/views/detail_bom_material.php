@@ -37,16 +37,16 @@ $TOTAL_PRICE_ALL = 0;
 		<table class='table' width='100%'>
 			<thead>
 				<tr>
-					<th colspan='8'>A. Mixing & Proses</th>
+					<th colspan='8'>A. Mixing & Proses <span class="text-danger">混合工艺</span></th>
 				</tr>
 				<tr>
 					<th class='text-left' style='width: 3%;'>#</th>
-					<th class='text-left'>Material Category</th>
-					<th class='text-right' style='width: 8%;'>Berat</th>
+					<th class='text-left'><span class="text-danger">材料种类</span> <br> Material Category</th>
+					<th class='text-right' style='width: 8%;'><span class="text-danger">重量</span> Weight</th>
 					<th class='text-right' style='width: 1%;'></th>
-					<th class='text-right' style='width: 8%;'>Berat Bersih</th>
-					<th class='text-right' style='width: 8%;'>Price Ref</th>
-					<th class='text-right' style='width: 8%;'>Total Price</th>
+					<th class='text-right' style='width: 8%;'><span class="text-danger">净重</span> Net Weight</th>
+					<th class='text-right' style='width: 8%;'><span class="text-danger">参考价格</span> <br> Reference Price</th>
+					<th class='text-right' style='width: 8%;'><span class="text-danger">总金额</span> <br> Total Price</th>
 				</tr>
 			</thead>
 			<tbody>

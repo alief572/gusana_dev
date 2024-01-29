@@ -20,17 +20,17 @@ $ENABLE_DELETE  = has_permission('Price_List.Delete');
             <table id="dataTable" class="table table-bordered display table-striped border-right-0 border-left-0" width="100%">
                 <thead>
                     <tr>
-                        <th width="10" class="text-center">No <span class="text-danger">(不)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Kode Product <span class="text-danger">(产品型号)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Nama Product <span class="text-danger">(产品名称)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Nama Product (Mandarin) <span class="text-danger">(产品名称)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Packaging <span class="text-danger">(包装规格)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Lot Size <span class="text-danger">(生产数量)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Curing Agent <span class="text-danger">(配套固化剂)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Curing Agent Konversi <span class="text-danger">(辅助固化剂包装规格（公斤）)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Distibutor Price<span class="text-danger">(经销商价格)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Pricelist / Kg <span class="text-danger">(单价)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark text-center">Pricelist / Kaleng <span class="text-danger">(每罐价格)</span></th>
+                        <th width="10" class="text-center"><span class="text-danger">(序号)</span> <br> No</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center"><span class="text-danger">(产品型号)</span> <br> Kode Product</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center"><span class="text-danger">(产品名称)</span> <br> Nama Product</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center"><span class="text-danger">(产品名称)</span> <br> Nama Product (Mandarin)</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center"><span class="text-danger">(包装规格)</span> <br> Packaging</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center"><span class="text-danger">(批量大小)</span> <br> Lot Size</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center"><span class="text-danger">(配套固化剂)</span> <br> Curing Agent</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center"><span class="text-danger">(辅助固化剂包装规格（公斤）)</span> <br> Curing Agent Konversi</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center"><span class="text-danger">(经销商价格)</span> <br> Distibutor Price</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center"><span class="text-danger">(单价)</span> <br> Unit Price</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center"><span class="text-danger">(价格/桶)</span> <br> Pricelist / Kaleng</th>
                     </tr>
                 </thead>
                 <tbody></tbody>

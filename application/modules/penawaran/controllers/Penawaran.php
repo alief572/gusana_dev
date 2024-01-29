@@ -373,14 +373,15 @@ class Penawaran extends Admin_Controller
                         }
                     }
 
-                    $this->db->update('ms_stock_product', ['qty_asli' => ($stock - $penawaran_detail->weight)], ['id_product' => $penawaran_detail->id_product]);
+                // $this->db->update('ms_stock_product', ['qty_asli' => ($stock - $penawaran_detail->weight)], ['id_product' => $penawaran_detail->id_product]);
                 endforeach;
 
                 $this->db->update('ms_penawaran', [
                     'deliver_date' => $post['deliver_date'],
                     'upload_po' => $data_upload_po,
                     'upload_penawaran_deal' => $data_upload_penawaran_deal,
-                    'sts' => 'so_created'
+                    'sts' => 'so_created',
+                    'tgl_create_so' => date('Y-m-d')
                 ], [
                     'id_penawaran' => $id_penawaran
                 ]);

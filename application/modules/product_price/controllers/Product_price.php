@@ -177,7 +177,6 @@ class Product_price extends Admin_Controller
 			$TOTAL_PRICE_ALL = 0;
 			$TOTAL_BERAT_BERSIH = $value['qty_hopper'];
 			//default
-			
 			if (!empty($detail)) {
 				// print_r($detail);
 				// exit;
@@ -191,10 +190,6 @@ class Product_price extends Admin_Controller
 
 					$code_lv2		= (!empty($GET_LEVEL4[$valx['id_category1']]['id_category1'])) ? $GET_LEVEL4[$valx['id_category1']]['id_category1'] : '-';
 					$price_ref      = (!empty($GET_PRICE_REF[$valx['id_category1']]['price_ref_idr'])) ? $GET_PRICE_REF[$valx['id_category1']]['price_ref_idr'] : 0;
-					if($no_bom == 'PRO1-01-24000013'){
-						print_r($valx['id_category1']);
-						exit;
-					}
 					// $get_material_price_ref = $this->Product_price_model->get_material_price_ref();
 					$nm_category = strtolower(get_name('ms_inventory_category1', 'nama', 'id_category1', $code_lv2));
 					$berat_pengurang_additive = ($nm_category == 'resin') ? $BERAT_MINUS : 0;

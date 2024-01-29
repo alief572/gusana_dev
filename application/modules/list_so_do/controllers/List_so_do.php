@@ -11,23 +11,23 @@ if (!defined('BASEPATH')) {
  * This is controller for Master Employee
  */
 
-class Log_app_price_list extends Admin_Controller
+class List_so_do extends Admin_Controller
 {
-    protected $viewPermission     = 'Log_Approval.View';
-    protected $addPermission      = 'Log_Approval.Add';
-    protected $managePermission = 'Log_Approval.Manage';
-    protected $deletePermission = 'Log_Approval.Delete';
+    protected $viewPermission     = 'List_SO_DO.View';
+    protected $addPermission      = 'List_SO_DO.Add';
+    protected $managePermission = 'List_SO_DO.Manage';
+    protected $deletePermission = 'List_SO_DO.Delete';
     public function __construct()
     {
         parent::__construct();
 
         $this->load->library(array('upload', 'Image_lib', 'user_agent', 'uri'));
         $this->load->model(array(
-            'Log_app_price_list/Log_app_price_list_model',
+            'List_so_do/List_so_do_model',
             'Aktifitas/aktifitas_model',
         ));
         $this->load->helper(['url', 'json']);
-        $this->template->title('Log_app_price_list');
+        $this->template->title('List_so_do');
         $this->template->page_icon('fas fa-user-tie');
 
         date_default_timezone_set('Asia/Bangkok');
@@ -48,34 +48,25 @@ class Log_app_price_list extends Admin_Controller
 
         $string = $this->db->escape_like_str($search);
         $sql = "
-        SELECT 
-            a.*,
-            b.nama,
-            b.nama_mandarin,
-            c.full_name
-        FROM 
-            ms_log_app_price_list a
-            LEFT JOIN ms_product_category3 b ON b.id_category3 = a.id_product
-            LEFT JOIN users c ON c.id_user = a.approve_by
-        WHERE 1=1  
-        AND 
-        (
-            a.id_bom LIKE '%" . $string . "%' OR
-            b.nama LIKE '%" . $string . "%' OR
-            a.product_costing LIKE '%" . $string . "%' OR
-            a.product_costing_per_kg LIKE '%" . $string . "%' OR
-            a.propose_price_list LIKE '%" . $string . "%' OR
-            a.price_list_before LIKE '%" . $string . "%' OR
-            IF(a.app_type = 1, 'Approval', 'Reject') LIKE '%" . $string . "%' OR
-            c.full_name LIKE '%" . $string . "%'
-        ) GROUP BY a.id";
+            SELECT *, DATE_FORMAT(tgl_penawaran, '%d %M %Y') AS quote_date
+            FROM
+                ms_penawaran
+            WHERE
+                1=1 AND sts = 'so_created' AND id_quote <> '' AND (
+                    id_quote LIKE '%" . $string . "%' OR
+                    nm_cust LIKE '%" . $string . "%' OR
+                    nm_marketing LIKE '%" . $string . "%' OR
+                    nilai_penawaran LIKE '%" . $string . "%' OR
+                    DATE_FORMAT(tgl_penawaran, '%d %M %Y') LIKE '%" . $string . "%'
+                )
+        ";
 
         $totalData = $this->db->query($sql)->num_rows();
         $totalFiltered = $this->db->query($sql)->num_rows();
 
         $columns_order_by = array(
-            0 => 'id',
-            1 => 'id'
+            0 => 'id_quote',
+            1 => 'id_quote'
         );
 
         $sql .= " ORDER BY " . $columns_order_by[$column] . " " . $dir . " ";
@@ -105,27 +96,32 @@ class Log_app_price_list extends Admin_Controller
                 $nomor = ($total_data - $start_dari) - $urut2;
             }
 
-            $buttons = '';
+            $view         = '<button type="button" class="btn btn-primary btn-sm view" data-toggle="tooltip" title="View" data-id="' . $row['id_quote'] . '"><i class="fa fa-eye"></i></button>';
+            $edit         = '<button type="button" class="btn btn-success btn-sm edit" data-toggle="tooltip" title="Edit" data-id="' . $row['id_quote'] . '"><i class="fa fa-edit"></i></button>';
+            $delete     = '<button type="button" class="btn btn-danger btn-sm delete" data-toggle="tooltip" title="Delete" data-id="' . $row['id_quote'] . '"><i class="fa fa-trash"></i></button>';
 
-            $get_bom = $this->db->get_where('ms_bom', ['id' => $row['id_bom']])->row();
+            $create_ppb = '<button type="button" class="btn btn-success btn-sm create_ppb" data-toggle="tooltip" title="Outgoing Goods Request" data-id="' . $row['id_quote'] . '"><i class="fa fa-plus"></i></button>';
+
+            $buttons     = $create_ppb;
+            if ($row['sts_ppb'] == 'ppb_created') {
+                $buttons = '';
+            }
+
+            if ($row['sts_ppb'] !== 'ppb_created') {
+                $sts = '<div class="badge badge-warning text-light">Request Not Created</div>';
+            } else {
+                $sts = '<div class="badge badge-success">Request Created</div>';
+            }
 
             $nestedData   = array();
             $nestedData[]  = $nomor;
-            // $nestedData[]  = $row['id_bom']; 
-            $nestedData[]  = $row['nama'];
-            $nestedData[]  = $row['nama_mandarin'];
-            $nestedData[]  = $get_bom->qty_hopper;
-            $nestedData[]  = number_format($row['product_costing'], 2);
-            $nestedData[]  = number_format($row['product_costing_per_kg'], 2);
-            $nestedData[]  = number_format($row['propose_price_list'], 2);
-            $nestedData[]  = number_format($row['price_list_before'], 2);
-            if ($row['app_type'] == 1) {
-                $nestedData[]  = '<div class="badge badge-success">Approved</div>';
-            } else {
-                $nestedData[]  = '<div class="badge badge-danger">Rejected</div>';
-            }
-            $nestedData[]  = $row['full_name'];
-            $nestedData[]  = date('d F Y', strtotime($row['approve_date']));
+            $nestedData[]  = $row['id_quote'];
+            $nestedData[]  = $row['nm_cust'];
+            $nestedData[]  = $row['nm_marketing'];
+            $nestedData[]  = number_format($row['nilai_penawaran'], 2);
+            $nestedData[]  = $row['quote_date'];
+            $nestedData[]  = $sts;
+            $nestedData[]  = $buttons;
             $data[] = $nestedData;
             $urut1++;
             $urut2++;
@@ -144,7 +140,7 @@ class Log_app_price_list extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Log Approval Price List | 审批记录');
+        $this->template->title('List SO');
         $this->template->render('index');
     }
 
@@ -181,7 +177,7 @@ class Log_app_price_list extends Admin_Controller
         // Logging
         $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
 
-        $desc = "View Log_app_price_list Data " . $divisi->id . " - " . $divisi->divisi;
+        $desc = "View List_so_do Data " . $divisi->id . " - " . $divisi->divisi;
         $device_name = $this->agent->mobile(); // Returns the mobile device name
         if ($this->agent->is_browser()) {
             $device_name = $this->agent->browser(); // Returns the browser name
@@ -212,96 +208,33 @@ class Log_app_price_list extends Admin_Controller
         $this->auth->restrict($this->addPermission);
         $post = $this->input->post();
 
-        $data = $post;
-        $data['id'] = ($post['id_divisi'] ?: null);
-        $data['divisi'] = ($post['nama_divisi'] ?: null);
-        $data['dibuat_oleh'] = $this->auth->user_id();
-        $data['dibuat_tgl'] = date("Y-m-d H:i:s");
-
-        $num_divisi = $this->db->query("SELECT divisi FROM m_divisi WHERE id = '" . $post['id_divisi'] . "'")->num_rows();
+        $id_ppb = $this->List_so_do_model->generate_id();
 
         $this->db->trans_begin();
-        if ($num_divisi > 0) {
-            $this->db->update('m_divisi', ['divisi' => $this->input->post('nama_divisi')], ['id' => $post['id_divisi']]);
 
-            // Logging
-            $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
-
-            $desc = "Update Log_app_price_list Data " . $data['id'] . " - " . $data['divisi'];
-            $device_name = $this->agent->mobile(); // Returns the mobile device name
-            if ($this->agent->is_browser()) {
-                $device_name = $this->agent->browser(); // Returns the browser name
-            } elseif ($this->agent->is_robot()) {
-                $device_name = $this->agent->robot(); // Returns the robot/crawler name
-            } elseif ($this->agent->is_mobile()) {
-                $device_name = $this->agent->mobile(); // Returns the mobile device name
-            } else {
-                $device_name = 'Unidentified Device';
-            }
-
-            $id_user = $this->auth->user_id();
-            $id_menu = $get_menu->id;
-            $nm_menu = $get_menu->title;
-            $device_type = $this->agent->platform();
-            $os_type = $this->agent->browser();
-            log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
-        } else {
-            $this->db->insert('m_divisi', [
-                'divisi' => $this->input->post('nama_divisi'),
-                'dibuat_oleh' => $this->auth->user_id(),
-                'dibuat_tgl' => date("Y-m-d H:i:s")
-            ]);
-
-            // Logging
-            $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
-
-            $desc = "Insert New Log_app_price_list Data " . $data['id'] . " - " . $data['divisi'];
-            $device_name = $this->agent->mobile(); // Returns the mobile device name
-            if ($this->agent->is_browser()) {
-                $device_name = $this->agent->browser(); // Returns the browser name
-            } elseif ($this->agent->is_robot()) {
-                $device_name = $this->agent->robot(); // Returns the robot/crawler name
-            } elseif ($this->agent->is_mobile()) {
-                $device_name = $this->agent->mobile(); // Returns the mobile device name
-            } else {
-                $device_name = 'Unidentified Device';
-            }
-
-            $id_user = $this->auth->user_id();
-            $id_menu = $get_menu->id;
-            $nm_menu = $get_menu->title;
-            $device_type = $this->agent->platform();
-            $os_type = $this->agent->browser();
-            log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
-        }
+        $this->db->update('ms_penawaran', [
+            'id_ppb' => $id_ppb,
+            'sts_ppb' => 'ppb_created',
+            'tgl_create_ppb' => date('Y-m-d'),
+            'create_ppb_user' => $this->auth->user_id()
+        ], [
+            'id_quote' => $post['id_quote']
+        ]);
 
         if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();
-            $return    = array(
-                'msg'        => 'Failed save data Log_app_price_list.  Please try again.',
-                'status'    => 0
-            );
-            $keterangan     = "FAILED save data Log_app_price_list " . $data['id'] . ", Log_app_price_list : " . $data['divisi'];
-            $status         = 1;
-            $nm_hak_akses   = $this->addPermission;
-            $kode_universal = $data['id'];
-            $jumlah         = 1;
-            $sql            = $this->db->last_query();
+            $status = 0;
+            $msg = 'Sorry, please try again !';
         } else {
             $this->db->trans_commit();
-            $return    = array(
-                'msg'        => 'Success Save data Log_app_price_list.',
-                'status'    => 1
-            );
-            $keterangan     = "SUCCESS save data Log_app_price_list " . $data['id'] . ", Log_app_price_list : " . $data['divisi'];
-            $status         = 1;
-            $nm_hak_akses   = $this->addPermission;
-            $kode_universal = $data['id'];
-            $jumlah         = 1;
-            $sql            = $this->db->last_query();
+            $status = 1;
+            $msg = 'Success, request has been created !';
         }
-        simpan_aktifitas($nm_hak_akses, $kode_universal, $keterangan, $jumlah, $sql, $status);
-        echo json_encode($return);
+
+        echo json_encode([
+            'status' => $status,
+            'msg' => $msg
+        ]);
     }
 
     public function delete()
@@ -313,7 +246,7 @@ class Log_app_price_list extends Admin_Controller
         // Logging
         $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
 
-        $desc = "Delete Log_app_price_list Data " . $data['id'] . " - " . $data['divisi'];
+        $desc = "Delete List_so_do Data " . $data['id'] . " - " . $data['divisi'];
         $device_name = $this->agent->mobile(); // Returns the mobile device name
         if ($this->agent->is_browser()) {
             $device_name = $this->agent->browser(); // Returns the browser name
@@ -343,16 +276,16 @@ class Log_app_price_list extends Admin_Controller
             $jumlah         = 1;
             $sql            = $this->db->last_query();
             $return    = array(
-                'msg'        => "Failed delete data Log_app_price_list. Please try again. " . $errMsg,
+                'msg'        => "Failed delete data List_so_do. Please try again. " . $errMsg,
                 'status'    => 0
             );
         } else {
             $this->db->trans_commit();
             $return    = array(
-                'msg'        => 'Delete data Log_app_price_list.',
+                'msg'        => 'Delete data List_so_do.',
                 'status'    => 1
             );
-            $keterangan     = "Delete data Log_app_price_list " . $data['id'] . ", Log_app_price_list : " . $data['divisi'];
+            $keterangan     = "Delete data List_so_do " . $data['id'] . ", List_so_do : " . $data['divisi'];
             $status         = 1;
             $nm_hak_akses   = $this->addPermission;
             $kode_universal = $data['id'];
@@ -361,5 +294,27 @@ class Log_app_price_list extends Admin_Controller
         }
         simpan_aktifitas($nm_hak_akses, $kode_universal, $keterangan, $jumlah, $sql, $status);
         echo json_encode($return);
+    }
+
+    public function create_ppb($id)
+    {
+        $this->auth->restrict($this->managePermission);
+
+        $get_penawaran = $this->db->get_where('ms_penawaran', ['id_quote' => $id])->row();
+
+        $get_penawaran_detail = $this->db->get_where('ms_penawaran_detail', ['id_penawaran' => $get_penawaran->id_penawaran])->result();
+
+        $id_quote = $get_penawaran->id_penawaran;
+        if ($get_penawaran->id_quote !== null && $get_penawaran->id_quote !== '') {
+            $id_quote = $get_penawaran->id_quote;
+        }
+
+        $this->template->set([
+            'id_penawaran' => $id,
+            'id_quote' => $id_quote,
+            'data_penawaran' => $get_penawaran,
+            'data_penawaran_detail' => $get_penawaran_detail
+        ]);
+        $this->template->render('create_ppb');
     }
 }

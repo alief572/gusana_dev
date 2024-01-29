@@ -22,18 +22,18 @@ $ENABLE_DELETE  = has_permission('Log_Approval.Delete');
             <table id="dataTable" width="100%" class="table display table-bordered table-hover table-striped border-left-0 border-right-0">
                 <thead>
                     <tr>
-                        <th width="15" class="text-center">No</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">No. Bom</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Nama Product <span class="text-danger">(产品名称)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Nama Product (Mandarin) <span class="text-danger">(產品中文名稱)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Log Size <span class="text-danger">(生产数量)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Product Costing <span class="text-danger">(产品成本计算)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Product Costing / Kg <span class="text-danger">(产品每公斤成本)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Propose Price List <span class="text-danger">(建议价格表)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Price List Before <span class="text-danger">(之前的价格表)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Approval Type <span class="text-danger">(批准类型)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">App By <span class="text-danger">(批准者)</span></th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">App Date <span class="text-danger">(批准日期)</span></th>
+                        <th width="25" class="text-center"><span class="text-danger">(序号)</span> <br> No</th>
+                        <!-- <th class="desktop tablet mobile tx-bold tx-dark" width="">No. Bom</th> -->
+                        <th class="desktop tablet mobile tx-bold tx-dark" width=""><span class="text-danger">(产品名称)</span> <br> Nama Product</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width=""> <span class="text-danger">(產品中文名稱)</span> <br> Nama Product (Mandarin)</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width=""><span class="text-danger">(批量大小)</span> <br> Log Size</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width=""><span class="text-danger">(产品成本)</span> <br> Product Costing</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width=""><span class="text-danger">(产品成本/公斤)</span> <br> Product Costing / Kg</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width=""><span class="text-danger">(拟议价格)</span> <br> Propose Price List</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width=""><span class="text-danger">(原价格)</span> <br> Price List Before</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width=""><span class="text-danger">(审批种类)</span> <br> Approval Type</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width=""><span class="text-danger">(审批者)</span> <br> App By</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark" width=""><span class="text-danger">(审批日期)</span> <br> App Date</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
