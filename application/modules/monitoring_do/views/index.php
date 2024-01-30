@@ -41,7 +41,7 @@ $ENABLE_DELETE  = has_permission('Monitoring_DO.Delete');
 
 <div class="modal fade effect-scale" id="dialog-popup" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <form id="data-form" method="post" data-parsley-validate>
+        <form id="data-form" method="post" enctype="multipart/form-data" data-parsley-validate>
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title tx-bold text-dark" id="myModalLabel"></h4>
@@ -125,7 +125,6 @@ $ENABLE_DELETE  = has_permission('Monitoring_DO.Delete');
             },
             allowOutsideClick: true
         }).then((val) => {
-            console.log(val);
             if (val.isConfirmed) {
                 if (val.value.status == '1') {
                     Lobibox.notify('success', {
@@ -175,9 +174,84 @@ $ENABLE_DELETE  = has_permission('Monitoring_DO.Delete');
                 $('.choose_do_delivery_' + id_print_do).html('<i class="fa fa-eye"></i>');
                 $('.detail_do_delivery').html(result.hasil);
 
-                $("#save").removeClass('d-none');
+                if (result.close_do == '' || result.close_do == null) {
+                    $("#save").removeClass('d-none');
+                }
             }
         });
+    });
+
+    $(document).on('click', '.update_status', function(e) {
+        e.preventDefault();
+        var id_do = $(this).data('id');
+        var swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-primary mg-r-10 wd-100',
+                cancelButton: 'btn btn-danger wd-100'
+            },
+            buttonsStyling: false
+        })
+
+        let formData = new FormData($('#data-form')[0]);
+        swalWithBootstrapButtons.fire({
+            title: "Warning !",
+            text: "Are you sure to Update Status this DO to Close ?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "<i class='fa fa-check'></i> Yes",
+            cancelButtonText: "<i class='fa fa-ban'></i> No",
+            showLoaderOnConfirm: true,
+            preConfirm: () => {
+                return $.ajax({
+                    type: 'POST',
+                    url: siteurl + thisController + 'update_status/' + id_do,
+                    dataType: "JSON",
+                    data: {
+                        'id_do': id_do
+                    },
+                    cache: false,
+                    error: function() {
+                        Lobibox.notify('error', {
+                            title: 'Error!!!',
+                            icon: 'fa fa-times',
+                            position: 'top right',
+                            showClass: 'zoomIn',
+                            hideClass: 'zoomOut',
+                            soundPath: '<?= base_url(); ?>themes/bracket/assets/lib/lobiani/sounds/',
+                            msg: 'Internal server error. Ajax process failed.'
+                        });
+                    }
+                })
+            },
+            allowOutsideClick: true
+        }).then((val) => {
+            if (val.isConfirmed) {
+                if (val.value.status == '1') {
+                    Lobibox.notify('success', {
+                        icon: 'fa fa-check',
+                        msg: val.value.msg,
+                        position: 'top right',
+                        showClass: 'zoomIn',
+                        hideClass: 'zoomOut',
+                        soundPath: '<?= base_url(); ?>themes/bracket/assets/lib/lobiani/sounds/',
+                    });
+                    $("#dialog-popup").modal('hide');
+                    loadData()
+                    $('.dataTables_length select').select2({
+                        minimumResultsForSearch: -1
+                    })
+                } else {
+                    Lobibox.notify('warning', {
+                        icon: 'fa fa-ban',
+                        msg: val.value.msg,
+                        position: 'top right',
+                        showClass: 'zoomIn',
+                        hideClass: 'zoomOut',
+                        soundPath: '<?= base_url(); ?>themes/bracket/assets/lib/lobiani/sounds/',
+                    });
+                };
+            }
+        })
     });
 
 

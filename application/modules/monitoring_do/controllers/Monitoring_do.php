@@ -107,29 +107,35 @@ class Monitoring_do extends Admin_Controller
             $this->db->where('a.upload_bukti_kirim !=', '');
             $check_bukti_kirim = $this->db->get()->result();
 
-            foreach ($check_bukti_kirim as $check) :
-                if ($valid_bukti_kirim == 1) {
-                    if (!file_exists(base_url($check['upload_bukti_kirim'])) && $check['upload_bukti_kirim'] !== '') {
-                        $valid_bukti_kirim = 0;
-                    } else {
-                        if ($check['upload_bukti_kirim'] == '') {
+            if (count($check_bukti_kirim) > 0) {
+                foreach ($check_bukti_kirim as $check) :
+
+                    if ($valid_bukti_kirim == 1) {
+                        if (!file_exists(str_replace('/uploads', 'uploads', $check->upload_bukti_kirim))) {
                             $valid_bukti_kirim = 0;
+                        } else {
+                            if ($check->upload_bukti_kirim == '') {
+                                $valid_bukti_kirim = 0;
+                            }
                         }
                     }
-                }
-            endforeach;
+                endforeach;
+            } else {
+                $valid_bukti_kirim = 0;
+            }
 
-            if ($valid_bukti_kirim !== '1') {
+            if ($valid_bukti_kirim != 1) {
                 $update = '';
             }
 
-            $buttons     = $view . ' ' . $update;
-
-            if ($row['sts_monitor_do'] == 'close') {
-                $sts = '<div class="badge badge-danger">Close</div>';
+            if ($row['sts_close_do'] == 'close') {
+                $sts = '<div class="badge badge-success">Sent</div>';
+                $update = '';
             } else {
                 $sts = '<div class="badge badge-warning text-light">On Process</div>';
             }
+
+            $buttons     = $view . ' ' . $update;
 
             $nestedData   = array();
             $nestedData[]  = $nomor;
@@ -185,7 +191,10 @@ class Monitoring_do extends Admin_Controller
         $get_detail_do = $this->db->get_where('ms_detail_do', ['id_print_do' => $post['id_print_do']])->result();
 
         $link_bukti = '<a href="' . base_url($get_detail_do[0]->upload_bukti_kirim) . '" class="btn btn-sm btn-info" target="_blank">Download Delivery Proof</a>';
-        if ($get_detail_do[0]->upload_bukti_kirim == '' || !file_exists($get_detail_do[0]->upload_bukti_kirim)) {
+        if ($get_detail_do[0]->upload_bukti_kirim == '') {
+            $link_bukti = '';
+        }
+        if (!file_exists(str_replace('/uploads', 'uploads', $get_detail_do[0]->upload_bukti_kirim))) {
             $link_bukti = '';
         }
 
@@ -215,7 +224,14 @@ class Monitoring_do extends Admin_Controller
                         <th>Upload Delivery Proof</th>
                         <th>:</th>
                         <td>
-                            <input type="file" name="upload_bukti_kirim" id="" class="form-control form-control-sm"> ' . $link_bukti . '
+                            ';
+
+        if ($get_penawaran->sts_close_do !== 'close') {
+            $hasil = $hasil . '<input type="file" name="upload_bukti_kirim" id="" class="form-control form-control-sm">';
+        }
+
+        $hasil = $hasil . '
+                            ' . $link_bukti . '
                         </td>
                     </tr>
                 </table>
@@ -259,8 +275,79 @@ class Monitoring_do extends Admin_Controller
             </div>
         ';
 
+
+
         echo json_encode([
-            'hasil' => $hasil
+            'hasil' => $hasil,
+            'close_do' => $get_penawaran->sts_close_do
+        ]);
+    }
+
+    public function save()
+    {
+        $this->auth->restrict($this->addPermission);
+        $session = $this->session->userdata('app_session');
+
+        $post = $this->input->post();
+
+        $config['upload_path'] = './uploads/bukti_kirim_do/'; //path folder
+        $config['allowed_types'] = 'gif|jpg|png|jpeg|pdf'; //type yang dapat diakses bisa anda sesuaikan
+        $config['max_size'] = 10000; // Maximum file size in kilobytes (2MB).
+        $config['encrypt_name'] = TRUE; // Encrypt the uploaded file's name.
+        $config['remove_spaces'] = TRUE; // Remove spaces from the file name.
+
+        $this->load->library('upload', $config);
+        $this->upload->initialize($config);
+
+        if (!$this->upload->do_upload('upload_bukti_kirim')) {
+            $upload_file = 'Upload Error';
+        } else {
+            $upload_file = $this->upload->data();
+            $upload_file = '/uploads/bukti_kirim_do/' . $upload_file['file_name'];
+        }
+
+        $this->db->trans_begin();
+
+        $this->db->update('ms_detail_do', [
+            'upload_bukti_kirim' => $upload_file
+        ], [
+            'id_print_do' => $post['id_print_do']
+        ]);
+
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            $valid = 0;
+            $msg = 'Sorry, Delivery Proof not uploaded !';
+        } else {
+            $this->db->trans_commit();
+            $valid = 1;
+            $msg = 'Success, Delivery Proof has been uploaded !';
+        }
+
+        echo json_encode([
+            'status' => $valid,
+            'msg' => $msg
+        ]);
+    }
+
+    public function update_status($id_do)
+    {
+        $this->db->trans_begin();
+        $this->db->update('ms_penawaran', ['sts_close_do' => 'close'], ['id_do' => $id_do]);
+
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            $valid = 0;
+            $msg = 'Sorry, DO Status has not been updated, please try again !';
+        } else {
+            $this->db->trans_commit();
+            $valid = 1;
+            $msg = 'Success, DO status has been updated to Closed !';
+        }
+
+        echo json_encode([
+            'status' => $valid,
+            'msg' => $msg
         ]);
     }
 }
