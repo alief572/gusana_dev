@@ -53,6 +53,7 @@ class Delivery_do extends Admin_Controller
                 ms_penawaran
             WHERE
                 1=1 AND sts_do != '' AND id_do IS NOT NULL AND (
+                    nm_cust LIKE '%" . $string . "%' OR
                     id_do LIKE '%" . $string . "%' OR
                     DATE_FORMAT(tgl_create_do,'%d %M %Y') LIKE '%" . $string . "%' OR
                     id_quote LIKE '%" . $string . "%' OR
@@ -71,7 +72,8 @@ class Delivery_do extends Admin_Controller
             4 => "DATE_FORMAT(tgl_create_so,'%d %M %Y')"
         );
 
-        $sql .= " ORDER BY " . $columns_order_by[$column] . " " . $dir . " ";
+        // $sql .= " ORDER BY " . $columns_order_by[$column] . " " . $dir . " ";
+        $sql .= " ORDER BY id_do DESC ";
         $sql .= " LIMIT " . $start . " ," . $length . " ";
         $query  = $this->db->query($sql);
 
@@ -117,12 +119,12 @@ class Delivery_do extends Admin_Controller
             $ttl_so_qty = $this->db->get()->row();
 
             if ($ttl_do_sended->all_qty == 0) {
-                $sts = '<div class="badge badge-danger">DO not sended</div>';
+                $sts = '<div class="badge badge-danger">Not Sent</div>';
             } else {
                 if ($ttl_do_sended->all_qty !== $ttl_so_qty->so_qty) {
-                    $sts = '<div class="badge badge-warning text-light">DO Sended ' . number_format($ttl_do_sended->all_qty / $ttl_so_qty->so_qty * 100, 2) . '%</div>';
+                    $sts = '<div class="badge badge-warning text-light">Sent ' . number_format($ttl_do_sended->all_qty / $ttl_so_qty->so_qty * 100, 2) . '%</div>';
                 } else {
-                    $sts = '<div class="badge badge-success">DO Sended 100%</div>';
+                    $sts = '<div class="badge badge-success">Sent 100%</div>';
                     $edit = '';
                 }
             }
@@ -131,6 +133,7 @@ class Delivery_do extends Admin_Controller
 
             $nestedData   = array();
             $nestedData[]  = $nomor;
+            $nestedData[]  = $row['nm_cust'];
             $nestedData[]  = $row['id_do'];
             $nestedData[]  = $row['do_date'];
             $nestedData[]  = $row['id_quote'];
@@ -208,8 +211,10 @@ class Delivery_do extends Admin_Controller
             $this->db->select('SUM(a.weight) AS booking_stock');
             $this->db->from('ms_penawaran_detail a');
             $this->db->join('ms_penawaran b', 'b.id_penawaran = a.id_penawaran');
-            $this->db->where('a.id', $penawaran_detail->id);
+            $this->db->where('a.id_product', $penawaran_detail->id_product);
             $this->db->where('b.sts !=', 'loss');
+            $this->db->where('b.sts_close_do', '');
+            $this->db->where('b.id_do !=', $post['id_do']);
             $get_booking_stock = $this->db->get()->row();
 
             $this->db->select('IF(SUM(a.qty) > 0 AND SUM(a.qty) IS NOT NULL, SUM(a.qty), 0) AS qty_delivered');

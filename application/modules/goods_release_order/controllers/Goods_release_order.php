@@ -46,6 +46,7 @@ class Goods_release_order extends Admin_Controller
                 ms_penawaran
             WHERE
                 1=1 AND sts_ppb = 'ppb_created' AND id_ppb IS NOT NULL AND (
+                    nm_cust LIKE '%" . $string . "%' OR
                     id_ppb LIKE '%" . $string . "%' OR
                     DATE_FORMAT(tgl_create_ppb, '%d %M %Y') LIKE '%" . $string . "%' OR
                     id_quote LIKE '%" . $string . "%' OR
@@ -64,7 +65,8 @@ class Goods_release_order extends Admin_Controller
             4 => 'DATE_FORMAT(tgl_create_so, "%d %M %Y")',
         );
 
-        $sql .= " ORDER BY " . $columns_order_by[$column] . " " . $dir . " ";
+        // $sql .= " ORDER BY " . $columns_order_by[$column] . " " . $dir . " ";
+        $sql .= " ORDER BY id_ppb DESC ";
         $sql .= " LIMIT " . $start . " ," . $length . " ";
         $query  = $this->db->query($sql);
 
@@ -112,6 +114,7 @@ class Goods_release_order extends Admin_Controller
 
             $nestedData   = array();
             $nestedData[]  = $nomor;
+            $nestedData[]  = $row['nm_cust'];
             $nestedData[]  = $row['id_ppb'];
             $nestedData[]  = $row['ppb_date'];
             $nestedData[]  = $row['id_quote'];
@@ -136,7 +139,7 @@ class Goods_release_order extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Goods Release Orders');
+        $this->template->title('Product Release Orders');
         $this->template->render('index');
     }
 

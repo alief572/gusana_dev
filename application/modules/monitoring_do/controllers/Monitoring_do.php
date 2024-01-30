@@ -69,7 +69,7 @@ class Monitoring_do extends Admin_Controller
             3 => 'id_quote'
         );
 
-        $sql .= " ORDER BY " . $columns_order_by[$column] . " " . $dir . " ";
+        $sql .= " ORDER BY a.id_do DESC ";
         $sql .= " LIMIT " . $start . " ," . $length . " ";
         $query  = $this->db->query($sql);
 
@@ -96,10 +96,15 @@ class Monitoring_do extends Admin_Controller
                 $nomor = ($total_data - $start_dari) - $urut2;
             }
 
-            $view = '<button type="button" class="btn btn-sm btn-info view" data-toggle="tooltip" title="View" data-id="' . $row['id_do'] . '"><i class="fa fa-list"></i></button>';
-            $update = '<button type="button" class="btn btn-sm btn-warning text-light update_status" data-toggle="toolptip" title="Update Status" data-id="' . $row['id_do'] . '"><i class="fa fa-plus"></i></button>';
+            $view = '<button type="button" class="btn btn-sm btn-success view" data-toggle="tooltip" title="Update" data-id="' . $row['id_do'] . '"><i class="fa fa-list"></i></button>';
+            $update = '<button type="button" class="btn btn-sm btn-warning text-light update_status" data-toggle="toolptip" title="Closing DO" data-id="' . $row['id_do'] . '"><i class="fa fa-check"></i></button>';
 
             $valid_bukti_kirim = 1;
+
+            $this->db->select('COUNT(a.id_do) AS all_do_proof');
+            $this->db->from('ms_detail_do a');
+            $this->db->where('a.id_do', $row['id_do']);
+            $check_all_deliver = $this->db->get()->row();
 
             $this->db->select('a.upload_bukti_kirim');
             $this->db->from('ms_detail_do a');
@@ -107,19 +112,26 @@ class Monitoring_do extends Admin_Controller
             $this->db->where('a.upload_bukti_kirim !=', '');
             $check_bukti_kirim = $this->db->get()->result();
 
-            if (count($check_bukti_kirim) > 0) {
-                foreach ($check_bukti_kirim as $check) :
+            // print_r($check_all_deliver->all_do_proof . ' ' . count($check_bukti_kirim));
+            // exit;
 
-                    if ($valid_bukti_kirim == 1) {
-                        if (!file_exists(str_replace('/uploads', 'uploads', $check->upload_bukti_kirim))) {
-                            $valid_bukti_kirim = 0;
-                        } else {
-                            if ($check->upload_bukti_kirim == '') {
+            if ($check_all_deliver->all_do_proof == count($check_bukti_kirim)) {
+                if (count($check_bukti_kirim) > 0) {
+                    foreach ($check_bukti_kirim as $check) :
+
+                        if ($valid_bukti_kirim == 1) {
+                            if (!file_exists(str_replace('/uploads', 'uploads', $check->upload_bukti_kirim))) {
                                 $valid_bukti_kirim = 0;
+                            } else {
+                                if ($check->upload_bukti_kirim == '') {
+                                    $valid_bukti_kirim = 0;
+                                }
                             }
                         }
-                    }
-                endforeach;
+                    endforeach;
+                } else {
+                    $valid_bukti_kirim = 0;
+                }
             } else {
                 $valid_bukti_kirim = 0;
             }
@@ -135,18 +147,30 @@ class Monitoring_do extends Admin_Controller
                 $sts = '<div class="badge badge-warning text-light">On Process</div>';
             }
 
-            $buttons     = $view . ' ' . $update;
+            $this->db->select('SUM(a.weight) AS qty_sended_do');
+            $this->db->from('ms_detail_do a');
+            $this->db->where('a.id_do', $row['id_do']);
+            $check_sended_do = $this->db->get()->row();
 
-            $nestedData   = array();
-            $nestedData[]  = $nomor;
-            $nestedData[]  = $row['nm_cust'];
-            $nestedData[]  = $row['id_do'];
-            $nestedData[]  = $row['id_quote'];
-            $nestedData[]  = $sts;
-            $nestedData[]  = $buttons;
-            $data[] = $nestedData;
-            $urut1++;
-            $urut2++;
+            $this->db->select('SUM(a.weight) AS all_weight_order');
+            $this->db->from('ms_penawaran_detail a');
+            $this->db->where('a.id_penawaran', $row['id_penawaran']);
+            $check_weight_order = $this->db->get()->row();
+
+            if ($check_sended_do->qty_sended_do == $check_weight_order->all_weight_order) {
+                $buttons     = $view . ' ' . $update;
+
+                $nestedData   = array();
+                $nestedData[]  = $nomor;
+                $nestedData[]  = $row['nm_cust'];
+                $nestedData[]  = $row['id_do'];
+                $nestedData[]  = $row['id_quote'];
+                $nestedData[]  = $sts;
+                $nestedData[]  = $buttons;
+                $data[] = $nestedData;
+                $urut1++;
+                $urut2++;
+            }
         }
 
         $json_data = array(
@@ -190,7 +214,7 @@ class Monitoring_do extends Admin_Controller
 
         $get_detail_do = $this->db->get_where('ms_detail_do', ['id_print_do' => $post['id_print_do']])->result();
 
-        $link_bukti = '<a href="' . base_url($get_detail_do[0]->upload_bukti_kirim) . '" class="btn btn-sm btn-info" target="_blank">Download Delivery Proof</a>';
+        $link_bukti = '<a href="' . base_url($get_detail_do[0]->upload_bukti_kirim) . '" class="btn btn-sm btn-info" target="_blank">Download Evidence</a>';
         if ($get_detail_do[0]->upload_bukti_kirim == '') {
             $link_bukti = '';
         }

@@ -17,7 +17,7 @@
                     <th>Delivery Date</th>
                     <th>:</th>
                     <td>
-                        <input type="date" name="deliver_date" id="" class="form-control form-control-sm" min="<?= date('Y-m-d') ?>">
+                        <input type="date" name="deliver_date" id="" class="form-control form-control-sm" min="<?= date('Y-m-d') ?>" required>
                     </td>
                 </tr>
             </table>
@@ -63,7 +63,7 @@
                             <td class="text-center"><?= $penawaran_detail->qty ?></td>
                             <td class="text-center"><?= $penawaran_detail->konversi . ' ' . $penawaran_detail->unit_nm ?></td>
                             <td class="text-center"><?= $penawaran_detail->weight . ' ' . $penawaran_detail->unit_nm ?></td>
-                            <td class="text-center"><?= (($penawaran_detail->stock_aktual - $nilai_booking_stock->booking_stock) / $penawaran_detail->konversi) ?></td>
+                            <td class="text-center"><?= number_format(($penawaran_detail->stock_aktual - $nilai_booking_stock->booking_stock) / $penawaran_detail->konversi, 2) ?></td>
                             <td class="text-center">
                                 <?= number_format($get_last_delivery->last_delivery, 2) ?>
                             </td>

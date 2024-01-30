@@ -23,11 +23,12 @@ $ENABLE_DELETE  = has_permission('DO.Delete');
                 <thead>
                     <tr>
                         <th width="15" class="text-center">No</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">No. DO</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">DO Date</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">No. SO</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">SO Date</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Status</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">Customer Name</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">No. DO</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">DO Date</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">No. SO</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">SO Date</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">Status</th>
                         <?php if ($ENABLE_MANAGE) : ?>
                             <th class="desktop text-center no-sort" width="110">Action</th>
                         <?php endif; ?>

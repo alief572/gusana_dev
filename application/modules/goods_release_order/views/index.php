@@ -8,7 +8,7 @@ $ENABLE_DELETE  = has_permission('Goods_release_order.Delete');
 <div class="br-pagetitle">
     <i class="tx-primary fa-4x <?= $template['page_icon']; ?>"></i>
     <div>
-        <h4>Goods Release Order</h4>
+        <h4>Product Release Order</h4>
     </div>
 </div><!-- d-flex -->
 
@@ -23,11 +23,12 @@ $ENABLE_DELETE  = has_permission('Goods_release_order.Delete');
                 <thead>
                     <tr>
                         <th width="15" class="text-center">No</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">No. Request Goods Out</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Date of Issue</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">No. SO</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">SO Date</th>
-                        <th class="desktop tablet mobile tx-bold tx-dark" width="">Status</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">Customer Name</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">No. Request Goods Out</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">Date of Issue</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">No. SO</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">SO Date</th>
+                        <th class="desktop tablet mobile tx-bold tx-dark text-center" width="">Status</th>
                         <?php if ($ENABLE_MANAGE) : ?>
                             <th class="desktop text-center no-sort" width="110">Action</th>
                         <?php endif; ?>
