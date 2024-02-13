@@ -302,35 +302,35 @@ class Req_app_penawaran extends Admin_Controller
         }
 
         $id_quote = '';
-        // if ($post['req_action'] == '1') {
+        if ($post['req_action'] == '1') {
 
-        //     $get_kode_sales = $this->db->get_where('ms_kode_sales', ['id_sales' => $get_penawaran->id_marketing])->row();
-        //     $get_customer = $this->db->get('customers')->result();
+            $get_kode_sales = $this->db->get_where('ms_kode_sales', ['id_sales' => $get_penawaran->id_marketing])->row();
+            $get_customer = $this->db->get('customers')->result();
 
-        //     $this->db->select('a.*');
-        //     $this->db->from('ms_penawaran a');
-        //     $this->db->where('id_cust', $get_penawaran->id_cust);
-        //     $this->db->where('sts', 'approved');
-        //     $this->db->where('id_quote LIKE', '%' . date('Ymd') . '%');
-        //     $num_pesanan = $this->db->get()->num_rows();
+            $this->db->select('a.*');
+            $this->db->from('ms_penawaran a');
+            $this->db->where('id_cust', $get_penawaran->id_cust);
+            $this->db->where('sts', 'approved');
+            $this->db->where('id_quote LIKE', '%' . date('Ymd') . '%');
+            $num_pesanan = $this->db->get()->num_rows();
 
-        //     $jum_pesanan = sprintf('%02s', ($num_pesanan + 1));
+            $jum_pesanan = sprintf('%02s', ($num_pesanan + 1));
 
-        //     // print_r($jum_pesanan);
-        //     // exit;
+            // print_r($jum_pesanan);
+            // exit;
 
-        //     $kode_cust = '';
-        //     $x = 1;
-        //     foreach ($get_customer as $customer) :
-        //         if ($customer->id_customer == $get_penawaran->id_cust) {
-        //             $kode_cust = $x;
-        //         }
-        //         $x++;
-        //     endforeach;
+            $kode_cust = '';
+            $x = 1;
+            foreach ($get_customer as $customer) :
+                if ($customer->id_customer == $get_penawaran->id_cust) {
+                    $kode_cust = $x;
+                }
+                $x++;
+            endforeach;
 
 
-        //     $id_quote = 'G' . $get_kode_sales->kode_angka . $kode_cust . $jum_pesanan . date('Ymd');
-        // }
+            $id_quote = 'G-' . sprintf('%03s', $get_kode_sales->kode_angka) . '-' . $kode_cust . '-' . $jum_pesanan . '-' . date('Ymd');
+        }
 
         $get_customer = $this->db->get_where('customers', ['id_customer' => $get_penawaran->id_cust])->row();
 
@@ -342,6 +342,7 @@ class Req_app_penawaran extends Admin_Controller
 
         $this->db->trans_begin();
         $this->db->update('ms_penawaran', [
+            'id_quote' => $id_quote,
             'nilai_penawaran' => $get_total_harga->ttl_harga,
             'total' => $get_total_harga->ttl_harga,
             'disc_num' => $post['disc_val'],

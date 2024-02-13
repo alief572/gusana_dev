@@ -159,7 +159,7 @@
                         <td class="text-center"><?= $penawaran_detail->nm_product ?></td>
                         <td class="text-center"><?= $penawaran_detail->konversi ?> Kg</td>
                         <td class="text-center"><?= $penawaran_detail->ral_code ?></td>
-                        <td class="text-center"><?= $penawaran_detail->packaging ?></td>
+                        <td class="text-center"><?= $penawaran_detail->nm_packaging ?></td>
                         <td class="text-center"><?= $penawaran_detail->qty ?></td>
                         <td class="text-center"></td>
                     </tr>

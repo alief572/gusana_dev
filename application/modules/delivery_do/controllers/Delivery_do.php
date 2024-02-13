@@ -57,7 +57,7 @@ class Delivery_do extends Admin_Controller
                     id_do LIKE '%" . $string . "%' OR
                     DATE_FORMAT(tgl_create_do,'%d %M %Y') LIKE '%" . $string . "%' OR
                     id_quote LIKE '%" . $string . "%' OR
-                    DATE_FORMAT(tgl_create_so,'%d %M %Y')
+                    DATE_FORMAT(tgl_create_so,'%d %M %Y') LIKE '%" . $string . "%'
                 )
         ";
 
@@ -308,11 +308,16 @@ class Delivery_do extends Admin_Controller
             $pic_phone = $get_pic_phone->phone_number;
         }
 
-        $this->template->set([
+        // print_r($get_penawaran);
+
+        // $this->template->set([
+
+        // ]);
+
+        $this->load->view('view', [
             'data_penawaran' => $get_penawaran,
             'data_penawaran_detail' => $get_penawaran_detail,
             'pic_phone' => $pic_phone
         ]);
-        $this->template->render('view');
     }
 }
