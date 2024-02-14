@@ -281,17 +281,6 @@
                 <div class="modal-body">
                     <div class="row">
 
-
-
-
-
-
-
-
-
-
-
-
                     </div>
                     <div class="row">
                         <div class="col-6 row">
@@ -672,7 +661,6 @@
         $('.total_harga').val('');
 
         $('.keterangan').val('');
-        v
     });
 
     $(document).on('change', '.customer', function() {

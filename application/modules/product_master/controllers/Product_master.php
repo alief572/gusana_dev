@@ -1201,7 +1201,8 @@ class Product_master extends Admin_Controller
 				d.nama LIKE '%" . $string . "%' OR 
 				e.nm_packaging LIKE '%" . $string . "%' OR 
 				a.konversi LIKE '%" . $string . "%' OR 
-				a.unit_nm LIKE '%" . $string . "%'
+				a.unit_nm LIKE '%" . $string . "%' OR
+				CONCAT(a.id_category3, ' ', b.nama, ' ', c.nama, ' ', d.nama, ' ', a.nama, ' ', e.nm_packaging, ' ', a.konversi, ' ', a.unit_nm) LIKE '%" . $string . "%'
 			)
 		GROUP BY a.id_category3
 		";

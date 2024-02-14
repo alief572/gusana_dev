@@ -11,13 +11,13 @@ class Goods_release_order_model extends BF_Model
 {
     function generate_id($kode = '')
     {
-        $do = $this->db->query("SELECT MAX(id_do) AS max_id FROM ms_penawaran WHERE id_do LIKE '%DO-" . date('Ymd') . "-%'")->row();
+        $do = $this->db->query("SELECT MAX(id_do) AS max_id FROM ms_penawaran WHERE id_do LIKE '%GS" . date('Ym') . "%'")->row();
         $kodeBarang = $do->max_id;
-        $urutan = (int) substr($kodeBarang, 13, 5);
+        $urutan = (int) substr($kodeBarang, 8, 5);
         $urutan++;
-        $tahun = date('Ymd');
-        $huruf = "DO-";
-        $kodecollect = $huruf . $tahun . '-' . sprintf("%05s", $urutan);
+        $tahun = date('Ym');
+        $huruf = "GS";
+        $kodecollect = $huruf . $tahun . sprintf("%03s", $urutan);
         return $kodecollect;
     }
 }

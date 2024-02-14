@@ -187,12 +187,11 @@ $ENABLE_DELETE  = has_permission('So_Invoice.Delete');
             <th class="non-bordered"><?= $data_penawaran->nm_cust ?></th>
             <th class="non-bordered" style="min-width: 220px;">
                 <span>
-                    Nomor PO
-                    (订单号)
+                    Nomor DO (编号)
                 </span>
             </th>
             <th style="width:50px;text-align:center;">:</th>
-            <th class="non-bordered" style="min-width: 300px; max-width: 300px;"><?= $data_penawaran->id_quote ?></th>
+            <th class="non-bordered" style="min-width: 300px; max-width: 300px;"><?= $data_penawaran->id_do ?></th>
         </tr>
         <tr class="non-bordered">
             <th class="non-bordered" style="min-width: 220px;">
@@ -205,12 +204,12 @@ $ENABLE_DELETE  = has_permission('So_Invoice.Delete');
             <th class="non-bordered" style="min-width: 300px; max-width: 300px;"><?= $data_penawaran->address_cust ?></th>
             <th class="non-bordered" style="min-width: 220px;">
                 <span>
-                    Tanggal PO
-                    (订单日期)
+                    Nomor PO
+                    (订单号)
                 </span>
             </th>
             <th style="width:50px;text-align:center;">:</th>
-            <th class="non-bordered" style="min-width: 300px; max-width: 300px;"><?= $data_penawaran->tgl_penawaran ?></th>
+            <th class="non-bordered" style="min-width: 300px; max-width: 300px;"><?= $data_penawaran->id_quote ?></th>
         </tr>
         <tr class="non-bordered">
             <th class="non-bordered" style="min-width: 220px;">
@@ -224,24 +223,30 @@ $ENABLE_DELETE  = has_permission('So_Invoice.Delete');
             </th>
             <th class="non-bordered" style="min-width: 220px;">
                 <span>
+                    Tanggal PO
+                    (订单日期)
+                </span>
+            </th>
+            <th style="width:50px;text-align:center;">:</th>
+            <th class="non-bordered" style="min-width: 300px; max-width: 300px;"><?= $data_penawaran->tgl_penawaran ?></th>
+        </tr>
+        <tr class="non-bordered">
+            <th class="non-bordered" style="min-width: 220px;">
+                <span>
+                    Nomor Telp
+                    (联系电话)
+                </span>
+            </th>
+            <th style="width:50px;text-align:center;">:</th>
+            <th class="non-bordered" style="min-width: 300px; max-width: 300px;"><?= $data_penawaran->nm_pic_cust . ' (' . $pic_phone . ')' ?></th>
+            <th class="non-bordered" style="min-width: 220px;">
+                <span>
                     Tanggal Pengiriman
                     (发货日期)
                 </span>
             </th>
             <th style="width:50px;text-align:center;">:</th>
             <th class="non-bordered" style="min-width: 300px; max-width: 300px;"><?= $data_penawaran->deliver_date ?></th>
-        </tr>
-        <tr class="non-bordered">
-            <th class="non-bordered" style="min-width: 220px;">
-                <span>
-                    Nomor Kontak
-                    (联系电话)
-                </span>
-            </th>
-            <th style="width:50px;text-align:center;">:</th>
-            <th class="non-bordered" style="min-width: 300px; max-width: 300px;"><?= $data_penawaran->nm_pic_cust . ' (' . $pic_phone . ')' ?></th>
-            <th class="non-bordered" colspan="3">
-            </th>
         </tr>
     </table>
     <table class="w-100" style="width: 100%;" border="1">
@@ -292,7 +297,21 @@ $ENABLE_DELETE  = has_permission('So_Invoice.Delete');
                                 <td class="text-center" style="font-weight: bold;border: 1px solid black;font-size: 20px;">' . $x . '</td>
                                 <td class="text-center" style="font-weight: bold;border: 1px solid black;font-size: 20px;">' . $penawaran_detail->kode_product . '</td>
                                 <td class="text-center" style="font-weight: bold;border: 1px solid black;font-size: 20px;"><span>' . $penawaran_detail->nama_mandarin . '<br>' . $penawaran_detail->nm_product . '</span></td>
-                                <td class="text-center" style="font-weight: bold;border: 1px solid black;font-size: 20px;">' . round($penawaran_detail->konversi) . '/桶 <br> ' . $penawaran_detail->nm_packaging . '</td>
+                                <td class="text-center" style="font-weight: bold;border: 1px solid black;font-size: 20px;">
+                                
+                                ';
+
+                if ($penawaran_detail->nm_curing_agent !== '') {
+                    $get_product = $this->db->get_where('ms_product_category3', ['id_category3' => $penawaran_detail->id_product])->row();
+                    $get_curing_agent = $this->db->get_where('ms_product_category3', ['id_category3' => $get_product->curing_agent])->row();
+
+                    echo 'A : B ' . round($penawaran_detail->konversi - $get_curing_agent->konversi) . ' ' . $penawaran_detail->nm_packaging . ' : ' . $get_curing_agent->konversi . ' ' . $get_curing_agent->unit_nm . ' <br> ' . '(' . ($penawaran_detail->konversi + $get_curing_agent->konversi - $get_curing_agent->konversi) . ' ' . $penawaran_detail->unit_nm . ')';
+                } else {
+                    echo '' . round($penawaran_detail->konversi) . '/桶 <br> ' . $penawaran_detail->nm_packaging . '';
+                }
+
+                echo '          
+                                </td>
                                 <td class="text-center" style="font-weight: bold;border: 1px solid black;font-size: 20px;">' . $penawaran_detail->nm_packaging . '</td>
                                 <td class="text-center" style="font-weight: bold;border: 1px solid black;font-size: 20px;">' . number_format($get_qty_delivery->qty_delivery) . '</td>
                                 <td class="text-center" style="font-weight: bold;border: 1px solid black;font-size: 20px;">' . $penawaran_detail->kode_warna . '</td>

@@ -812,7 +812,7 @@ class Penawaran extends Admin_Controller
     {
         $produk = $this->input->post('produk');
 
-        $get_produk = $this->db->select('a.*, b.nm_packaging, c.nama as ral_code, d.nama curing_agent');
+        $get_produk = $this->db->select('a.*, a.curing_agent id_curing_agent, b.nm_packaging, c.nama as ral_code, d.nama curing_agent');
         $get_produk = $this->db->from('ms_product_category3 a');
         $get_produk = $this->db->join('master_packaging b', 'b.id = a.packaging', 'left');
         $get_produk = $this->db->join('ms_product_category2 c', 'c.id_category2 = a.id_category2', 'left');
@@ -861,11 +861,21 @@ class Penawaran extends Admin_Controller
 
         $free_stock -= $booking_stock->ttl_booking;
 
+        $konversi = $get_produk->konversi;
+        if ($get_produk->id_curing_agent !== '') {
+            $get_curing_agent = $this->db->query('SELECT konversi FROM ms_product_category3 WHERE id_category3 = "' . $get_produk->id_curing_agent . '"')->row();
+
+            // print_r($get_produk->id_curing_agent);
+            // exit;
+
+            $konversi += $get_curing_agent->konversi;
+        }
+
         echo json_encode([
             'list_lot_size' => $list_lot_size,
             'kode_produk' => $get_produk->product_code,
-            'konversi' => $get_produk->konversi,
-            'spesifikasi_kemasan' => $get_produk->konversi . ' ' . $get_produk->unit_nm,
+            'konversi' => $konversi,
+            'spesifikasi_kemasan' => $konversi . ' ' . $get_produk->unit_nm,
             'ral_code' => $get_produk->ral_code,
             'free_stock' => $free_stock,
             'unit_nm' => $get_produk->nm_packaging,
@@ -914,8 +924,17 @@ class Penawaran extends Admin_Controller
         $qty_detail = $this->input->post('qty');
 
         $get_produk = $this->db->get_where('ms_product_category3', ['id_category3' => $produk_detail])->row();
+        $konversi = $get_produk->konversi;
+        if ($get_produk->curing_agent !== '') {
+            $get_curing_agent = $this->db->query('SELECT konversi FROM ms_product_category3 WHERE id_category3 = "' . $get_produk->curing_agent . '"')->row();
 
-        $weight = ($qty_detail * $get_produk->konversi);
+            // print_r($get_produk->id_curing_agent);
+            // exit;
+
+            $konversi += $get_curing_agent->konversi;
+        }
+
+        $weight = ($qty_detail * $konversi);
 
         echo json_encode(['weight' => $weight, 'weight_form' => number_format($weight, 2)]);
     }
@@ -1267,6 +1286,13 @@ class Penawaran extends Admin_Controller
         $get_produk = $this->db->where(['a.id_category3' => $produk_detail]);
         $get_produk = $this->db->get()->row();
 
+        $konversi = $get_produk->konversi;
+        if ($get_produk->curing_agent !== '') {
+            $get_curing_agent = $this->db->get_where('ms_product_category3', ['id_category3' => $get_produk->curing_agent])->row();
+
+            $konversi += $get_curing_agent->konversi;
+        }
+
         $this->db->select('a.nama');
         $this->db->from('ms_product_category3 a');
         $this->db->where('a.nama =', $supporting_curing_agent);
@@ -1316,13 +1342,13 @@ class Penawaran extends Admin_Controller
                     'id_product' => $produk_detail,
                     'nm_product' => $get_produk->nama,
                     'kode_product' => $get_produk->product_code,
-                    'konversi' => $get_produk->konversi,
+                    'konversi' => $konversi,
                     'packaging' => $get_produk->nm_packaging,
                     'ral_code' => $get_produk->ral_code,
                     'qty' => $qty_detail,
-                    'weight' => ($qty_detail * $get_produk->konversi),
+                    'weight' => ($qty_detail * $konversi),
                     'harga_satuan' => $price_list,
-                    'total_harga' => ($price_list * ($qty_detail * $get_produk->konversi)),
+                    'total_harga' => ($price_list * ($qty_detail * $konversi)),
                     'lot_size' => $get_qty_hopper->qty_hopper,
                     'keterangan' => $keterangan,
                     'keterangan' => $keterangan,
@@ -1337,13 +1363,13 @@ class Penawaran extends Admin_Controller
                     'id_product' => $produk_detail,
                     'nm_product' => $get_produk->nama,
                     'kode_product' => $get_produk->product_code,
-                    'konversi' => $get_produk->konversi,
+                    'konversi' => $konversi,
                     'packaging' => $get_produk->nm_packaging,
                     'ral_code' => $get_produk->ral_code,
                     'qty' => $qty_detail,
-                    'weight' => ($qty_detail * $get_produk->konversi),
+                    'weight' => ($qty_detail * $konversi),
                     'harga_satuan' => $price_list,
-                    'total_harga' => ($price_list * ($qty_detail * $get_produk->konversi)),
+                    'total_harga' => ($price_list * ($qty_detail * $konversi)),
                     'keterangan' => $keterangan,
                     'keterangan' => $keterangan,
                     'id_curing_agent' => $supporting_curing_agent,
@@ -1361,13 +1387,13 @@ class Penawaran extends Admin_Controller
                     'id_product' => $produk_detail,
                     'nm_product' => $get_produk->nama,
                     'kode_product' => $get_produk->product_code,
-                    'konversi' => $get_produk->konversi,
+                    'konversi' => $konversi,
                     'packaging' => $get_produk->nm_packaging,
                     'ral_code' => $get_produk->ral_code,
                     'qty' => $qty_detail,
-                    'weight' => ($qty_detail * $get_produk->konversi),
+                    'weight' => ($qty_detail * $konversi),
                     'harga_satuan' => $price_list,
-                    'total_harga' => ($price_list * ($qty_detail * $get_produk->konversi)),
+                    'total_harga' => ($price_list * ($qty_detail * $konversi)),
                     'free_stock' => $free_stock,
                     'lot_size' => $get_qty_hopper->qty_hopper,
                     'keterangan' => $keterangan,
@@ -1384,13 +1410,13 @@ class Penawaran extends Admin_Controller
                     'id_product' => $produk_detail,
                     'nm_product' => $get_produk->nama,
                     'kode_product' => $get_produk->product_code,
-                    'konversi' => $get_produk->konversi,
+                    'konversi' => $konversi,
                     'packaging' => $get_produk->nm_packaging,
                     'ral_code' => $get_produk->ral_code,
                     'qty' => $qty_detail,
-                    'weight' => ($qty_detail * $get_produk->konversi),
+                    'weight' => ($qty_detail * $konversi),
                     'harga_satuan' => $price_list,
-                    'total_harga' => ($price_list * ($qty_detail * $get_produk->konversi)),
+                    'total_harga' => ($price_list * ($qty_detail * $konversi)),
                     'free_stock' => $free_stock,
                     'keterangan' => $keterangan,
                     'id_curing_agent' => $supporting_curing_agent,

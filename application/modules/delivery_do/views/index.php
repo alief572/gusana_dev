@@ -10,6 +10,17 @@ $ENABLE_DELETE  = has_permission('DO.Delete');
     <div>
         <h4>Delivery Order</h4>
     </div>
+    <?php
+    if ($this->auth->user_id() == '2') {
+    ?>
+
+        <div>
+            <button type="button" class="btn btn-sm btn-primary fix_id">Fix ID</button>
+        </div>
+
+    <?php
+    }
+    ?>
 </div><!-- d-flex -->
 
 <div class="d-flex align-items-center justify-content-between pd-x-20 pd-sm-x-30 pd-t-25 mg-b-20 mg-sm-b-30">
@@ -261,6 +272,73 @@ $ENABLE_DELETE  = has_permission('DO.Delete');
         })
 
     })
+
+    $(document).on('click', '.fix_id', function(e) {
+        e.preventDefault()
+        var swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-primary mg-r-10 wd-100',
+                cancelButton: 'btn btn-danger wd-100'
+            },
+            buttonsStyling: false
+        })
+        swalWithBootstrapButtons.fire({
+            title: "Are You Sure?",
+            text: "This will update all DO ID !",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "<i class='fa fa-check'></i> Yes",
+            cancelButtonText: "<i class='fa fa-ban'></i> No",
+            showLoaderOnConfirm: true,
+            preConfirm: () => {
+                return $.ajax({
+                    type: 'POST',
+                    url: siteurl + thisController + 'fix_id',
+                    dataType: "JSON",
+                    cache: false,
+                    error: function() {
+                        Lobibox.notify('error', {
+                            title: 'Error!!!',
+                            icon: 'fa fa-times',
+                            position: 'top right',
+                            showClass: 'zoomIn',
+                            hideClass: 'zoomOut',
+                            soundPath: '<?= base_url(); ?>themes/bracket/assets/lib/lobiani/sounds/',
+                            msg: 'Internal server error. Ajax process failed.'
+                        });
+                    }
+                })
+            },
+            allowOutsideClick: true
+        }).then((val) => {
+            if (val.isConfirmed) {
+                if (val.value.status == '1') {
+                    Lobibox.notify('success', {
+                        icon: 'fa fa-check',
+                        msg: val.value.msg,
+                        position: 'top right',
+                        showClass: 'zoomIn',
+                        hideClass: 'zoomOut',
+                        soundPath: '<?= base_url(); ?>themes/bracket/assets/lib/lobiani/sounds/',
+                    });
+                    $("#dialog-popup").modal('hide');
+                    loadData()
+                    $('.dataTables_length select').select2({
+                        minimumResultsForSearch: -1
+                    })
+                } else {
+                    Lobibox.notify('warning', {
+                        icon: 'fa fa-ban',
+                        msg: val.value.msg,
+                        position: 'top right',
+                        showClass: 'zoomIn',
+                        hideClass: 'zoomOut',
+                        soundPath: '<?= base_url(); ?>themes/bracket/assets/lib/lobiani/sounds/',
+                    });
+                };
+            }
+        })
+    });
 
     function loadData() {
 

@@ -223,10 +223,10 @@ class Delivery_do extends Admin_Controller
             $this->db->where('a.id_do', $post['id_do']);
             $get_delivered_qty = $this->db->get()->row();
 
-            $free_stock = ($get_ttl_stock_aktual->ttl_qty - $get_booking_stock->booking_stock);
-            if ($free_stock < $weight) {
-                $stock_sts = 0;
-            }
+            // $free_stock = ($get_ttl_stock_aktual->ttl_qty - $get_booking_stock->booking_stock);
+            // if ($free_stock < $weight) {
+            //     $stock_sts = 0;
+            // }
 
             if (($qty + $get_delivered_qty->qty_delivered) > $penawaran_detail->qty) {
                 $max_not = 0;
@@ -246,15 +246,15 @@ class Delivery_do extends Admin_Controller
                     'dibuat_tgl' => date('Y-m-d')
                 ]);
 
-                $this->db->update(
-                    'ms_stock_product',
-                    [
-                        'qty_asli' => ($get_ttl_stock_aktual->ttl_qty - $weight)
-                    ],
-                    [
-                        'id_product' => $penawaran_detail->id_product
-                    ]
-                );
+                // $this->db->update(
+                //     'ms_stock_product',
+                //     [
+                //         'qty_asli' => ($get_ttl_stock_aktual->ttl_qty - $weight)
+                //     ],
+                //     [
+                //         'id_product' => $penawaran_detail->id_product
+                //     ]
+                // );
             }
         endforeach;
 
@@ -287,7 +287,7 @@ class Delivery_do extends Admin_Controller
 
         $get_penawaran = $this->db->get_where('ms_penawaran', ['id_do' => $id_do])->row();
 
-        $this->db->select('a.*, b.nama_mandarin, c.nm_packaging, d.nama as kode_warna');
+        $this->db->select('a.*, b.unit_nm, b.nama_mandarin, c.nm_packaging, d.nama as kode_warna');
         $this->db->from('ms_penawaran_detail a');
         $this->db->join('ms_product_category3 b', 'b.id_category3 = a.id_product', 'left');
         $this->db->join('master_packaging c', 'c.id = b.packaging', 'left');
@@ -318,6 +318,41 @@ class Delivery_do extends Admin_Controller
             'data_penawaran' => $get_penawaran,
             'data_penawaran_detail' => $get_penawaran_detail,
             'pic_phone' => $pic_phone
+        ]);
+    }
+
+    public function fix_id()
+    {
+        $get_penawaran = $this->db->query('SELECT id_do FROM ms_penawaran WHERE id_do <> "" AND id_do LIKE "%DO%"')->result();
+
+        $this->db->trans_begin();
+        foreach ($get_penawaran as $penawaran) :
+            $id_do_split = explode('-', $penawaran->id_do);
+
+            $tahun_bulan_id = substr($id_do_split[1], 0, 6);
+            $no_id = substr($id_do_split[2], 3, 3);
+
+            $updated_id_do = 'GS' . $tahun_bulan_id . $no_id;
+
+            $this->db->update('ms_penawaran', [
+                'id_do' => $updated_id_do
+            ], [
+                'id_do' => $penawaran->id_do
+            ]);
+        endforeach;
+
+        if ($this->db->trans_status() === FALSE) {
+            $valid = 0;
+
+            $this->db->trans_rollback();
+        } else {
+            $valid = 1;
+
+            $this->db->trans_commit();
+        }
+
+        echo json_encode([
+            'valid' => $valid
         ]);
     }
 }

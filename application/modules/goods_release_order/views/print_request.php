@@ -1,44 +1,67 @@
+<style>
+    .dn {
+        position: fixed;
+    }
+
+    .nd {
+        margin-top: 65%;
+        position: fixed;
+    }
+
+    @media print {
+        .dn {
+            position: fixed;
+        }
+
+        .nd {
+            margin-top: 65%;
+            position: fixed;
+        }
+    }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 <div class="container-fluid" id="printableDiv">
-    <div class="col-12 text-center">
-        <h5 style="font-weight: bold;">产品出库申请单</h5> <br>
-        <h5 style="font-weight: bold;">PERMINTAAN BARANG KELUAR GUDANG</h5>
-    </div>
-    <div class="col-12">
-        <table class="w-100">
-            <tr>
-                <th>
-                    <span>
-                        销售员 <br>
-                        Sales
-                    </span>
-                </th>
-                <th style="vertical-align:top;">:</th>
-                <th style="vertical-align:top;"><?= $penawaran->nm_marketing ?></th>
-                <th>
-                    <span>
-                        编号 <br>
-                        No Seri
-                    </span>
-                </th>
-                <th style="vertical-align:top;">:</th>
-                <th style="vertical-align:top;"><?= $penawaran->id_ppb ?></th>
-            </tr>
-            <?php
-            if ($penawaran->tgl_create_do !== null) {
-                echo '
+    <div class="dn">
+        <div class="col-12 text-center">
+            <h5 style="font-weight: bold;">产品出库申请单</h5> <br>
+            <h5 style="font-weight: bold;">PERMINTAAN BARANG KELUAR GUDANG</h5>
+        </div>
+        <div class="col-12">
+            <table class="w-100">
                 <tr>
                     <th>
                         <span>
-                            客户名称 <br>
-                            Cust Name
+                            Sales
+                            (销售员)
+                        </span>
+                    </th>
+                    <th style="vertical-align:top;">:</th>
+                    <th style="vertical-align:top;"><?= $penawaran->nm_marketing ?></th>
+                    <th>
+                        <span>
+                            No Seri
+                            (编号)
+                        </span>
+                    </th>
+                    <th style="vertical-align:top;">:</th>
+                    <th style="vertical-align:top;"><?= $penawaran->id_ppb ?></th>
+                </tr>
+                <?php
+                if ($penawaran->tgl_create_do !== null) {
+                    echo '
+                <tr>
+                    <th>
+                        <span>
+                        Cust Name
+                        (客户名称)
                         </span>
                     </th>
                     <th style="vertical-align:top;">:</th>
                     <th style="vertical-align:top;">' . $penawaran->nm_cust . '</th>
                     <th>
                         <span>
-                            送货单号 <br>
-                            No. Surat Jalan
+                        No. Surat Jalan
+                        (送货单号)
                         </span>
                     </th>
                     <th style="vertical-align:top;">:</th>
@@ -47,37 +70,37 @@
                 <tr>
                     <th>
                         <span>
-                            合同号 <br>
-                            No Kontrak
+                        No Kontrak
+                        (合同号)
                         </span>
                     </th>
                     <th style="vertical-align:top;">:</th>
                     <th style="vertical-align:top;">' . $penawaran->id_penawaran . '</th>
                     <th>
                         <span>
-                            交货日期 <br>
-                            Tgl Pengiriman
+                        Tgl Pengiriman
+                        (交货日期)
                         </span>
                     </th>
                     <th style="vertical-align:top;">:</th>
                     <th style="vertical-align:top;">' . $penawaran->deliver_date . '</th>
                 </tr>
                 ';
-            } else {
-                echo '
+                } else {
+                    echo '
                         <tr>
                             <th>
                                 <span>
-                                    客户名称 <br>
-                                    Cust Name
+                                Cust Name
+                                (客户名称)
                                 </span>
                             </th>
                             <th style="vertical-align:top;">:</th>
                             <th style="vertical-align:top;">' . $penawaran->nm_cust . '</th>
                             <th>
                                 <span>
-                                    交货日期 <br>
-                                    Tgl Pengiriman
+                                Tgl Pengiriman
+                                (交货日期)
                                 </span>
                             </th>
                             <th style="vertical-align:top;">:</th>
@@ -86,108 +109,346 @@
                         <tr>
                             <th>
                                 <span>
-                                    合同号 <br>
-                                    No Kontrak
+                                No Kontrak
+                                (合同号)
                                 </span>
                             </th>
                             <th style="vertical-align:top;">:</th>
                             <th style="vertical-align:top;">' . $penawaran->id_penawaran . '</th>
                         </tr>
                     ';
-            }
-            ?>
-        </table>
-    </div>
-    <div class="col-12 mt-15">
-        <table class="w-100 mt-15" border="1">
-            <thead>
-                <th class="text-center">
-                    <span>
-                        序号 <br>
-                        No
-                    </span>
-                </th>
-                <th class="text-center">
-                    <span>
-                        产品型号 <br>
-                        Kode Produk
-                    </span>
-                </th>
-                <th class="text-center">
-                    <span>
-                        产品名称 <br>
-                        Nama Barang
-                    </span>
-                </th>
-                <th class="text-center">
-                    <span>
-                        包装规格 <br>
-                        Spek Kemasan (Kg/Kaleng)
-                    </span>
-                </th>
-                <th class="text-center">
-                    <span>
-                        色卡 <br>
-                        RAL Code
-                    </span>
-                </th>
-                <th class="text-center">
-                    <span>
-                        单位 <br>
-                        Unit
-                    </span>
-                </th>
-                <th class="text-center">
-                    <span>
-                        数量 <br>
-                        Jumlah
-                    </span>
-                </th>
-                <th class="text-center">
-                    <span>
-                        生产日期 <br>
-                        Tgl Produksi
-                    </span>
-                </th>
-            </thead>
-            <tbody>
-                <?php $x = 0;
-                foreach ($list_penawaran_detail as $penawaran_detail) : $x++; ?>
-                    <tr>
-                        <td class="text-center"><?= $x ?></td>
-                        <td class="text-center"><?= $penawaran_detail->kode_product ?></td>
-                        <td class="text-center"><?= $penawaran_detail->nm_product ?></td>
-                        <td class="text-center"><?= $penawaran_detail->konversi ?> Kg</td>
-                        <td class="text-center"><?= $penawaran_detail->ral_code ?></td>
-                        <td class="text-center"><?= $penawaran_detail->nm_packaging ?></td>
-                        <td class="text-center"><?= $penawaran_detail->qty ?></td>
-                        <td class="text-center"></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+                }
+                ?>
+            </table>
+        </div>
+        <div class="col-12 mt-15">
+            <table class="w-100 mt-15" border="1">
+                <thead>
+                    <th class="text-center">
+                        <span>
+                            序号 <br>
+                            No
+                        </span>
+                    </th>
+                    <th class="text-center">
+                        <span>
+                            产品型号 <br>
+                            Kode Produk
+                        </span>
+                    </th>
+                    <th class="text-center">
+                        <span>
+                            产品名称 <br>
+                            Nama Barang
+                        </span>
+                    </th>
+                    <th class="text-center">
+                        <span>
+                            包装规格 <br>
+                            Spek Kemasan (Kg/Kaleng)
+                        </span>
+                    </th>
+                    <th class="text-center">
+                        <span>
+                            色卡 <br>
+                            RAL Code
+                        </span>
+                    </th>
+                    <th class="text-center">
+                        <span>
+                            单位 <br>
+                            Unit
+                        </span>
+                    </th>
+                    <th class="text-center">
+                        <span>
+                            数量 <br>
+                            Jumlah
+                        </span>
+                    </th>
+                    <th class="text-center">
+                        <span>
+                            生产日期 <br>
+                            Tgl Produksi
+                        </span>
+                    </th>
+                </thead>
+                <tbody>
+                    <?php $x = 1;
+                    foreach ($list_penawaran_detail as $penawaran_detail) :  ?>
+                        <?php
+                        if ($penawaran_detail->nm_curing_agent !== '') {
+                        ?>
+
+                            <tr>
+                                <td class="text-center"><?= $x ?></td>
+                                <td class="text-center"><?= $penawaran_detail->kode_product ?></td>
+                                <td class="text-center"><?= $penawaran_detail->nm_product ?></td>
+                                <td class="text-center"><?= $penawaran_detail->konversi ?> Kg</td>
+                                <td class="text-center"><?= $penawaran_detail->ral_code ?></td>
+                                <td class="text-center"><?= $penawaran_detail->nm_packaging ?></td>
+                                <td class="text-center"><?= $penawaran_detail->qty ?></td>
+                                <td class="text-center"></td>
+                            </tr>
+
+                            <?php
+
+                            $x++;
+
+                            $get_curing_agent = $this->db->query("SELECT a.*, b.nama as ral_code, c.nm_packaging FROM ms_product_category3 a LEFT JOIN ms_product_category2 b ON b.id_category2 = a.id_category2 LEFT JOIN master_packaging c ON c.id = a.packaging WHERE a.id_category3 = '" . $penawaran_detail->curing_agent . "'")->row();
+
+                            ?>
+
+                            <tr>
+                                <td class="text-center"><?= $x ?></td>
+                                <td class="text-center"><?= $get_curing_agent->product_code ?></td>
+                                <td class="text-center"><?= $get_curing_agent->nama ?></td>
+                                <td class="text-center"><?= $get_curing_agent->konversi ?> Kg</td>
+                                <td class="text-center"><?= $get_curing_agent->ral_code ?></td>
+                                <td class="text-center"><?= $get_curing_agent->nm_packaging ?></td>
+                                <td class="text-center"><?= $penawaran_detail->qty ?></td>
+                                <td class="text-center"></td>
+                            </tr>
+
+                        <?php
+                            $x++;
+                        } else {
+                        ?>
+
+                            <tr>
+                                <td class="text-center"><?= $x ?></td>
+                                <td class="text-center"><?= $penawaran_detail->kode_product ?></td>
+                                <td class="text-center"><?= $penawaran_detail->nm_product ?></td>
+                                <td class="text-center"><?= $penawaran_detail->konversi ?> Kg</td>
+                                <td class="text-center"><?= $penawaran_detail->ral_code ?></td>
+                                <td class="text-center"><?= $penawaran_detail->nm_packaging ?></td>
+                                <td class="text-center"><?= $penawaran_detail->qty ?></td>
+                                <td class="text-center"></td>
+                            </tr>
+                    <?php
+                            $x++;
+                        }
+                    endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-</div>
-<div class="col-12 text-right" style="margin-top: 1.5vh;">
-    <button type="button" class="btn btn-sm btn-info" onclick="printDiv('printableDiv')">Print</button>
+    <div class="nd">
+        <div class="col-12 text-center">
+            <h5 style="font-weight: bold;">产品出库申请单</h5> <br>
+            <h5 style="font-weight: bold;">PERMINTAAN BARANG KELUAR GUDANG</h5>
+        </div>
+        <div class="col-12">
+            <table class="w-100">
+                <tr>
+                    <th>
+                        <span>
+                            Sales
+                            (销售员)
+                        </span>
+                    </th>
+                    <th style="vertical-align:top;">:</th>
+                    <th style="vertical-align:top;"><?= $penawaran->nm_marketing ?></th>
+                    <th>
+                        <span>
+                            No Seri
+                            (编号)
+                        </span>
+                    </th>
+                    <th style="vertical-align:top;">:</th>
+                    <th style="vertical-align:top;"><?= $penawaran->id_ppb ?></th>
+                </tr>
+                <?php
+                if ($penawaran->tgl_create_do !== null) {
+                    echo '
+                <tr>
+                    <th>
+                        <span>
+                        Cust Name
+                        (客户名称)
+                        </span>
+                    </th>
+                    <th style="vertical-align:top;">:</th>
+                    <th style="vertical-align:top;">' . $penawaran->nm_cust . '</th>
+                    <th>
+                        <span>
+                        No. Surat Jalan
+                        (送货单号)
+                        </span>
+                    </th>
+                    <th style="vertical-align:top;">:</th>
+                    <th style="vertical-align:top;">' . $penawaran->id_do . '</th>
+                </tr>
+                <tr>
+                    <th>
+                        <span>
+                        No Kontrak
+                        (合同号)
+                        </span>
+                    </th>
+                    <th style="vertical-align:top;">:</th>
+                    <th style="vertical-align:top;">' . $penawaran->id_penawaran . '</th>
+                    <th>
+                        <span>
+                        Tgl Pengiriman
+                        (交货日期)
+                        </span>
+                    </th>
+                    <th style="vertical-align:top;">:</th>
+                    <th style="vertical-align:top;">' . $penawaran->deliver_date . '</th>
+                </tr>
+                ';
+                } else {
+                    echo '
+                        <tr>
+                            <th>
+                                <span>
+                                Cust Name
+                                (客户名称)
+                                </span>
+                            </th>
+                            <th style="vertical-align:top;">:</th>
+                            <th style="vertical-align:top;">' . $penawaran->nm_cust . '</th>
+                            <th>
+                                <span>
+                                Tgl Pengiriman
+                                (交货日期)
+                                </span>
+                            </th>
+                            <th style="vertical-align:top;">:</th>
+                            <th style="vertical-align:top;">' . $penawaran->deliver_date . '</th>
+                        </tr>
+                        <tr>
+                            <th>
+                                <span>
+                                No Kontrak
+                                (合同号)
+                                </span>
+                            </th>
+                            <th style="vertical-align:top;">:</th>
+                            <th style="vertical-align:top;">' . $penawaran->id_penawaran . '</th>
+                        </tr>
+                    ';
+                }
+                ?>
+            </table>
+        </div>
+        <div class="col-12 mt-15">
+            <table class="w-100 mt-15" border="1">
+                <thead>
+                    <th class="text-center">
+                        <span>
+                            序号 <br>
+                            No
+                        </span>
+                    </th>
+                    <th class="text-center">
+                        <span>
+                            产品型号 <br>
+                            Kode Produk
+                        </span>
+                    </th>
+                    <th class="text-center">
+                        <span>
+                            产品名称 <br>
+                            Nama Barang
+                        </span>
+                    </th>
+                    <th class="text-center">
+                        <span>
+                            包装规格 <br>
+                            Spek Kemasan (Kg/Kaleng)
+                        </span>
+                    </th>
+                    <th class="text-center">
+                        <span>
+                            色卡 <br>
+                            RAL Code
+                        </span>
+                    </th>
+                    <th class="text-center">
+                        <span>
+                            单位 <br>
+                            Unit
+                        </span>
+                    </th>
+                    <th class="text-center">
+                        <span>
+                            数量 <br>
+                            Jumlah
+                        </span>
+                    </th>
+                    <th class="text-center">
+                        <span>
+                            生产日期 <br>
+                            Tgl Produksi
+                        </span>
+                    </th>
+                </thead>
+                <tbody>
+                    <?php $x = 1;
+                    foreach ($list_penawaran_detail as $penawaran_detail) :  ?>
+                        <?php
+                        if ($penawaran_detail->nm_curing_agent !== '') {
+                        ?>
+
+                            <tr>
+                                <td class="text-center"><?= $x ?></td>
+                                <td class="text-center"><?= $penawaran_detail->kode_product ?></td>
+                                <td class="text-center"><?= $penawaran_detail->nm_product ?></td>
+                                <td class="text-center"><?= $penawaran_detail->konversi ?> Kg</td>
+                                <td class="text-center"><?= $penawaran_detail->ral_code ?></td>
+                                <td class="text-center"><?= $penawaran_detail->nm_packaging ?></td>
+                                <td class="text-center"><?= $penawaran_detail->qty ?></td>
+                                <td class="text-center"></td>
+                            </tr>
+
+                            <?php
+
+                            $x++;
+
+                            $get_curing_agent = $this->db->query("SELECT a.*, b.nama as ral_code, c.nm_packaging FROM ms_product_category3 a LEFT JOIN ms_product_category2 b ON b.id_category2 = a.id_category2 LEFT JOIN master_packaging c ON c.id = a.packaging WHERE a.id_category3 = '" . $penawaran_detail->curing_agent . "'")->row();
+
+                            ?>
+
+                            <tr>
+                                <td class="text-center"><?= $x ?></td>
+                                <td class="text-center"><?= $get_curing_agent->product_code ?></td>
+                                <td class="text-center"><?= $get_curing_agent->nama ?></td>
+                                <td class="text-center"><?= $get_curing_agent->konversi ?> Kg</td>
+                                <td class="text-center"><?= $get_curing_agent->ral_code ?></td>
+                                <td class="text-center"><?= $get_curing_agent->nm_packaging ?></td>
+                                <td class="text-center"><?= $penawaran_detail->qty ?></td>
+                                <td class="text-center"></td>
+                            </tr>
+
+                        <?php
+                            $x++;
+                        } else {
+                        ?>
+
+                            <tr>
+                                <td class="text-center"><?= $x ?></td>
+                                <td class="text-center"><?= $penawaran_detail->kode_product ?></td>
+                                <td class="text-center"><?= $penawaran_detail->nm_product ?></td>
+                                <td class="text-center"><?= $penawaran_detail->konversi ?> Kg</td>
+                                <td class="text-center"><?= $penawaran_detail->ral_code ?></td>
+                                <td class="text-center"><?= $penawaran_detail->nm_packaging ?></td>
+                                <td class="text-center"><?= $penawaran_detail->qty ?></td>
+                                <td class="text-center"></td>
+                            </tr>
+                    <?php
+                            $x++;
+                        }
+                    endforeach;
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <script>
-    function printDiv(divId) {
-        var printContents = document.getElementById(divId).innerHTML;
-        var originalContents = document.body.innerHTML;
-
-        document.body.innerHTML = printContents;
-
-        window.print();
-
-        document.body.innerHTML = originalContents;
-    }
-    $(document).ready(function() {
-        $(".chosen-select").select2();
-        $(".autonum").autoNumeric();
-
-
-    });
+    window.print();
 </script>
