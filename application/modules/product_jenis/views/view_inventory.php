@@ -36,6 +36,11 @@ $ENABLE_DELETE  = has_permission('Level_3.Delete');
 							<th><?= $result['cust']->nama; ?></th>
 						</tr>
 						<tr>
+							<th>Product Jenis (Mandarin)</th>
+							<th>:</th>
+							<th><?= $result['cust']->nama_mandarin; ?></th>
+						</tr>
+						<tr>
 							<th>Aktif / Non Aktif</th>
 							<th>:</th>
 							<th><?= $result['status']; ?></th>

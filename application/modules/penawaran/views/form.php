@@ -86,6 +86,10 @@
                     <option value="0" <?= (isset($data_penawaran) && $data_penawaran->ppn_type == 0) ? 'selected' : null ?>>Non PPN</option>
                 </select>
             </div>
+            <div class="col-6">
+                <label for="">Remarks</label>
+                <textarea name="keterangan" id="" cols="30" rows="5" class="form-control"><?= (isset($data_penawaran)) ? $data_penawaran->keterangan : null ?></textarea>
+            </div>
         </div>
 
         <div class="col-12">
@@ -251,7 +255,7 @@
         <div class="col-5 <?= (isset($request_approval) && $request_approval == 1) ? '' : 'd-none' ?>">
             <div class="form-group">
                 <label>Keterangan Request Approval</label>
-                <textarea name="keterangan" class="form-control " cols="10" rows="10"></textarea>
+                <textarea name="keterangan_request_approval" class="form-control " cols="10" rows="10"></textarea>
             </div>
         </div>
         <div class="text-right">
@@ -354,7 +358,7 @@
                                 </span>
                             </div>
                             <div class="col-8" style="margin-top: 10px;">
-                                <textarea name="keterangan" id="" cols="30" rows="5" class="form-control form-control-sm keterangan"></textarea>
+                                <textarea name="" id="" cols="30" rows="5" class="form-control form-control-sm keterangan"></textarea>
                             </div>
                         </div>
                         <div class="col-6 row">
@@ -530,7 +534,7 @@
             cache: false,
             dataType: 'json',
             success: function(result) {
-                console.log(result);
+                // console.log(result);
                 $('.total_harga').val(result.total_harga2);
             }
         });

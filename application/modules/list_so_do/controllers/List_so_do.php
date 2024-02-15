@@ -214,7 +214,6 @@ class List_so_do extends Admin_Controller
         $this->db->trans_begin();
 
         $this->db->update('ms_penawaran', [
-            'id_ppb' => $id_ppb,
             'sts_ppb' => 'ppb_created',
             'tgl_create_ppb' => date('Y-m-d'),
             'create_ppb_user' => $this->auth->user_id()

@@ -56,7 +56,8 @@ class Penawaran extends Admin_Controller
             nm_marketing LIKE '%$string%' OR
             nilai_penawaran LIKE '%$string%' OR
             tgl_penawaran LIKE '%$string%' OR
-            revisi LIKE '%$string%'
+            revisi LIKE '%$string%' OR
+            keterangan LIKE '%$string%'
         )";
 
         $totalData = $this->db->query($sql)->num_rows();
@@ -67,7 +68,7 @@ class Penawaran extends Admin_Controller
             1 => 'id_penawaran'
         );
 
-        $sql .= " ORDER BY " . $columns_order_by[$column] . " " . $dir . " ";
+        $sql .= " ORDER BY dibuat_tgl DESC ";
         $sql .= " LIMIT " . $start . " ," . $length . " ";
         $query  = $this->db->query($sql);
 
@@ -187,11 +188,11 @@ class Penawaran extends Admin_Controller
         if ($this->uri->segment(3) == 'new') {
             $id_penawaran = $this->auth->user_id();
         } else {
-            $id_penawaran = str_replace('-', '/', $id_penawaran);
-            $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+            // $id_penawaran = str_replace('-', '/', $id_penawaran);
+            // $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
         }
 
-        $get_cust = $this->db->get('customers')->result();
+        $get_cust = $this->db->get_where('customers', ['deleted_by' => null])->result();
         $get_produk = $this->db->get_where('ms_product_category3', ['aktif' => 1])->result();
         $get_sales = $this->db->get_where('employees', ['deleted_at' => null])->result();
 
@@ -199,6 +200,7 @@ class Penawaran extends Admin_Controller
         $this->db->from('ms_penawaran_detail a');
         $this->db->join('ms_product_category3 b', 'b.id_category3 = a.id_product', 'left');
         $this->db->where('a.id_penawaran', $id_penawaran);
+        $this->db->order_by('a.id ASC');
         $get_penawaran_detail = $this->db->get()->result();
 
         $this->db->select('SUM(a.total_harga) AS ttl_harga');
@@ -249,7 +251,7 @@ class Penawaran extends Admin_Controller
         $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id])->row();
         $get_penawaran_detail = $this->db->get_where('ms_penawaran_detail', ['id_penawaran' => $id])->result();
 
-        $get_cust = $this->db->get('customers')->result();
+        $get_cust = $this->db->get_where('customers', ['deleted_by' => null])->result();
         $get_produk = $this->db->get_where('ms_product_category3', ['aktif' => 1])->result();
         $get_sales = $this->db->get_where('employees', ['deleted_at' => null])->result();
 
@@ -276,8 +278,8 @@ class Penawaran extends Admin_Controller
     public function view($id)
     {
         $this->auth->restrict($this->managePermission);
-        $id = str_replace('-', '/', $id);
-        $id = str_replace('SP/', 'SP-', $id);
+        // $id = str_replace('-', '/', $id);
+        // $id = str_replace('SP/', 'SP-', $id);
 
         $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id])->row();
         // echo '<pre>';
@@ -311,17 +313,16 @@ class Penawaran extends Admin_Controller
 
         $this->db->trans_begin();
         if (isset($post['loss_penawaran'])) {
-            $id_penawaran = str_replace('-', '/', $post['id_penawaran']);
-            $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+            $id_penawaran = $post['id_penawaran'];
 
             $this->db->update('ms_penawaran', ['sts' => 'loss', 'loss_date' => date('Y-m-d H:i:s'), 'keterangan_app' => $post['keterangan_loss']], ['id_penawaran' => $id_penawaran]);
         } else if (isset($post['create_so'])) {
 
-            $id_penawaran = str_replace('-', '/', $post['id_penawaran']);
-            $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+            $id_penawaran = $post['id_penawaran'];
+            // $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
 
             $config['upload_path'] = './uploads/po'; //path folder
-            $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp|pdf'; //type yang dapat diakses bisa anda sesuaikan
+            $config['allowed_types'] = 'gif|jpg|png|jpeg|bmp|pdf|xlsx|xls'; //type yang dapat diakses bisa anda sesuaikan
             $config['max_size'] = 10000; // Maximum file size in kilobytes (2MB).
             $config['encrypt_name'] = FALSE; // Encrypt the uploaded file's name.
             $config['remove_spaces'] = FALSE; // Remove spaces from the file name.
@@ -437,6 +438,7 @@ class Penawaran extends Admin_Controller
                         'grand_total' => $grand_total,
                         'sts' => 'request_approval',
                         'keterangan' => $post['keterangan'],
+                        'keterangan_request_approval' => $post['keterangan_request_approval'],
                         'deliver_type' => $post['deliver_type'],
                         'address_cust' => $post['address_cust'],
                         'dari_tmp' => $post['dari_tmp'],
@@ -471,6 +473,7 @@ class Penawaran extends Admin_Controller
                             'dari_tmp' => $post['dari_tmp'],
                             'ke_tmp' => $post['ke_tmp'],
                             'sts' => '',
+                            'keterangan' => $post['keterangan'],
                             'diubah_oleh' => $this->auth->user_id(),
                             'diubah_tgl' => date('Y-m-d H:i:s')
                         ], [
@@ -501,6 +504,7 @@ class Penawaran extends Admin_Controller
                                 'dari_tmp' => $post['dari_tmp'],
                                 'ke_tmp' => $post['ke_tmp'],
                                 'revisi' => ($get_penawaran->revisi + 1),
+                                'keterangan' => $post['keterangan'],
                                 'diubah_oleh' => $this->auth->user_id(),
                                 'diubah_tgl' => date('Y-m-d H:i:s')
                             ], [
@@ -529,6 +533,7 @@ class Penawaran extends Admin_Controller
                                 'address_cust' => $post['address_cust'],
                                 'dari_tmp' => $post['dari_tmp'],
                                 'ke_tmp' => $post['ke_tmp'],
+                                'keterangan' => $post['keterangan'],
                                 'diubah_oleh' => $this->auth->user_id(),
                                 'diubah_tgl' => date('Y-m-d H:i:s')
                             ], [
@@ -596,21 +601,43 @@ class Penawaran extends Admin_Controller
 
 
 
-                    $kode_sales = '';
-                    $code_pen = $this->db->query("SELECT MAX(id_penawaran) as max_id_penawaran FROM ms_penawaran WHERE id_penawaran LIKE '%/SP-" . $get_kode_sales->kode_nama . "/" . date('m') . '/' . date('Y') . "%'")->row();
-                    $kodeBarang = $code_pen->max_id_penawaran;
-                    $urutan = (int) substr($kodeBarang, 0, 3);
-                    $urutan++;
-                    $tahun = date('Y/m/d/');
-                    $huruf = "PN/";
-                    $kode_pn = sprintf("%03s", $urutan) . '/SP-' . $get_kode_sales->kode_nama . "/" . date('m') . '/' . date('Y');
+                    $get_kode_sales = $this->db->get_where('ms_kode_sales', ['id_sales' => $post['sales_marketing']])->row();
+                    $get_customer = $this->db->query('SELECT * FROM customers ORDER BY id_customer ASC')->result();
+
+                    $get_nm_customer = $this->db->get_where('customers', ['id_customer' => $post['customer']])->row();
+
+                    $this->db->select('a.*');
+                    $this->db->from('ms_penawaran a');
+                    $this->db->where('id_cust', $post['customer']);
+                    $this->db->where('id_penawaran LIKE', '%' . date('Ymd') . '%');
+                    $num_pesanan = $this->db->get()->num_rows();
+
+                    $jum_pesanan = sprintf('%02s', ($num_pesanan + 1));
+
+                    // print_r($jum_pesanan);
+                    // exit;
+
+                    $kode_cust = '';
+                    $x = 1;
+                    foreach ($get_customer as $customer) :
+                        if ($customer->id_customer == $post['customer']) {
+                            $kode_cust = $x;
+                        }
+                        $x++;
+                    endforeach;
+
+
+                    $id_quote = 'G' . $get_kode_sales->kode_angka . '-' . sprintf('%03s', $kode_cust) . '-' . $jum_pesanan . '-' . date('Ymd');
 
                     $this->db->insert('ms_penawaran', [
-                        'id_penawaran' => $kode_pn,
+                        'id_penawaran' => $id_quote,
+                        'id_quote' => $id_quote,
+                        'id_ppb' => $id_quote,
+                        'id_penawaran' => $id_quote,
                         'id_marketing' => $post['sales_marketing'],
                         'nm_marketing' => $get_marketing->name,
                         'id_cust' => $post['customer'],
-                        'nm_cust' => $get_customer->customer_name,
+                        'nm_cust' => $get_nm_customer->customer_name,
                         'id_pic_cust' => $post['pic_cust'],
                         'nm_pic_cust' => $get_pic_cust->name,
                         'nilai_penawaran' => $get_total_harga->ttl_harga,
@@ -627,6 +654,7 @@ class Penawaran extends Admin_Controller
                         'address_cust' => $post['address_cust'],
                         'dari_tmp' => $post['dari_tmp'],
                         'ke_tmp' => $post['ke_tmp'],
+                        'keterangan' => $post['keterangan'],
                         'dibuat_oleh' => $this->auth->user_id(),
                         'dibuat_tgl' => date('Y-m-d H:i:s')
                     ]);
@@ -645,12 +673,12 @@ class Penawaran extends Admin_Controller
                         }
                     endforeach;
 
-                    $this->db->update('ms_penawaran_detail', ['id_penawaran' => $kode_pn], ['id_penawaran' => $this->auth->user_id()]);
+                    $this->db->update('ms_penawaran_detail', ['id_penawaran' => $id_quote], ['id_penawaran' => $this->auth->user_id()]);
 
                     // Logging
                     $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
 
-                    $desc = "Insert New Penawaran Data - " . $kode_pn;
+                    $desc = "Insert New Penawaran Data - " . $id_quote;
                     $device_name = $this->agent->mobile(); // Returns the mobile device name
                     if ($this->agent->is_browser()) {
                         $device_name = $this->agent->browser(); // Returns the browser name
@@ -862,14 +890,14 @@ class Penawaran extends Admin_Controller
         $free_stock -= $booking_stock->ttl_booking;
 
         $konversi = $get_produk->konversi;
-        if ($get_produk->id_curing_agent !== '') {
-            $get_curing_agent = $this->db->query('SELECT konversi FROM ms_product_category3 WHERE id_category3 = "' . $get_produk->id_curing_agent . '"')->row();
+        // if ($get_produk->id_curing_agent !== '') {
+        //     $get_curing_agent = $this->db->query('SELECT konversi FROM ms_product_category3 WHERE id_category3 = "' . $get_produk->id_curing_agent . '"')->row();
 
-            // print_r($get_produk->id_curing_agent);
-            // exit;
+        //     // print_r($get_produk->id_curing_agent);
+        //     // exit;
 
-            $konversi += $get_curing_agent->konversi;
-        }
+        //     $konversi += $get_curing_agent->konversi;
+        // }
 
         echo json_encode([
             'list_lot_size' => $list_lot_size,
@@ -948,7 +976,17 @@ class Penawaran extends Admin_Controller
 
         $get_produk = $this->db->get_where('ms_product_category3', ['id_category3' => $produk_detail])->row();
 
-        $total_harga = ($harga_satuan * ($qty_detail * $get_produk->konversi));
+        $konversi = $get_produk->konversi;
+        if ($get_produk->curing_agent !== '') {
+            $get_curing_agent = $this->db->query('SELECT konversi FROM ms_product_category3 WHERE id_category3 = "' . $get_produk->curing_agent . '"')->row();
+
+            // print_r($get_produk->id_curing_agent);
+            // exit;
+
+            $konversi += $get_curing_agent->konversi;
+        }
+
+        $total_harga = ($harga_satuan * ($qty_detail * $konversi));
 
         echo json_encode(['total_harga' => $total_harga, 'total_harga2' => number_format($total_harga, 2)]);
     }
@@ -956,8 +994,8 @@ class Penawaran extends Admin_Controller
     public function add_penawaran_detail()
     {
         $id_penawaran = $this->input->post('id_penawaran');
-        $id_penawaran = str_replace('-', '/', $id_penawaran);
-        $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+        // $id_penawaran = str_replace('-', '/', $id_penawaran);
+        // $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
         $produk_detail = $this->input->post('produk_detail');
         $lot_size_detail = $this->input->post('lot_size_detail');
         $qty_detail = $this->input->post('qty_detail');
@@ -1079,8 +1117,8 @@ class Penawaran extends Admin_Controller
     public function hitung_disc()
     {
         $id_penawaran = $this->input->post('id_penawaran');
-        $id_penawaran = str_replace('-', '/', $id_penawaran);
-        $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+        // $id_penawaran = str_replace('-', '/', $id_penawaran);
+        // $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
         $disc_val = $this->input->post('disc_val');
         $disc_type = $this->input->post('disc_type');
 
@@ -1153,8 +1191,8 @@ class Penawaran extends Admin_Controller
         $id = $this->input->post('id');
         $id = str_replace('-', '/', $id);
         $id_penawaran = $this->input->post('id_penawaran');
-        $id_penawaran = str_replace('-', '/', $id_penawaran);
-        $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+        // $id_penawaran = str_replace('-', '/', $id_penawaran);
+        // $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
 
         $this->db->trans_begin();
 
@@ -1212,13 +1250,13 @@ class Penawaran extends Admin_Controller
     public function request_approval($id)
     {
         $this->auth->restrict($this->managePermission);
-        $id = str_replace('-', '/', $id);
-        $id = str_replace('SP/', 'SP-', $id);
+        // $id = str_replace('-', '/', $id);
+        // $id = str_replace('SP/', 'SP-', $id);
 
         $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id])->row();
         $get_penawaran_detail = $this->db->get_where('ms_penawaran_detail', ['id_penawaran' => $id])->result();
 
-        $get_cust = $this->db->get('customers')->result();
+        $get_cust = $this->db->get_where('customers', ['deleted_by' => null])->result();
         $get_produk = $this->db->get_where('ms_product_category3', ['aktif' => 1])->result();
         $get_sales = $this->db->get_where('employees', ['deleted_at' => null])->result();
 
@@ -1229,7 +1267,7 @@ class Penawaran extends Admin_Controller
         $this->db->where(['a.id_penawaran' => $id]);
         $get_total_harga = $this->db->get()->row();
 
-        $get_cust = $this->db->get('customers')->result();
+        $get_cust = $this->db->get_where('customers', ['deleted_by' => null])->result();
         $get_produk = $this->db->get_where('ms_product_category3', ['aktif' => 1])->result();
         $get_sales = $this->db->get_where('employees', ['deleted_at' => null])->result();
 
@@ -1266,8 +1304,8 @@ class Penawaran extends Admin_Controller
         $id_detail = str_replace('-', '/', $post['id_detail']);
 
         $id_penawaran = $this->input->post('id_penawaran');
-        $id_penawaran = str_replace('-', '/', $id_penawaran);
-        $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+        // $id_penawaran = str_replace('-', '/', $id_penawaran);
+        // $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
         if ($id_penawaran == 'new') {
             $id_penawaran = $this->auth->user_id();
         }
@@ -1550,8 +1588,8 @@ class Penawaran extends Admin_Controller
         if ($id_penawaran == 'new' || $id_penawaran == '' || $id_penawaran == null) {
             $id_penawaran = $this->auth->user_id();
         } else {
-            $id_penawaran = str_replace('-', '/', $id_penawaran);
-            $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+            // $id_penawaran = str_replace('-', '/', $id_penawaran);
+            // $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
         }
 
         // print_r($id_penawaran);
@@ -1613,7 +1651,7 @@ class Penawaran extends Admin_Controller
                 </thead>
                 <tbody class="list_detail_penawaran">
             ';
-            $get_penawaran_detail = $this->db->get_where('ms_penawaran_detail', ['id_penawaran' => $id_penawaran])->result();
+            $get_penawaran_detail = $this->db->query("SELECT a.* FROM ms_penawaran_detail a WHERE a.id_penawaran = '" . $id_penawaran . "' ORDER BY a.id ASC")->result();
 
             $x = 0;
             $ttl_harga = 0;
@@ -1909,17 +1947,18 @@ class Penawaran extends Admin_Controller
 
     public function print_penawaran($id_penawaran)
     {
-        $id_penawaran = str_replace('-', '/', $id_penawaran);
-        $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+        // $id_penawaran = str_replace('-', '/', $id_penawaran);
+        // $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
 
-        $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id_penawaran])->row();
+        $get_penawaran = $this->db->query("SELECT * FROM ms_penawaran WHERE id_penawaran = '" . $id_penawaran . "' OR id_quote = '" . $id_penawaran . "'")->row();
         // $get_penawaran_detail = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id_penawaran])->result();
 
-        $this->db->select('a.*, c.nama_mandarin, c.unit_nm, d.nm_packaging');
+        $this->db->select('a.*, c.nama_mandarin, c.unit_nm, d.nm_packaging, e.nama_mandarin as mandarin_ral_code');
         $this->db->from('ms_penawaran_detail a');
         $this->db->join('ms_product_category3 b', 'b.curing_agent = a.id_product', 'left');
         $this->db->join('ms_product_category3 c', 'c.id_category3 = a.id_product', 'left');
         $this->db->join('master_packaging d', 'd.id = c.packaging', 'left');
+        $this->db->join('ms_product_category2 e', 'e.id_category2 = c.id_category2', 'left');
         $this->db->where('a.id_penawaran =', $id_penawaran);
         $this->db->group_by('a.id_product');
         $get_penawaran_detail = $this->db->get()->result();
@@ -1953,13 +1992,12 @@ class Penawaran extends Admin_Controller
     {
         $post = $this->input->post();
 
-        $id = str_replace('-', '/', $post['id']);
-        $id = str_replace('SP/', 'SP-', $id);
+        $id = $post['id'];
 
         $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id])->row();
 
         $get_kode_sales = $this->db->get_where('ms_kode_sales', ['id_sales' => $get_penawaran->id_marketing])->row();
-        $get_customer = $this->db->get('customers')->result();
+        $get_customer = $this->db->get_where('customers', ['deleted_by' => null])->result();
 
         $this->db->select('a.*');
         $this->db->from('ms_penawaran a');
@@ -1987,7 +2025,7 @@ class Penawaran extends Admin_Controller
 
         $this->db->trans_begin();
 
-        $this->db->update('ms_penawaran', ['id_quote' => $id_quote, 'sts' => 'send', 'send_date' => date('Y-m-d H:i:s')], ['id_penawaran' => $id]);
+        $this->db->update('ms_penawaran', ['sts' => 'send', 'send_date' => date('Y-m-d H:i:s')], ['id_penawaran' => $id]);
 
         if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();
@@ -2009,8 +2047,7 @@ class Penawaran extends Admin_Controller
     {
         $post = $this->input->post();
 
-        $id = str_replace('-', '/', $post['id']);
-        $id = str_replace('SP/', 'SP-', $id);
+        $id = $post['id'];
 
         $this->db->select('a.revisi');
         $this->db->from('ms_penawaran a');
@@ -2040,8 +2077,8 @@ class Penawaran extends Admin_Controller
     {
         // $post = $this->input->post();
 
-        $id_pen = str_replace('-', '/', $id);
-        $id_pen = str_replace('SP/', 'SP-', $id_pen);
+        $id_pen = $id;
+        // $id_pen = str_replace('SP/', 'SP-', $id_pen);
 
         $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id_pen])->row();
         $get_penawaran_detail = $this->db->get_where('ms_penawaran_detail', ['id_penawaran' => $id_pen])->result();
@@ -2058,8 +2095,9 @@ class Penawaran extends Admin_Controller
     {
         // $post = $this->input->post();
 
-        $id_pen = str_replace('-', '/', $id);
-        $id_pen = str_replace('SP/', 'SP-', $id_pen);
+        $id_pen = $id;
+        // $id_pen = str_replace('-', '/', $id);
+        // $id_pen = str_replace('SP/', 'SP-', $id_pen);
 
         $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id_pen])->row();
 

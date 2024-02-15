@@ -242,6 +242,7 @@ class Delivery_do extends Admin_Controller
                     'qty' => $post['deliver_' . $penawaran_detail->id],
                     'weight' => ($post['deliver_' . $penawaran_detail->id] * $penawaran_detail->konversi),
                     'tgl_kirim' => $post['deliver_date'],
+                    'keterangan' => $post['remarks_' . $penawaran_detail->id],
                     'dibuat_oleh' => $this->auth->user_id(),
                     'dibuat_tgl' => date('Y-m-d')
                 ]);
@@ -287,7 +288,7 @@ class Delivery_do extends Admin_Controller
 
         $get_penawaran = $this->db->get_where('ms_penawaran', ['id_do' => $id_do])->row();
 
-        $this->db->select('a.*, b.unit_nm, b.nama_mandarin, c.nm_packaging, d.nama as kode_warna');
+        $this->db->select('a.*, b.unit_nm, b.nama_mandarin, c.nm_packaging, d.nama as kode_warna, d.nama_mandarin as mandarin_ral_code');
         $this->db->from('ms_penawaran_detail a');
         $this->db->join('ms_product_category3 b', 'b.id_category3 = a.id_product', 'left');
         $this->db->join('master_packaging c', 'c.id = b.packaging', 'left');

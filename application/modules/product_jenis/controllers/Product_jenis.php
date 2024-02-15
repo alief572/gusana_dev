@@ -181,6 +181,7 @@ class Product_jenis extends Admin_Controller
 				'id_type'		    => $post['product_type'],
 				'id_category1'		=> $post['product_category'],
 				'nama'      		=> $post['nm_product_jenis'],
+				'nama_mandarin'     => $post['nm_product_jenis_mandarin'],
 				'aktif'				=> $post['aktif'],
 				'diubah_oleh'		=> date('Y-m-d H:i:s'),
 				'diubah_tgl'		=> $this->auth->user_id()
@@ -192,6 +193,7 @@ class Product_jenis extends Admin_Controller
 				'id_type'		    => $post['product_type'],
 				'id_category1'		=> $post['product_category'],
 				'nama'      		=> $post['nm_product_jenis'],
+				'nama_mandarin'      		=> $post['nm_product_jenis_mandarin'],
 				'aktif'				=> 1,
 				'dibuat_oleh'		=> date('Y-m-d H:i:s'),
 				'dibuat_tgl'		=> $this->auth->user_id()

@@ -52,6 +52,18 @@ $ENABLE_DELETE  = has_permission('Product_Jenis.Delete');
 				</div>
 			</div>
 		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group row">
+					<div class="col-md-2">
+						<label for="">Product Jenis (Mandarin)</label>
+					</div>
+					<div class="col-md-6">
+						<input type="text" class="form-control form-control-sm" id="" name="nm_product_jenis_mandarin" placeholder="Product Jenis">
+					</div>
+				</div>
+			</div>
+		</div>
 
 	</div>
 

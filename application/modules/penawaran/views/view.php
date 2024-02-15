@@ -30,7 +30,9 @@
                 </tr>
                 <tr>
                     <th class="text-left">PPN/Non PPN</th>
-                    <th class="text-left" colspan="3">: <?= ($data_penawaran->ppn_type == 1) ? '<div class="badge badge-success">PPN</div>' : '<div class="badge badge-danger">Non PPN</div>' ?></th>
+                    <th class="text-left">: <?= ($data_penawaran->ppn_type == 1) ? '<div class="badge badge-success">PPN</div>' : '<div class="badge badge-danger">Non PPN</div>' ?></th>
+                    <th class="text-left">Keterangan</th>
+                    <th class="text-left">: <?= $data_penawaran->keterangan ?></th>
                 </tr>
             </table>
         </div>

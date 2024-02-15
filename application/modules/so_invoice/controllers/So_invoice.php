@@ -64,7 +64,7 @@ class So_Invoice extends Admin_Controller
             1 => 'id_penawaran'
         );
 
-        $sql .= " ORDER BY " . $columns_order_by[$column] . " " . $dir . " ";
+        $sql .= " ORDER BY dibuat_tgl DESC ";
         $sql .= " LIMIT " . $start . " ," . $length . " ";
         $query  = $this->db->query($sql);
 
@@ -171,8 +171,10 @@ class So_Invoice extends Admin_Controller
         if ($this->uri->segment(3) == 'new') {
             $id_penawaran = $this->auth->user_id();
         } else {
-            $id_penawaran = str_replace('-', '/', $id_penawaran);
-            $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+            if (strpos($id_penawaran, 'SP')) {
+                $id_penawaran = str_replace('-', '/', $id_penawaran);
+                $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+            }
         }
 
         $get_cust = $this->db->get('customers')->result();
@@ -1276,8 +1278,10 @@ class So_Invoice extends Admin_Controller
         if ($id_penawaran == 'new' || $id_penawaran == '' || $id_penawaran == null) {
             $id_penawaran = $this->auth->user_id();
         } else {
-            $id_penawaran = str_replace('-', '/', $id_penawaran);
-            $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+            if (strpos($id_penawaran, 'SP')) {
+                $id_penawaran = str_replace('-', '/', $id_penawaran);
+                $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+            }
         }
 
         // print_r($id_penawaran);
@@ -1609,17 +1613,20 @@ class So_Invoice extends Admin_Controller
 
     public function print_so($id_penawaran)
     {
-        $id_penawaran = str_replace('-', '/', $id_penawaran);
-        $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+        if (strpos($id_penawaran, 'SP')) {
+            $id_penawaran = str_replace('-', '/', $id_penawaran);
+            $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+        }
 
         $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id_penawaran])->row();
         // $get_penawaran_detail = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id_penawaran])->result();
 
-        $this->db->select('a.*, c.nama_mandarin, c.unit_nm, d.nm_packaging');
+        $this->db->select('a.*, c.nama_mandarin, c.unit_nm, d.nm_packaging, e.nama_mandarin as mandarin_ral_code');
         $this->db->from('ms_penawaran_detail a');
         $this->db->join('ms_product_category3 b', 'b.curing_agent = a.id_product', 'left');
         $this->db->join('ms_product_category3 c', 'c.id_category3 = a.id_product', 'left');
         $this->db->join('master_packaging d', 'd.id = c.packaging', 'left');
+        $this->db->join('ms_product_category2 e', 'e.id_category2 = c.id_category2', 'left');
         $this->db->where('a.id_penawaran =', $id_penawaran);
         $this->db->group_by('a.id_product');
         $get_penawaran_detail = $this->db->get()->result();

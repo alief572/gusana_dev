@@ -55,8 +55,9 @@ class Req_app_penawaran extends Admin_Controller
             nm_marketing LIKE '%$string%' OR
             nilai_penawaran LIKE '%$string%' OR
             tgl_penawaran LIKE '%$string%' OR
-            revisi LIKE '%$string%'
-        )";
+            revisi LIKE '%$string%' OR
+            keterangan LIKE '%$string%'
+        ) ";
 
         $totalData = $this->db->query($sql)->num_rows();
         $totalFiltered = $this->db->query($sql)->num_rows();
@@ -66,7 +67,7 @@ class Req_app_penawaran extends Admin_Controller
             1 => 'id_penawaran'
         );
 
-        $sql .= " ORDER BY " . $columns_order_by[$column] . " " . $dir . " ";
+        $sql .= " ORDER BY dibuat_tgl DESC ";
         $sql .= " LIMIT " . $start . " ," . $length . " ";
         $query  = $this->db->query($sql);
 
@@ -154,11 +155,11 @@ class Req_app_penawaran extends Admin_Controller
         if ($this->uri->segment(3) == 'new') {
             $id_penawaran = $this->auth->user_id();
         } else {
-            $id_penawaran = str_replace('-', '/', $id_penawaran);
-            $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+            // $id_penawaran = str_replace('-', '/', $id_penawaran);
+            // $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
         }
 
-        $get_cust = $this->db->get('customers')->result();
+        $get_cust = $this->db->get_where('customers', ['deleted_at' => null])->result();
         $get_produk = $this->db->get_where('ms_product_category3', ['aktif' => 1])->result();
         $get_sales = $this->db->get_where('employees', ['deleted_at' => null])->result();
 
@@ -166,6 +167,7 @@ class Req_app_penawaran extends Admin_Controller
         $this->db->from('ms_penawaran_detail a');
         $this->db->join('ms_product_category3 b', 'b.id_category3 = a.id_product', 'left');
         $this->db->where('a.id_penawaran', $id_penawaran);
+        $this->db->order_by('a.id ASC');
         $get_penawaran_detail = $this->db->get()->result();
 
         $this->db->select('SUM(a.total_harga) AS ttl_harga');
@@ -216,7 +218,7 @@ class Req_app_penawaran extends Admin_Controller
         $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id])->row();
         $get_penawaran_detail = $this->db->get_where('ms_penawaran_detail', ['id_penawaran' => $id])->result();
 
-        $get_cust = $this->db->get('customers')->result();
+        $get_cust = $this->db->get_where('customers', ['deleted_at' => null])->result();
         $get_produk = $this->db->get_where('ms_product_category3', ['aktif' => 1])->result();
         $get_sales = $this->db->get_where('employees', ['deleted_at' => null])->result();
 
@@ -305,7 +307,7 @@ class Req_app_penawaran extends Admin_Controller
         if ($post['req_action'] == '1') {
 
             $get_kode_sales = $this->db->get_where('ms_kode_sales', ['id_sales' => $get_penawaran->id_marketing])->row();
-            $get_customer = $this->db->get('customers')->result();
+            $get_customer = $this->db->get_where('customers', ['deleted_at' => null])->result();
 
             $this->db->select('a.*');
             $this->db->from('ms_penawaran a');
@@ -342,7 +344,6 @@ class Req_app_penawaran extends Admin_Controller
 
         $this->db->trans_begin();
         $this->db->update('ms_penawaran', [
-            'id_quote' => $id_quote,
             'nilai_penawaran' => $get_total_harga->ttl_harga,
             'total' => $get_total_harga->ttl_harga,
             'disc_num' => $post['disc_val'],
@@ -593,7 +594,17 @@ class Req_app_penawaran extends Admin_Controller
 
         $get_produk = $this->db->get_where('ms_product_category3', ['id_category3' => $produk_detail])->row();
 
-        $weight = ($qty_detail * $get_produk->konversi);
+        $konversi = $get_produk->konversi;
+        if ($get_produk->curing_agent !== '') {
+            $get_curing_agent = $this->db->query('SELECT konversi FROM ms_product_category3 WHERE id_category3 = "' . $get_produk->curing_agent . '"')->row();
+
+            // print_r($get_produk->id_curing_agent);
+            // exit;
+
+            $konversi += $get_curing_agent->konversi;
+        }
+
+        $weight = ($qty_detail * $konversi);
 
         echo json_encode(['weight' => $weight, 'weight_form' => number_format($weight, 2)]);
     }
@@ -606,8 +617,17 @@ class Req_app_penawaran extends Admin_Controller
         $harga_satuan = $this->input->post('harga_satuan');
 
         $get_produk = $this->db->get_where('ms_product_category3', ['id_category3' => $produk_detail])->row();
+        $konversi = $get_produk->konversi;
+        if ($get_produk->curing_agent !== '') {
+            $get_curing_agent = $this->db->query('SELECT konversi FROM ms_product_category3 WHERE id_category3 = "' . $get_produk->curing_agent . '"')->row();
 
-        $total_harga = ($harga_satuan * ($qty_detail * $get_produk->konversi));
+            // print_r($get_produk->id_curing_agent);
+            // exit;
+
+            $konversi += $get_curing_agent->konversi;
+        }
+
+        $total_harga = ($harga_satuan * ($qty_detail * $konversi));
 
         echo json_encode(['total_harga' => $total_harga, 'total_harga2' => number_format($total_harga, 2)]);
     }
@@ -615,8 +635,8 @@ class Req_app_penawaran extends Admin_Controller
     public function add_penawaran_detail()
     {
         $id_penawaran = $this->input->post('id_penawaran');
-        $id_penawaran = str_replace('-', '/', $id_penawaran);
-        $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+        // $id_penawaran = str_replace('-', '/', $id_penawaran);
+        // $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
         $produk_detail = $this->input->post('produk_detail');
         $lot_size_detail = $this->input->post('lot_size_detail');
         $qty_detail = $this->input->post('qty_detail');
@@ -758,8 +778,8 @@ class Req_app_penawaran extends Admin_Controller
     public function hitung_disc()
     {
         $id_penawaran = $this->input->post('id_penawaran');
-        $id_penawaran = str_replace('-', '/', $id_penawaran);
-        $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+        // $id_penawaran = str_replace('-', '/', $id_penawaran);
+        // $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
         $disc_val = $this->input->post('disc_val');
         $disc_type = $this->input->post('disc_type');
 
@@ -832,8 +852,8 @@ class Req_app_penawaran extends Admin_Controller
         $id = $this->input->post('id');
         $id = str_replace('-', '/', $id);
         $id_penawaran = $this->input->post('id_penawaran');
-        $id_penawaran = str_replace('-', '/', $id_penawaran);
-        $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+        // $id_penawaran = str_replace('-', '/', $id_penawaran);
+        // $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
 
         $this->db->trans_begin();
 
@@ -897,7 +917,7 @@ class Req_app_penawaran extends Admin_Controller
         $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id])->row();
         $get_penawaran_detail = $this->db->get_where('ms_penawaran_detail', ['id_penawaran' => $id])->result();
 
-        $get_cust = $this->db->get('customers')->result();
+        $get_cust = $this->db->get_where('customers', ['deleted_at' => null])->result();
         $get_produk = $this->db->get_where('ms_product_category3', ['aktif' => 1])->result();
         $get_sales = $this->db->get_where('employees', ['deleted_at' => null])->result();
 
@@ -908,7 +928,7 @@ class Req_app_penawaran extends Admin_Controller
         $this->db->where(['a.id_penawaran' => $id]);
         $get_total_harga = $this->db->get()->row();
 
-        $get_cust = $this->db->get('customers')->result();
+        $get_cust = $this->db->get_where('customers', ['deleted_at' => null])->result();
         $get_produk = $this->db->get_where('ms_product_category3', ['aktif' => 1])->result();
         $get_sales = $this->db->get_where('employees', ['deleted_at' => null])->result();
 
@@ -945,8 +965,8 @@ class Req_app_penawaran extends Admin_Controller
         $id_detail = str_replace('-', '/', $post['id_detail']);
 
         $id_penawaran = $this->input->post('id_penawaran');
-        $id_penawaran = str_replace('-', '/', $id_penawaran);
-        $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+        // $id_penawaran = str_replace('-', '/', $id_penawaran);
+        // $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
         if ($id_penawaran == 'new') {
             $id_penawaran = $this->auth->user_id();
         }
@@ -1219,8 +1239,8 @@ class Req_app_penawaran extends Admin_Controller
         if ($id_penawaran == 'new' || $id_penawaran == '' || $id_penawaran == null) {
             $id_penawaran = $this->auth->user_id();
         } else {
-            $id_penawaran = str_replace('-', '/', $id_penawaran);
-            $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+            // $id_penawaran = str_replace('-', '/', $id_penawaran);
+            // $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
         }
 
         // print_r($id_penawaran);
@@ -1282,7 +1302,7 @@ class Req_app_penawaran extends Admin_Controller
                 </thead>
                 <tbody class="list_detail_penawaran">
             ';
-            $get_penawaran_detail = $this->db->get_where('ms_penawaran_detail', ['id_penawaran' => $id_penawaran])->result();
+            $get_penawaran_detail = $this->db->query("SELECT a.* FROM ms_penawaran_detail a WHERE a.id_penawaran = '" . $id_penawaran . "' ORDER BY a.id ASC")->result();
 
             $x = 0;
             $ttl_harga = 0;
@@ -1573,8 +1593,8 @@ class Req_app_penawaran extends Admin_Controller
 
     public function print_penawaran($id_penawaran)
     {
-        $id_penawaran = str_replace('-', '/', $id_penawaran);
-        $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+        // $id_penawaran = str_replace('-', '/', $id_penawaran);
+        // $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
 
         $get_penawaran = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id_penawaran])->row();
         // $get_penawaran_detail = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id_penawaran])->result();

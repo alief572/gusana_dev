@@ -291,6 +291,14 @@ $ENABLE_DELETE  = has_permission('So_Invoice.Delete');
                 $this->db->where('a.id_product', $penawaran_detail->id_product);
                 $get_qty_delivery = $this->db->get()->row();
 
+                $this->db->select('a.keterangan');
+                $this->db->from('ms_detail_do a');
+                $this->db->where('a.id_do', $data_penawaran->id_do);
+                $this->db->where('a.id_product', $penawaran_detail->id_product);
+                $this->db->order_by('a.id DESC');
+                $this->db->limit(1);
+                $get_keterangan = $this->db->get()->row();
+
 
                 echo '
                             <tr class="non-bordered">
@@ -305,7 +313,7 @@ $ENABLE_DELETE  = has_permission('So_Invoice.Delete');
                     $get_product = $this->db->get_where('ms_product_category3', ['id_category3' => $penawaran_detail->id_product])->row();
                     $get_curing_agent = $this->db->get_where('ms_product_category3', ['id_category3' => $get_product->curing_agent])->row();
 
-                    echo 'A : B ' . round($penawaran_detail->konversi - $get_curing_agent->konversi) . ' ' . $penawaran_detail->nm_packaging . ' : ' . $get_curing_agent->konversi . ' ' . $get_curing_agent->unit_nm . ' <br> ' . '(' . ($penawaran_detail->konversi + $get_curing_agent->konversi - $get_curing_agent->konversi) . ' ' . $penawaran_detail->unit_nm . ')';
+                    echo 'A : B ' . round($penawaran_detail->konversi - $get_curing_agent->konversi) . ' Kg : ' . $get_curing_agent->konversi . ' Kg <br> ' . '(' . ($penawaran_detail->konversi + $get_curing_agent->konversi - $get_curing_agent->konversi) . ' Kg)';
                 } else {
                     echo '' . round($penawaran_detail->konversi) . '/桶 <br> ' . $penawaran_detail->nm_packaging . '';
                 }
@@ -314,8 +322,8 @@ $ENABLE_DELETE  = has_permission('So_Invoice.Delete');
                                 </td>
                                 <td class="text-center" style="font-weight: bold;border: 1px solid black;font-size: 20px;">' . $penawaran_detail->nm_packaging . '</td>
                                 <td class="text-center" style="font-weight: bold;border: 1px solid black;font-size: 20px;">' . number_format($get_qty_delivery->qty_delivery) . '</td>
-                                <td class="text-center" style="font-weight: bold;border: 1px solid black;font-size: 20px;">' . $penawaran_detail->kode_warna . '</td>
-                                <td class="text-right" style="border: 1px solid black;"></td>
+                                <td class="text-center" style="font-weight: bold;border: 1px solid black;font-size: 20px;">' . $penawaran_detail->mandarin_ral_code . '<br>' . $penawaran_detail->kode_warna . '</td>
+                                <td class="" style="border: 1px solid black;font-size: 20px;font-weight:bold;">' . $get_keterangan->keterangan . '</td>
                             </tr>
                         ';
                 $ttl_berat += ($penawaran_detail->qty * $penawaran_detail->konversi);

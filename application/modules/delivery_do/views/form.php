@@ -34,6 +34,7 @@
                         <th class="text-center">Stock Free</th>
                         <th class="text-center">Qty Sent Earlier</th>
                         <th class="text-center">Delivery</th>
+                        <th class="text-center">Remarks</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -69,6 +70,9 @@
                             </td>
                             <td class="text-center">
                                 <input type="number" name="deliver_<?= $penawaran_detail->id ?>" id="" class="form-control text-right" value="0">
+                            </td>
+                            <td class="text-center">
+                                <input type="text" name="remarks_<?= $penawaran_detail->id ?>" id="" class="form-control" value="<?= $penawaran_detail->keterangan ?>">
                             </td>
                         </tr>
                     <?php endforeach; ?>

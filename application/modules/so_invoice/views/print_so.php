@@ -160,11 +160,11 @@ $ENABLE_DELETE  = has_permission('So_Invoice.Delete');
                                 <td class="text-center">' . $penawaran_detail->kode_product . '</td>
                                 <td class="text-center">' . $penawaran_detail->konversi . '</td>
                                 <td class="text-center">' . str_replace(' Kg', '', $penawaran_detail->package_spec_curing_agent) . '</td>
-                                <td class="text-center">' . $penawaran_detail->ral_code . '</td>
+                                <td class="text-center">' . $penawaran_detail->mandarin_ral_code . ' <br> ' . $penawaran_detail->ral_code . '</td>
                                 <td class="text-center">' . $penawaran_detail->nm_packaging . '</td>
                                 <td class="text-center">' . $penawaran_detail->qty . '</td>
                                 <td class="text-center">' . $penawaran_detail->weight . '</td>
-                                <td class="text-right"></td>
+                                <td class="text-right">' . $penawaran_detail->keterangan . '</td>
                             </tr>
                         ';
                     $ttl_harga += $penawaran_detail->total_harga;

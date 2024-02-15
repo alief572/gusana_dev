@@ -56,7 +56,8 @@ class Loss_Penawaran extends Admin_Controller
             nm_marketing LIKE '%$string%' OR
             nilai_penawaran LIKE '%$string%' OR
             tgl_penawaran LIKE '%$string%' OR
-            revisi LIKE '%$string%'
+            revisi LIKE '%$string%' OR
+            keterangan_app LIKE '%$string%'
         )";
 
         $totalData = $this->db->query($sql)->num_rows();
