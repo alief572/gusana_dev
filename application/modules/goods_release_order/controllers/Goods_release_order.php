@@ -149,7 +149,7 @@ class Goods_release_order extends Admin_Controller
         $this->template->title('Goods Release Orders');
 
         $get_penawaran = $this->db->get_where('ms_penawaran', ['id_ppb' => $id])->row();
-        $get_penawaran_detail = $this->db->query('SELECT a.*, b.curing_agent, c.nm_packaging, d.nama_mandarin as mandarin_ral_code FROM ms_penawaran_detail a LEFT JOIN ms_product_category3 b ON b.id_category3 = a.id_product LEFT JOIN master_packaging c ON c.id = b.packaging LEFT JOIN ms_product_category2 d ON d.id_category2 = b.id_category2 WHERE a.id_penawaran = "' . $get_penawaran->id_penawaran . '"')->result();
+        $get_penawaran_detail = $this->db->query('SELECT a.*, b.curing_agent, c.nm_packaging, d.nama_mandarin as mandarin_ral_code FROM ms_penawaran_detail a LEFT JOIN ms_product_category3 b ON b.id_category3 = a.id_product LEFT JOIN master_packaging c ON c.id = b.packaging LEFT JOIN ms_product_category2 d ON d.id_category2 = b.id_category2 WHERE a.id_penawaran = "' . $get_penawaran->id_penawaran . '" ORDER BY a.id ASC')->result();
         $data = [
             'penawaran' => $get_penawaran,
             'list_penawaran_detail' => $get_penawaran_detail

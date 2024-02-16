@@ -294,6 +294,7 @@ class Delivery_do extends Admin_Controller
         $this->db->join('master_packaging c', 'c.id = b.packaging', 'left');
         $this->db->join('ms_product_category2 d', 'd.id_category2 = b.id_category2', 'left');
         $this->db->where('a.id_penawaran', $get_penawaran->id_penawaran);
+        $this->db->order_by('a.id ASC');
         $get_penawaran_detail = $this->db->get()->result();
 
         $pic_phone = '';

@@ -627,7 +627,7 @@ class Penawaran extends Admin_Controller
                     endforeach;
 
 
-                    $id_quote = 'G' . $get_kode_sales->kode_angka . '-' . sprintf('%03s', $kode_cust) . '-' . $jum_pesanan . '-' . date('Ymd');
+                    $id_quote = 'G' . $get_kode_sales->kode_angka . '-' . sprintf('%03s', $kode_cust) . '-' . $jum_pesanan . '-' . date('Ymd', strtotime($post['tgl_penawaran']));
 
                     $this->db->insert('ms_penawaran', [
                         'id_penawaran' => $id_quote,
@@ -1389,10 +1389,9 @@ class Penawaran extends Admin_Controller
                     'total_harga' => ($price_list * ($qty_detail * $konversi)),
                     'lot_size' => $get_qty_hopper->qty_hopper,
                     'keterangan' => $keterangan,
-                    'keterangan' => $keterangan,
                     'id_curing_agent' => $supporting_curing_agent,
                     'nm_curing_agent' => $nm_curing_agent,
-                    'package_spec_curing_agent' => $curing_agent_pack_spec
+                    'package_spec_curing_agent' => $curing_agent_pack_spec,
                 ], [
                     'id' => $id_detail
                 ]);
@@ -1408,7 +1407,6 @@ class Penawaran extends Admin_Controller
                     'weight' => ($qty_detail * $konversi),
                     'harga_satuan' => $price_list,
                     'total_harga' => ($price_list * ($qty_detail * $konversi)),
-                    'keterangan' => $keterangan,
                     'keterangan' => $keterangan,
                     'id_curing_agent' => $supporting_curing_agent,
                     'nm_curing_agent' => $nm_curing_agent,

@@ -177,76 +177,76 @@ $ENABLE_DELETE  = has_permission('So_Invoice.Delete');
             </th>
         </tr>
         <tr class="non-bordered">
-            <th class="non-bordered" style="min-width: 220px;">
+            <th class="non-bordered" style="vertical-align:top;min-width: 220px;">
                 <span>
                     Nama Pelanggan
                     (客户名称)
                 </span>
             </th>
-            <th style="width:50px;text-align:center;">:</th>
+            <th style="width:50px;text-align:center;vertical-align:top;">:</th>
             <th class="non-bordered"><?= $data_penawaran->nm_cust ?></th>
-            <th class="non-bordered" style="min-width: 220px;">
+            <th class="non-bordered" style="vertical-align:top;min-width: 220px;">
                 <span>
                     Nomor DO (编号)
                 </span>
             </th>
-            <th style="width:50px;text-align:center;">:</th>
-            <th class="non-bordered" style="min-width: 300px; max-width: 300px;"><?= $data_penawaran->id_do ?></th>
+            <th style="width:50px;text-align:center;vertical-align:top;">:</th>
+            <th class="non-bordered" style="vertical-align:top;min-width: 300px; max-width: 300px;"><?= $data_penawaran->id_do ?></th>
         </tr>
         <tr class="non-bordered">
-            <th class="non-bordered" style="min-width: 220px;">
+            <th class="non-bordered" style="vertical-align:top;min-width: 220px;">
                 <span>
                     Alamat Pengiriman
                     (收货地址)
                 </span>
             </th>
-            <th style="width:50px;text-align:center;">:</th>
-            <th class="non-bordered" style="min-width: 300px; max-width: 300px;"><?= $data_penawaran->address_cust ?></th>
-            <th class="non-bordered" style="min-width: 220px;">
+            <th style="width:50px;text-align:center;vertical-align:top;">:</th>
+            <th class="non-bordered" style="vertical-align:top;min-width: 300px; max-width: 300px;"><?= $data_penawaran->address_cust ?></th>
+            <th class="non-bordered" style="vertical-align:top;min-width: 220px;">
                 <span>
                     Nomor PO
                     (订单号)
                 </span>
             </th>
-            <th style="width:50px;text-align:center;">:</th>
-            <th class="non-bordered" style="min-width: 300px; max-width: 300px;"><?= $data_penawaran->id_quote ?></th>
+            <th style="width:50px;text-align:center;vertical-align:top;">:</th>
+            <th class="non-bordered" style="vertical-align:top;min-width: 300px; max-width: 300px;"><?= $data_penawaran->id_quote ?></th>
         </tr>
         <tr class="non-bordered">
-            <th class="non-bordered" style="min-width: 220px;">
+            <th class="non-bordered" style="vertical-align:top;min-width: 220px;">
                 <span>
                     Penerima Barang
                     (收货人)
                 </span>
             </th>
-            <th style="width:50px;text-align:center;">:</th>
+            <th style="width:50px;text-align:center;vertical-align:top;">:</th>
             <th class="non-bordered"><?= $data_penawaran->nm_pic_cust ?>
             </th>
-            <th class="non-bordered" style="min-width: 220px;">
+            <th class="non-bordered" style="vertical-align:top;min-width: 220px;">
                 <span>
                     Tanggal PO
                     (订单日期)
                 </span>
             </th>
-            <th style="width:50px;text-align:center;">:</th>
-            <th class="non-bordered" style="min-width: 300px; max-width: 300px;"><?= $data_penawaran->tgl_penawaran ?></th>
+            <th style="width:50px;text-align:center;vertical-align:top;">:</th>
+            <th class="non-bordered" style="vertical-align:top;min-width: 300px; max-width: 300px;"><?= $data_penawaran->tgl_penawaran ?></th>
         </tr>
         <tr class="non-bordered">
-            <th class="non-bordered" style="min-width: 220px;">
+            <th class="non-bordered" style="vertical-align:top;min-width: 220px;">
                 <span>
                     Nomor Telp
                     (联系电话)
                 </span>
             </th>
-            <th style="width:50px;text-align:center;">:</th>
-            <th class="non-bordered" style="min-width: 300px; max-width: 300px;"><?= $data_penawaran->nm_pic_cust . ' (' . $pic_phone . ')' ?></th>
-            <th class="non-bordered" style="min-width: 220px;">
+            <th style="width:50px;text-align:center;vertical-align:top;">:</th>
+            <th class="non-bordered" style="vertical-align:top;min-width: 300px; max-width: 300px;"><?= '(' . $pic_phone . ')' ?></th>
+            <th class="non-bordered" style="vertical-align:top;min-width: 220px;">
                 <span>
                     Tanggal Pengiriman
                     (发货日期)
                 </span>
             </th>
-            <th style="width:50px;text-align:center;">:</th>
-            <th class="non-bordered" style="min-width: 300px; max-width: 300px;"><?= $data_penawaran->deliver_date ?></th>
+            <th style="width:50px;text-align:center;vertical-align:top;">:</th>
+            <th class="non-bordered" style="vertical-align:top;min-width: 300px; max-width: 300px;"><?= $data_penawaran->deliver_date ?></th>
         </tr>
     </table>
     <table class="w-100" style="width: 100%;" border="1">

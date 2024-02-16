@@ -358,7 +358,7 @@
                                 </span>
                             </div>
                             <div class="col-8" style="margin-top: 10px;">
-                                <textarea name="" id="" cols="30" rows="5" class="form-control form-control-sm keterangan"></textarea>
+                                <textarea name="keterangan" id="" cols="30" rows="5" class="form-control form-control-sm keterangan"></textarea>
                             </div>
                         </div>
                         <div class="col-6 row">

@@ -125,7 +125,7 @@ class So_Invoice extends Admin_Controller
 
             $view_penawaran_deal = '';
             $view_po = '';
-            if (file_exists($row['upload_po'])) {
+            if (file_exists('.' . $row['upload_po'])) {
                 $view_po = '<a href="' . base_url($row['upload_po']) . '" target="_blank" class="btn btn-sm btn-info" >View</a>';
             }
             if (file_exists('.' . $row['upload_penawaran_deal'])) {

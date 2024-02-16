@@ -57,7 +57,7 @@
                         </span>
                     </th>
                     <th style="vertical-align:top;">:</th>
-                    <th style="vertical-align:top;">' . $penawaran->nm_cust . '</th>
+                    <th style="vertical-align:top;"></th>
                     <th>
                         <span>
                         No. Surat Jalan
@@ -96,7 +96,7 @@
                                 </span>
                             </th>
                             <th style="vertical-align:top;">:</th>
-                            <th style="vertical-align:top;">' . $penawaran->nm_cust . '</th>
+                            <th style="vertical-align:top;"></th>
                             <th>
                                 <span>
                                 Tgl Pengiriman
@@ -187,7 +187,7 @@
                                 <td class="text-center"><?= $penawaran_detail->konversi ?> Kg</td>
                                 <td class="text-center"><?= $penawaran_detail->ral_code ?></td>
                                 <td class="text-center"><?= $penawaran_detail->nm_packaging ?></td>
-                                <td class="text-center"><?= $penawaran_detail->qty ?></td>
+                                <td class="text-center"><?= number_format($penawaran_detail->qty) ?></td>
                                 <td class="text-center"></td>
                             </tr>
 
@@ -206,7 +206,7 @@
                                 <td class="text-center"><?= $get_curing_agent->konversi ?> Kg</td>
                                 <td class="text-center"><?= $get_curing_agent->ral_code ?></td>
                                 <td class="text-center"><?= $get_curing_agent->nm_packaging ?></td>
-                                <td class="text-center"><?= $penawaran_detail->qty ?></td>
+                                <td class="text-center"><?= number_format($penawaran_detail->qty) ?></td>
                                 <td class="text-center"></td>
                             </tr>
 
@@ -222,7 +222,7 @@
                                 <td class="text-center"><?= $penawaran_detail->konversi ?> Kg</td>
                                 <td class="text-center"><?= $penawaran_detail->ral_code ?></td>
                                 <td class="text-center"><?= $penawaran_detail->nm_packaging ?></td>
-                                <td class="text-center"><?= $penawaran_detail->qty ?></td>
+                                <td class="text-center"><?= number_format($penawaran_detail->qty) ?></td>
                                 <td class="text-center"></td>
                             </tr>
                     <?php
@@ -270,7 +270,7 @@
                         </span>
                     </th>
                     <th style="vertical-align:top;">:</th>
-                    <th style="vertical-align:top;">' . $penawaran->nm_cust . '</th>
+                    <th style="vertical-align:top;"></th>
                     <th>
                         <span>
                         No. Surat Jalan
@@ -309,7 +309,7 @@
                                 </span>
                             </th>
                             <th style="vertical-align:top;">:</th>
-                            <th style="vertical-align:top;">' . $penawaran->nm_cust . '</th>
+                            <th style="vertical-align:top;"></th>
                             <th>
                                 <span>
                                 Tgl Pengiriman
@@ -400,7 +400,7 @@
                                 <td class="text-center"><?= $penawaran_detail->konversi ?> Kg</td>
                                 <td class="text-center"><?= $penawaran_detail->mandarin_ral_code . '<br>' . $penawaran_detail->ral_code ?></td>
                                 <td class="text-center"><?= $penawaran_detail->nm_packaging ?></td>
-                                <td class="text-center"><?= $penawaran_detail->qty ?></td>
+                                <td class="text-center"><?= number_format($penawaran_detail->qty) ?></td>
                                 <td class="text-center"></td>
                             </tr>
 
@@ -419,7 +419,7 @@
                                 <td class="text-center"><?= $get_curing_agent->konversi ?> Kg</td>
                                 <td class="text-center"><?= $get_curing_agent->ral_code ?></td>
                                 <td class="text-center"><?= $get_curing_agent->nm_packaging ?></td>
-                                <td class="text-center"><?= $penawaran_detail->qty ?></td>
+                                <td class="text-center"><?= number_format($penawaran_detail->qty) ?></td>
                                 <td class="text-center"></td>
                             </tr>
 
@@ -435,7 +435,7 @@
                                 <td class="text-center"><?= $penawaran_detail->konversi ?> Kg</td>
                                 <td class="text-center"><?= $penawaran_detail->ral_code ?></td>
                                 <td class="text-center"><?= $penawaran_detail->nm_packaging ?></td>
-                                <td class="text-center"><?= $penawaran_detail->qty ?></td>
+                                <td class="text-center"><?= number_format($penawaran_detail->qty) ?></td>
                                 <td class="text-center"></td>
                             </tr>
                     <?php

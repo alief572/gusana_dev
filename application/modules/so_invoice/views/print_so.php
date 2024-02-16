@@ -108,8 +108,13 @@ $ENABLE_DELETE  = has_permission('So_Invoice.Delete');
                 </th>
                 <th class="non-bordered">:</th>
                 <th class="non-bordered" style="min-width: 300px; max-width: 300px;"><?= $data_penawaran->nm_pic_cust . ' (' . $pic_phone . ')' ?></th>
-                <th class="non-bordered" colspan="3">
+                <th class="non-bordered">
+                    <span>
+                        Remarks
+                    </span>
                 </th>
+                <th class="non-bordered">:</th>
+                <th class="non-bordered" style="min-width: 300px; max-width: 300px;"><?= $data_penawaran->keterangan ?></th>
             </tr>
         </table>
         <table class="w-100" border="1">
@@ -158,12 +163,12 @@ $ENABLE_DELETE  = has_permission('So_Invoice.Delete');
                                 <td class="text-center">' . $x . '</td>
                                 <td class="text-center"><span>' . $penawaran_detail->nama_mandarin . '<br>' . $penawaran_detail->nm_product . '</span></td>
                                 <td class="text-center">' . $penawaran_detail->kode_product . '</td>
-                                <td class="text-center">' . $penawaran_detail->konversi . '</td>
-                                <td class="text-center">' . str_replace(' Kg', '', $penawaran_detail->package_spec_curing_agent) . '</td>
+                                <td class="text-center">' . number_format($penawaran_detail->konversi) . '</td>
+                                <td class="text-center">' . str_replace(' Kg', '', str_replace('.00', '', $penawaran_detail->package_spec_curing_agent)) . '</td>
                                 <td class="text-center">' . $penawaran_detail->mandarin_ral_code . ' <br> ' . $penawaran_detail->ral_code . '</td>
                                 <td class="text-center">' . $penawaran_detail->nm_packaging . '</td>
-                                <td class="text-center">' . $penawaran_detail->qty . '</td>
-                                <td class="text-center">' . $penawaran_detail->weight . '</td>
+                                <td class="text-center">' . number_format($penawaran_detail->qty) . '</td>
+                                <td class="text-center">' . number_format($penawaran_detail->weight) . '</td>
                                 <td class="text-right">' . $penawaran_detail->keterangan . '</td>
                             </tr>
                         ';
