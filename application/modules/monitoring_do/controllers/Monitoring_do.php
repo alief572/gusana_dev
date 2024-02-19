@@ -197,11 +197,27 @@ class Monitoring_do extends Admin_Controller
         $this->db->select('a.id_print_do, a.id_do, a.tgl_kirim');
         $this->db->from('ms_detail_do a');
         $this->db->where('a.id_do', $id);
-        $this->db->group_by('a.id_print_do');
-        $get_list_deliver = $this->db->get()->result();
+        $this->db->group_by('a.id_do');
+        $this->db->order_by('a.id_do DESC');
+        $this->db->limit(1);
+        $get_list_deliver = $this->db->get()->row();
+
+        $get_detail_do = $this->db->get_where('ms_detail_do', ['id_do' => $get_list_deliver->id_do])->result();
+        $get_penawaran = $this->db->get_where('ms_penawaran', ['id_do' => $get_list_deliver->id_do])->row();
+
+        $link_bukti = '<a href="' . base_url($get_detail_do[0]->upload_bukti_kirim) . '" class="btn btn-sm btn-info" target="_blank">Download Evidence</a>';
+        if ($get_detail_do[0]->upload_bukti_kirim == '') {
+            $link_bukti = '';
+        }
+        if (!file_exists(str_replace('/uploads', 'uploads', $get_detail_do[0]->upload_bukti_kirim))) {
+            $link_bukti = '';
+        }
 
         $this->template->set([
-            'list_delivery' => $get_list_deliver
+            'list_delivery' => $get_list_deliver,
+            'get_penawaran' => $get_penawaran,
+            'get_detail_do' => $get_detail_do,
+            'link_bukti' => $link_bukti
         ]);
         $this->template->render('view');
     }
@@ -335,7 +351,7 @@ class Monitoring_do extends Admin_Controller
         $this->db->update('ms_detail_do', [
             'upload_bukti_kirim' => $upload_file
         ], [
-            'id_print_do' => $post['id_print_do']
+            'id_do' => $post['id_do']
         ]);
 
         if ($this->db->trans_status() === FALSE) {

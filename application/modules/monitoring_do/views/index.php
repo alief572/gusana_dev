@@ -77,7 +77,7 @@ $ENABLE_DELETE  = has_permission('Monitoring_DO.Delete');
                 })
                 $("#dialog-popup").modal();
                 $("#dialog-popup .modal-body").html(data);
-                $("#save").addClass('d-none');
+                // $("#save").addClass('d-none');
             }
         })
     });

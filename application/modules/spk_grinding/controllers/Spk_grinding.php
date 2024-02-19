@@ -337,9 +337,9 @@ class Spk_grinding extends Admin_Controller
 
         $get_material_tambahan = $this->db->get_where('ms_spk_material_tambahan', ['id_spk' => $id_spk, 'id_proses' => 3])->result();
 
-        $get_user = $this->db->query("SELECT b.full_name, b.username FROM ms_create_spk a LEFT JOIN users b ON b.id_user = a.ditarik_oleh WHERE a.id_spk = '".$id_spk."'")->row();
+        $get_user = $this->db->query("SELECT b.full_name, b.username FROM ms_create_spk a LEFT JOIN users b ON b.id_user = a.ditarik_oleh WHERE a.id_spk = '" . $id_spk . "'")->row();
 
-        $no_cetak = $get_data_spk->batch_ke.'/'.date('d-m-Y').'/'.$get_user->username;
+        $no_cetak = $get_data_spk->batch_ke . '/' . date('d-m-Y') . '/' . $get_user->username;
 
         $data = [
             'data_spk' => $get_data_spk,
@@ -381,17 +381,19 @@ class Spk_grinding extends Admin_Controller
         $sql = "
             SELECT 
                 a.*,
-                b.nama as nm_product
+                b.nama as nm_product,
+                e.nm_packaging
             FROM
                 ms_so a
                 LEFT JOIN ms_product_category3 b ON b.id_category3 = a.id_product
                 JOIN ms_bom c ON c.id_product = a.id_product
                 JOIN ms_bom_detail_material d ON d.id_bom = c.id
+                LEFT JOIN master_packaging e ON e.id = b.packaging 
             WHERE
                 1=1 AND d.id_proses = '3' AND (
                     a.id_so LIKE '%" . $string . "%' OR
                     b.nama LIKE '%" . $string . "%' OR
-                    a.packaging LIKE '%" . $string . "%' OR
+                    e.nm_packaging LIKE '%" . $string . "%' OR
                     b.konversi LIKE '%" . $string . "%' OR
                     a.due_date LIKE '%" . $string . "%' OR
                     a.released LIKE '%" . $string . "%' OR
@@ -464,7 +466,7 @@ class Spk_grinding extends Admin_Controller
             $nestedData[]  = $nomor;
             $nestedData[]  = $row['id_so'];
             $nestedData[]  = $row['nm_product'];
-            $nestedData[]  = $row['packaging'];
+            $nestedData[]  = $row['nm_packaging'];
             $nestedData[]  = $row['propose'];
             $nestedData[]  = ($row['propose'] / $get_bom->qty_hopper);
             $nestedData[]  = ($get_create_spk->max_batch_ke);
@@ -596,7 +598,7 @@ class Spk_grinding extends Admin_Controller
         $list_data = $this->db->select('a.id_spk, a.tgl_tarik, b.full_name');
         $list_data = $this->db->from('ms_create_spk a');
         $list_data = $this->db->join('users b', 'b.id_user = a.ditarik_oleh', 'left');
-        $list_data = $this->db->where(['id_so' => str_replace('-','/',$id_so), 'id_proses' => 3]);
+        $list_data = $this->db->where(['id_so' => str_replace('-', '/', $id_so), 'id_proses' => 3]);
         $list_data = $this->db->group_by('a.id_spk');
         $list_data = $this->db->get()->result();
 

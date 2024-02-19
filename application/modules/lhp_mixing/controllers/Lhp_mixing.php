@@ -568,17 +568,19 @@ class Lhp_mixing extends Admin_Controller
         $sql = "
             SELECT 
                 a.*,
-                b.nama as nm_product
+                b.nama as nm_product,
+                e.nm_packaging
             FROM
                 ms_so a
                 LEFT JOIN ms_product_category3 b ON b.id_category3 = a.id_product
                 JOIN ms_bom c ON c.id_product = a.id_product
                 JOIN ms_bom_detail_material d ON d.id_bom = c.id
+                LEFT JOIN master_packaging e ON e.id = b.packaging
             WHERE
                 1=1 AND d.id_proses = '5' AND (SELECT COUNT(aa.id_spk) AS count_spk FROM ms_create_spk aa WHERE aa.id_so = a.id_so AND aa.id_proses = '5') > 0 AND (
                     a.id_so LIKE '%" . $string . "%' OR
                     b.nama LIKE '%" . $string . "%' OR
-                    a.packaging LIKE '%" . $string . "%' OR
+                    e.nm_packaging LIKE '%" . $string . "%' OR
                     b.konversi LIKE '%" . $string . "%' OR
                     a.due_date LIKE '%" . $string . "%' OR
                     a.released LIKE '%" . $string . "%' OR
@@ -656,7 +658,7 @@ class Lhp_mixing extends Admin_Controller
             $nestedData[]  = $nomor;
             $nestedData[]  = $row['id_so'];
             $nestedData[]  = $row['nm_product'];
-            $nestedData[]  = $row['packaging'];
+            $nestedData[]  = $row['nm_packaging'];
             $nestedData[]  = $row['propose'];
             $nestedData[]  = ($row['propose'] / $get_bom->qty_hopper);
             $nestedData[]  = ($get_create_spk->max_batch_ke);
