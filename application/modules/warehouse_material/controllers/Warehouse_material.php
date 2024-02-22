@@ -1,1247 +1,1589 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
-/**
- *
- */
-class Warehouse_material extends Admin_Controller
-{
-    //Permission
-    protected $viewPermission 	= 'Warehouse_Material.View';
-    protected $addPermission  	= 'Warehouse_Material.Add';
-    protected $managePermission = 'Warehouse_Material.Manage';
-    protected $deletePermission = 'Warehouse_Material.Delete';
 
-   public function __construct()
-    {
-        parent::__construct();
+use Mpdf\Tag\Pre;
 
-        $this->load->library(array('Mpdf', 'upload', 'Image_lib'));
-        $this->load->model(array('Warehouse_material/warehouse_material_model'
-                                ));
-        $this->template->title('Manage Data Supplier');
-        $this->template->page_icon('fa fa-building-o');
-
-        date_default_timezone_set('Asia/Bangkok');
-    }
-
-    //==========================================================================================================
-    //============================================STOCK=========================================================
-    //==========================================================================================================
-
-    public function stock(){
-      $this->auth->restrict($this->viewPermission);
-      $session  = $this->session->userdata('app_session');
-      $this->template->page_icon('fa fa-users');
-      history("View index masterial stock");
-      $this->template->title('Materials Stock');
-      $this->template->render('stock');
-    }
-
-    public function data_side_stock(){
-  		$this->warehouse_material_model->get_json_stock();
-  	}
-
-    public function modal_history(){
-  		$this->warehouse_material_model->modal_history();
-  	}
-
-    //==========================================================================================================
-    //============================================STOCK PRO=========================================================
-    //==========================================================================================================
-
-    public function stock_pro(){
-      $this->auth->restrict($this->viewPermission);
-      $session  = $this->session->userdata('app_session');
-      $this->template->page_icon('fa fa-users');
-      history("View index masterial stock produksi");
-      $this->template->title('Materials Stock Produksi');
-      $this->template->render('stock_pro');
-    }
-
-    public function data_side_stock_pro(){
-  		$this->warehouse_material_model->get_json_stock_pro();
-  	}
-
-    //==========================================================================================================
-    //============================================WIP=========================================================
-    //==========================================================================================================
-
-    public function wip(){
-      $this->auth->restrict($this->viewPermission);
-      $session  = $this->session->userdata('app_session');
-      $this->template->page_icon('fa fa-users');
-      history("View index masterial wip");
-      $this->template->title('Material Request');
-      $this->template->render('wip');
-    }
-
-    public function data_side_wip(){
-  		$this->warehouse_material_model->get_json_wip();
-  	}
-
-    public function add_wip(){
-      if($this->input->post()){
-        $data 			= $this->input->post();
-    		$session  = $this->session->userdata('app_session');
-    		$detail			= $data['detail'];
-        $Ym = date('ym');
-        $srcMtr			  = "SELECT MAX(no_wip) as maxP FROM material_wip WHERE no_wip LIKE 'WIP".$Ym."%' ";
-        $numrowMtr		= $this->db->query($srcMtr)->num_rows();
-        $resultMtr		= $this->db->query($srcMtr)->result_array();
-        $angkaUrut2		= $resultMtr[0]['maxP'];
-        $urutan2		  = (int)substr($angkaUrut2, 7, 3);
-        $urutan2++;
-        $urut2			  = sprintf('%03s',$urutan2);
-        $no_wip	      = "WIP".$Ym.$urut2;
-
-        $q_header = "SELECT
-                      	b.*
-                      FROM
-                      	produksi_planning b
-                      WHERE
-                      	b.no_plan = '".$data['plandate']."'";
-        $resultHP = $this->db->query($q_header)->result();
-
-        $ArrHeader = array(
-          'no_wip'        => $no_wip,
-          'costcenter'    => 'CC2000012',
-          'date_awal'     => $resultHP[0]->date_awal,
-          'date_akhir'    => $resultHP[0]->date_akhir,
-          'no_plan'       => $resultHP[0]->no_plan,
-          'created_by'	  => $session['username'],
-          'created_date'	=> date('Y-m-d H:i:s')
-        );
-
-        $ArrDetail	= array();
-        $ArrUpdateMat	= array();
-        $ArrUpdatePro	= array();
-        $ArrHist	= array();
-        $SUM_QTY = 0;
-        $SUM_PACK = 0;
-        foreach($detail AS $val => $valx){
-
-          $qty_packing  = str_replace(',','',$valx['qty_packing']);
-          $qty_aktual   = str_replace(',','',$valx['qty_aktual']);
-
-          $SUM_QTY  += $qty_aktual;
-          $SUM_PACK += $qty_packing;
-
-          $ArrDetail[$val]['no_wip']        = $no_wip;
-          $ArrDetail[$val]['material']      = $valx['material'];
-          $ArrDetail[$val]['qty_material']  = $valx['qty_material'];
-          $ArrDetail[$val]['unit']          = $valx['unit'];
-          $ArrDetail[$val]['qty_packing']   = $qty_packing;
-          $ArrDetail[$val]['unit_packing']  = $valx['unit_packing'];
-          $ArrDetail[$val]['qty_aktual'] 	  = $qty_aktual;
-          $ArrDetail[$val]['unit_aktual']   = $valx['unit_aktual'];
-
-          $sqlWhDetail	   = "SELECT b.* FROM warehouse_stock b WHERE b.id_material = '".$valx['material']."' AND b.kd_gudang = 'PRO'";
-  				$restWhDetail	   = $this->db->query($sqlWhDetail)->result();
-
-          $sqlWhDetailMat	  = "SELECT b.* FROM warehouse_stock b WHERE 	b.id_material = '".$valx['material']."' AND b.kd_gudang = 'OPC'";
-  				$restWhDetailMat	= $this->db->query($sqlWhDetailMat)->result();
-
-          //update warehouse material
-  				$ArrUpdateMat[$val]['id_material']        = $valx['material'];
-  				$ArrUpdateMat[$val]['kd_gudang'] 	        = 'OPC';
-          $ArrUpdateMat[$val]['outgoing'] 	        = $qty_aktual;
-  				$ArrUpdateMat[$val]['qty_stock'] 	        = $restWhDetailMat[0]->qty_stock - $qty_aktual;
-          $ArrUpdateMat[$val]['outgoing_packing'] 	= $qty_packing;
-          $ArrUpdateMat[$val]['qty_stock_packing'] 	= $restWhDetailMat[0]->qty_stock_packing - $qty_packing;
-  				$ArrUpdateMat[$val]['update_by'] 	        = $session['username'];
-  				$ArrUpdateMat[$val]['update_date']        = date('Y-m-d H:i:s');
-
-          //update warehouse produksi
-  				$ArrUpdatePro[$val]['id_material']        = $valx['material'];
-  				$ArrUpdatePro[$val]['kd_gudang'] 	        = 'PRO';
-          $ArrUpdatePro[$val]['incoming'] 	        = $qty_aktual;
-  				$ArrUpdatePro[$val]['qty_stock'] 	        = $restWhDetail[0]->qty_stock + $qty_aktual;
-          $ArrUpdatePro[$val]['incoming_packing'] 	= $qty_packing;
-          $ArrUpdatePro[$val]['qty_stock_packing'] 	= $restWhDetail[0]->qty_stock_packing + $qty_packing;
-  				$ArrUpdatePro[$val]['update_by'] 	        = $session['username'];
-  				$ArrUpdatePro[$val]['update_date']        = date('Y-m-d H:i:s');
-
-          //insert history
-  				$ArrHist[$val]['id_material'] 		  = $restWhDetail[0]->id_material;
-  				$ArrHist[$val]['idmaterial'] 		    = $restWhDetail[0]->idmaterial;
-  				$ArrHist[$val]['nm_material'] 		  = $restWhDetail[0]->nm_material;
-  				$ArrHist[$val]['kd_gudang_dari'] 	  = "OPC";
-  				$ArrHist[$val]['kd_gudang_ke'] 		  = "PRO";
-          $ArrHist[$val]['incoming_awal'] 	  = $restWhDetail[0]->incoming;
-  				$ArrHist[$val]['incoming_akhir'] 	  = $restWhDetail[0]->incoming + $qty_aktual;
-  				$ArrHist[$val]['qty_stock_awal'] 	  = $restWhDetail[0]->qty_stock;
-  				$ArrHist[$val]['qty_stock_akhir'] 	= $restWhDetail[0]->qty_stock + $qty_aktual;
-  				$ArrHist[$val]['qty_booking_awal'] 	= $restWhDetail[0]->qty_booking;
-  				$ArrHist[$val]['qty_booking_akhir'] = $restWhDetail[0]->qty_booking;
-  				$ArrHist[$val]['qty_rusak_awal'] 	  = $restWhDetail[0]->qty_rusak;
-  				$ArrHist[$val]['qty_rusak_akhir'] 	= $restWhDetail[0]->qty_rusak;
-  				$ArrHist[$val]['no_trans'] 			    = $no_wip;
-  				$ArrHist[$val]['jumlah_mat'] 		    = $qty_aktual;
-  				$ArrHist[$val]['update_by'] 		    = $session['username'];
-  				$ArrHist[$val]['update_date'] 		  = date('Y-m-d H:i:s');
-          $ArrHist[$val]['incoming_awal_packing'] 	  = $restWhDetail[0]->incoming_packing;
-  				$ArrHist[$val]['incoming_akhir_packing'] 	  = $restWhDetail[0]->incoming_packing + $qty_packing;
-          $ArrHist[$val]['qty_stock_awal_packing'] 	  = $restWhDetail[0]->qty_stock_packing;
-  				$ArrHist[$val]['qty_stock_akhir_packing'] 	= $restWhDetail[0]->qty_stock_packing + $qty_packing;
-  				$ArrHist[$val]['qty_booking_awal_packing'] 	= $restWhDetail[0]->qty_booking_packing;
-  				$ArrHist[$val]['qty_booking_akhir_packing'] = $restWhDetail[0]->qty_booking_packing;
-  				$ArrHist[$val]['qty_rusak_awal_packing'] 	  = $restWhDetail[0]->qty_rusak_packing;
-  				$ArrHist[$val]['qty_rusak_akhir_packing'] 	= $restWhDetail[0]->qty_rusak;
-          $ArrHist[$val]['jumlah_mat_packing'] 		    = $qty_packing;
-
-        }
-
-        //insert adjustment
-        $ArrInsertH = array(
-  				'no_ipp'             => $no_wip,
-  				'jumlah_mat'         => $SUM_QTY,
-          'jumlah_mat_packing' => $SUM_PACK,
-  				'kd_gudang_dari'     => 'OPC',
-  				'kd_gudang_ke'       => 'PRO',
-  				// 'note' => $note,
-          // 'tanda_terima' => $tanda_terima,
-  				'created_by'    => $session['username'],
-  				'created_date'  => date('Y-m-d H:i:s')
-  			);
-
-        $q_update = "SELECT
-                  	a.id,
-                  	a.sts_wip
-                  FROM
-                  	produksi_planning_data a
-                  	LEFT JOIN produksi_planning b ON a.no_plan = b.no_plan
-                  WHERE
-                  	b.costcenter = 'CC2000012'
-                    AND a.no_plan = '".$data['plandate']."'
-                  	AND a.sts_wip = 'N'";
-        $result_update = $this->db->query($q_update)->result_array();
-        $ArrUpdate	= array();
-        foreach($result_update AS $val => $valx){
-          $ArrUpdate[$val]['id']          = $valx['id'];
-          $ArrUpdate[$val]['sts_wip']     = 'Y';
-          $ArrUpdate[$val]['updated_by']  = $session['username'];
-          $ArrUpdate[$val]['updated_date']= date('Y-m-d H:i:s');
-          $ArrUpdate[$val]['no_wip']      = $no_wip;
-        }
-
-        $ArrHeadPlan = array(
-          'sts_plan' => 'Y'
-        );
-
-        $sales_header    = $this->db->query("SELECT * FROM sales_order_header WHERE delivery_date BETWEEN '".$resultHP[0]->date_awal."' AND '".$resultHP[0]->date_akhir."' ")->result_array();
-        $ArrUpdSales	= array();
-        foreach($sales_header AS $val => $valx){
-          $ArrUpdSales[$val]['no_so']      = $valx['no_so'];
-          $ArrUpdSales[$val]['sts_plan']   = 'Y';
-        }
-
-        $sales_detail    = $this->db->query("SELECT *, SUM(qty_order) AS order_plan FROM sales_order_detail WHERE delivery_date BETWEEN '".$resultHP[0]->date_awal."' AND '".$resultHP[0]->date_akhir."' GROUP BY product ")->result_array();
-        $ArrUpdStockProduct	= array();
-        $ArrHistProduct = array();
-        foreach($sales_detail AS $val => $valx){
-          $ArrUpdStockProduct[$val]['id_product']  = $valx['product'];
-          $ArrUpdStockProduct[$val]['qty_order']   = $valx['order_plan'];
-          $ArrUpdStockProduct[$val]['update_by']  = $session['username'];
-          $ArrUpdStockProduct[$val]['update_date']= date('Y-m-d H:i:s');
-
-          $sqlhistPro	   = "SELECT * FROM warehouse_product WHERE id_product = '".$valx['product']."' AND category = 'product'";
-  				$resthistPro	 = $this->db->query($sqlhistPro)->result();
-
-          //insert history
-  				$ArrHistProduct[$val]['category'] 		     = 'product';
-  				$ArrHistProduct[$val]['id_product'] 		 = $valx['product'];
-  				$ArrHistProduct[$val]['qty_order_awal']  = $resthistPro[0]->qty_order;
-  				$ArrHistProduct[$val]['qty_order_akhir'] = $resthistPro[0]->qty_order + $valx['order_plan'];
-          $ArrHistProduct[$val]['no_trans'] 		   = $no_wip;
-          $ArrHistProduct[$val]['update_by'] 	   = $session['username'];
-  				$ArrHistProduct[$val]['update_date'] 	 = date('Y-m-d H:i:s');
-        }
-
-
-        //HISTORT STOCK
-
-        // echo $q_update;
-        // print_r($ArrHeader);
-        // print_r($ArrDetail);
-        // print_r($ArrUpdate);
-        // print_r($ArrUpdateMat);
-        // print_r($ArrUpdatePro);
-        // print_r($ArrHist);
-        // print_r($ArrInsertH);
-
-        // print_r($ArrUpdStockProduct);
-        // print_r($ArrHistProduct);
-        // exit;
-
-        $this->db->trans_start();
-          $this->db->where('no_plan', $data['plandate']);
-          $this->db->update('produksi_planning', $ArrHeadPlan);
-
-          $this->db->insert('material_wip', $ArrHeader);
-          $this->db->insert_batch('material_wip_detail', $ArrDetail);
-          $this->db->update_batch('produksi_planning_data', $ArrUpdate, 'id');
-
-          $this->db->where('kd_gudang','OPC');
-          $this->db->update_batch('warehouse_stock', $ArrUpdateMat, 'id_material');
-
-          $this->db->where('kd_gudang','PRO');
-          $this->db->update_batch('warehouse_stock', $ArrUpdatePro, 'id_material');
-
-          $this->db->insert_batch('warehouse_history', $ArrHist);
-          $this->db->insert('warehouse_adjustment', $ArrInsertH);
-
-          $this->db->update_batch('sales_order_header', $ArrUpdSales, 'no_so');
-
-          $this->db->where('category','product');
-          $this->db->update_batch('warehouse_product', $ArrUpdStockProduct, 'id_product');
-          $this->db->insert_batch('warehouse_product_history', $ArrHistProduct);
-        $this->db->trans_complete();
-
-        if($this->db->trans_status() === FALSE){
-          $this->db->trans_rollback();
-          $Arr_Data	= array(
-            'pesan'		=>'Save gagal disimpan ...',
-            'status'	=> 0
-          );
-        }
-        else{
-          $this->db->trans_commit();
-          $Arr_Data	= array(
-            'pesan'		=>'Save berhasil disimpan. Thanks ...',
-            'status'	=> 1
-          );
-          history("Insert Material WIP ".$no_wip);
-        }
-        echo json_encode($Arr_Data);
-      }
-      else{
-        $this->template->title('Materials WIP');
-        $this->template->render('add_wip');
-      }
-  	}
-
-    public function get_wip_produksi(){
-      $no_plan = $this->uri->segment(3);
-      $query = "SELECT
-                  a.*,
-                  b.nama,
-                  b.konversi,
-                  c.nm_unit,
-                  d.nm_packaging
-                FROM
-                  get_material_wip a
-                  LEFT JOIN ms_inventory_category3 b ON a.code_material=b.id_category3
-                  LEFT JOIN m_unit c ON c.id_unit = b.unit
-                  LEFT JOIN master_packaging d ON d.id = b.packaging
-                WHERE a.no_plan='".$no_plan."'
-                  AND a.code_material <> '0' AND a.code_material <> '' AND a.code_material IS NOT NULL
-                  ";
-      $result = $this->db->query($query)->result_array();
-      $num_r = $this->db->query($query)->num_rows();
-      $d_Header = "<div class='box box-primary'>";
-        	$d_Header .= "<div class='box-body'>";
-          $d_Header .= "<table class='table table-bordered table-striped'>";
-          $d_Header .= "<thead>";
-          $d_Header .= "<tr>";
-            $d_Header .= "<th class='text-center' width='5%' style='vertical-align:middle;'>#</th>";
-            $d_Header .= "<th class='text-center' width='30%' style='vertical-align:middle;'>Material Name</th>";
-            $d_Header .= "<th class='text-center' width='13%' style='vertical-align:middle;'>Qty Packing</th>";
-            $d_Header .= "<th class='text-center' width='13%' style='vertical-align:middle;'>Qty Material</th>";
-            $d_Header .= "<th class='text-center' width='13%' style='vertical-align:middle;'>Actual Qty Packing</th>";
-            $d_Header .= "<th class='text-center' width='13%' style='vertical-align:middle;'>Unit Packing</th>";
-            $d_Header .= "<th class='text-center' width='13%' style='vertical-align:middle;'>Actual Qty Material (Kg)</th>";
-          $d_Header .= "</tr>";
-          $d_Header .= "</thead>";
-          $d_Header .= "<tbody>";
-          foreach ($result as $key => $value) { $key++;
-
-            if($value['weight'] <= 0 OR empty($value['konversi']) OR $value['konversi'] <= 0){
-              $qty_pack = 0;
-            }else{
-              $qty_pack = $value['weight']/$value['konversi'];
-            }
-            $d_Header .= "<tr>";
-              $d_Header .= "<td class='text-center'>".$key."</td>";
-              $d_Header .= "<td>".strtoupper($value['nama'])."</td>";
-              $d_Header .= "<td class='text-right'>".number_format($qty_pack,2)." ".ucfirst($value['nm_packaging'])."</td>";
-              $d_Header .= "<td class='text-right'>".number_format($value['weight'],2)." ".ucfirst($value['nm_unit'])."</td>";
-              $d_Header .= "<td>
-                            <input type='text' name='detail[".$key."][qty_packing]' id='pack_".$key."' data-konversi='".$value['konversi']."' class='form-control input-md text-right maskM inputPacking'>
-                            </td>";
-              $d_Header .= "<td class='text-center'>".ucfirst($value['nm_packaging'])."</td>";
-              $d_Header .= "<td>
-                            <input type='text' name='detail[".$key."][qty_aktual]' id='qty_".$key."' class='form-control input-md text-right' readonly='readonly'>
-                            <input type='hidden' name='detail[".$key."][material]' class='form-control input-md' value='".$value['id_category3']."'>
-                            <input type='hidden' name='detail[".$key."][qty_material]' class='form-control input-md' value='".$value['weight']."'>
-                            <input type='hidden' name='detail[".$key."][unit]' class='form-control input-md' value='".$value['nm_unit']."'>
-                            <input type='hidden' name='detail[".$key."][unit_packing]' class='form-control input-md' value='".$value['nm_packaging']."'>
-                            <input type='hidden' name='detail[".$key."][unit_aktual]' class='form-control input-md' value='".$value['nm_unit']."'>
-                            </td>";
-            $d_Header .= "</tr>";
-          }
-          if($num_r < 1){
-            $d_Header .= "<tr>";
-            $d_Header .= "<td colspan='6'>Data not found ...</td>";
-            $d_Header .= "</tr>";
-          }
-          $d_Header .= "</tbody>";
-          $d_Header .= "</table>";
-          $d_Header .= "</div>";
-      $d_Header .= "</div>";
-
-
-  		 echo json_encode(array(
-  				'header'			=> $d_Header,
-          'num' => $num_r
-  		 ));
-  	}
-
-    public function detail_wip(){
-      $no_wip     = $this->uri->segment(3);
-      $created    = str_replace('sp4si',' ',$this->uri->segment(4));
-      $dated      = str_replace('sp4si',' ',$this->uri->segment(5));
-
-      $query 	= "SELECT a.*, b.nm_material FROM material_wip_detail a LEFT JOIN ms_inventory_category3 b ON a.material=b.id_category3 WHERE no_wip='".$no_wip."'";
-      $result		= $this->db->query($query)->result_array();
-
-      $data = array(
-        'data' => $result
-      );
-
-      $this->template->set('results', $data);
-      history("View detail wip ".$no_wip);
-      $this->template->title('Materials WIP');
-      $this->template->render('detail_wip');
-    }
-
-    //==========================================================================================================
-    //============================================INCOMING=========================================================
-    //==========================================================================================================
-
-    public function incoming(){
-      $this->auth->restrict($this->viewPermission);
-      $session  = $this->session->userdata('app_session');
-      $this->template->page_icon('fa fa-users');
-
-      $query = "SELECT no_po FROM tran_material_purchase_header WHERE sts_ajuan = 'OPN' ORDER BY no_po ASC ";
-      // echo $query;
-  		$restQuery = $this->db->query($query)->result_array();
-  		$data = array(
-  			'no_po' => $restQuery
-  		);
-
-      $this->template->set('results', $data);
-      history("View index masterial incoming");
-      $this->template->title('Materials Incoming');
-      $this->template->render('incoming');
-    }
-
-    public function data_side_incoming(){
-      $this->warehouse_material_model->get_json_incoming();
-    }
-
-    public function adjustment(){
-      $no_po = $this->uri->segment(3);
-      $gudang = $this->uri->segment(4);
-
-      $qBQdetailHeader 	= " SELECT
-                              a.*,
-                              SUM(a.qty) AS qty,
-                              SUM(a.qty_in) AS qty_in,
-                              b.konversi,
-                              c.nm_unit,
-                              d.nm_packaging
-                            FROM tran_material_purchase_detail a 
-                            LEFT JOIN ms_inventory_category3 b ON a.id_material = b.id_category3
-                            LEFT JOIN m_unit c ON c.id_unit = b.unit
-                            LEFT JOIN master_packaging d ON d.id = b.packaging
-                            WHERE
-                              a.no_po='".$no_po."'
-                              AND complete = 'N'
-                            GROUP BY id_material";
-      $qBQdetailRest		= $this->db->query($qBQdetailHeader)->result_array();
-      $qBQdetailNum		= $this->db->query($qBQdetailHeader)->num_rows();
-      // echo $qBQdetailHeader;
-      // exit;
-
-      $data = array(
-        'qBQdetailHeader' => $qBQdetailHeader,
-        'qBQdetailRest' => $qBQdetailRest,
-        'qBQdetailNum' => $qBQdetailNum,
-        'no_po' => $no_po,
-        'gudang' => $gudang
-      );
-
-      $this->template->set('results', $data);
-      $this->template->title('Materials In');
-      $this->template->render('adjustment');
-  	}
-
-    public function in_material(){
-  		$data 			= $this->input->post();
-  		$session  = $this->session->userdata('app_session');
-  		$no_po			= $data['no_po'];
-  		$gudang			= $data['gudang'];
-  		// $note			= strtolower($data['note']);
-      // $tanda_terima			= strtoupper($data['tanda_terima']);
-  		$addInMat		= $data['addInMat'];
-  		$adjustment 	= $data['adjustment'];
-
-      $Ym 			      = date('ym');
-
-  		//pengurutan kode
-  		$srcMtr			  = "SELECT MAX(kode_trans) as maxP FROM warehouse_adjustment WHERE kode_trans LIKE 'TRS".$Ym."%' ";
-  		$numrowMtr		= $this->db->query($srcMtr)->num_rows();
-  		$resultMtr		= $this->db->query($srcMtr)->result_array();
-  		$angkaUrut2		= $resultMtr[0]['maxP'];
-  		$urutan2		  = (int)substr($angkaUrut2, 7, 4);
-  		$urutan2++;
-  		$urut2			   = sprintf('%04s',$urutan2);
-  		$kode_trans		= "TRS".$Ym.$urut2;
-
-  		// echo $no_po;
-  		// print_r($addInMat);
-  		// exit;
-
-  		if($adjustment == 'IN'){
-  			$histHlp = "Material Adjustment In Purchase To ".$gudang." / ".$no_po;
-  		}
-
-  		if($adjustment == 'IN'){
-  			$ArrUpdate		 = array();
-  			$ArrInList		 = array();
-  			$ArrDeatil		 = array();
-  			$ArrHist		 = array();
-
-        $ArrUpdateMat		 = array();
-
-  			$SumMat = 0;
-  			$SumRisk = 0;
-
-        $SumMatPack = 0;
-  			$SumRiskPack = 0;
-  			foreach($addInMat AS $val => $valx){
-  				$SumMat += $valx['qty_in'];
-  				$SumRisk += $valx['qty_rusak'];
-
-          $SumMatPack += $valx['qty_in_pack'];
-  				$SumRiskPack += $valx['qty_rusak_pack'];
-
-  				$sqlWhDetail	= "	SELECT
-  									a.*,
-  									b.id AS id2,
-  									b.*
-  								FROM
-  									tran_material_purchase_detail a
-  									LEFT JOIN warehouse_stock b
-  										ON a.id_material=b.id_material
-  								WHERE
-  									a.id = '".$valx['id']."' AND b.kd_gudang = 'OPC'
-  								";
-  				$restWhDetail	= $this->db->query($sqlWhDetail)->result();
-
-          // echo $sqlWhDetail;
-  				//update detail purchase
-  				$ArrUpdate[$val]['id'] 			= $valx['id'];
-  				$ArrUpdate[$val]['qty_in'] 		= $restWhDetail[0]->qty_in + $valx['qty_in'];
-  				$ArrUpdate[$val]['complete'] 	= (!empty($valx['complete']))?$valx['complete']:'N';
-          $ArrUpdate[$val]['qty_in_packing'] 		= $restWhDetail[0]->qty_in_packing + $valx['qty_in_pack'];
-
-  				$ArrInList[$val]['complete'] 	= (!empty($valx['complete']))?$valx['complete']:'N';
-
-          //Update_mat
-
-
-  				//update stock
-  				$ArrDeatil[$val]['id'] 			    = $restWhDetail[0]->id2;
-  				// $ArrDeatil[$val]['id_material'] = $restWhDetail[0]->id_material;
-  				// $ArrDeatil[$val]['kd_gudang'] 	= $restWhDetail[0]->kd_gudang;
-          $ArrDeatil[$val]['incoming'] 	  = $valx['qty_in'];
-  				$ArrDeatil[$val]['qty_stock'] 	= $restWhDetail[0]->qty_stock + $valx['qty_in'];
-  				$ArrDeatil[$val]['qty_rusak'] 	= $restWhDetail[0]->qty_rusak + $valx['qty_rusak'];
-  				$ArrDeatil[$val]['update_by'] 	= $session['username'];
-  				$ArrDeatil[$val]['update_date'] = date('Y-m-d H:i:s');
-
-  				//insert history
-  				$ArrHist[$val]['id_material'] 		= $restWhDetail[0]->id_material;
-  				$ArrHist[$val]['idmaterial'] 		  = $restWhDetail[0]->idmaterial;
-  				$ArrHist[$val]['nm_material'] 		= $restWhDetail[0]->nm_material;
-  				$ArrHist[$val]['kd_gudang_dari'] 	= "PURCHASE";
-          $ArrHist[$val]['id_gudang'] 		= "1";
-  				$ArrHist[$val]['kd_gudang'] 		= "OPC";
-          $ArrHist[$val]['id_gudang_ke'] 		= "";
-          $ArrHist[$val]['kd_gudang_ke'] 		= "PURCHASE";
-          $ArrHist[$val]['id_gudang_dari'] 		= "1";
-  				$ArrHist[$val]['kd_gudang_dari'] 		= "OPC";
-          $ArrHist[$val]['incoming_awal'] 	= $restWhDetail[0]->incoming;
-  				$ArrHist[$val]['incoming_akhir'] 	= $restWhDetail[0]->incoming + $valx['qty_in'];
-  				$ArrHist[$val]['qty_stock_awal'] 	= $restWhDetail[0]->qty_stock;
-  				$ArrHist[$val]['qty_stock_akhir'] 	= $restWhDetail[0]->qty_stock + $valx['qty_in'];
-  				$ArrHist[$val]['qty_booking_awal'] 	= $restWhDetail[0]->qty_booking;
-  				$ArrHist[$val]['qty_booking_akhir'] = $restWhDetail[0]->qty_booking;
-  				$ArrHist[$val]['qty_rusak_awal'] 	= $restWhDetail[0]->qty_rusak;
-  				$ArrHist[$val]['qty_rusak_akhir'] 	= $restWhDetail[0]->qty_rusak + $valx['qty_rusak'];
-  				$ArrHist[$val]['no_ipp'] 			    = $kode_trans."/".$no_po;
-  				$ArrHist[$val]['jumlah_mat'] 		  = $valx['qty_in'] + $valx['qty_rusak'];
-          $ArrHist[$val]['ket'] 		        = "incoming material";
-  				$ArrHist[$val]['update_by'] 		  = $session['username'];
-  				$ArrHist[$val]['update_date'] 		= date('Y-m-d H:i:s');
-
-          $ArrHist[$val]['tanda_terima'] 		= $valx['tanda_terima'];
-          $ArrHist[$val]['surat_jalan'] 		= $valx['surat_jalan'];
-  			}
-
-  			$ArrInsertH = array(
-          'kode_trans' => $kode_trans,
-  				'no_ipp' => $no_po,
-  				'jumlah_mat' => $SumMat + $SumRisk,
-          'jumlah_mat_packing' => $SumMatPack + $SumRiskPack,
-          'id_gudang_dari' => '',
-  				'kd_gudang_dari' => 'PURCHASE',
-  				'id_gudang_ke' => '1',
-          'kd_gudang_ke' => 'OPC',
-  				// 'note' => $note,
-          'category' => 'incoming material',
-  				'created_by' => $session['username'],
-  				'created_date' => date('Y-m-d H:i:s')
-  			);
-
-  			$ArrHeader = array(
-  				'sts_process' => 'Y',
-  			);
-
-  			$ArrHeader2 = array(
-  				'sts_ajuan' => 'CLS',
-  			);
-
-
-  			// print_r($ArrUpdate);
-  			// print_r($ArrHist);
-  			// print_r($ArrInsertH);
-  			// exit;
-  			$this->db->trans_start();
-  				$this->db->update_batch('warehouse_stock', $ArrDeatil, 'id');
-  				$this->db->update_batch('tran_material_purchase_detail', $ArrUpdate, 'id');
-
-  				$this->db->insert_batch('warehouse_history', $ArrHist);
-  				$this->db->insert('warehouse_adjustment', $ArrInsertH);
-
-  				$this->db->where('no_po', $no_po);
-  				$this->db->update('tran_material_purchase_header', $ArrHeader);
-
-  				$qCheck = "SELECT * FROM tran_material_purchase_detail WHERE no_po='".$no_po."' AND qty_in < qty ";
-  				$NumChk = $this->db->query($qCheck)->num_rows();
-  				if($NumChk < 1){
-  					$this->db->where('no_po', $no_po);
-  					$this->db->update('tran_material_purchase_header', $ArrHeader2);
-  				}
-  			$this->db->trans_complete();
-  		}
-
-
-  		if($this->db->trans_status() === FALSE){
-  			$this->db->trans_rollback();
-  			$Arr_Data	= array(
-  				'pesan'		=>'Save process failed. Please try again later ...',
-  				'status'	=> 0
-  			);
-  		}
-  		else{
-  			$this->db->trans_commit();
-  			$Arr_Data	= array(
-  				'pesan'		=>'Save process success. Thanks ...',
-  				'status'	=> 1
-  			);
-  			history($histHlp);
-  		}
-  		echo json_encode($Arr_Data);
-  	}
-
-    public function detail_adjustment(){
-      $no_ipp     = $this->uri->segment(3);
-      $created    = str_replace('sp4si',' ',$this->uri->segment(4));
-      $dated      = str_replace('sp4si',' ',$this->uri->segment(5));
-
-      $qBQdetailHeader 	= "SELECT * FROM warehouse_history WHERE no_ipp LIKE '%".$no_ipp."%' AND update_by='".$created."' AND update_date='".$dated."' ";
-      $qBQdetailRest		= $this->db->query($qBQdetailHeader)->result_array();
-      $qBQdetailNum		= $this->db->query($qBQdetailHeader)->num_rows();
-
-      $data = array(
-        'qBQdetailHeader' => $qBQdetailHeader,
-        'qBQdetailRest'   => $qBQdetailRest,
-        'qBQdetailNum'    => $qBQdetailNum
-      );
-
-      $this->template->set('results', $data);
-      history("View index detail adjustment ".$no_ipp);
-      $this->template->title('Materials Adjustment In');
-      $this->template->render('detail_adjustment');
-    }
-
-    //==========================================================================================================
-    //============================================ADJUSTMENT MATERIAL===========================================
-    //==========================================================================================================
-
-    public function adjustment_material(){
-      $this->auth->restrict($this->viewPermission);
-      $session  = $this->session->userdata('app_session');
-      $this->template->page_icon('fa fa-users');
-      history("View index adjustment material");
-      $this->template->title('Adjustment');
-      $this->template->render('adjustment_material');
-    }
-
-    public function data_side_adjustment(){
-  		$this->warehouse_material_model->get_json_adjustment();
-  	}
-
-    public function add_adjustment(){
-      if($this->input->post()){
-        $data 			  = $this->input->post();
-    		$session      = $this->session->userdata('app_session');
-        $kd_gudang		= $data['kd_gudang'];
-        $material	    = $data['material'];
-        $adjustment		= $data['adjustment'];
-        $surat_jalan	= $data['surat_jalan'];
-        $qty			    = $data['qty'];
-        $stock_awal	  = $data['stock_awal'];
-        $stock_akhir	= $data['stock_akhir'];
-        $reason	      = strtolower($data['reason']);
-        $unit_	      = $data['unit'];
-        $IMP          = explode('_', $unit_);
-        $ajust_by     = $IMP[1];
-        $unit         = $IMP[0];
-
-        $Ym           = date('ym');
-        $srcMtr			  = "SELECT MAX(kd_adjustment) as maxP FROM warehouse_material_adjustment WHERE kd_adjustment LIKE 'AM".$Ym."%' ";
-        $numrowMtr		= $this->db->query($srcMtr)->num_rows();
-        $resultMtr		= $this->db->query($srcMtr)->result_array();
-        $angkaUrut2		= $resultMtr[0]['maxP'];
-        $urutan2		  = (int)substr($angkaUrut2, 6, 6);
-        $urutan2++;
-        $urut2			  = sprintf('%06s',$urutan2);
-        $kd_adjustment	= "AM".$Ym.$urut2;
-
-        if($ajust_by == 'packing'){
-          $awal     = $stock_awal * get_konversi($material);
-          $akhir     = $stock_akhir * get_konversi($material);
-          $qty_unit     = $qty * get_konversi($material);
-        }
-        if($ajust_by == 'unit'){
-          $awal     = $stock_awal;
-          $akhir     = $stock_akhir;
-          $qty_unit     = $qty;
-        }
-
-        $ArrHeader = array(
-          'kd_adjustment'   => $kd_adjustment,
-          'kd_gudang'       => $kd_gudang,
-          'material'        => $material,
-          'adjustment'      => $adjustment,
-          'qty'             => $qty_unit,
-          'stock_awal'      => $awal,
-          'surat_jalan'      => $surat_jalan,
-          'stock_akhir'     => $akhir,
-          'reason'          => $reason,
-          'unit'            => $unit,
-          'ajust_by'        => $ajust_by,
-          'created_by'	    => $session['username'],
-          'created_date'	  => date('Y-m-d H:i:s')
-        );
-
-        // print_r($ArrHeader); exit;
-
-        $ArrHist	  = array();
-        $ArrUpdate3	= array();
-
-        //history
-        $sqlWhDetail	= "	SELECT
-                            b.*
-                          FROM
-                            warehouse_stock b
-                          WHERE
-                            b.id_material = '".$material."' AND b.id_gudang = '".$kd_gudang."'
-                          LIMIT 1";
-        $restWhDetail	= $this->db->query($sqlWhDetail)->result();
-        // echo $sqlWhDetail; exit;
-        if(!empty($restWhDetail)){
-          $incoming_akhir = $restWhDetail[0]->incoming - $qty_unit;
-          $qty_stock_akhir = $restWhDetail[0]->qty_stock - $qty_unit;
-          if($adjustment == 'plus'){
-            $incoming_akhir = $restWhDetail[0]->incoming + $qty_unit;
-            $qty_stock_akhir = $restWhDetail[0]->qty_stock + $qty_unit;
-          }
-
-          $ArrUpdate3['qty_stock']          = $akhir;
-          $ArrUpdate3['incoming']           = $qty_unit;
-          $ArrUpdate3['update_by'] 	        = $session['username'];
-  				$ArrUpdate3['update_date'] 	      = date('Y-m-d H:i:s');
-
-          $ArrHist['id_material'] 		= $restWhDetail[0]->id_material;
-          $ArrHist['idmaterial'] 		  = $restWhDetail[0]->idmaterial;
-          $ArrHist['nm_material'] 		= $restWhDetail[0]->nm_material;
-          $ArrHist['id_gudang'] 		  = $restWhDetail[0]->id_gudang;
-          $ArrHist['kd_gudang'] 		  = $restWhDetail[0]->kd_gudang;
-          $ArrHist['id_gudang_dari'] 	= "";
-          $ArrHist['kd_gudang_dari'] 	= "ADJUSTMENT";
-          $ArrHist['id_gudang_ke'] 		= $restWhDetail[0]->id_gudang;
-          $ArrHist['kd_gudang_ke'] 		= $restWhDetail[0]->kd_gudang;
-          $ArrHist['incoming_awal'] 	= $restWhDetail[0]->incoming;
-          $ArrHist['incoming_akhir'] 	= $incoming_akhir;
-          $ArrHist['qty_stock_awal'] 	= $restWhDetail[0]->qty_stock;
-          $ArrHist['qty_stock_akhir'] 	= $qty_stock_akhir;
-          $ArrHist['qty_booking_awal'] 	= $restWhDetail[0]->qty_booking;
-          $ArrHist['qty_booking_akhir'] = $restWhDetail[0]->qty_booking;
-          $ArrHist['qty_rusak_awal'] 	  = $restWhDetail[0]->qty_rusak;
-          $ArrHist['qty_rusak_akhir'] 	= $restWhDetail[0]->qty_rusak;
-          $ArrHist['no_ipp'] 			    = $kd_adjustment;
-          $ArrHist['jumlah_mat'] 		    = $qty_unit;
-          $ArrHist['ket'] 		        = "adjustment material ".$adjustment;
-          $ArrHist['update_by'] 		    = $session['username'];
-          $ArrHist['update_date'] 		  = date('Y-m-d H:i:s');
-        }
-
-        $ArrStockSupIns = array();
-        $ArrHistSubIns = array();
-        if(empty($restWhDetail)){
-					$sql_mat	= "	SELECT a.* FROM ms_inventory_category3 a WHERE a.id_category3 = '".$material."' LIMIT 1";
-					$rest_mat	= $this->db->query($sql_mat)->result();
-					//update stock sub gudang
-					$ArrStockSupIns['id_material'] 	= $rest_mat[0]->id_category3;
-					$ArrStockSupIns['idmaterial'] 	= $rest_mat[0]->id_category3;
-					$ArrStockSupIns['nm_material'] 	= $rest_mat[0]->nama;
-					$ArrStockSupIns['id_gudang'] 		= $kd_gudang;
-					$ArrStockSupIns['kd_gudang'] 		= get_name('m_warehouse', 'id', 'id', $kd_gudang);
-					$ArrStockSupIns['qty_stock'] 		= ($IMP[1] == 'packing' ? ($stock_akhir * $rest_mat[0]->konversi) : $stock_akhir);
-					$ArrStockSupIns['update_by'] 		= $session['username'];
-					$ArrStockSupIns['update_date'] 	= date('Y-m-d H:i:s');
-
-					$ArrHistSubIns['id_material'] 	= $rest_mat[0]->id_category3;
-					$ArrHistSubIns['idmaterial'] 		= $rest_mat[0]->id_category3;
-					$ArrHistSubIns['nm_material'] 	= $rest_mat[0]->nama;
-					$ArrHistSubIns['id_gudang'] 		= $kd_gudang;
-					$ArrHistSubIns['kd_gudang'] 		= get_name('m_warehouse', 'id', 'id', $kd_gudang);
-          $ArrHistSubIns['id_gudang_dari'] 	= "";
-          $ArrHistSubIns['kd_gudang_dari'] 	= "ADJUSTMENT";
-					$ArrHistSubIns['id_gudang_ke'] 	= $kd_gudang;
-					$ArrHistSubIns['kd_gudang_ke'] 	= get_name('m_warehouse', 'id', 'id', $kd_gudang);
-					$ArrHistSubIns['qty_stock_awal'] 	= 0;
-					$ArrHistSubIns['qty_stock_akhir'] 	= ($IMP[1] == 'packing' ? ($stock_akhir * $rest_mat[0]->konversi) : $stock_akhir);
-					$ArrHistSubIns['qty_booking_awal'] 	= 0;
-					$ArrHistSubIns['qty_booking_akhir'] 	= 0;
-					$ArrHistSubIns['qty_rusak_awal'] 		= 0;
-					$ArrHistSubIns['qty_rusak_akhir'] 	= 0;
-					$ArrHistSubIns['no_ipp'] 				= $kd_adjustment;
-					$ArrHistSubIns['jumlah_mat'] 			= $qty_unit;
-					$ArrHistSubIns['ket'] 				= 'penambahan gudang by adjustment (insert new)';
-					$ArrHistSubIns['update_by'] 			= $session['username'];
-					$ArrHistSubIns['update_date'] 		= date('Y-m-d H:i:s');
-				}
-
-        // print_r($ArrHeader);
-        // print_r($ArrUpdate3);
-        // print_r($ArrHist);
-        // print_r($ArrStockSupIns);
-        // print_r($ArrHistSubIns);
-        // exit;
-
-        $this->db->trans_start();
-            $this->db->insert('warehouse_material_adjustment', $ArrHeader);
-
-            if(!empty($restWhDetail)){
-              $this->db->where('id_material', $material);
-              $this->db->where('id_gudang', $kd_gudang);
-              $this->db->update('warehouse_stock', $ArrUpdate3);
-              $this->db->insert('warehouse_history', $ArrHist);
-            }
-            if(empty($restWhDetail)){
-      				$this->db->insert('warehouse_stock', $ArrStockSupIns);
-      				$this->db->insert('warehouse_history', $ArrHistSubIns);
-      			}
-        $this->db->trans_complete();
-
-        if($this->db->trans_status() === FALSE){
-          $this->db->trans_rollback();
-          $Arr_Data	= array(
-            'pesan'		=>'Save gagal disimpan ...',
-            'status'	=> 0
-          );
-        }
-        else{
-          $this->db->trans_commit();
-          $Arr_Data	= array(
-            'pesan'		=>'Save berhasil disimpan. Thanks ...',
-            'status'	=> 1
-          );
-          history("Insert adjustment material ".$kd_adjustment);
-        }
-        echo json_encode($Arr_Data);
-      }
-      else{
-        $this->template->title('Add Adjustment');
-        $this->template->render('add_adjustment');
-      }
-  	}
-
-    public function get_stock(){
-      $material = $this->uri->segment(3);
-      $gudang    = $this->uri->segment(4);
-      $unit    = $this->uri->segment(5);
-
-      $IMP = explode('_', $unit);
-      // echo $IMP[1];
-
-      if($gudang == '1'){
-        if(empty($unit)){
-          $stock = get_stock_material_packing($material, $gudang);
-        }
-        if(!empty($unit)){
-          if($IMP[1] == 'unit'){
-            $stock = get_stock_material($material, $gudang);
-          }
-          if($IMP[1] == 'packing'){
-            $stock = get_stock_material_packing($material, $gudang);
-          }
-
-        }
-
-        $sqlSup		= "SELECT b.nm_unit, c.nm_packaging FROM ms_inventory_category3 a LEFT JOIN m_unit b ON b.id_unit = a.unit LEFT JOIN master_packaging c ON c.id = a.packaging WHERE a.id_category3 ='".$material."' ";
-    		$restSup	= $this->db->query($sqlSup)->result();
-
-    		$option	= "<option value='".$restSup[0]->nm_packaging."_packing'>".strtoupper($restSup[0]->nm_packaging)." (Packing)</option>";
-        $option	.= "<option value='".$restSup[0]->nm_unit."_unit'>".strtoupper($restSup[0]->nm_unit)." (Unit)</option>";
-
-        $tanda = "packing";
-      }
-
-      if($gudang != '1'){
-        $stock = get_stock_material($material, $gudang);
-
-        $sqlSup		= "SELECT b.nm_unit FROM ms_inventory_category3 a LEFT JOIN m_unit b ON b.id_unit = a.unit WHERE a.id_category3 ='".$material."' ";
-    		$restSup	= $this->db->query($sqlSup)->result();
-
-        $option	= "<option value='".$restSup[0]->nm_unit."_unit'>".strtoupper($restSup[0]->nm_unit)." (Unit)</option>";
-
-        $tanda = "unit";
-      }
-
-  		 echo json_encode(array(
-  				'stock'			=> floatval($stock),
-          'option'		=> $option,
-          'tanda'			=> $tanda
-  		 ));
-  	}
-
-    //==========================================================================================================
-    //============================================STOCK=========================================================
-    //==========================================================================================================
-
-    public function history(){
-      $this->auth->restrict($this->viewPermission);
-      $session  = $this->session->userdata('app_session');
-      $this->template->page_icon('fa fa-users');
-      history("View index masterial History");
-      $this->template->title('Materials History');
-      $this->template->render('history');
-    }
-
-    public function data_side_history(){
-  		$this->warehouse_material_model->get_json_history();
-  	}
-
-    public function excel_history(){
-  		//membuat objek PHPExcel
-  		set_time_limit(0);
-  		ini_set('memory_limit','1024M');
-
-  		$this->load->library("PHPExcel");
-  		// $this->load->library("PHPExcel/Writer/Excel2007");
-  		$objPHPExcel	= new PHPExcel();
-
-  		$style_header = array(
-  			'borders' => array(
-  				'allborders' => array(
-  					  'style' => PHPExcel_Style_Border::BORDER_THIN,
-  					  'color' => array('rgb'=>'000000')
-  				  )
-  			),
-  			'fill' => array(
-  				'type' => PHPExcel_Style_Fill::FILL_SOLID,
-  				'color' => array('rgb'=>'e0e0e0'),
-  			),
-  			'font' => array(
-  				'bold' => true,
-  			),
-  			'alignment' => array(
-  				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
-  				'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER
-  			)
-  		);
-
-  		$style_header2 = array(
-  			'fill' => array(
-  				'type' => PHPExcel_Style_Fill::FILL_SOLID,
-  				'color' => array('rgb'=>'e0e0e0'),
-  			),
-  			'font' => array(
-  				'bold' => true,
-  			),
-  			'alignment' => array(
-  				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
-  				'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER
-  			)
-  		);
-
-  		$styleArray = array(
-  			  'alignment' => array(
-  				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
-  			  ),
-  			  'borders' => array(
-  				'allborders' => array(
-  					  'style' => PHPExcel_Style_Border::BORDER_THIN,
-  					  'color' => array('rgb'=>'000000')
-  				  )
-  			)
-  		  );
-  		$styleArray3 = array(
-  			  'alignment' => array(
-  				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT
-  			  ),
-  			  'borders' => array(
-  				'allborders' => array(
-  					  'style' => PHPExcel_Style_Border::BORDER_THIN,
-  					  'color' => array('rgb'=>'000000')
-  				  )
-  			)
-  		  );
-  		 $styleArray4 = array(
-  			  'alignment' => array(
-  				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT
-  			  ),
-  			  'borders' => array(
-  				'allborders' => array(
-  					  'style' => PHPExcel_Style_Border::BORDER_THIN,
-  					  'color' => array('rgb'=>'000000')
-  				  )
-  			)
-  		  );
-  	    $styleArray1 = array(
-  			  'borders' => array(
-  				  'allborders' => array(
-  					  'style' => PHPExcel_Style_Border::BORDER_THIN
-  				  )
-  			  ),
-  			  'alignment' => array(
-  				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
-  				'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER
-  			  )
-  		  );
-  		$styleArray2 = array(
-  			  'borders' => array(
-  				  'allborders' => array(
-  					  'style' => PHPExcel_Style_Border::BORDER_THIN
-  				  )
-  			  ),
-  			  'alignment' => array(
-  				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
-  				'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER
-  			  )
-  		  );
-
-    		$Arr_Bulan	= array(1=>'Jan','Feb','Mar','Apr','Mei','Jun','Jul','Aug','Sep','Oct','Nov','Dec');
-    		$sheet 		= $objPHPExcel->getActiveSheet();
-
-        $material   = $this->uri->segment(3);
-        $kd_gudang  = $this->uri->segment(4);
-        $tgl_awal   = $this->uri->segment(5);
-        $tgl_akhir  = $this->uri->segment(6);
-
-        $material_where = "";
-        if($material != '0'){
-        $material_where = " AND a.id_material = '".$material."'";
-        }
-
-        $kd_gudang_where = "";
-        if($kd_gudang != '0'){
-        $kd_gudang_where = " AND a.id_gudang = '".$kd_gudang."'";
-        }
-
-        $kd_date_where = "";
-        if($tgl_awal != '0'){
-        $kd_date_where = " AND a.update_date BETWEEN '".$tgl_awal."' AND '".$tgl_akhir."' ";
-        }
-
-    		$sql = "
-      			SELECT
-      				a.*
-      			FROM
-      			   warehouse_history a
-      		   WHERE DATE(update_date) >= '2020-12-01' ".$material_where." ".$kd_gudang_where." ".$kd_date_where." ";
-    		// echo $sql;exit;
-  		$product    = $this->db->query($sql)->result_array();
-
-    		$Row		= 1;
-    		$NewRow		= $Row+1;
-    		$Col_Akhir	= $Cols	= getColsChar(11);
-    		$sheet->setCellValue('A'.$Row, 'HISTORY MATERIAL');
-    		$sheet->getStyle('A'.$Row.':'.$Col_Akhir.$NewRow)->applyFromArray($style_header2);
-    		$sheet->mergeCells('A'.$Row.':'.$Col_Akhir.$NewRow);
-
-    		$NewRow	= $NewRow +2;
-    		$NextRow= $NewRow +1;
-
-    		$sheet->setCellValue('A'.$NewRow, 'No');
-    		$sheet->getStyle('A'.$NewRow.':A'.$NextRow)->applyFromArray($style_header);
-    		$sheet->mergeCells('A'.$NewRow.':A'.$NextRow);
-    		$sheet->getColumnDimension('A')->setAutoSize(true);
-
-    		$sheet->setCellValue('B'.$NewRow, 'Material');
-    		$sheet->getStyle('B'.$NewRow.':B'.$NextRow)->applyFromArray($style_header);
-    		$sheet->mergeCells('B'.$NewRow.':B'.$NextRow);
-    		$sheet->getColumnDimension('B')->setAutoSize(true);
-
-  		  $sheet->setCellValue('C'.$NewRow, 'Tanggal');
-    		$sheet->getStyle('C'.$NewRow.':C'.$NextRow)->applyFromArray($style_header);
-    		$sheet->mergeCells('C'.$NewRow.':C'.$NextRow);
-    		$sheet->getColumnDimension('C')->setAutoSize(true);
-
-        $sheet->setCellValue('D'.$NewRow, 'Gudang');
-    		$sheet->getStyle('D'.$NewRow.':D'.$NextRow)->applyFromArray($style_header);
-    		$sheet->mergeCells('D'.$NewRow.':D'.$NextRow);
-    		$sheet->getColumnDimension('D')->setAutoSize(true);
-
-        $sheet->setCellValue('E'.$NewRow, 'Weight');
-    		$sheet->getStyle('E'.$NewRow.':E'.$NextRow)->applyFromArray($style_header);
-    		$sheet->mergeCells('E'.$NewRow.':E'.$NextRow);
-    		$sheet->getColumnDimension('E')->setAutoSize(true);
-
-        $sheet->setCellValue('F'.$NewRow, 'Gudang Dari');
-    		$sheet->getStyle('F'.$NewRow.':F'.$NextRow)->applyFromArray($style_header);
-    		$sheet->mergeCells('F'.$NewRow.':F'.$NextRow);
-    		$sheet->getColumnDimension('F')->setAutoSize(true);
-
-        $sheet->setCellValue('G'.$NewRow, 'Gudang Ke');
-    		$sheet->getStyle('G'.$NewRow.':G'.$NextRow)->applyFromArray($style_header);
-    		$sheet->mergeCells('G'.$NewRow.':G'.$NextRow);
-    		$sheet->getColumnDimension('G')->setAutoSize(true);
-
-        $sheet->setCellValue('H'.$NewRow, 'Stock Awal');
-    		$sheet->getStyle('H'.$NewRow.':H'.$NextRow)->applyFromArray($style_header);
-    		$sheet->mergeCells('H'.$NewRow.':H'.$NextRow);
-    		$sheet->getColumnDimension('H')->setAutoSize(true);
-
-        $sheet->setCellValue('I'.$NewRow, 'Stock Akhir');
-    		$sheet->getStyle('I'.$NewRow.':I'.$NextRow)->applyFromArray($style_header);
-    		$sheet->mergeCells('I'.$NewRow.':I'.$NextRow);
-    		$sheet->getColumnDimension('I')->setAutoSize(true);
-
-        $sheet->setCellValue('J'.$NewRow, 'Update By');
-    		$sheet->getStyle('J'.$NewRow.':J'.$NextRow)->applyFromArray($style_header);
-    		$sheet->mergeCells('J'.$NewRow.':J'.$NextRow);
-    		$sheet->getColumnDimension('J')->setAutoSize(true);
-
-        $sheet->setCellValue('K'.$NewRow, 'Update Date');
-    		$sheet->getStyle('K'.$NewRow.':K'.$NextRow)->applyFromArray($style_header);
-    		$sheet->mergeCells('K'.$NewRow.':K'.$NextRow);
-    		$sheet->getColumnDimension('K')->setAutoSize(true);
-
-  		if($product){
-  			$awal_row	= $NextRow;
-  			$no=0;
-  			foreach($product as $key => $row){
-  				$no++;
-  				$awal_row++;
-  				$awal_col	= 0;
-
-  				$awal_col++;
-  				$nomor	= $no;
-  				$Cols			= getColsChar($awal_col);
-  				$sheet->setCellValue($Cols.$awal_row, $nomor);
-  				$sheet->getStyle($Cols.$awal_row)->applyFromArray($styleArray3);
-
-  				$awal_col++;
-  				$id_produksi	= strtoupper(strtoupper($row['nm_material']));
-  				$Cols			= getColsChar($awal_col);
-  				$sheet->setCellValue($Cols.$awal_row, $id_produksi);
-  				$sheet->getStyle($Cols.$awal_row)->applyFromArray($styleArray3);
-
-  				$awal_col++;
-  				$status_date	= strtoupper(date('d-M-Y', strtotime($row['update_date'])));
-  				$Cols			= getColsChar($awal_col);
-  				$sheet->setCellValue($Cols.$awal_row, $status_date);
-  				$sheet->getStyle($Cols.$awal_row)->applyFromArray($styleArray4);
-
-          $awal_col++;
-          $status_date	= strtoupper(get_name('warehouse','nm_gudang','id',$row['id_gudang']));
-          $Cols			= getColsChar($awal_col);
-          $sheet->setCellValue($Cols.$awal_row, $status_date);
-          $sheet->getStyle($Cols.$awal_row)->applyFromArray($styleArray3);
-
-          $awal_col++;
-          $status_date	= $row['jumlah_mat'];
-          $Cols			= getColsChar($awal_col);
-          $sheet->setCellValue($Cols.$awal_row, $status_date);
-          $sheet->getStyle($Cols.$awal_row)->applyFromArray($styleArray4);
-
-          $gudang_dari = (!empty($row['id_gudang_dari']))?get_name('warehouse','nm_gudang','id',$row['id_gudang_dari']):$row['kd_gudang_dari'];
-          $gudang_ke = (!empty($row['id_gudang_ke']))?get_name('warehouse','nm_gudang','id',$row['id_gudang_ke']):$row['kd_gudang_ke'];
-
-          $awal_col++;
-          $status_date	= strtoupper($gudang_dari);
-          $Cols			= getColsChar($awal_col);
-          $sheet->setCellValue($Cols.$awal_row, $status_date);
-          $sheet->getStyle($Cols.$awal_row)->applyFromArray($styleArray3);
-
-          $awal_col++;
-          $status_date	= strtoupper($gudang_ke);
-          $Cols			= getColsChar($awal_col);
-          $sheet->setCellValue($Cols.$awal_row, $status_date);
-          $sheet->getStyle($Cols.$awal_row)->applyFromArray($styleArray3);
-
-          $awal_col++;
-          $qty_stock_awal	= $row['qty_stock_awal'];
-          $Cols			= getColsChar($awal_col);
-          $sheet->setCellValue($Cols.$awal_row, $qty_stock_awal);
-          $sheet->getStyle($Cols.$awal_row)->applyFromArray($styleArray4);
-
-          $awal_col++;
-          $qty_stock_akhir	= $row['qty_stock_akhir'];
-          $Cols			= getColsChar($awal_col);
-          $sheet->setCellValue($Cols.$awal_row, $qty_stock_akhir);
-          $sheet->getStyle($Cols.$awal_row)->applyFromArray($styleArray4);
-
-          $awal_col++;
-          $update_by	= strtoupper($row['update_by']);
-          $Cols			= getColsChar($awal_col);
-          $sheet->setCellValue($Cols.$awal_row, $update_by);
-          $sheet->getStyle($Cols.$awal_row)->applyFromArray($styleArray3);
-
-          $awal_col++;
-          $update_date	= date('d-M-Y H:i:s', strtotime($row['update_date']));
-          $Cols			= getColsChar($awal_col);
-          $sheet->setCellValue($Cols.$awal_row, $update_date);
-          $sheet->getStyle($Cols.$awal_row)->applyFromArray($styleArray4);
-
-  			}
-  		}
-
-
-  		$sheet->setTitle('History Material');
-  		//mulai menyimpan excel format xlsx, kalau ingin xls ganti Excel2007 menjadi Excel5
-  		$objWriter		= PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-  		ob_end_clean();
-  		//sesuaikan headernya
-  		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-  		header("Cache-Control: no-store, no-cache, must-revalidate");
-  		header("Cache-Control: post-check=0, pre-check=0", false);
-  		header("Pragma: no-cache");
-  		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-  		//ubah nama file saat diunduh
-  		header('Content-Disposition: attachment;filename="history_material_'.date('YmdHis').'.xls"');
-  		//unduh file
-  		$objWriter->save("php://output");
-  	}
-
+if (!defined('BASEPATH')) {
+	exit('No direct script access allowed');
 }
 
-?>
+/*
+ * @author Ichsan
+ * @copyright Copyright (c) 2019, Ichsan
+ *
+ * This is controller for Master Supplier
+ */
+
+class Warehouse_material extends Admin_Controller
+{
+	//Permission
+	protected $viewPermission 	= 'Warehouse_Material.View';
+	protected $addPermission  	= 'Warehouse_Material.Add';
+	protected $managePermission = 'Warehouse_Material.Manage';
+	protected $deletePermission = 'Warehouse_Material.Delete';
+
+	protected $viewPermission_om 	= 'Material_Outgoing.View';
+	protected $addPermission_om  	= 'Material_Outgoing.Add';
+	protected $managePermission_om = 'Material_Outgoing.Manage';
+	protected $deletePermission_om = 'Material_Outgoing.Delete';
+
+	public function __construct()
+	{
+		parent::__construct();
+
+		$this->load->library(array('Mpdf', 'Image_lib', 'input', 'user_agent', 'uri'));
+		$this->load->library('upload');
+		$this->load->helper(['form', 'url', 'json']);
+
+		$this->load->model(array(
+			'Warehouse_material/Warehouse_material_model',
+			'Aktifitas/aktifitas_model',
+		));
+		$this->template->title('Manage Data Supplier');
+		$this->template->page_icon('fa fa-building-o');
+
+		date_default_timezone_set('Asia/Bangkok');
+	}
+
+	public function addAltSupplier()
+	{
+		$dataSupplier = $this->db->get_where('master_supplier', ['id' => $this->input->post('id_supplier')])->row();
+		$dataCategory3 = $this->db->get_where('ms_inventory_category3', ['id_category3' => $this->input->post('alt_material_id')])->row();
+
+		// $id_bm1 = BarangMasuk::where('id_bm1', 'LIKE', '%BM1-' . date('m-y') . '%')->max('id_bm1');
+		$id_bm1 = $this->db->query("SELECT MAX(id) AS max_id FROM ms_inventory_category3_alt_supplier WHERE id LIKE '%ALC3-" . date('m-y') . "%'")->result();
+		$kodeBarang = $id_bm1[0]->max_id;
+		$urutan = (int) substr($kodeBarang, 11, 5);
+		$urutan++;
+		$tahun = date('m-y');
+		$huruf = "ALC3-";
+		$generate_id = $huruf . $tahun . sprintf("%06s", $urutan);
+
+		$this->db->trans_begin();
+
+		$this->db->insert('ms_inventory_category3_alt_supplier', [
+			'id' => $generate_id,
+			'id_category3' => $this->input->post('id_category3'),
+			'id_supplier' => $this->input->post('id_supplier'),
+			'nm_supplier' => $dataSupplier->supplier_name,
+			'lead_time' => $this->input->post('lead_time'),
+			'moq' => $this->input->post('moq'),
+			'alt_material_id' => $this->input->post('alt_material_id'),
+			'alt_material_nm' => $dataCategory3->nama,
+			'keterangan' => $this->input->post('keterangan'),
+			'dibuat_oleh' => $this->auth->user_id(),
+			'dibuat_tgl' => date("Y-m-d H:i:s")
+		]);
+		if ($this->db->trans_status() === FALSE) {
+			$this->db->trans_rollback();
+		} else {
+			$this->db->trans_commit();
+		}
+
+		$hasil = '';
+
+		$dataGetAltSupplier = $this->db->get_where('ms_inventory_category3_alt_supplier', ['id_category3' => $this->input->post('id_category3')])->result();
+		foreach ($dataGetAltSupplier as $altSupplier) {
+			$hasil = $hasil . '
+				<tr>
+					<td>
+						<select name="" id="" class="form-control form-control-sm alt_supplier_' . $altSupplier->id . '">
+							<option value="">-- Nama Supplier --</option>
+						';
+
+			$dataGetSupplier = $this->db->get_where('master_supplier')->result();
+			foreach ($dataGetSupplier as $dataSupplier) {
+
+				$selected = '';
+				if ($this->input->post('id_supplier') == $dataSupplier->id) {
+					$selected = 'selected';
+				}
+
+				$hasil = $hasil . '
+					<option value="' . $dataSupplier->id . '" ' . $selected . '>' . $dataSupplier->supplier_name . '</option>
+				';
+			}
+
+			$hasil = $hasil . '
+						</select>
+					</td>
+					<td>
+						<input type="text" name="" id="" class="form-control form-control-sm alt_lead_time_' . $altSupplier->id . '" placeholder="Lead Time" value="' . $altSupplier->lead_time . '">
+					</td>
+					<td>
+						<input type="text" name="" id="" class="form-control form-control-sm alt_moq_' . $altSupplier->id . '" placeholder="MOQ" value="' . $altSupplier->moq . '">
+					</td>
+					<td>
+						<select name="" id="" class="form-control form-control-sm alt_material_' . $altSupplier->id . '">
+							<option value="">-- Alternatif Material --</option>
+					';
+
+			$dataGetInventory4 = $this->db->get('ms_inventory_category3')->result();
+			foreach ($dataGetInventory4 as $inventory4) {
+
+				$selected = '';
+				if ($this->input->post('alt_material_id') == $inventory4->id_category3) {
+					$selected = 'selected';
+				}
+
+				$hasil = $hasil . '
+					<option value="' . $inventory4->id_category3 . '" ' . $selected . '>' . $inventory4->nama . '</option>
+				';
+			}
+
+			$hasil = $hasil . '
+						</select>
+					</td>
+					<td>
+						<input type="text" name="" id="" class="form-control form-control-sm alt_keterangan_' . $altSupplier->id . '" placeholder="Keterangan" value="' . $altSupplier->keterangan . '">
+					</td>
+					<td>
+						<button type="button" class="btn btn-sm btn-danger del_inventory_category3_alt_supp" data-id="' . $altSupplier->id . '">
+							<i class="fa fa-trash"></i>
+						</button>
+					</td>
+				</tr>
+			';
+		}
+		echo $hasil;
+	}
+
+	public function delAltSupplier()
+	{
+		$this->db->trans_begin();
+
+		$this->db->delete('ms_inventory_category3_alt_supplier', ['id' => $this->input->post('id')]);
+
+		// print_r($this->db->trapns_status);
+
+		if ($this->db->trans_status() === TRUE) {
+			$this->db->trans_commit();
+
+			$hasil = '';
+
+			$dataGetAltSupplier = $this->db->get_where('ms_inventory_category3_alt_supplier', ['id_category3' => $this->input->post('id_category3')])->result();
+			foreach ($dataGetAltSupplier as $altSupplier) {
+				$hasil = $hasil . '
+					<tr>
+						<td>
+							<select name="" id="" class="form-control form-control-sm alt_supplier_' . $altSupplier->id . '">
+								<option value="">-- Nama Supplier --</option>
+							';
+
+				$dataGetSupplier = $this->db->get_where('master_supplier')->result();
+				foreach ($dataGetSupplier as $dataSupplier) {
+
+					$selected = '';
+					if ($altSupplier->id_supplier == $dataSupplier->id) {
+						$selected = 'selected';
+					}
+
+					$hasil = $hasil . '
+						<option value="' . $dataSupplier->id . '" ' . $selected . '>' . $dataSupplier->supplier_name . '</option>
+					';
+				}
+
+				$hasil = $hasil . '
+							</select>
+						</td>
+						<td>
+							<input type="text" name="" id="" class="form-control form-control-sm alt_lead_time_' . $altSupplier->id . '" placeholder="Lead Time" value="' . $altSupplier->lead_time . '">
+						</td>
+						<td>
+							<input type="text" name="" id="" class="form-control form-control-sm alt_moq_' . $altSupplier->id . '" placeholder="MOQ" value="' . $altSupplier->moq . '">
+						</td>
+						<td>
+							<select name="" id="" class="form-control form-control-sm alt_material_' . $altSupplier->id . '">
+								<option value="">-- Alternatif Material --</option>
+						';
+
+				$dataGetInventory4 = $this->db->get('ms_inventory_category3')->result();
+				foreach ($dataGetInventory4 as $inventory4) {
+
+					$selected = '';
+					if ($altSupplier->alt_material_id == $inventory4->id_category3) {
+						$selected = 'selected';
+					}
+
+					$hasil = $hasil . '
+						<option value="' . $inventory4->id_category3 . '" ' . $selected . '>' . $inventory4->nama . '</option>
+					';
+				}
+
+				$hasil = $hasil . '
+							</select>
+						</td>
+						<td>
+							<input type="text" name="" id="" class="form-control form-control-sm alt_keterangan_' . $altSupplier->id . '" placeholder="Keterangan" value="' . $altSupplier->keterangan . '">
+						</td>
+						<td>
+							<button type="button" class="btn btn-sm btn-danger del_inventory_category3_alt_supp" data-id="' . $altSupplier->id . '">
+								<i class="fa fa-trash"></i>
+							</button>
+						</td>
+					</tr>
+				';
+			}
+			echo $hasil;
+		}
+	}
+
+	public function index1()
+	{
+		$this->auth->restrict($this->viewPermission);
+		$session = $this->session->userdata('app_session');
+		$this->template->page_icon('fa fa-users');
+		$deleted = '0';
+		$data = $this->Warehouse_material_model->get_data('ms_bentuk', 'deleted', $deleted);
+		$this->template->set('results', $data);
+		$this->template->title('Material');
+		$this->template->render('index');
+	}
+	public function index()
+	{
+		$id_bentuk = $this->uri->segment(3);
+		$this->auth->restrict($this->viewPermission);
+		$session = $this->session->userdata('app_session');
+		$this->template->page_icon('fa fa-users');
+		$deleted = '0';
+		$data = $this->Warehouse_material_model->get_material_stock();
+		$this->template->set('results', [
+			'list_material_stock' => $data
+		]);
+		$this->template->title('Stock Material');
+		$this->template->render('list');
+	}
+
+	public function outgoing()
+	{
+		$this->auth->restrict($this->viewPermission_om);
+		$session = $this->session->userdata('app_session');
+		$this->template->title('Outgoing Material');
+		$this->template->render('outgoing');
+	}
+
+	public function editInventory($id)
+	{
+		$this->auth->restrict($this->viewPermission);
+		$session = $this->session->userdata('app_session');
+		$this->template->page_icon('fa fa-pencil');
+
+		$id_type = $this->input->post('id_type');
+
+		$deleted = '0';
+
+		$inventory_4 = $this->Warehouse_material_model->get_data_category3_where($id);
+		$inventory_1 = $this->Warehouse_material_model->get_data('ms_inventory_type');
+		$inventory_2 = $this->db->get_where('ms_inventory_category1', ['id_type' => $inventory_4->id_type, 'deleted' => 0])->result();
+		$inventory_3 = $this->db->get_where('ms_inventory_category2', ['id_category1' => $inventory_4->id_category1, 'deleted' => 0])->result();
+		$inv_4_alt = $this->db->get_where('ms_inventory_category3', ['id_category2' => $inventory_4->id_category2, 'deleted' => 0])->result();
+		$alt_suppliers = $this->Warehouse_material_model->get_data_category3_alt_suppliers($id);
+		$packaging = $this->db->get('master_packaging')->result();
+		$suppliers = $this->db->get('master_supplier')->result();
+		$unit = $this->db->get('m_unit')->result();
+		$kategori_fg = $this->db->get('kategori_finish_goods')->result();
+		$material_master = $this->db->get('ms_inventory_category3')->result();
+
+		$data = [
+			'inventory_1' => $inventory_1,
+			'inventory_2' => $inventory_2,
+			'inventory_3' => $inventory_3,
+			'inventory_4' => $inventory_4,
+			'inv_4_alt' => $inv_4_alt,
+			'alt_suppliers' => $alt_suppliers,
+			'packaging' => $packaging,
+			'suppliers' => $suppliers,
+			'unit' => $unit,
+			'kategori_fg' => $kategori_fg,
+			'material_master' => $material_master
+		];
+
+
+
+		$this->template->set('results', $data);
+		$this->template->title('Edit Inventory');
+		$this->template->render('edit_inventory');
+	}
+	public function copyInventory($id)
+	{
+		$this->auth->restrict($this->viewPermission);
+		$session = $this->session->userdata('app_session');
+		$this->template->page_icon('fa fa-pencil');
+		$deleted = '0';
+		$inven = $this->Warehouse_material_model->getedit($id);
+		$komposisiold = $this->Warehouse_material_model->get_data('child_inven_compotition', 'id_category3', $id);
+		$komposisi = $this->Warehouse_material_model->kompos($id);
+		$dimensiold = $this->Warehouse_material_model->get_data('child_inven_dimensi', 'id_category3', $id);
+		$dimensi = $this->Warehouse_material_model->dimensy($id);
+		$supl = $this->Warehouse_material_model->supl($id);
+		$inventory_1 = $this->Warehouse_material_model->get_data('ms_inventory_type', 'deleted', $deleted);
+		$inventory_2 = $this->Warehouse_material_model->get_data('ms_inventory_category1', 'deleted', $deleted);
+		$inventory_3 = $this->Warehouse_material_model->get_data('ms_inventory_category2', 'deleted', $deleted);
+		$maker = $this->Warehouse_material_model->get_data('negara');
+		$id_bentuk = $this->Warehouse_material_model->get_data('ms_bentuk');
+		$id_supplier = $this->Warehouse_material_model->get_data('master_supplier');
+		$id_surface = $this->Warehouse_material_model->get_data('ms_surface');
+		$dt_suplier = $this->Warehouse_material_model->get_data('child_inven_suplier', 'id_category3', $id);
+		$data = [
+			'inventory_1' => $inventory_1,
+			'inventory_2' => $inventory_2,
+			'inventory_3' => $inventory_3,
+			'komposisi' => $komposisi,
+			'dimensi' => $dimensi,
+			'id_bentuk' => $id_bentuk,
+			'inven' => $inven,
+			'maker' => $maker,
+			'supl' => $supl,
+			'id_surface' => $id_surface,
+			'id_supplier' => $id_supplier,
+			'dt_suplier' => $dt_suplier
+		];
+		$this->template->set('results', $data);
+		$this->template->title('Add Inventory');
+		$this->template->render('copy_inventory');
+	}
+	public function viewInventory($id)
+	{
+		$this->auth->restrict($this->viewPermission);
+		$session = $this->session->userdata('app_session');
+		$this->template->page_icon('fa fa-pencil');
+		$deleted = '0';
+		$inventory_1 = $this->Warehouse_material_model->get_data('ms_inventory_type', 'deleted', $deleted);
+		$inventory_2 = $this->Warehouse_material_model->get_data('ms_inventory_category1', 'deleted', $deleted);
+		$inventory_3 = $this->Warehouse_material_model->get_data('ms_inventory_category2', 'deleted', $deleted);
+		$inventory_4 = $this->Warehouse_material_model->get_data_category3_where($id);
+		$alt_suppliers = $this->Warehouse_material_model->get_data_category3_alt_suppliers($id);
+
+		// Logging
+		$get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
+
+
+		$desc = "View Material Master Data " . $id . " - " . $inventory_4->nama;
+		$device_name = $this->agent->mobile(); // Returns the mobile device name
+		if ($this->agent->is_browser()) {
+			$device_name = $this->agent->browser(); // Returns the browser name
+		} elseif ($this->agent->is_robot()) {
+			$device_name = $this->agent->robot(); // Returns the robot/crawler name
+		} elseif ($this->agent->is_mobile()) {
+			$device_name = $this->agent->mobile(); // Returns the mobile device name
+		} else {
+			$device_name = 'Unidentified Device';
+		}
+
+		$id_user = $this->auth->user_id();
+		$id_menu = $get_menu->id;
+		$nm_menu = $get_menu->title;
+		$device_type = $this->agent->platform();
+		$os_type = $this->agent->browser();
+		log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
+
+		$data = [
+			'inventory_1' => $inventory_1,
+			'inventory_2' => $inventory_2,
+			'inventory_3' => $inventory_3,
+			'inventory_4' => $inventory_4,
+			'alt_suppliers' => $alt_suppliers
+		];
+		$this->template->set('results', $data);
+		$this->template->title('Add Inventory');
+		if ($inventory_4->id_type == "I2300003") {
+			$this->template->render('view_fg');
+		} else {
+			$this->template->render('view_inventory');
+		}
+	}
+	public function viewBentuk($id)
+	{
+		$this->auth->restrict($this->viewPermission);
+		$id 	= $this->input->post('id');
+		$bentuk = $this->db->get_where('ms_bentuk', array('id_bentuk' => $id))->result();
+		$dimensi = $this->Bentuk_model->getDimensi($id);
+		$data = [
+			'bentuk' => $bentuk,
+			'dimensi' => $dimensi,
+		];
+		$this->template->set('results', $data);
+		$this->template->render('view_bentuk');
+	}
+
+
+	public function addInventory()
+	{
+		$id_data 	= $this->input->post('id');
+		$this->auth->restrict($this->viewPermission);
+		$session = $this->session->userdata('app_session');
+		$this->template->page_icon('fa fa-pencil');
+
+		$post = $this->input->post();
+
+		$deleted = '0';
+		$inventory_1 = $this->Warehouse_material_model->get_data('ms_inventory_type', 'deleted', $deleted);
+		$maker = $this->Warehouse_material_model->get_data('negara');
+		$dimensi = $this->Warehouse_material_model->get_data('ms_dimensi', 'id_bentuk', $id_data);
+		$id_bentuk = $this->Warehouse_material_model->get_data('ms_bentuk', 'id_bentuk', $id_data);
+		$id_supplier = $this->Warehouse_material_model->get_data('master_supplier', 'status', '1');
+		$id_surface = $this->Warehouse_material_model->get_data('ms_surface');
+		$supplier = $this->Warehouse_material_model->get_data('master_supplier', 'status', '1');
+		$packaging = $this->Warehouse_material_model->get_data('master_packaging');
+		$unit = $this->Warehouse_material_model->get_data('m_unit');
+		$inventory_4 = $this->Warehouse_material_model->get_data('ms_inventory_category3', 'deleted', $deleted);
+		$inventory_3 = $this->Warehouse_material_model->get_data('ms_inventory_category2', 'deleted', $deleted);
+		$kategori_fg = $this->Warehouse_material_model->get_data('kategori_finish_goods');
+		$inv_lv_1 = "";
+		if (isset($post['inv_lv_1'])) {
+			$inv_lv_1 = $this->input->post('inv_lv_1');
+		}
+
+		$inv_2 = '';
+		$inv_3 = '';
+		if ($inv_lv_1 !== "") {
+			$inv_2 = $this->Warehouse_material_model->get_data('ms_inventory_category1', 'id_type', $inv_lv_1);
+		}
+
+		$material_master = $this->db->get('ms_inventory_category3')->result();
+
+		$data = [
+			'inventory_1' => $inventory_1,
+			'id_bentuk' => $id_bentuk,
+			'dimensi' => $dimensi,
+			'maker' => $maker,
+			'id_surface' => $id_surface,
+			'id_supplier' => $id_supplier,
+			'supplier' => $supplier,
+			'packaging' => $packaging,
+			'unit' => $unit,
+			'inventory_4' => $inventory_4,
+			'inventory_3' => $inventory_3,
+			'id_category3' => $this->auth->user_id(),
+			'inv_lv_1' => $inv_lv_1,
+			'inv_2' => $inv_2,
+			'kategori_fg' => $kategori_fg,
+			'material_master' => $material_master
+		];
+
+		$this->template->set('results', $data);
+		$this->template->title('Add Inventory');
+
+		if ($inv_lv_1 == "I2300003") {
+			$this->template->render('add_inventory_fg');
+		} else {
+			$this->template->render('add_inventory');
+		}
+	}
+
+	public function delDetail()
+	{
+		$this->auth->restrict($this->deletePermission);
+		$id = $this->input->post('id');
+		// print_r($id);
+		// exit();
+		$data = [
+			'deleted' 		=> '1',
+			'deleted_by' 	=> $this->auth->user_id()
+		];
+
+		$this->db->trans_begin();
+		$this->db->where('id_dimensi', $id)->update("ms_dimensi", $data);
+
+		if ($this->db->trans_status() === FALSE) {
+			$this->db->trans_rollback();
+			$status	= array(
+				'pesan'		=> 'Gagal Save Item. Thanks ...',
+				'status'	=> 0
+			);
+		} else {
+			$this->db->trans_commit();
+			$status	= array(
+				'pesan'		=> 'Success Save Item. Thanks ...',
+				'status'	=> 1
+			);
+		}
+
+		echo json_encode($status);
+	}
+
+	public function deleteInventory()
+	{
+		$this->auth->restrict($this->deletePermission);
+		$id = $this->input->post('id');
+		$data = [
+			'deleted' 		=> '1',
+			'deleted_by' 	=> $this->auth->user_id()
+		];
+
+		$this->db->trans_begin();
+
+		// Logging
+		$get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
+
+		$get_data = $this->db->get_where('ms_inventory_category3', ['id_category3' => $id])->row();
+
+		$desc = "Delete New Material Master Data " . $id . " - " . $get_data->nama;
+		$device_name = $this->agent->mobile(); // Returns the mobile device name
+		if ($this->agent->is_browser()) {
+			$device_name = $this->agent->browser(); // Returns the browser name
+		} elseif ($this->agent->is_robot()) {
+			$device_name = $this->agent->robot(); // Returns the robot/crawler name
+		} elseif ($this->agent->is_mobile()) {
+			$device_name = $this->agent->mobile(); // Returns the mobile device name
+		} else {
+			$device_name = 'Unidentified Device';
+		}
+
+		$id_user = $this->auth->user_id();
+		$id_menu = $get_menu->id;
+		$nm_menu = $get_menu->title;
+		$device_type = $this->agent->platform();
+		$os_type = $this->agent->browser();
+		log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
+
+		$this->db->delete("ms_inventory_category3_alt_supplier", ['id_category3' => $this->input->post('id')]);
+		$this->db->delete("ms_inventory_category3", ['id_category3' => $this->input->post('id')]);
+
+		if ($this->db->trans_status() === FALSE) {
+			$this->db->trans_rollback();
+			$status	= array(
+				'pesan'		=> 'Gagal Save Item. Thanks ...',
+				'status'	=> 0
+			);
+		} else {
+			$this->db->trans_commit();
+			$status	= array(
+				'pesan'		=> 'Success Save Item. Thanks ...',
+				'status'	=> 1
+			);
+		}
+
+		echo json_encode($status);
+	}
+	function get_inven2()
+	{
+		$inventory_1 = $_GET['inventory_1'];
+		$data = $this->Warehouse_material_model->level_2($inventory_1);
+		echo "<select id='inventory_2' name='inventory_2' class='form-control onchange='get_inv3()'  input-sm select2'>";
+		echo "<option value=''>-- Pilih Material Category --</option>";
+		foreach ($data as $key => $st) :
+			echo "<option value='" . $st->id_category1 . "' set_select('inventory_2', $st->id_category1, isset($data->id_category1) && $data->id_category1 == $st->id_category1)>$st->nama
+                    </option>";
+		endforeach;
+		echo "</select>";
+	}
+
+	function get_namainven2()
+	{
+		$inventory_1 = $_POST['inventory_1'];
+
+		$data = $this->db->query("SELECT * from ms_inventory_category2 WHERE id_category2 = '" . $inventory_1 . "'")->result_array();
+
+		echo $data->nama;
+	}
+	function get_inven3()
+	{
+		$inventory_2 = $_GET['inventory_2'];
+		$data = $this->Warehouse_material_model->level_3($inventory_2);
+
+		// print_r($data);
+		// exit();
+		echo "<select id='inventory_3' name='inventory_3' class='form-control input-sm select2'>";
+		echo "<option value=''>-- Pilih Material Jenis --</option>";
+		foreach ($data as $key => $st) :
+			echo "<option value='" . $st->id_category2 . "' set_select('inventory_3', $st->id_category2, isset($data->id_category2) && $data->id_category2 == $st->id_category2)>$st->nama
+                    </option>";
+		endforeach;
+		echo "</select>";
+	}
+	public function saveNewInventory()
+	{
+		$this->auth->restrict($this->addPermission);
+		$session = $this->session->userdata('app_session');
+
+		$config['upload_path'] = './uploads/'; //path folder
+		$config['allowed_types'] = 'gif|jpg|png|jpeg|bmp|doc|docx|xls|xlsx|ppt|pptx|pdf|rar|zip|vsd'; //type yang dapat diakses bisa anda sesuaikan
+		$config['max_size'] = 10000; // Maximum file size in kilobytes (2MB).
+		$config['encrypt_name'] = FALSE; // Encrypt the uploaded file's name.
+		$config['remove_spaces'] = FALSE; // Remove spaces from the file name.
+
+		$this->load->library('upload', $config);
+		$this->upload->initialize($config);
+
+		if (!$this->upload->do_upload('msds')) {
+			$data = 'Upload Error';
+		} else {
+			$data = $this->upload->data();
+			$data = '/uploads/' . $data['file_name'];
+		}
+		// exit;
+
+
+
+		$code = $this->Warehouse_material_model->generate_id();
+
+		$this->db->trans_begin();
+		$numb1 = 0;
+		//$head = $_POST['hd1'];
+		$this->db->update('ms_inventory_category3_alt_supplier', ['id_category3' => $code], ['id_category3' => $this->auth->user_id()]);
+		$this->db->insert('ms_inventory_category3', [
+			'id_category3' => $code,
+			'id_type' => $this->input->post('inventory_1'),
+			'id_category1' => $this->input->post('inventory_2'),
+			'id_category2' => $this->input->post('inventory_3'),
+			'nama' => $this->input->post('nm_lv_4'),
+			'supplier_utama' => $this->input->post('supplier_utama'),
+			'lead_time' => $this->input->post('lead_time'),
+			'moq' => $this->input->post('moq'),
+			'packaging' => $this->input->post('packaging'),
+			'konversi' => $this->input->post('konversi'),
+			'unit' => $this->input->post('unit'),
+			'material_code' => $this->input->post('material_code'),
+			'max_stok' => $this->input->post('max_stok'),
+			'min_stok' => $this->input->post('min_stok'),
+			'dim_length' => $this->input->post('dim_length'),
+			'dim_width' => $this->input->post('dim_width'),
+			'dim_height' => $this->input->post('dim_height'),
+			'cbm' => $this->input->post('cbm'),
+			'msds' => $data,
+			'deleted' => 0,
+			'aktif' => 'aktif',
+			'created_by' => $this->auth->user_id(),
+			'created_on' => date("Y-m-d H:i:s")
+		]);
+
+		// Logging
+		$get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
+
+
+		$desc = "Insert New Material Master Data " . $code . " - " . $this->input->post('nm_lv_4');
+		$device_name = $this->agent->mobile(); // Returns the mobile device name
+		if ($this->agent->is_browser()) {
+			$device_name = $this->agent->browser(); // Returns the browser name
+		} elseif ($this->agent->is_robot()) {
+			$device_name = $this->agent->robot(); // Returns the robot/crawler name
+		} elseif ($this->agent->is_mobile()) {
+			$device_name = $this->agent->mobile(); // Returns the mobile device name
+		} else {
+			$device_name = 'Unidentified Device';
+		}
+
+		$id_user = $this->auth->user_id();
+		$id_menu = $get_menu->id;
+		$nm_menu = $get_menu->title;
+		$device_type = $this->agent->platform();
+		$os_type = $this->agent->browser();
+		log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
+
+		if ($this->db->trans_status() === FALSE) {
+			$this->db->trans_rollback();
+			$status	= array(
+				'pesan'		=> 'Gagal Save Item. Thanks ...',
+				'status'	=> 0
+			);
+		} else {
+			$this->db->trans_commit();
+			$status	= array(
+				'pesan'		=> 'Success Save Item. Thanks ...',
+				'status'	=> 1
+			);
+		}
+
+		echo json_encode($status);
+	}
+	public function saveEditInventory()
+	{
+		$this->auth->restrict($this->addPermission);
+		$session = $this->session->userdata('app_session');
+		$code = $this->Warehouse_material_model->generate_id();
+		$this->db->trans_begin();
+
+
+		$config['upload_path'] = './uploads/'; //path folder
+		$config['allowed_types'] = 'gif|jpg|png|jpeg|bmp|doc|docx|xls|xlsx|ppt|pptx|pdf|rar|zip|vsd'; //type yang dapat diakses bisa anda sesuaikan
+		$config['max_size'] = 10000; // Maximum file size in kilobytes (2MB).
+		$config['encrypt_name'] = FALSE; // Encrypt the uploaded file's name.
+		$config['remove_spaces'] = FALSE; // Remove spaces from the file name.
+
+		$this->load->library('upload', $config);
+		$this->upload->initialize($config);
+
+		if (!$this->upload->do_upload('msds')) {
+			$data = 'Upload Error';
+		} else {
+			$data = $this->upload->data();
+			$data = '/uploads/' . $data['file_name'];
+		}
+		$numb1 = 0;
+		$post = $this->input->post();
+
+		$this->db->update("ms_inventory_category3", [
+			'id_type' => $this->input->post('inventory_1'),
+			'id_category1' => $this->input->post('inventory_2'),
+			'id_category2' => $this->input->post('inventory_3'),
+			'nama' => $this->input->post('nm_lv_4'),
+			'supplier_utama' => $this->input->post('supplier_utama'),
+			'lead_time' => $this->input->post('lead_time'),
+			'moq' => $this->input->post('moq'),
+			'packaging' => $this->input->post('packaging'),
+			'konversi' => $this->input->post('konversi'),
+			'unit' => $this->input->post('unit'),
+			'material_code' => $this->input->post('material_code'),
+			'max_stok' => $this->input->post('max_stok'),
+			'min_stok' => $this->input->post('min_stok'),
+			'dim_length' => $this->input->post('dim_length'),
+			'dim_width' => $this->input->post('dim_width'),
+			'dim_height' => $this->input->post('dim_height'),
+			'cbm' => $this->input->post('cbm'),
+			'msds' => $data,
+			'aktif' => $this->input->post('aktif'),
+			'modified_on' => date('Y-m-d H:i:s'),
+			'modified_by' => $this->auth->user_id(),
+			'deleted' => '0'
+		], ['id_category3' => $post['id_category3']]);
+
+		// Logging
+		$get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
+
+
+		$desc = "Update Material Master Data " . $this->input->post('id_category3') . " - " . $this->input->post('nm_lv_4');
+		$device_name = $this->agent->mobile(); // Returns the mobile device name
+		if ($this->agent->is_browser()) {
+			$device_name = $this->agent->browser(); // Returns the browser name
+		} elseif ($this->agent->is_robot()) {
+			$device_name = $this->agent->robot(); // Returns the robot/crawler name
+		} elseif ($this->agent->is_mobile()) {
+			$device_name = $this->agent->mobile(); // Returns the mobile device name
+		} else {
+			$device_name = 'Unidentified Device';
+		}
+
+		$id_user = $this->auth->user_id();
+		$id_menu = $get_menu->id;
+		$nm_menu = $get_menu->title;
+		$device_type = $this->agent->platform();
+		$os_type = $this->agent->browser();
+		log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
+
+		if ($this->db->trans_status() === FALSE) {
+			$this->db->trans_rollback();
+			$status	= array(
+				'pesan'		=> 'Gagal Save Item. Thanks ...',
+				'status'	=> 0
+			);
+		} else {
+			$this->db->trans_commit();
+			$status	= array(
+				'pesan'		=> 'Success Save Item. Thanks ...',
+				'status'	=> 1
+			);
+		}
+
+		echo json_encode($status);
+	}
+	function get_compotition_new()
+	{
+		$inventory_2 = $_GET['inventory_2'];
+		$comp = $this->Warehouse_material_model->compotition($inventory_2);
+		$numb = 0;
+		// print_r($data);
+		// exit();
+		foreach ($comp as $key => $cmp) : $numb++;
+			echo "<tr>
+					  <td hidden align='left'>
+					  <input type='text' name='compo[$numb][id_compotition]' readonly class='form-control'  value='" . $cmp->id_compotition . "'>
+					  </td>
+					  <td align='left'>
+					  ";
+
+			echo $cmp->name_compotition;
+
+			echo "
+					  </td>
+					  <td align='left'>
+					  <input type='text' name='compo[$numb][jumlah_kandungan]' class='form-control'>
+					  </td>
+					  <td align='left'>%</td>
+                    </tr>";
+		endforeach;
+		echo "</select>";
+	}
+	function get_dimensi()
+	{
+		$id_bentuk = $_GET['id_bentuk'];
+		$dim = $this->Warehouse_material_model->bentuk($id_bentuk);
+		$numb = 0;
+		// print_r($data);
+		// exit();
+		foreach ($dim as $key => $ensi) : $numb++;
+			echo "<tr>
+					  <td align='left' hidden>
+					  <input type='text' name='dimens[$numb][id_dimensi]' readonly class='form-control'  value='" . $ensi->id_dimensi . "'>
+					  </td>
+					  <td align='left'>
+					  $ensi->nm_dimensi
+					  </td>
+					  <td align='left'>
+					  <input type='text' name='dimens[$numb][nilai_dimensi]' class='form-control'>
+					  </td>
+                    </tr>";
+		endforeach;
+		echo "</select>";
+	}
+	function get_compotition_old()
+	{
+		$inventory_2 = $_GET['inventory_2'];
+		$comp = $this->Warehouse_material_model->compotition_edit($inventory_2);
+		$numb = 0;
+		// print_r($data);
+		// exit();
+		foreach ($comp as $key => $cmp) : $numb++;
+			echo "<tr>
+					  <td hidden align='left'>
+					  <input type='text' name='compo[$numb][id_compotition]' readonly class='form-control'  value='" . $cmp->id_compotition . "'>
+					  </td>
+					  <td align='left'>
+					  $cmp->name_compotition
+					  </td>
+					  <td align='left'>
+					  <input type='text' name='compo[$numb][jumlah_kandungan]' class='form-control'>
+					  </td>
+					  <td align='left'>%</td>
+                    </tr>";
+		endforeach;
+		echo "</select>";
+	}
+	function get_dimensi_old()
+	{
+		$id_bentuk = $_GET['id_bentuk'];
+		$dim = $this->Warehouse_material_model->bentuk_edit($id_bentuk);
+		$numb = 0;
+		// print_r($data);
+		// exit();
+		foreach ($dim as $key => $ensi) : $numb++;
+			echo "<tr>
+					  <td hidden align='left'>
+					  <input type='text' name='dimens[$numb][id_dimensi]' readonly class='form-control'  value='" . $ensi->id_dimensi . "'>
+					  </td>
+					  <td align='left'>
+					  $ensi->nm_dimensi
+					  </td>
+					  <td align='left'>
+					  <input type='text' name='dimens[$numb][nilai_dimensi]' class='form-control'>
+					  </td>
+                    </tr>";
+		endforeach;
+		echo "</select>";
+	}
+	public function saveEditInventorylama()
+	{
+		$this->auth->restrict($this->addPermission);
+		$session = $this->session->userdata('app_session');
+		$code = $this->Warehouse_material_model->generate_id();
+		$this->db->trans_begin();
+		$id = $_POST['hd1']['1']['id_category3'];
+		$numb1 = 0;
+		//$head = $_POST['hd1'];
+		foreach ($_POST['hd1'] as $h1) {
+			$numb1++;
+
+			$header1 =  array(
+				'id_type'		        => $h1['inventory_1'],
+				'id_category1'		    => $h1['inventory_2'],
+				'id_category2'		    => $h1['inventory_3'],
+				'nama'		        	=> $h1['nm_inventory'],
+				'maker'		        	=> $h1['maker'],
+				'density'		        => $h1['density'],
+				'hardness'		        => $h1['hardness'],
+				'id_bentuk'		        => $h1['id_bentuk'],
+				'id_surface'		    => $h1['id_surface'],
+				'mountly_forecast'		=> $h1['mountly_forecast'],
+				'safety_stock'		    => $h1['safety_stock'],
+				'order_point'		    => $h1['order_point'],
+				'maksimum'		    	=> $h1['maksimum'],
+				'aktif'					=> 'aktif',
+				'created_on'		=> date('Y-m-d H:i:s'),
+				'created_by'		=> $this->auth->user_id(),
+				'deleted'			=> '0'
+			);
+			//Add Data
+			$this->db->where('id_category3', $id)->update("ms_inventory_category3", $header1);
+		}
+		$this->db->delete('child_inven_suplier', array('id_category3' => $id));
+		if (empty($_POST['data1'])) {
+		} else {
+			$numb2 = 0;
+			foreach ($_POST['data1'] as $d1) {
+				$numb2++;
+				$data1 =  array(
+					'id_category3' => $code,
+					'id_suplier' => $d1['id_supplier'],
+					'lead' => $d1['lead'],
+					'minimum' => $d1['minimum'],
+					'deleted' => '0',
+					'created_on' => date('Y-m-d H:i:s'),
+					'created_by' => $this->auth->user_id(),
+				);
+				//Add Data
+				$this->db->insert('child_inven_suplier', $data1);
+			}
+		}
+		if (empty($_POST['compo'])) {
+		} else {
+			$numb3 = 0;
+			foreach ($_POST['compo'] as $c1) {
+				$numb3++;
+				$comp =  array(
+					'id_category3' => $code,
+					'id_compotition' => $c1['id_compotition'],
+					'nilai_compotition' => $c1['jumlah_kandungan'],
+					'deleted' => '0',
+					'created_on' => date('Y-m-d H:i:s'),
+					'created_by' => $this->auth->user_id(),
+				);
+				//Add Data
+				$this->db->insert('child_inven_compotition', $comp);
+			}
+		}
+		if (empty($_POST['dimens'])) {
+		} else {
+			$numb4 = 0;
+			foreach ($_POST['dimens'] as $dm) {
+				$numb4++;
+				$dms =  array(
+					'id_category3' => $code,
+					'id_dimensi' => $dm['id_dimensi'],
+					'nilai_dimensi' => $dm['nilai_dimensi'],
+					'deleted' => '0',
+					'created_on' => date('Y-m-d H:i:s'),
+					'created_by' => $this->auth->user_id(),
+				);
+				//Add Data
+				$this->db->insert('child_inven_dimensi', $dms);
+			}
+		}
+		if ($this->db->trans_status() === FALSE) {
+			$this->db->trans_rollback();
+			$status	= array(
+				'pesan'		=> 'Gagal Save Item. Thanks ...',
+				'status'	=> 0
+			);
+		} else {
+			$this->db->trans_commit();
+			$status	= array(
+				'pesan'		=> 'Success Save Item. invenThanks ...',
+				'status'	=> 1
+			);
+		}
+
+		echo json_encode($status);
+	}
+	public function saveEditInventoryOld()
+	{
+		$this->auth->restrict($this->addPermission);
+		$session = $this->session->userdata('app_session');
+		$code = $this->Warehouse_material_model->generate_id();
+		$this->db->trans_begin();
+		$id = $_POST['hd1']['1']['id_category3'];
+		$numb1 = 0;
+		//$head = $_POST['hd1'];
+		foreach ($_POST['hd1'] as $h1) {
+			$numb1++;
+
+			$header1 =  array(
+				'id_type'		        => $h1['inventory_1'],
+				'id_category1'		    => $h1['inventory_2'],
+				'id_category2'		    => $h1['inventory_3'],
+				'nama'		        	=> $h1['nm_inventory'],
+				'maker'		        	=> $h1['maker'],
+				'density'		        => $h1['density'],
+				'hardness'		        => $h1['hardness'],
+				'id_bentuk'		        => $h1['id_bentuk'],
+				'id_surface'		    => $h1['id_surface'],
+				'mountly_forecast'		=> $h1['mountly_forecast'],
+				'safety_stock'		    => $h1['safety_stock'],
+				'order_point'		    => $h1['order_point'],
+				'maksimum'		    	=> $h1['maksimum'],
+				'aktif'					=> 'aktif',
+				'created_on'		=> date('Y-m-d H:i:s'),
+				'created_by'		=> $this->auth->user_id(),
+				'deleted'			=> '0'
+			);
+			//Add Data
+			$this->db->where('id_category3', $id)->update("ms_inventory_category3", $header1);
+		}
+		if (empty($_POST['data1'])) {
+		} else {
+			$numb2 = 0;
+			foreach ($_POST['data1'] as $d1) {
+				$numb2++;
+				$data1 =  array(
+					'id_category3' => $id,
+					'id_suplier' => $d1['id_supplier'],
+					'lead' => $d1['lead'],
+					'minimum' => $d1['minimum'],
+					'deleted' => '0',
+					'created_on' => date('Y-m-d H:i:s'),
+					'created_by' => $this->auth->user_id(),
+				);
+				//Add Data
+				$this->db->insert('child_inven_suplier', $data1);
+			}
+		}
+		if (empty($_POST['compo'])) {
+		} else {
+			$numb3 = 0;
+			foreach ($_POST['compo'] as $c1) {
+				$numb3++;
+				$comp =  array(
+					'id_category3' => $id,
+					'id_compotition' => $c1['id_compotition'],
+					'nilai_compotition' => $c1['jumlah_kandungan'],
+					'deleted' => '0',
+					'created_on' => date('Y-m-d H:i:s'),
+					'created_by' => $this->auth->user_id(),
+				);
+				//Add Data
+				$this->db->insert('child_inven_compotition', $comp);
+			}
+		}
+		if (empty($_POST['dimens'])) {
+		} else {
+			$numb4 = 0;
+			foreach ($_POST['dimens'] as $dm) {
+				$numb4++;
+				$dms =  array(
+					'id_category3' => $id,
+					'id_dimensi' => $dm['id_dimensi'],
+					'nilai_dimensi' => $dm['nilai_dimensi'],
+					'deleted' => '0',
+					'created_on' => date('Y-m-d H:i:s'),
+					'created_by' => $this->auth->user_id(),
+				);
+				//Add Data
+				$this->db->insert('child_inven_dimensi', $dms);
+			}
+		}
+		if ($this->db->trans_status() === FALSE) {
+			$this->db->trans_rollback();
+			$status	= array(
+				'pesan'		=> 'Gagal Save Item. Thanks ...',
+				'status'	=> 0
+			);
+		} else {
+			$this->db->trans_commit();
+			$status	= array(
+				'pesan'		=> 'Success Save Item. invenThanks ...',
+				'status'	=> 1
+			);
+		}
+
+		echo json_encode($status);
+	}
+	function get_compotition()
+	{
+		$inventory_2 = $_GET['inventory_2'];
+		$comp = $this->Warehouse_material_model->compotition($inventory_2);
+		$numb = 0;
+		// print_r($data);
+		// exit();
+		foreach ($comp as $key => $cmp) : $numb++;
+			echo "<tr>
+					  <td hidden align='left'>
+					  <input type='text' name='compo[$numb][id_compotition]' readonly class='form-control'  value='" . $cmp->id_compotition . "'>
+					  </td>
+					  <td align='left'>
+					  $cmp->name_compotition
+					  </td>
+					  <td align='left'>
+					  <input type='text' name='compo[$numb][jumlah_kandungan]' class='form-control'>
+					  </td>
+					  <td align='left'>%</td>
+                    </tr>";
+		endforeach;
+		echo "</select>";
+	}
+
+
+
+	public function update_material()
+	{
+		$sql = $this->db->query("SELECT * FROM ms_inventory_new")->result();
+
+
+
+		// print_r($sql);
+		// exit;
+
+		$n = 0;
+
+		foreach ($sql as $val => $valx) {
+
+			$n++;
+
+
+
+
+			$this->db->query("UPDATE ms_inventory_category33 
+							SET nama='" . $valx->nama . "',maker='" . $valx->maker . "',density='" . $valx->density . "',hardness='" . $valx->hardness . "',thickness='" . $valx->thickness . "',spek='" . $valx->spek . "',alloy='" . $valx->alloy . "'
+							WHERE id_category3='" . $valx->id_category3 . "'");
+
+			echo "$n";
+
+			//$this->db->where('id', $valx->id )->update("ms_inventory_category32",$data);
+
+		}
+	}
+
+	public function addKompMaterial()
+	{
+		$material = $this->db->get_where('ms_inventory_category2', ['id_category2' => $this->input->post('kode_material')])->row();
+		$inv_lv4 = $this->db->get_where('ms_inventory_category3', ['id_inventory3' => $this->input->post('material')])->row();
+
+		$get_id = $this->db->query("SELECT MAX(id_komp_material) AS max_id FROM ms_inventory_category3_komp_material WHERE id_komp_material LIKE '%KML3-" . date('m-y') . "%'")->row();
+		$kodeBarang = $get_id->max_id;
+		$urutan = (int) substr($kodeBarang, 11, 5);
+		$urutan++;
+		$tahun = date('m-y');
+		$huruf = "KML3-";
+		$generate_id = $huruf . $tahun . sprintf("%06s", $urutan);
+
+		$this->db->trans_begin();
+
+		$this->db->insert('ms_inventory_category3_komp_supplier', [
+			'id_komp_material' => $generate_id,
+			'id_category3' => $this->auth->user_id(),
+			'id_material' => $material->id_category2,
+			'nm_material' => $material->nama,
+			'id_category4' => $inv_lv4->id_category3,
+			'nm_category4' => $inv_lv4->nama,
+			'persen_penggunaan' => $this->input->post('persen_penggunaan'),
+			'keterangan' => $this->input->post('keterangan'),
+			'dibuat_oleh' => $this->auth->user_id(),
+			'dibuat_tgl' => date("Y-m-d H:i:s")
+		]);
+
+		if ($this->db->trans_status() === FALSE) {
+			$this->db->trans_rollback();
+		} else {
+			$this->db->trans_commit();
+		}
+
+		$hasil = '';
+
+		$getData = $this->db->get_where('ms_inventory_category3_komp_material', ['id_category3' => $this->auth->user_id()])->result();
+		foreach ($getData as $data) {
+			$hasil = $hasil . '
+				<tr>
+					<td>
+						<select name="" id="" class="form-control form-control-sm kode_material_' . $data->id_komp_material . '">
+						';
+
+			$get_inv_lv3 = $this->db->get_where('ms_inventory_category2')->result();
+			foreach ($get_inv_lv3 as $inv_lv3) {
+				$hasil = $hasil . '
+						<option value="' . $inv_lv3->id_category2 . '" ' . ($data->id_material == $inv_lv3->id_category2) ? 'selected' : null . '>' . $inv_lv3->nama . '</option>
+					';
+			}
+
+			$hasil = $hasil . '
+						</select>
+					</td>
+					<td>
+						<select name="" id="" class="form-control form-control-sm kode_material_' . $data->id_komp_material . '">
+						';
+
+			$get_inv_lv4 = $this->db->get_where('ms_inventory_category2')->result();
+			foreach ($get_inv_lv4 as $inv_lv4) {
+				$hasil = $hasil . '
+						<option value="' . $inv_lv4->id_category3 . '" ' . ($data->id_category4 == $inv_lv4->id_category3) ? 'selected' : null . '>' . $inv_lv4->nama . '</option>
+					';
+			}
+
+			$hasil = $hasil . '
+						</select>
+					</td>
+					<td>
+						<input type="number" name="" id="" class="form-control form-control-sm persen_penggunaan_' . $data->id_komp_material . '" value="' . $data->persen_penggunaan . '">
+					</td>
+				</tr>
+			';
+		}
+	}
+
+	public function gabung_nama()
+	{
+		$this->auth->restrict($this->addPermission);
+		$inv_lv_1_id = $this->input->post('inv_lv_1');
+		$inv_lv_2_id = $this->input->post('inv_lv_2');
+		$inv_lv_3_id = $this->input->post('inv_lv_3');
+
+		$get_inv_lv_1 = $this->db->get_where('ms_inventory_type', ['id_type' =>  $this->input->post('inv_lv_1')])->row();
+		$get_inv_lv_2 = $this->db->get_where('ms_inventory_category1', ['id_category1' =>  $this->input->post('inv_lv_2')])->row();
+		$get_inv_lv_3 = $this->db->get_where('ms_inventory_category2', ['id_category2' =>  $this->input->post('inv_lv_3')])->row();
+
+		$gabung_nama = $get_inv_lv_1->nama . ' ' . $get_inv_lv_2->nama . '; ' . $get_inv_lv_3->nama;
+
+		echo $gabung_nama;
+	}
+
+	function get_surface()
+	{
+		$idsurface = $_GET['idsurface'];
+		$surface = $this->db->query("SELECT * FROM ms_surface WHERE id_surface='" . $idsurface . "'")->row();
+		echo "$surface->nm_surface";
+	}
+
+
+
+	public function getData()
+	{
+		$requestData    = $_REQUEST;
+		$status         = $requestData['status'];
+		$search         = $requestData['search']['value'];
+		$column         = $requestData['order'][0]['column'];
+		$dir            = $requestData['order'][0]['dir'];
+		$start          = $requestData['start'];
+		$length         = $requestData['length'];
+
+		$date_from = date('Y-m-d');
+		$date_ = date('Y-m-d');
+
+		$string = $this->db->escape_like_str($search);
+		$sql = "
+			SELECT
+				a.*,
+				b.nama as category_nm,
+				c.nm_packaging,
+				d.nm_unit,
+				f.konversi,
+				(SUM(e.qty_stock) / f.konversi) AS stock_unit
+			FROM
+				ms_inventory_category2 a
+				LEFT JOIN ms_inventory_category1 b ON b.id_category1 = a.id_category1
+				LEFT JOIN ms_inventory_category3 f ON f.id_category2 = a.id_category2
+				LEFT JOIN m_unit d ON d.id_unit = f.unit
+				LEFT JOIN master_packaging c ON c.id = f.packaging
+				LEFT JOIN ms_stock_material e ON e.id_category1 = b.id_category1
+			WHERE
+				1=1 AND a.deleted = '0' AND (
+					b.nama LIKE '%" . $string . "%' OR
+					a.nama LIKE '%" . $string . "%' OR
+					c.nm_packaging LIKE '%" . $string . "%' OR
+					f.konversi LIKE '%" . $string . "%'
+				)
+			GROUP BY a.id_category2
+		";
+
+		$totalData = $this->db->query($sql)->num_rows();
+		$totalFiltered = $this->db->query($sql)->num_rows();
+
+		$columns_order_by = array(
+			0 => 'id',
+		);
+
+		// $sql .= " ORDER BY " . $columns_order_by[$column] . " " . $dir . " ";
+		$sql .= " LIMIT " . $start . " ," . $length . " ";
+		$query  = $this->db->query($sql);
+
+		$data  = array();
+		$urut1  = 1;
+		$urut2  = 0;
+
+		foreach ($query->result_array() as $row) {
+			$buttons = '';
+			$total_data     = $totalData;
+			$start_dari     = $start;
+			$asc_desc       = $dir;
+			if (
+				$asc_desc == 'asc'
+			) {
+				$nomor = $urut1 + $start_dari;
+			}
+			if (
+				$asc_desc == 'desc'
+			) {
+				$nomor = ($total_data - $start_dari) - $urut2;
+			}
+
+			$btn_history = '<button type="button" class="btn btn-sm btn-info"><i class="fa fa-eye"></i></button>';
+
+			$nestedData   = array();
+			$nestedData[]  = $urut1;
+			$nestedData[]  = $row['category_nm'];
+			$nestedData[]  = $row['nama'];
+			$nestedData[]  = $row['nm_packaging'];
+			$nestedData[]  = number_format($row['konversi']);
+			$nestedData[]  = $row['nm_unit'];
+			$nestedData[]  = number_format($row['stock_unit'], 2);
+			$nestedData[]  = $btn_history;
+			// $nestedData[]  = $row['email'];
+			// $nestedData[]  = $row['address'];
+			// $nestedData[]  = $status[$row['status']];
+			$nestedData[]  = $buttons;
+			$data[] = $nestedData;
+			$urut1++;
+			$urut2++;
+		}
+
+		$json_data = array(
+			"draw"              => intval($requestData['draw']),
+			"recordsTotal"      => intval($totalData),
+			"recordsFiltered"   => intval($totalFiltered),
+			"data"              => $data
+		);
+
+		echo json_encode($json_data);
+	}
+
+	public function getData_request()
+	{
+		$requestData    = $_REQUEST;
+		$status         = $requestData['status'];
+		$search         = $requestData['search']['value'];
+		$column         = $requestData['order'][0]['column'];
+		$dir            = $requestData['order'][0]['dir'];
+		$start          = $requestData['start'];
+		$length         = $requestData['length'];
+
+		$where = "";
+		// $where = " AND `status` <> 'D'";
+
+		$string = $this->db->escape_like_str($search);
+		$sql = "
+		SELECT 
+			a.*, 
+			b.warehouse_nm,	
+			(SELECT SUM(aa.request_qty) FROM ms_request_material_detail aa WHERE aa.id_request = a.id) AS qty_packing,
+			d.full_name AS by_acc
+		FROM
+			ms_request_material a
+			LEFT JOIN m_warehouse b ON b.id = a.id_gudang_from
+			LEFT JOIN users d ON d.id_user = a.dibuat_oleh
+		WHERE
+			1=1 AND (
+				a.id LIKE '%" . $string . "%' OR
+				b.warehouse_nm LIKE '%" . $string . "%' OR
+				(SELECT SUM(aa.request_qty) FROM ms_request_material_detail aa WHERE aa.id_request = a.id) LIKE '%" . $string . "%' OR
+				d.full_name LIKE '%" . $string . "%' OR
+				DATE_FORMAT(a.tgl_request, '%d %F %Y') LIKE '%" . $string . "%'
+			)
+		GROUP BY a.id
+		";
+
+		$totalData = $this->db->query($sql)->num_rows();
+		$totalFiltered = $this->db->query($sql)->num_rows();
+
+		$columns_order_by = array(
+			0 => 'id',
+			1 => 'id'
+		);
+
+		$sql .= " ORDER BY " . $columns_order_by[$column] . " " . $dir . " ";
+		$sql .= " LIMIT " . $start . " ," . $length . " ";
+		$query  = $this->db->query($sql);
+
+
+		$data  = array();
+		$urut1  = 1;
+		$urut2  = 0;
+
+
+
+		foreach ($query->result_array() as $row) {
+			$buttons = '';
+			$total_data     = $totalData;
+			$start_dari     = $start;
+			$asc_desc       = $dir;
+			if (
+				$asc_desc == 'asc'
+			) {
+				$nomor = $urut1 + $start_dari;
+			}
+			if (
+				$asc_desc == 'desc'
+			) {
+				$nomor = ($total_data - $start_dari) - $urut2;
+			}
+
+			$sts = '<div class="badge badge-warning text-light">Open</div>';
+			if ($row['status'] == '1') {
+				$sts = '<div class="badge badge-success">Approved</div>';
+			}
+			if ($row['status'] == '2') {
+				$sts = '<div class="badge badge-danger">Rejected</div>';
+			}
+
+			$view         = '<button type="button" class="btn btn-primary btn-sm view" data-toggle="tooltip" title="View" data-id="' . $row['id'] . '"><i class="fa fa-eye"></i></button>';
+
+			$print = '<button type="button" class="btn btn-sm btn-info print" data-toggle="tooltip" title="Print" data-id="' . $row['id'] . '" ><i class="fa fa-print"></i></button>';
+			if ($row['status'] == '1') {
+				$print = '<a href="' . base_url('warehouse_material/print_ttb/' . $row['id']) . '" class="btn btn-sm btn-primary"><i class="fa fa-print"></i></a>';
+			}
+			if ($row['status'] == '2') {
+				$print = '';
+			}
+
+			$buttons     = $view . ' ' . $print;
+
+			$nestedData   = array();
+			$nestedData[]  = $nomor;
+			$nestedData[]  = $row['id'];
+			$nestedData[]  = $row['warehouse_nm'];
+			$nestedData[]  = number_format($row['qty_packing']);
+			$nestedData[]  = $row['by_acc'];
+			$nestedData[]  = date('d F Y', strtotime($row['tgl_request']));
+			$nestedData[]  = $sts;
+			$nestedData[]  = $buttons;
+			$data[] = $nestedData;
+			$urut1++;
+			$urut2++;
+		}
+
+		$json_data = array(
+			"draw"              => intval($requestData['draw']),
+			"recordsTotal"      => intval($totalData),
+			"recordsFiltered"   => intval($totalFiltered),
+			"data"              => $data
+		);
+
+		echo json_encode($json_data);
+	}
+
+	public function history_material()
+	{
+		$id_category1 = $this->input->post('id_category1');
+
+		$get_data_stock_material = $this->Warehouse_material_model->get_material_stock($id_category1);
+
+		// print_r($get_data_stock_material);
+		// exit;
+
+		$this->template->set('results', [
+			'data_stock_material' => $get_data_stock_material
+		]);
+		$this->template->render('view');
+	}
+
+	public function view()
+	{
+		$post = $this->input->post();
+
+		$this->db->select('a.*, b.warehouse_nm AS nm_wr_from, c.warehouse_nm AS nm_wr_to');
+		$this->db->from('ms_request_material a');
+		$this->db->join('m_warehouse b', 'b.id = a.id_gudang_from', 'left');
+		$this->db->join('m_warehouse c', 'c.id = a.id_gudang_to', 'left');
+		$this->db->where('a.id', $post['id']);
+		$data_request = $this->db->get()->row();
+
+		// print_r($data_request);
+		// exit;
+
+		$this->db->select('a.*, b.nama AS category_nm, c.nama, e.nm_packaging');
+		$this->db->from('ms_request_material_detail a');
+		$this->db->join('ms_inventory_category1 b', 'b.id_category1 = a.id_category1', 'left');
+		$this->db->join('ms_inventory_category2 c', 'c.id_category2 = a.id_category2', 'left');
+		$this->db->join('ms_inventory_category3 d', 'd.id_category2 = a.id_category2', 'left');
+		$this->db->join('master_packaging e', 'e.id = d.packaging', 'left');
+		$this->db->where('a.id_request', $post['id']);
+		$data_request_detail = $this->db->get()->result();
+
+		// $this->template->title('Request Material');
+		$this->template->set('results', [
+			'data_request' => $data_request,
+			'data_request_detail' => $data_request_detail
+		]);
+		$this->template->render('view_request');
+	}
+
+	public function print_outgoing()
+	{
+		$post = $this->input->post();
+
+		$this->db->trans_begin();
+
+		$stock_ok = 1;
+		$get_request_detail = $this->db->get_where('ms_request_material_detail', ['id_request' => $post['id']])->result();
+		foreach ($get_request_detail as $request_detail) {
+			if ($stock_ok = 1) {
+				$get_inv_3 = $this->db->get_where('ms_inventory_category3', ['id_category1' => $request_detail->id_category1])->row();
+
+				$get_stock = $this->db->query('SELECT SUM(a.qty_stock) AS stock_all FROM ms_stock_material a WHERE a.id_category1 = "' . $request_detail->id_category1 . '"')->row();
+
+				if ($request_detail->request_qty > ($get_stock->stock_all / $get_inv_3->konversi)) {
+					print_r($request_detail->request_qty . ' - ' . ($get_stock->stock_all / $get_inv_3->konversi));
+					exit;
+					$stock_ok = 0;
+				}
+			}
+		}
+
+
+
+
+		if ($stock_ok = '1') {
+			$this->db->update('ms_request_material', ['status' => '1'], ['id' => $post['id']]);
+
+			$get_material_stock = $this->db->get_where('ms_request_material_detail', ['id_request' => $post['id']])->result();
+			foreach ($get_material_stock as $material_stock) {
+				$get_inv_3 = $this->db->get_where('ms_inventory_category3', ['id_category1' => $request_detail->id_category1])->row();
+
+				$get_stock = $this->db->query('SELECT SUM(a.qty_stock) AS stock_all FROM ms_stock_material a WHERE a.id_category1 = "' . $request_detail->id_category1 . '"')->row();
+
+				$sisa_stock = ($get_stock->stock_all - ($material_stock->request_qty * $get_inv_3->konversi));
+
+
+				$this->db->update('ms_stock_material', ['qty_stock' => $sisa_stock], ['id_category1' => $material_stock->id_category1]);
+			}
+		}
+
+
+		if ($this->db->trans_status() === FALSE || $stock_ok != '1') {
+			// print_r($stock_ok);
+			// exit;
+			$valid = 0;
+			if ($stock_ok != '1') {
+				$valid = 2;
+			}
+			$this->db->trans_rollback();
+		} else {
+			$valid = 1;
+			$this->db->trans_commit();
+		}
+
+		echo json_encode([
+			'status' => $valid
+		]);
+	}
+
+	public function print_ttb($id)
+	{
+		$get_request = $this->db->query('
+			SELECT 
+				a.*, 
+				b.warehouse_nm AS nm_wr_nm_from,
+				c.warehouse_nm AS nm_wr_nm_to
+			FROM
+				ms_request_material a
+				LEFT JOIN m_warehouse b ON b.id = a.id_gudang_from
+				LEFT JOIN m_warehouse c ON c.id = a.id_gudang_to
+			WHERE
+				a.id = "' . $id . '"
+		')->row();
+
+		$get_request_detail = $this->db->query('
+			SELECT
+				a.*,
+				b.nama AS category_nm,
+				c.nama
+			FROM
+				ms_request_material_detail a
+				LEFT JOIN ms_inventory_category1 b ON b.id_category1 = a.id_category1
+				LEFT JOIN ms_inventory_category2 c ON c.id_category2 = a.id_category2
+			WHERE
+				a.id_request = "' . $id . '"
+		')->result();
+
+		$this->template->set('results', [
+			'data_request' => $get_request,
+			'data_request_material' => $get_request_detail,
+		]);
+		$this->template->title('Print TTB');
+		$this->template->render('print_ttb');
+	}
+}

@@ -395,7 +395,7 @@ class Spk_filling extends Admin_Controller
                 ms_so a
                 LEFT JOIN ms_product_category3 b ON b.id_category3 = a.id_product
                 LEFT JOIN ms_bom c ON c.id_product = a.id_product
-                LEFT JOIN ms_bom_detail_material d ON d.id_bom = c.id,
+                LEFT JOIN ms_bom_detail_material d ON d.id_bom = c.id
                 LEFT JOIN master_packaging e ON e.id = b.packaging
             WHERE
                 1=1 AND (

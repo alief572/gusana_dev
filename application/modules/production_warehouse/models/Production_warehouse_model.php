@@ -7,7 +7,7 @@
  * This is model class for table "Customer"
  */
 
-class Warehouse_material_model extends BF_Model
+class Production_warehouse_model extends BF_Model
 {
 	/**
 	 * @var string  User Table Name
@@ -289,7 +289,7 @@ class Warehouse_material_model extends BF_Model
 				LEFT JOIN ms_inventory_category3 f ON f.id_category2 = a.id_category2
 				LEFT JOIN m_unit d ON d.id_unit = f.unit
 				LEFT JOIN master_packaging c ON c.id = f.packaging
-				LEFT JOIN ms_stock_material e ON e.id_category1 = b.id_category1
+				LEFT JOIN ms_stock_material_production e ON e.id_category1 = b.id_category1
 			WHERE
 				1=1 AND a.deleted = '0' AND a.id_category1 = '" . $id_category1 . "'
 			GROUP BY a.id_category2
@@ -309,7 +309,7 @@ class Warehouse_material_model extends BF_Model
 				LEFT JOIN ms_inventory_category3 f ON f.id_category2 = a.id_category2
 				LEFT JOIN m_unit d ON d.id_unit = f.unit
 				LEFT JOIN master_packaging c ON c.id = f.packaging
-				LEFT JOIN ms_stock_material e ON e.id_category1 = b.id_category1
+				LEFT JOIN ms_stock_material_production e ON e.id_category1 = b.id_category1
 			WHERE
 				1=1 AND a.deleted = '0'
 			GROUP BY a.id_category2
@@ -317,5 +317,49 @@ class Warehouse_material_model extends BF_Model
 		}
 
 		return $get_material_stock;
+	}
+
+	public function generate_id_detail_request_material()
+	{
+		$code_so = $this->db->query("SELECT MAX(id) as max_id FROM ms_request_material_detail WHERE id LIKE '%RMD-" . date('Y') . "-" . date('m') . "-" . date('d') . "%'")->row();
+		$kodeBarang = $code_so->max_id;
+		$urutan = (int) substr($kodeBarang, 15, 6);
+		$urutan++;
+		$tahun = date('Y-m-d-');
+		$huruf = "RMD-";
+		$kodecollect = $huruf . $tahun . sprintf("%06s", $urutan);
+
+		return $kodecollect;
+	}
+	public function generate_id_request()
+	{
+		$code_so = $this->db->query("SELECT MAX(id) as max_id FROM ms_request_material WHERE id LIKE '%RM-" . date('Y') . "-" . date('m') . "-" . date('d') . "%'")->row();
+		$kodeBarang = $code_so->max_id;
+		$urutan = (int) substr($kodeBarang, 14, 6);
+		$urutan++;
+		$tahun = date('Y-m-d-');
+		$huruf = "RM-";
+		$kodecollect = $huruf . $tahun . sprintf("%06s", $urutan);
+
+		return $kodecollect;
+	}
+
+	public function get_request_material()
+	{
+		$get_data = $this->db->query('
+			SELECT 
+				a.*, 
+				b.warehouse_nm,	
+				SUM(c.request_qty) AS qty_packing,
+				d.full_name AS by_acc
+			FROM
+				ms_request_material a
+				LEFT JOIN m_warehouse b ON b.id = a.id_gudang_from
+				LEFT JOIN ms_request_material_detail c ON c.id_request = a.id
+				LEFT JOIN users d ON d.id_user = a.dibuat_oleh
+			GROUP BY a.id
+		')->result();
+
+		return $get_data;
 	}
 }
