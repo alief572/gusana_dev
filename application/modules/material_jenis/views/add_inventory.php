@@ -50,6 +50,14 @@ $ENABLE_DELETE  = has_permission('Material_Jenis.Delete');
 						<input type="text" class="form-control form-control-sm" id="" required name="nm_inventory" placeholder="Material Jenis">
 					</div>
 				</div>
+				<div class="form-group row">
+					<div class="col-md-2">
+						<label for="">Material Jenis (Mandarin)</label>
+					</div>
+					<div class="col-md-6">
+						<input type="text" class="form-control form-control-sm" id="" name="nm_inventory_mandarin" placeholder="Material Jenis (Mandarin)">
+					</div>
+				</div>
 
 				<div class="form-group row">
 					<div class="col-md-3">

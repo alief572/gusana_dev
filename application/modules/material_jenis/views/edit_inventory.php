@@ -65,6 +65,14 @@ foreach ($results['inven'] as $inven) {
 		</div>
 		<div class="form-group row">
 			<div class="col-md-2">
+				<label for="">Material Jenis (Mandarin)</label>
+			</div>
+			<div class="col-md-6">
+				<input type="text" class="form-control form-control-sm" id="nm_inventory_mandarin" required name="nm_inventory_mandarin" placeholder="Material Jenis (Mandarin)" value="<?= $inven->nama_mandarin ?>">
+			</div>
+		</div>
+		<div class="form-group row">
+			<div class="col-md-2">
 				<label for="">Status</label>
 			</div>
 			<div class="col-md-4">

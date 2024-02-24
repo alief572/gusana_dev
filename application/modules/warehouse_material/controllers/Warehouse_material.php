@@ -1451,12 +1451,74 @@ class Warehouse_material extends Admin_Controller
 
 		$get_data_stock_material = $this->Warehouse_material_model->get_material_stock($id_category1);
 
-		// print_r($get_data_stock_material);
+		$stock_awal = 0;
+
+		$get_stock_awal_pr = $this->db->query('SELECT SUM(a.qty) AS stock_awal_pr FROM ms_pr_material_detail a JOIN ms_pr_material b ON b.id = a.id_pr WHERE a.id_category1 = "' . $id_category1 . '" AND b.tgl < "' . date('Y-m-d') . '" AND b.sts = "1"')->row();
+
+		$get_stock_awal_outgoing = $this->db->query('SELECT SUM(a.request_qty) AS stock_awal_outgoing FROM ms_request_material_detail a JOIN ms_request_material b ON b.id = a.id_request WHERE a.id_category1 = "' . $id_category1 . '" AND b.tgl_request < "' . date('Y-m-d') . '" AND b.status = "1" ')->row();
+
+		$stock_awal = ($get_stock_awal_pr->stock_awal_pr - $get_stock_awal_outgoing->stock_awal_outgoing);
+		// print_r($get_stock_awal_pr->stock_awal_pr . ' - ' . $get_stock_awal_outgoing->stock_awal_outgoing);
+		// exit;
+
+		$get_history = $this->db->query("
+		
+        select
+        	'PR' as xx,
+            a.tgl AS history_date,
+            b.full_name AS nm_by,
+            'Pembelian Material' AS dari_gudang,
+            c.warehouse_nm AS ke_gudang,
+            SUM(d.qty) AS qty_up,
+            '0' AS qty_down,
+            a.id AS no_transaksi,
+            a.keterangan AS keterangan,
+            d.id_category1 AS id_category1,
+            a.sts AS status
+        FROM
+            ms_pr_material a
+            LEFT JOIN users b ON b.id_user = a.dibuat_oleh
+            LEFT JOIN m_warehouse c ON c.id = a.id_gudang_to
+            LEFT JOIN ms_pr_material_detail d ON d.id_pr = a.id
+        WHERE 
+            d.id_category1 = '" . $id_category1 . "' AND a.sts = '1' AND a.id IS NOT NULL
+
+        union all
+
+        select
+        	'Outgoing' as xx,
+            a.tgl_request AS history_date,
+            b.full_name AS nm_by,
+            e.warehouse_nm AS dari_gudang,
+            c.warehouse_nm AS ke_gudang,
+            '0' AS qty_up,
+            SUM(d.request_qty) AS qty_down,
+            a.id AS no_transaksi,
+            a.keterangan AS keterangan,
+            d.id_category1 AS id_category1,
+            a.status AS status
+        FROM
+            ms_request_material a
+            LEFT JOIN users b ON b.id_user = a.dibuat_oleh
+            LEFT JOIN m_warehouse c ON c.id = a.id_gudang_to
+            LEFT JOIN ms_request_material_detail d ON d.id_request = a.id
+            LEFT JOIN m_warehouse e ON e.id = a.id_gudang_from
+        WHERE
+             d.id_category1 = '" . $id_category1 . "' AND a.status = '1' AND a.id IS NOT NULL
+         group by no_transaksi
+        
+		")->result();
+
+		// print_r("");
 		// exit;
 
 		$this->template->set('results', [
-			'data_stock_material' => $get_data_stock_material
+			'data_stock_material' => $get_data_stock_material,
+			'stock_awal' => $stock_awal,
+			'list_history' => $get_history
 		]);
+		// print_r($get_history);
+		// exit;
 		$this->template->render('view');
 	}
 
@@ -1506,8 +1568,6 @@ class Warehouse_material extends Admin_Controller
 				$get_stock = $this->db->query('SELECT SUM(a.qty_stock) AS stock_all FROM ms_stock_material a WHERE a.id_category1 = "' . $request_detail->id_category1 . '"')->row();
 
 				if ($request_detail->request_qty > ($get_stock->stock_all / $get_inv_3->konversi)) {
-					print_r($request_detail->request_qty . ' - ' . ($get_stock->stock_all / $get_inv_3->konversi));
-					exit;
 					$stock_ok = 0;
 				}
 			}
@@ -1516,7 +1576,7 @@ class Warehouse_material extends Admin_Controller
 
 
 
-		if ($stock_ok = '1') {
+		if ($stock_ok == '1') {
 			$this->db->update('ms_request_material', ['status' => '1'], ['id' => $post['id']]);
 
 			$get_material_stock = $this->db->get_where('ms_request_material_detail', ['id_request' => $post['id']])->result();
@@ -1533,7 +1593,7 @@ class Warehouse_material extends Admin_Controller
 		}
 
 
-		if ($this->db->trans_status() === FALSE || $stock_ok != '1') {
+		if ($this->db->trans_status() === FALSE || $stock_ok !== '1') {
 			// print_r($stock_ok);
 			// exit;
 			$valid = 0;
@@ -1581,7 +1641,7 @@ class Warehouse_material extends Admin_Controller
 
 		$this->template->set('results', [
 			'data_request' => $get_request,
-			'data_request_material' => $get_request_detail,
+			'data_request_material' => $get_request_detail
 		]);
 		$this->template->title('Print TTB');
 		$this->template->render('print_ttb');

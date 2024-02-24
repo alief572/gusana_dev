@@ -134,6 +134,7 @@ class Material_jenis extends Admin_Controller
 			'id_type'		    => $post['inventory_1'],
 			'id_category1'		=> $post['inventory_2'],
 			'nama'      		=> $post['nm_inventory'],
+			'nama_mandarin'		=> $post['nm_inventory_mandarin'],
 			'aktif'				=> $post['status'],
 			'modified_on'		=> date('Y-m-d H:i:s'),
 			'modified_by'		=> $this->auth->user_id()
@@ -253,6 +254,7 @@ class Material_jenis extends Admin_Controller
 			'id_type'		    => $post['inventory_1'],
 			'id_category1'		=> $post['inventory_2'],
 			'nama'      		=> $post['nm_inventory'],
+			'nama_mandarin'     => $post['nm_inventory_mandarin'],
 			'aktif'				=> 'aktif',
 			'created_on'		=> date('Y-m-d H:i:s'),
 			'created_by'		=> $this->auth->user_id(),

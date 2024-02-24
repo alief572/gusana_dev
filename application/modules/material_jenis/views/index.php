@@ -30,6 +30,7 @@ $ENABLE_DELETE  = has_permission('Material_Jenis.Delete');
 					<th>Material Type</th>
 					<th>Material Category</th>
 					<th>Material Jenis</th>
+					<th>Material Jenis (Mandarin)</th>
 					<th>Status</th>
 					<?php if ($ENABLE_MANAGE) : ?>
 						<th>Action</th>
@@ -47,6 +48,7 @@ $ENABLE_DELETE  = has_permission('Material_Jenis.Delete');
 							<td><?= $record->nama_type ?></td>
 							<td><?= $record->nama_category1 ?></td>
 							<td><?= $record->nama ?></td>
+							<td><?= $record->nama_mandarin ?></td>
 							<td>
 								<?php if ($record->aktif == 'aktif') { ?>
 									<label class="badge badge-success">Aktif</label>

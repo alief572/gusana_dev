@@ -302,7 +302,7 @@ class Warehouse_material_model extends BF_Model
 				c.nm_packaging,
 				d.nm_unit,
 				f.konversi,
-				(SUM(e.qty_stock) / f.konversi) AS stock_unit
+				((e.qty_stock) / e.konversi) AS stock_unit
 			FROM
 				ms_inventory_category2 a
 				LEFT JOIN ms_inventory_category1 b ON b.id_category1 = a.id_category1
