@@ -369,7 +369,7 @@ class Production_warehouse extends Admin_Controller
 
 			$sts = '<div class="badge badge-warning text-light">Open</div>';
 			if ($row['status'] == '1') {
-				$sts = '<div class="badge badge-success">Approved</div>';
+				$sts = '<div class="badge badge-success">Closed</div>';
 			}
 			if ($row['status'] == '2') {
 				$sts = '<div class="badge badge-danger">Rejected</div>';
@@ -400,5 +400,62 @@ class Production_warehouse extends Admin_Controller
 		);
 
 		echo json_encode($json_data);
+	}
+
+	public function history_material()
+	{
+		$id_category1 = $this->input->post('id_category1');
+
+		$get_data_stock_material = $this->Warehouse_material_model->get_material_stock($id_category1);
+
+		$stock_awal = 0;
+
+		$get_stock_awal_pr = $this->db->query('SELECT SUM(a.qty) AS stock_awal_pr FROM ms_pr_material_detail a JOIN ms_pr_material b ON b.id = a.id_pr WHERE a.id_category1 = "' . $id_category1 . '" AND b.tgl < "' . date('Y-m-d') . '" AND b.sts = "1"')->row();
+
+		$get_stock_awal_outgoing = $this->db->query('SELECT SUM(a.request_qty) AS stock_awal_outgoing FROM ms_request_material_detail a JOIN ms_request_material b ON b.id = a.id_request WHERE a.id_category1 = "' . $id_category1 . '" AND b.tgl_request < "' . date('Y-m-d') . '" AND b.status = "1" ')->row();
+
+		$stock_awal = ($get_stock_awal_pr->stock_awal_pr - $get_stock_awal_outgoing->stock_awal_outgoing);
+		// print_r($get_stock_awal_pr->stock_awal_pr . ' - ' . $get_stock_awal_outgoing->stock_awal_outgoing);
+		// exit;
+
+		$get_history = $this->db->query("
+
+        select
+        	'Outgoing' as xx,
+            a.tgl_request AS history_date,
+            b.full_name AS nm_by,
+            e.warehouse_nm AS dari_gudang,
+            c.warehouse_nm AS ke_gudang,
+            '0' AS qty_up,
+			f.konversi,
+            SUM(d.request_qty) AS qty_down,
+            a.id AS no_transaksi,
+            a.keterangan AS keterangan,
+            d.id_category1 AS id_category1,
+            a.status AS status
+        FROM
+            ms_request_material a
+            LEFT JOIN users b ON b.id_user = a.dibuat_oleh
+            LEFT JOIN m_warehouse c ON c.id = a.id_gudang_to
+            LEFT JOIN ms_request_material_detail d ON d.id_request = a.id
+            LEFT JOIN m_warehouse e ON e.id = a.id_gudang_from
+			LEFT JOIN ms_inventory_category3 f ON f.id_category1 = d.id_category1
+        WHERE
+             d.id_category1 = '" . $id_category1 . "' AND a.status = '1' AND a.id IS NOT NULL
+         group by no_transaksi
+        
+		")->result();
+
+		// print_r("");
+		// exit;
+
+		$this->template->set('results', [
+			'data_stock_material' => $get_data_stock_material,
+			'stock_awal' => $stock_awal,
+			'list_history' => $get_history
+		]);
+		// print_r($get_history);
+		// exit;
+		$this->template->render('view');
 	}
 }

@@ -42,22 +42,6 @@ $ENABLE_DELETE  = has_permission('Finish_Good.Delete');
                     </tr>
                 </thead>
                 <tbody></tbody>
-                <tfoot>
-                    <tr>
-                        <th class="text-center"></th>
-                        <th class="text-center">No</th>
-                        <th>Product Name</th>
-                        <th>Packing</th>
-                        <th>Konversi (kg)</th>
-                        <th>Actual Stock (kg)</th>
-                        <th>Actual Stock (kaleng)</th>
-                        <th>Stock Booking (kaleng)</th>
-                        <th>Free Stock (kaleng)</th>
-                        <th>Minimun Stock (kaleng)</th>
-                        <th>MOQ (kg)</th>
-                        <th>Propose (kg)</th>
-                    </tr>
-                </tfoot>
             </table>
         </div>
     </div>

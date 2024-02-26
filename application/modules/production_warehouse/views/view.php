@@ -1,8 +1,8 @@
 <?php
-$ENABLE_ADD     = has_permission('Stock_Material.Add');
-$ENABLE_MANAGE  = has_permission('Stock_Material.Manage');
-$ENABLE_VIEW    = has_permission('Stock_Material.View');
-$ENABLE_DELETE  = has_permission('Stock_Material.Delete');
+$ENABLE_ADD     = has_permission('Production_Warehouse.Add');
+$ENABLE_MANAGE  = has_permission('Production_Warehouse.Manage');
+$ENABLE_VIEW    = has_permission('Production_Warehouse.View');
+$ENABLE_DELETE  = has_permission('Production_Warehouse.Delete');
 
 ?>
 <div class="box box-primary">
@@ -38,6 +38,9 @@ $ENABLE_DELETE  = has_permission('Stock_Material.Delete');
                     </tr>
                 </table>
             </div>
+            <div class="row">
+                <div class="col-3"></div>
+            </div>
             <table class="table table-striped mt-15">
                 <thead>
                     <tr>
@@ -47,12 +50,51 @@ $ENABLE_DELETE  = has_permission('Stock_Material.Delete');
                         <th class="text-center">Dari Gudang</th>
                         <th class="text-center">Ke Gudang</th>
                         <th class="text-center">Qty</th>
-                        <th class="text-center">Stock Awal</th>
+                        <th class="text-center">Conversion (Kg)</th>
+                        <th class="text-center">Stock Awal (Kg)</th>
                         <th class="text-center">Stock Akhir</th>
                         <th class="text-center">No Transaksi</th>
                         <th class="text-center">Keterangan</th>
                     </tr>
                 </thead>
+                <tbody>
+                    <?php
+
+                    $no = 1;
+                    $stock_awal = 0;
+                    // print_r($results['list_history']);
+                    // exit;
+                    if (count($results['list_history']) > 0) {
+                        foreach ($results['list_history'] as $history) {
+                            // print_r($history->no_transaksi);
+                            // exit;
+                            if ($history->no_transaksi !== NULL) {
+                                $stock_akhir = ($stock_awal + $history->qty_down);
+
+                                $qty = $history->qty_down;
+
+                                echo '
+                                    <tr>
+                                        <td class="text-center">' . $no . '</td>
+                                        <td class="text-center">' . date('d F Y', strtotime($history->history_date)) . '</td>
+                                        <td class="text-center">' . $history->nm_by . '</td>
+                                        <td class="text-center">' . $history->dari_gudang . '</td>
+                                        <td class="text-center">' . $history->ke_gudang . '</td>
+                                        <td class="text-center">' . number_format($qty) . '</td>
+                                        <td class="text-center">' . number_format($history->konversi) . '</td>
+                                        <td class="text-center">' . number_format($stock_awal * $history->konversi) . '</td>
+                                        <td class="text-center">' . number_format($stock_akhir * $history->konversi) . '</td>
+                                        <td class="text-center">' . $history->no_transaksi . '</td>
+                                        <td class="text-center">' . $history->keterangan . '</td>
+                                    </tr>
+                                ';
+                                $stock_awal += $history->qty_down;
+                                $no++;
+                            }
+                        }
+                    }
+                    ?>
+                </tbody>
             </table>
         </form>
     </div>

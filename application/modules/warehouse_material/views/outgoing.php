@@ -25,13 +25,13 @@ $id_bentuk = $this->uri->segment(3);
         <table id="dataTable" class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th class="text-center">No.</th>
-                    <th class="text-center">No Transaksi</th>
-                    <th class="text-center">Gudang Dari</th>
-                    <th class="text-center">Qty Packing</th>
-                    <th class="text-center">By</th>
-                    <th class="text-center">Tanggal</th>
-                    <th class="text-center">Status</th>
+                    <th class="text-center" style="width: 20px;">No.</th>
+                    <th class="text-center" style="width: 160px;">No Transaksi</th>
+                    <th class="text-center" style="width: 160px;">Gudang Dari</th>
+                    <th class="text-center" style="width: 30px;">Qty Packing</th>
+                    <th class="text-center" style="width: 80px;">By</th>
+                    <th class="text-center" style="width: 180px;">Tanggal</th>
+                    <th class="text-center" style="width: 50px;">Status</th>
                     <?php if ($ENABLE_MANAGE) : ?>
                         <th class="text-center">Option</th>
                     <?php endif; ?>
@@ -164,7 +164,6 @@ $id_bentuk = $this->uri->segment(3);
             "stateSave": true,
             "bAutoWidth": true,
             "destroy": true,
-            "responsive": true,
             "language": {
                 "sSearch": "",
                 'searchPlaceholder': 'Search...',
@@ -177,25 +176,6 @@ $id_bentuk = $this->uri->segment(3);
                     "sPrevious": "<i class='fa fa-arrow-left' aria-hidden='true'></i>",
                     "sNext": "<i class='fa fa-arrow-right' aria-hidden='true'></i>"
                 }
-            },
-            "responsive": {
-                "breakpoints": [{
-                        "name": 'desktop',
-                        "width": Infinity
-                    },
-                    {
-                        "name": 'tablet',
-                        "width": 1148
-                    },
-                    {
-                        "name": 'mobile',
-                        "width": 680
-                    },
-                    {
-                        "name": 'mobile-p',
-                        "width": 320
-                    }
-                ],
             },
             "aaSorting": [
                 [1, "asc"]

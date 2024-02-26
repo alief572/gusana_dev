@@ -32,6 +32,7 @@ $id_bentuk = $this->uri->segment(3);
 					<th class="text-center">Conversion</th>
 					<th class="text-center">Unit</th>
 					<th class="text-center">Stock Unit</th>
+					<th class="text-center">Stock Unit (Kg)</th>
 					<th class="text-center">History</th>
 				</tr>
 			</thead>
@@ -50,6 +51,7 @@ $id_bentuk = $this->uri->segment(3);
 							<td class="text-center">' . number_format($material_stock->konversi) . '</td>
 							<td class="text-center">' . $material_stock->nm_unit . '</td>
 							<td class="text-center">' . number_format($material_stock->stock_unit, 2) . '</td>
+							<td class="text-center">' . number_format($material_stock->stock_unit * $material_stock->konversi, 2) . '</td>
 							<td class="text-center">
 								<button type="button" class="btn btn-sm btn-info history_material history_material_' . $material_stock->id_category1 . '" data-id_category1="' . $material_stock->id_category1 . '"><i class="fa fa-eye"></i></button>
 							</td>

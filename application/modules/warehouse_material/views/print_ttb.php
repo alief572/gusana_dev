@@ -32,6 +32,12 @@ $ENABLE_DELETE  = has_permission('Material_Outgoing.Delete');
                     <th><?= date('d-m-Y', strtotime($results['data_request']->tgl_request)) ?></th>
                     <th colspan="4"></th>
                 </tr>
+                <tr>
+                    <th>Keterangan</th>
+                    <th>:</th>
+                    <th><?= $results['data_request']->keterangan ?></th>
+                    <th colspan="4"></th>
+                </tr>
             </table>
         </div>
         <div class="col-12">

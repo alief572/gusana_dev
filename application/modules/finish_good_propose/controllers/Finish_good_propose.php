@@ -118,17 +118,28 @@ class Finish_good_propose extends Admin_Controller
                 //     $propose = $row['moq'];
                 // }
 
+                $get_booking_stock = $this->db->query('
+                    SELECT
+                        SUM(a.qty) AS ttl_booking_stock
+                    FROM
+                        ms_penawaran_detail a
+                        JOIN ms_penawaran b ON b.id_penawaran = a.id_penawaran 
+                    WHERE
+                        a.id_product = "' . $row['id_category3'] . '" AND
+                        b.sts = "so_created"
+                ')->row();
+
                 $nestedData   = array();
                 $nestedData[]  = '<input type="checkbox" name="finish_goods_nm_' . $row['id_category3'] . '" class="pilih pilih_' . $row['id_category3'] . '" value="' . $row['id_category3'] . '" data-id_category3="' . $row['id_category3'] . '" data-qty_asli="' . $row['qty_asli'] . '" data-moq="' . $row['moq'] . '" data-min_stok="' . $row['min_stok'] . '">';
                 $nestedData[]  = $nomor;
                 $nestedData[]  = $row['nama'];
                 $nestedData[]  = $row['nm_packaging'];
-                $nestedData[]  = $row['konversi'];
-                $nestedData[]  = $row['qty_asli'];
-                $nestedData[]  = ($row['qty_asli'] / $row['konversi']);
-                $nestedData[]  = 0;
-                $nestedData[]  = ($row['qty_asli'] / $row['konversi']);
-                $nestedData[]  = $row['min_stok'];
+                $nestedData[]  = number_format($row['konversi']);
+                $nestedData[]  = number_format($row['qty_asli']);
+                $nestedData[]  = number_format($row['qty_asli'] / $row['konversi']);
+                $nestedData[]  = number_format($get_booking_stock->ttl_booking_stock);
+                $nestedData[]  = number_format(($row['qty_asli'] / $row['konversi']) - $get_booking_stock->ttl_booking_stock);
+                $nestedData[]  = number_format($row['min_stok']);
                 $nestedData[]  = $row['moq'];
                 $nestedData[]  = '<input type="number" class="form-control form-control-sm propose_val propose_' . $row['id_category3'] . '" value="' . $propose . '" readonly>';
                 $nestedData[]  = $buttons;

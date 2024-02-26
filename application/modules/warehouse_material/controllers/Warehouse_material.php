@@ -1403,7 +1403,7 @@ class Warehouse_material extends Admin_Controller
 
 			$sts = '<div class="badge badge-warning text-light">Open</div>';
 			if ($row['status'] == '1') {
-				$sts = '<div class="badge badge-success">Approved</div>';
+				$sts = '<div class="badge badge-success">Closed</div>';
 			}
 			if ($row['status'] == '2') {
 				$sts = '<div class="badge badge-danger">Rejected</div>';
@@ -1562,7 +1562,7 @@ class Warehouse_material extends Admin_Controller
 		$stock_ok = 1;
 		$get_request_detail = $this->db->get_where('ms_request_material_detail', ['id_request' => $post['id']])->result();
 		foreach ($get_request_detail as $request_detail) {
-			if ($stock_ok = 1) {
+			if ($stock_ok == '1') {
 				$get_inv_3 = $this->db->get_where('ms_inventory_category3', ['id_category1' => $request_detail->id_category1])->row();
 
 				$get_stock = $this->db->query('SELECT SUM(a.qty_stock) AS stock_all FROM ms_stock_material a WHERE a.id_category1 = "' . $request_detail->id_category1 . '"')->row();
@@ -1570,10 +1570,14 @@ class Warehouse_material extends Admin_Controller
 				if ($request_detail->request_qty > ($get_stock->stock_all / $get_inv_3->konversi)) {
 					$stock_ok = 0;
 				}
+
+				// print_r($request_detail->request_qty . ' - ' . ($get_stock->stock_all / $get_inv_3->konversi));
+				// exit;
 			}
 		}
 
-
+		// print_r($stock_ok);
+		// exit;
 
 
 		if ($stock_ok == '1') {
@@ -1589,15 +1593,37 @@ class Warehouse_material extends Admin_Controller
 
 
 				$this->db->update('ms_stock_material', ['qty_stock' => $sisa_stock], ['id_category1' => $material_stock->id_category1]);
+
+				$check_warehouse_production = $this->db->get_where('ms_stock_material_production', ['id_category1' => $request_detail->id_category1])->num_rows();
+
+				if ($check_warehouse_production > 0) {
+					$get_stock_detail = $this->db->get_where('ms_stock_material_production', ['id_category1' => $request_detail->id_category1])->row();
+
+					$this->db->update('ms_stock_material_production', [
+						'qty_stock' => ($get_stock_detail->qty_stock + ($material_stock->request_qty * $get_inv_3->konversi))
+					], [
+						'id_category1' => $request_detail->id_category1
+					]);
+				} else {
+
+					$get_stock_detail = $this->db->get_where('ms_stock_material', ['id_category1' => $request_detail->id_category1])->row();
+
+					$this->db->insert('ms_stock_material_production', [
+						'id_category1' => $get_stock_detail->id_category1,
+						'nama_material1' => $get_stock_detail->nama_material1,
+						'konversi' => $get_stock_detail->konversi,
+						'unit' => $get_stock_detail->unit,
+						'qty_stock' => ($material_stock->request_qty * $get_inv_3->konversi)
+					]);
+				}
 			}
 		}
 
 
-		if ($this->db->trans_status() === FALSE || $stock_ok !== '1') {
-			// print_r($stock_ok);
-			// exit;
+		if ($this->db->trans_status() === FALSE || $stock_ok < 1) {
+
 			$valid = 0;
-			if ($stock_ok != '1') {
+			if ($stock_ok < 1) {
 				$valid = 2;
 			}
 			$this->db->trans_rollback();

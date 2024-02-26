@@ -38,6 +38,9 @@ $ENABLE_DELETE  = has_permission('Stock_Material.Delete');
                     </tr>
                 </table>
             </div>
+            <div class="row">
+                <div class="col-3"></div>
+            </div>
             <table class="table table-striped mt-15">
                 <thead>
                     <tr>

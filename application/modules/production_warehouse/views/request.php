@@ -138,7 +138,6 @@ $id_bentuk = $this->uri->segment(3);
             "stateSave": true,
             "bAutoWidth": true,
             "destroy": true,
-            "responsive": true,
             "language": {
                 "sSearch": "",
                 'searchPlaceholder': 'Search...',
@@ -151,25 +150,6 @@ $id_bentuk = $this->uri->segment(3);
                     "sPrevious": "<i class='fa fa-arrow-left' aria-hidden='true'></i>",
                     "sNext": "<i class='fa fa-arrow-right' aria-hidden='true'></i>"
                 }
-            },
-            "responsive": {
-                "breakpoints": [{
-                        "name": 'desktop',
-                        "width": Infinity
-                    },
-                    {
-                        "name": 'tablet',
-                        "width": 1148
-                    },
-                    {
-                        "name": 'mobile',
-                        "width": 680
-                    },
-                    {
-                        "name": 'mobile-p',
-                        "width": 320
-                    }
-                ],
             },
             "aaSorting": [
                 [1, "asc"]

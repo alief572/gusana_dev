@@ -281,8 +281,9 @@ class Production_warehouse_model extends BF_Model
 				b.nama as category_nm,
 				c.nm_packaging,
 				d.nm_unit,
-				f.konversi,
-				(SUM(e.qty_stock) / f.konversi) AS stock_unit
+				e.konversi,
+				e.qty_stock,
+				(SUM(e.qty_stock) / e.konversi) AS stock_unit
 			FROM
 				ms_inventory_category2 a
 				LEFT JOIN ms_inventory_category1 b ON b.id_category1 = a.id_category1
