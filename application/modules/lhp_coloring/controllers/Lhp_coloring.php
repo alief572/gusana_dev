@@ -334,7 +334,7 @@ class Lhp_coloring extends Admin_Controller
         $this->db->join('ms_bom_detail_material d', 'd.id_bom = b.id_bom', 'left');
         $this->db->join('ms_inventory_category1 e', 'e.id_category1 = d.id_category1', 'left');
         $this->db->join('ms_lhp_aktual_qty f', 'f.id_material = e.id_category1', 'left');
-        $this->db->join('ms_stock_material g', 'g.id_category1 = e.id_category1', 'left');
+        $this->db->join('ms_stock_material_production g', 'g.id_category1 = e.id_category1', 'left');
         $this->db->where([
             'a.id_spk' => $id_spk,
             'a.id_so' => $id_so,
@@ -346,7 +346,7 @@ class Lhp_coloring extends Admin_Controller
         $this->db->select('a.*, IF(c.qty_stock IS NOT NULL AND c.qty_stock > 0, c.qty_stock, 0) as stock_material');
         $this->db->from('ms_spk_material_tambahan a');
         $this->db->join('ms_inventory_category1 b', 'b.id_category1 = a.id_category1');
-        $this->db->join('ms_stock_material c', 'c.id_category1 = a.id_category1', 'left');
+        $this->db->join('ms_stock_material_production c', 'c.id_category1 = a.id_category1', 'left');
         $this->db->where([
             'a.id_spk' => $id_spk,
             'a.id_so' => $id_so,
@@ -361,7 +361,7 @@ class Lhp_coloring extends Admin_Controller
         $valid = 1;
         foreach ($get_data as $list_data) :
             if ($valid == 1) {
-                $check_stock_material = $this->db->get_where('ms_stock_material', ['id_category1' => $list_data->id_category1])->row();
+                $check_stock_material = $this->db->get_where('ms_stock_material_production', ['id_category1' => $list_data->id_category1])->row();
                 if (empty($check_stock_material)) {
                     $valid = 2;
                 } else {
@@ -376,13 +376,13 @@ class Lhp_coloring extends Admin_Controller
             if ($valid == 1) {
                 $qty_akhir = ($list_data->qty_stock - $list_data->aktual_qty);
 
-                $this->db->update('ms_stock_material', ['qty_stock' => $qty_akhir], ['id_category1' => $list_data->id_category1]);
+                $this->db->update('ms_stock_material_production', ['qty_stock' => $qty_akhir], ['id_category1' => $list_data->id_category1]);
             }
         endforeach;
 
         foreach ($get_data_material_tambahan as $list_data_material_tambahan) :
             if ($valid == 1) {
-                $check_stock_material = $this->db->get_where('ms_stock_material', ['id_category1' => $list_data_material_tambahan->id_category1])->row();
+                $check_stock_material = $this->db->get_where('ms_stock_material_production', ['id_category1' => $list_data_material_tambahan->id_category1])->row();
                 if (empty($check_stock_material)) {
                     $valid = 2;
                 } else {
@@ -397,7 +397,7 @@ class Lhp_coloring extends Admin_Controller
             if ($valid == 1) {
                 $qty_akhir = ($list_data_material_tambahan->stock_material - $list_data_material_tambahan->jumlah);
 
-                $this->db->update('ms_stock_material', ['qty_stock' => $qty_akhir], ['id_category1' => $list_data_material_tambahan->id_category1]);
+                $this->db->update('ms_stock_material_production', ['qty_stock' => $qty_akhir], ['id_category1' => $list_data_material_tambahan->id_category1]);
             }
         endforeach;
 

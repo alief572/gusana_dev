@@ -262,7 +262,7 @@ class Lhp_filling extends Admin_Controller
         $this->db->join('ms_bom_detail_material d', 'd.id_bom = b.id_bom', 'left');
         $this->db->join('ms_inventory_category1 e', 'e.id_category1 = d.id_category1', 'left');
         $this->db->join('ms_lhp_aktual_qty f', 'f.id_material = e.id_category1', 'left');
-        $this->db->join('ms_stock_material g', 'g.id_category1 = e.id_category1', 'left');
+        $this->db->join('ms_stock_material_production g', 'g.id_category1 = e.id_category1', 'left');
         $this->db->where([
             'a.id_spk' => $id_spk,
             'a.id_so' => $id_so,
@@ -274,7 +274,7 @@ class Lhp_filling extends Admin_Controller
         $this->db->select('a.*, IF(c.qty_stock IS NOT NULL AND c.qty_stock > 0, c.qty_stock, 0) as stock_material');
         $this->db->from('ms_spk_material_tambahan a');
         $this->db->join('ms_inventory_category1 b', 'b.id_category1 = a.id_category1');
-        $this->db->join('ms_stock_material c', 'c.id_category1 = a.id_category1', 'left');
+        $this->db->join('ms_stock_material_production c', 'c.id_category1 = a.id_category1', 'left');
         $this->db->where([
             'a.id_spk' => $id_spk,
             'a.id_so' => $id_so,

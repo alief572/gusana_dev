@@ -442,7 +442,35 @@ class Production_warehouse extends Admin_Controller
 			LEFT JOIN ms_inventory_category3 f ON f.id_category1 = d.id_category1
         WHERE
              d.id_category1 = '" . $id_category1 . "' AND a.status = '1' AND a.id IS NOT NULL
-         group by no_transaksi
+
+		UNION ALL
+
+		SELECT
+			'LHP' as xx,
+			DATE_FORMAT(d.dibuat_tgl, '%Y-%m-%d') AS history_date,
+			e.full_name AS nm_by,
+			'Production Warehouse' AS dari_gudang,
+			'LHP' AS ke_gudang,
+			SUM(g.qty_aktual) AS qty_up,
+			h.konversi AS konversi,
+			'0' AS qty_down,
+			b.id_spk AS no_transaksi,
+			'' AS keterangan,
+			c.id_category1 AS id_category1,
+			d.sts AS status
+		FROM
+			ms_so a 
+			LEFT JOIN ms_create_spk b ON b.id_so = a.id_so
+			LEFT JOIN ms_bom_detail_material c ON c.id_bom = a.id_bom
+			LEFT JOIN ms_closing_lhp d ON d.id_spk = b.id_spk
+			LEFT JOIN users e ON e.id_user = d.dibuat_oleh
+			LEFT JOIN ms_inventory_category1 f ON f.id_category1 = c.id_category1
+			LEFT JOIN ms_lhp_aktual_qty g ON g.id_spk = b.id_spk AND g.id_material = c.id_category1
+			LEFT JOIN ms_inventory_category3 h ON h.id_category1 = c.id_category1
+		WHERE
+			c.id_category1 = '" . $id_category1 . "' AND d.sts = 'closing' AND d.id_spk IS NOT NULL AND DATE_FORMAT(d.dibuat_tgl, '%Y-%m-%d') >= '2024-02-26'
+		
+        group by no_transaksi
         
 		")->result();
 

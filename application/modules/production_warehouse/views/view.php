@@ -51,6 +51,7 @@ $ENABLE_DELETE  = has_permission('Production_Warehouse.Delete');
                         <th class="text-center">Ke Gudang</th>
                         <th class="text-center">Qty</th>
                         <th class="text-center">Conversion (Kg)</th>
+                        <th class="text-center">Total Conversion (Kg)</th>
                         <th class="text-center">Stock Awal (Kg)</th>
                         <th class="text-center">Stock Akhir</th>
                         <th class="text-center">No Transaksi</th>
@@ -69,9 +70,19 @@ $ENABLE_DELETE  = has_permission('Production_Warehouse.Delete');
                             // print_r($history->no_transaksi);
                             // exit;
                             if ($history->no_transaksi !== NULL) {
-                                $stock_akhir = ($stock_awal + $history->qty_down);
+                                $stock_akhir = ($stock_awal + $history->qty_down - $history->qty_up);
 
                                 $qty = $history->qty_down;
+                                if ($history->qty_up > 0) {
+                                    $qty = ($history->qty_up / $history->konversi);
+                                }
+
+                                $pen_stock_awal = $stock_awal;
+                                $pen_stock_akhir = $stock_akhir;
+                                if ($history->xx !== 'LHP') {
+                                    $pen_stock_awal = ($stock_awal * $history->konversi);
+                                    $pen_stock_akhir = ($stock_akhir * $history->konversi);
+                                }
 
                                 echo '
                                     <tr>
@@ -80,15 +91,22 @@ $ENABLE_DELETE  = has_permission('Production_Warehouse.Delete');
                                         <td class="text-center">' . $history->nm_by . '</td>
                                         <td class="text-center">' . $history->dari_gudang . '</td>
                                         <td class="text-center">' . $history->ke_gudang . '</td>
-                                        <td class="text-center">' . number_format($qty) . '</td>
+                                        <td class="text-center">' . number_format($qty, 2) . '</td>
                                         <td class="text-center">' . number_format($history->konversi) . '</td>
-                                        <td class="text-center">' . number_format($stock_awal * $history->konversi) . '</td>
-                                        <td class="text-center">' . number_format($stock_akhir * $history->konversi) . '</td>
+                                        <td class="text-center">' . number_format($qty * $history->konversi) . '</td>
+                                        <td class="text-center">' . number_format($pen_stock_awal) . '</td>
+                                        <td class="text-center">' . number_format($pen_stock_akhir) . '</td>
                                         <td class="text-center">' . $history->no_transaksi . '</td>
                                         <td class="text-center">' . $history->keterangan . '</td>
                                     </tr>
                                 ';
-                                $stock_awal += $history->qty_down;
+                                if ($history->xx !== 'LHP') {
+                                    $stock_awal += ($history->qty_down * $history->konversi);
+                                    $stock_awal -= ($history->qty_up * $history->konversi);
+                                } else {
+                                    $stock_awal += $history->qty_down;
+                                    $stock_awal -= $history->qty_up;
+                                }
                                 $no++;
                             }
                         }
