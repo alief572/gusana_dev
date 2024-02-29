@@ -556,61 +556,81 @@ class Product_master extends Admin_Controller
 			$nm_refer = $get_refer->nama;
 		}
 
+		$get_same_product = $this->db->query('
+			SELECT 
+				LOWER(REPLACE(nama," ", "")) AS product_nm
+			FROM
+				ms_product_category3
+			WHERE
+				LOWER(REPLACE(nama," ", "")) = "' . str_replace(strtolower($this->input->post('nm_lv_4')), " ", "") . '"
+		')->num_rows();
+
+		$product_same = 0;
+		if ($get_same_product > 0) {
+			$product_same = 1;
+		}
+
 		$this->db->trans_begin();
 		$numb1 = 0;
 		//$head = $_POST['hd1'];
-		$this->db->update('ms_product_category3_competitor', ['id_category3' => $code], ['id_category3' => $this->auth->user_id()]);
-		$this->db->insert('ms_product_category3', [
-			'id_category3' => $code,
-			'id_type' => $this->input->post('inventory_1'),
-			'id_category1' => $this->input->post('inventory_2'),
-			'id_category2' => $this->input->post('inventory_3'),
-			'nama' => $this->input->post('nm_lv_4'),
-			'nama_mandarin' => $this->input->post('nm_lv_4_mandarin'),
-			'curing_agent' => $this->input->post('curing_agent'),
-			'curing_agent_konversi' => $this->input->post('curing_agent_konversi'),
-			'moq' => $this->input->post('moq'),
-			'packaging' => $this->input->post('packaging'),
-			'konversi' => $this->input->post('konversi'),
-			'unit_id' => $this->input->post('unit'),
-			'unit_nm' => $get_unit->nm_unit,
-			'product_code' => $this->input->post('product_code'),
-			'max_stok' => $this->input->post('max_stok'),
-			'min_stok' => $this->input->post('min_stok'),
-			'dim_length' => $this->input->post('dim_length'),
-			'dim_width' => $this->input->post('dim_width'),
-			'dim_height' => $this->input->post('dim_height'),
-			'cbm' => $this->input->post('cbm'),
-			'dim_tabung_r' => $this->input->post('dim_tabung_r'),
-			'dim_tabung_t' => $this->input->post('dim_tabung_t'),
-			'cbm_tabung' => $this->input->post('cbm_tabung'),
-			'pds' => $data,
-			'aktif' => 1,
-			'aplikasi_penggunaan_cat' => $this->input->post('aplikasi_penggunaan_cat'),
-			'water_resistance' => $this->input->post('water_resistance'),
-			'weather_uv_resistance' => $this->input->post('weather_uv_resistance'),
-			'corrosion_resistance' => $this->input->post('corrosion_resistance'),
-			'heat_resistance' => $this->input->post('heat_resistance'),
-			'daya_rekat' => $this->input->post('daya_rekat'),
-			'lama_pengeringan' => $this->input->post('lama_pengeringan'),
-			'permukaan' => $this->input->post('permukaan'),
-			'anti_jamur_lumut' => $this->input->post('anti_jamur_lumut'),
-			'mudah_dibersihkan' => $this->input->post('mudah_dibersihkan'),
-			'anti_bakteri' => $this->input->post('anti_bakteri'),
-			'daya_tahan_gesekan' => $this->input->post('daya_tahan_gesekan'),
-			'anti_slip' => $this->input->post('anti_slip'),
-			'fire_resistance' => $this->input->post('fire_resistance'),
-			'ketahanan_bahan_kimia' => $this->input->post('ketahanan_bahan_kimia'),
-			'id_product_refer' => $id_refer,
-			'nm_product_refer' => $nm_refer,
-			'dibuat_oleh' => $this->auth->user_id(),
-			'dibuat_tgl' => date("Y-m-d H:i:s")
-		]);
+		if ($product_same = 0) {
+			$this->db->update('ms_product_category3_competitor', ['id_category3' => $code], ['id_category3' => $this->auth->user_id()]);
+			$this->db->insert('ms_product_category3', [
+				'id_category3' => $code,
+				'id_type' => $this->input->post('inventory_1'),
+				'id_category1' => $this->input->post('inventory_2'),
+				'id_category2' => $this->input->post('inventory_3'),
+				'nama' => $this->input->post('nm_lv_4'),
+				'nama_mandarin' => $this->input->post('nm_lv_4_mandarin'),
+				'curing_agent' => $this->input->post('curing_agent'),
+				'curing_agent_konversi' => $this->input->post('curing_agent_konversi'),
+				'moq' => $this->input->post('moq'),
+				'packaging' => $this->input->post('packaging'),
+				'konversi' => $this->input->post('konversi'),
+				'unit_id' => $this->input->post('unit'),
+				'unit_nm' => $get_unit->nm_unit,
+				'product_code' => $this->input->post('product_code'),
+				'max_stok' => $this->input->post('max_stok'),
+				'min_stok' => $this->input->post('min_stok'),
+				'dim_length' => $this->input->post('dim_length'),
+				'dim_width' => $this->input->post('dim_width'),
+				'dim_height' => $this->input->post('dim_height'),
+				'cbm' => $this->input->post('cbm'),
+				'dim_tabung_r' => $this->input->post('dim_tabung_r'),
+				'dim_tabung_t' => $this->input->post('dim_tabung_t'),
+				'cbm_tabung' => $this->input->post('cbm_tabung'),
+				'pds' => $data,
+				'aktif' => 1,
+				'aplikasi_penggunaan_cat' => $this->input->post('aplikasi_penggunaan_cat'),
+				'water_resistance' => $this->input->post('water_resistance'),
+				'weather_uv_resistance' => $this->input->post('weather_uv_resistance'),
+				'corrosion_resistance' => $this->input->post('corrosion_resistance'),
+				'heat_resistance' => $this->input->post('heat_resistance'),
+				'daya_rekat' => $this->input->post('daya_rekat'),
+				'lama_pengeringan' => $this->input->post('lama_pengeringan'),
+				'permukaan' => $this->input->post('permukaan'),
+				'anti_jamur_lumut' => $this->input->post('anti_jamur_lumut'),
+				'mudah_dibersihkan' => $this->input->post('mudah_dibersihkan'),
+				'anti_bakteri' => $this->input->post('anti_bakteri'),
+				'daya_tahan_gesekan' => $this->input->post('daya_tahan_gesekan'),
+				'anti_slip' => $this->input->post('anti_slip'),
+				'fire_resistance' => $this->input->post('fire_resistance'),
+				'ketahanan_bahan_kimia' => $this->input->post('ketahanan_bahan_kimia'),
+				'id_product_refer' => $id_refer,
+				'nm_product_refer' => $nm_refer,
+				'dibuat_oleh' => $this->auth->user_id(),
+				'dibuat_tgl' => date("Y-m-d H:i:s")
+			]);
+		}
 
-		if ($this->db->trans_status() === FALSE) {
+		if ($this->db->trans_status() === FALSE || $product_same = 1) {
 			$this->db->trans_rollback();
+			$pesan = 'Gagal Save Item. Thanks ...';
+			if ($product_same = 1) {
+				$pesan = 'Maaf, Product yang anda input sudah ada !';
+			}
 			$status	= array(
-				'pesan'		=> 'Gagal Save Item. Thanks ...',
+				'pesan'		=> $pesan,
 				'status'	=> 0
 			);
 		} else {

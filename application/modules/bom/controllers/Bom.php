@@ -138,6 +138,8 @@ class Bom extends Admin_Controller
 
         $num_packaging = $this->db->query("SELECT id FROM ms_bom WHERE id = '" . $data['id_bom'] . "'")->num_rows();
 
+        $same_bom = 0;
+
         $this->db->trans_begin();
         if ($num_packaging > 0) {
             $id_bom = $post['id_bom'];
@@ -175,46 +177,58 @@ class Bom extends Admin_Controller
             log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
         } else {
             $id_bom = $this->Bom_model->generate_id();
-            $this->db->update('ms_bom_detail_material', ['id_bom' => $id_bom], ['id_bom' => $this->auth->user_id()]);
-            $this->db->insert('ms_bom', [
-                'id' => $id_bom,
-                'id_product' => $post['product_master'],
-                'variant' => $post['product_code'],
-                'qty_hopper' => $post['qty_hopper'],
-                'waste_product' => $post['waste_product'],
-                'waste_set_clean' => $post['waste_set_clean'],
-                'dibuat_oleh' => $this->auth->user_id(),
-                'dibuat_tgl' => date("Y-m-d H:i:s")
-            ]);
 
-            // Logging
-            $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
+            $get_same_bom = $this->db->get_where('ms_bom', ['id_product' => $post['product_master'], 'qty_hopper' => $post['qty_hopper']])->num_rows();
 
-
-            $desc = "Insert New BOM Data " . $id_bom;
-            $device_name = $this->agent->mobile(); // Returns the mobile device name
-            if ($this->agent->is_browser()) {
-                $device_name = $this->agent->browser(); // Returns the browser name
-            } elseif ($this->agent->is_robot()) {
-                $device_name = $this->agent->robot(); // Returns the robot/crawler name
-            } elseif ($this->agent->is_mobile()) {
-                $device_name = $this->agent->mobile(); // Returns the mobile device name
+            if ($get_same_bom > 0) {
+                $same_bom = 1;
             } else {
-                $device_name = 'Unidentified Device';
-            }
+                $this->db->update('ms_bom_detail_material', ['id_bom' => $id_bom], ['id_bom' => $this->auth->user_id()]);
+                $this->db->insert('ms_bom', [
+                    'id' => $id_bom,
+                    'id_product' => $post['product_master'],
+                    'variant' => $post['product_code'],
+                    'qty_hopper' => $post['qty_hopper'],
+                    'waste_product' => $post['waste_product'],
+                    'waste_set_clean' => $post['waste_set_clean'],
+                    'dibuat_oleh' => $this->auth->user_id(),
+                    'dibuat_tgl' => date("Y-m-d H:i:s")
+                ]);
 
-            $id_user = $this->auth->user_id();
-            $id_menu = $get_menu->id;
-            $nm_menu = $get_menu->title;
-            $device_type = $this->agent->platform();
-            $os_type = $this->agent->browser();
-            log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
+                // Logging
+                $get_menu = $this->db->like('link', $this->uri->segment(1))->get('menus')->row();
+
+
+                $desc = "Insert New BOM Data " . $id_bom;
+                $device_name = $this->agent->mobile(); // Returns the mobile device name
+                if ($this->agent->is_browser()) {
+                    $device_name = $this->agent->browser(); // Returns the browser name
+                } elseif ($this->agent->is_robot()) {
+                    $device_name = $this->agent->robot(); // Returns the robot/crawler name
+                } elseif ($this->agent->is_mobile()) {
+                    $device_name = $this->agent->mobile(); // Returns the mobile device name
+                } else {
+                    $device_name = 'Unidentified Device';
+                }
+
+                $id_user = $this->auth->user_id();
+                $id_menu = $get_menu->id;
+                $nm_menu = $get_menu->title;
+                $device_type = $this->agent->platform();
+                $os_type = $this->agent->browser();
+                log_history($id_user, $id_menu, $nm_menu, $device_name, $_SERVER['REMOTE_ADDR'], $desc);
+            }
         }
 
-        if ($this->db->trans_status() === FALSE) {
+        if ($this->db->trans_status() === FALSE || $same_bom > 0) {
             $this->db->trans_rollback();
+
+            $msg = 'Failed save data Bom.  Please try again.';
+            if ($same_bom > 0) {
+                $msg = 'Sorry, the BOM is already exists !';
+            }
             $return    = array(
-                'msg'        => 'Failed save data Bom.  Please try again.',
+                'msg'        => $msg,
                 'status'    => 0
             );
             $keterangan     = "FAILED save data Bom " . $id_bom;

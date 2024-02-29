@@ -473,7 +473,7 @@ class Spk_filling extends Admin_Controller
             // print_r($get_create_spk->max_batch_ke . ' | ' . $propose . ' | ' . $qty_hopper . '<br>');
 
             if ($propose > 0 && $qty_hopper > 0) {
-                if ($get_create_spk->max_batch_ke == ($propose / $qty_hopper)) {
+                if ($get_create_spk->max_batch_ke >= ($propose / $qty_hopper)) {
                     $create_spk_btn = '';
                 }
             }
@@ -484,7 +484,7 @@ class Spk_filling extends Admin_Controller
             $buttons     = $delete . ' ' . $create_spk_btn . ' ' . $btn_list_spk;
             // $buttons = '';
 
-            $batch_num = 1;
+            $batch_num = 0;
             if ($propose > 0 && $qty_hopper > 0) {
                 $batch_num = ($propose / $qty_hopper);
             }
@@ -495,7 +495,7 @@ class Spk_filling extends Admin_Controller
             $nestedData[]  = $row['nm_product'];
             $nestedData[]  = $row['nm_packaging'];
             $nestedData[]  = $propose;
-            $nestedData[]  = $batch_num;
+            $nestedData[]  = $batch_num . '(' . $propose . ' | ' . $qty_hopper . ')';
             $nestedData[]  = ($get_create_spk->max_batch_ke);
             $nestedData[]  = (($batch_num) - $get_create_spk->max_batch_ke);
             $nestedData[]  = date('d/m/Y', strtotime($row['due_date']));

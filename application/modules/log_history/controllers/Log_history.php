@@ -30,7 +30,7 @@ class Log_history extends Admin_Controller
     public function index()
     {
         $this->auth->restrict($this->viewPermission);
-        $this->template->title('Master Log History');
+        $this->template->title('Audit Trial');
         $this->template->render('index');
     }
 
@@ -51,12 +51,12 @@ class Log_history extends Admin_Controller
                 ms_log_history a
                 LEFT JOIN users b ON b.id_user = a.id_user
             WHERE 1=1 AND (
-                a.id_user LIKE '%".$string."%' OR
-                b.full_name LIKE '%".$string."%' OR
-                a.nm_menu LIKE '%".$string."%' OR
-                a.description LIKE '%".$string."%' OR
-                a.device_type LIKE '%".$string."%' OR 
-                a.ip_addr LIKE '%".$string."%'
+                a.id_user LIKE '%" . $string . "%' OR
+                b.full_name LIKE '%" . $string . "%' OR
+                a.nm_menu LIKE '%" . $string . "%' OR
+                a.description LIKE '%" . $string . "%' OR
+                a.device_type LIKE '%" . $string . "%' OR 
+                a.ip_addr LIKE '%" . $string . "%'
             ) ORDER BY a.date_time DESC
         ";
 

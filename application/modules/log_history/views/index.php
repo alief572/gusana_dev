@@ -8,7 +8,6 @@ $ENABLE_DELETE  = has_permission('Log_History.Delete');
     <i class="tx-primary fa-4x <?= $template['page_icon']; ?>"></i>
     <div>
         <h4><?= $template['title']; ?></h4>
-        <p class="mg-b-0">Lorem ipsum dolor sit amet.</p>
     </div>
 </div><!-- d-flex -->
 <div class="d-flex align-items-center justify-content-between pd-x-20 pd-sm-x-30 pd-t-25 mg-b-20 mg-sm-b-30">

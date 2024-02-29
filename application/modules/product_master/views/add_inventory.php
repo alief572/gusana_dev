@@ -604,7 +604,7 @@
  										showConfirmButton: false,
  										allowOutsideClick: false
  									}).then((hasil3) => {
- 										window.location.href = base_url + active_controller;
+
  									});
  								} else {
  									new swal({
@@ -616,7 +616,7 @@
  										showConfirmButton: false,
  										allowOutsideClick: false
  									}).then((hasil4) => {
- 										window.location.href = base_url + active_controller;
+
  									});
  								}
 
