@@ -15,7 +15,7 @@ $id_bentuk = $this->uri->segment(3);
 <!-- <link rel="stylesheet" href="<?= base_url('assets/plugins/datatables/dataTables.bootstrap.css') ?>"> -->
 <div class="box">
 	<div class="box-header">
-		<a class="btn btn-success btn-sm add" href="javascript:void(0)" data-id_bentuk="<?= $id_bentuk ?>" title="Add"><i class="fa fa-plus">&nbsp;</i>Add New Product</a>
+		<!-- <a class="btn btn-success btn-sm add" href="javascript:void(0)" data-id_bentuk="<?= $id_bentuk ?>" title="Add"><i class="fa fa-plus">&nbsp;</i>Add New Product</a> -->
 
 		<span class="pull-right">
 		</span>
@@ -513,7 +513,6 @@ $id_bentuk = $this->uri->segment(3);
 			"stateSave": true,
 			"bAutoWidth": true,
 			"destroy": true,
-			"responsive": true,
 			"language": {
 				"sSearch": "",
 				'searchPlaceholder': 'Search...',
@@ -533,25 +532,6 @@ $id_bentuk = $this->uri->segment(3);
 					"sPrevious": "<i class='fa fa-arrow-left' aria-hidden='true'></i>",
 					"sNext": "<i class='fa fa-arrow-right' aria-hidden='true'></i>"
 				}
-			},
-			"responsive": {
-				"breakpoints": [{
-						"name": 'desktop',
-						"width": Infinity
-					},
-					{
-						"name": 'tablet',
-						"width": 1148
-					},
-					{
-						"name": 'mobile',
-						"width": 680
-					},
-					{
-						"name": 'mobile-p',
-						"width": 320
-					}
-				],
 			},
 			"aaSorting": [
 				[1, "asc"]

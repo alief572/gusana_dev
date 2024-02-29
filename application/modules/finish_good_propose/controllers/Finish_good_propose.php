@@ -47,6 +47,23 @@ class Finish_good_propose extends Admin_Controller
         // $where = " AND `status` <> 'D'";
 
         $string = $this->db->escape_like_str($search);
+        // $sql = "
+        //     SELECT a.*,
+        //         b.nm_packaging,
+        //         IF(c.qty_asli > 0, c.qty_asli, 0) as qty_asli,
+        //         IF(a.moq > 0, a.moq, 0) as moq
+        //     FROM
+        //         ms_product_category3 a 
+        //         LEFT JOIN master_packaging b ON b.id = a.packaging
+        //         LEFT JOIN ms_stock_product c ON c.id_product = a.id_category3
+        //     WHERE (1=1 AND (SELECT COUNT(aa.id_so) AS count_so FROM ms_so aa WHERE aa.id_product = a.id_category3 AND aa.batch <> aa.released) < 1) AND (
+        //         a.nama LIKE '%" . $string . "%' OR
+        //         a.konversi LIKE '%" . $string . "%' OR
+        //         a.min_stok LIKE '%" . $string . "%' OR
+        //         a.moq LIKE '%" . $string . "%' OR
+        //         b.nm_packaging LIKE '%" . $string . "%' 
+        //     ) GROUP BY a.id_category3
+        // ";
         $sql = "
             SELECT a.*,
                 b.nm_packaging,
@@ -56,7 +73,7 @@ class Finish_good_propose extends Admin_Controller
                 ms_product_category3 a 
                 LEFT JOIN master_packaging b ON b.id = a.packaging
                 LEFT JOIN ms_stock_product c ON c.id_product = a.id_category3
-            WHERE (1=1 AND (SELECT COUNT(aa.id_so) AS count_so FROM ms_so aa WHERE aa.id_product = a.id_category3 AND aa.batch <> aa.released) < 1) AND (
+            WHERE (1=1) AND (a.curing_agent = '' AND a.id_product_refer = '') AND (
                 a.nama LIKE '%" . $string . "%' OR
                 a.konversi LIKE '%" . $string . "%' OR
                 a.min_stok LIKE '%" . $string . "%' OR
@@ -65,8 +82,8 @@ class Finish_good_propose extends Admin_Controller
             ) GROUP BY a.id_category3
         ";
 
-        $totalData = $this->db->query("SELECT a.id_category3 FROM ms_product_category3 a WHERE (SELECT COUNT(aa.id_so) AS count_so FROM ms_so aa WHERE aa.id_product = a.id_category3 AND aa.batch <> aa.released) < 1")->num_rows();
-        $totalFiltered = $this->db->query("SELECT a.id_category3 FROM ms_product_category3 a WHERE (SELECT COUNT(aa.id_so) AS count_so FROM ms_so aa WHERE aa.id_product = a.id_category3 AND aa.batch <> aa.released) < 1")->num_rows();
+        $totalData = $this->db->query($sql)->num_rows();
+        $totalFiltered = $this->db->query($sql)->num_rows();
 
         $columns_order_by = array(
             0 => 'id',
@@ -89,36 +106,93 @@ class Finish_good_propose extends Admin_Controller
         foreach ($query->result_array() as $row) {
             $check_data = $this->db->query('SELECT id_so FROM ms_so WHERE id_product = "' . $row['id_category3'] . '" AND batch <> released')->row();
 
-            if (!empty($check_data)) {
-            } else {
+            // if (!empty($check_data)) {
+            // } else {
 
-                $buttons = '';
-                $total_data     = $totalData;
-                $start_dari     = $start;
-                $asc_desc       = $dir;
-                if (
-                    $asc_desc == 'asc'
-                ) {
-                    $nomor = $urut1 + $start_dari;
-                }
-                if (
-                    $asc_desc == 'desc'
-                ) {
-                    $nomor = ($total_data - $start_dari) - $urut2;
-                }
+            //     $buttons = '';
+            //     $total_data     = $totalData;
+            //     $start_dari     = $start;
+            //     $asc_desc       = $dir;
+            //     if (
+            //         $asc_desc == 'asc'
+            //     ) {
+            //         $nomor = $urut1 + $start_dari;
+            //     }
+            //     if (
+            //         $asc_desc == 'desc'
+            //     ) {
+            //         $nomor = ($total_data - $start_dari) - $urut2;
+            //     }
 
-                $view         = '<button type="button" class="btn btn-primary btn-sm view" data-toggle="tooltip" title="View" data-id="' . $row['id'] . '"><i class="fa fa-eye"></i></button>';
-                // $edit         = '<button type="button" class="btn btn-success btn-sm edit" data-toggle="tooltip" title="Edit" data-id="' . $row['id'] . '"><i class="fa fa-edit"></i></button>';
-                // $delete     = '<button type="button" class="btn btn-danger btn-sm delete" data-toggle="tooltip" title="Delete" data-id="' . $row['id'] . '"><i class="fa fa-trash"></i></button>';
-                // $buttons     = $view . "&nbsp;" . $edit . "&nbsp;" . $delete;
-                $buttons = '';
+            //     $view         = '<button type="button" class="btn btn-primary btn-sm view" data-toggle="tooltip" title="View" data-id="' . $row['id'] . '"><i class="fa fa-eye"></i></button>';
+            //     // $edit         = '<button type="button" class="btn btn-success btn-sm edit" data-toggle="tooltip" title="Edit" data-id="' . $row['id'] . '"><i class="fa fa-edit"></i></button>';
+            //     // $delete     = '<button type="button" class="btn btn-danger btn-sm delete" data-toggle="tooltip" title="Delete" data-id="' . $row['id'] . '"><i class="fa fa-trash"></i></button>';
+            //     // $buttons     = $view . "&nbsp;" . $edit . "&nbsp;" . $delete;
+            //     $buttons = '';
 
-                $propose = 0;
-                // if ($row['qty_asli'] < $row['min_stok']) {
-                //     $propose = $row['moq'];
-                // }
+            //     $propose = 0;
+            //     // if ($row['qty_asli'] < $row['min_stok']) {
+            //     //     $propose = $row['moq'];
+            //     // }
 
-                $get_booking_stock = $this->db->query('
+            //     $get_booking_stock = $this->db->query('
+            //         SELECT
+            //             SUM(a.qty) AS ttl_booking_stock
+            //         FROM
+            //             ms_penawaran_detail a
+            //             JOIN ms_penawaran b ON b.id_penawaran = a.id_penawaran 
+            //         WHERE
+            //             a.id_product = "' . $row['id_category3'] . '" AND
+            //             b.sts = "so_created"
+            //     ')->row();
+
+            //     $nestedData   = array();
+            //     $nestedData[]  = '<input type="checkbox" name="finish_goods_nm_' . $row['id_category3'] . '" class="pilih pilih_' . $row['id_category3'] . '" value="' . $row['id_category3'] . '" data-id_category3="' . $row['id_category3'] . '" data-qty_asli="' . $row['qty_asli'] . '" data-moq="' . $row['moq'] . '" data-min_stok="' . $row['min_stok'] . '">';
+            //     $nestedData[]  = $nomor;
+            //     $nestedData[]  = $row['nama'];
+            //     $nestedData[]  = $row['nm_packaging'];
+            //     $nestedData[]  = number_format($row['konversi']);
+            //     $nestedData[]  = number_format($row['qty_asli']);
+            //     $nestedData[]  = number_format($row['qty_asli'] / $row['konversi']);
+            //     $nestedData[]  = number_format($get_booking_stock->ttl_booking_stock);
+            //     $nestedData[]  = number_format(($row['qty_asli'] / $row['konversi']) - $get_booking_stock->ttl_booking_stock);
+            //     $nestedData[]  = number_format($row['min_stok']);
+            //     $nestedData[]  = $row['moq'];
+            //     $nestedData[]  = '<input type="number" class="form-control form-control-sm propose_val propose_' . $row['id_category3'] . '" value="' . $propose . '" readonly>';
+            //     $nestedData[]  = $buttons;
+            //     $data[] = $nestedData;
+            //     $urut1++;
+            //     $urut2++;
+            //     // $nomor++;
+            // }
+
+            $buttons = '';
+            $total_data     = $totalData;
+            $start_dari     = $start;
+            $asc_desc       = $dir;
+            if (
+                $asc_desc == 'asc'
+            ) {
+                $nomor = $urut1 + $start_dari;
+            }
+            if (
+                $asc_desc == 'desc'
+            ) {
+                $nomor = ($total_data - $start_dari) - $urut2;
+            }
+
+            $view         = '<button type="button" class="btn btn-primary btn-sm view" data-toggle="tooltip" title="View" data-id="' . $row['id'] . '"><i class="fa fa-eye"></i></button>';
+            // $edit         = '<button type="button" class="btn btn-success btn-sm edit" data-toggle="tooltip" title="Edit" data-id="' . $row['id'] . '"><i class="fa fa-edit"></i></button>';
+            // $delete     = '<button type="button" class="btn btn-danger btn-sm delete" data-toggle="tooltip" title="Delete" data-id="' . $row['id'] . '"><i class="fa fa-trash"></i></button>';
+            // $buttons     = $view . "&nbsp;" . $edit . "&nbsp;" . $delete;
+            $buttons = '';
+
+            $propose = 0;
+            // if ($row['qty_asli'] < $row['min_stok']) {
+            //     $propose = $row['moq'];
+            // }
+
+            $get_booking_stock = $this->db->query('
                     SELECT
                         SUM(a.qty) AS ttl_booking_stock
                     FROM
@@ -129,25 +203,24 @@ class Finish_good_propose extends Admin_Controller
                         b.sts = "so_created"
                 ')->row();
 
-                $nestedData   = array();
-                $nestedData[]  = '<input type="checkbox" name="finish_goods_nm_' . $row['id_category3'] . '" class="pilih pilih_' . $row['id_category3'] . '" value="' . $row['id_category3'] . '" data-id_category3="' . $row['id_category3'] . '" data-qty_asli="' . $row['qty_asli'] . '" data-moq="' . $row['moq'] . '" data-min_stok="' . $row['min_stok'] . '">';
-                $nestedData[]  = $nomor;
-                $nestedData[]  = $row['nama'];
-                $nestedData[]  = $row['nm_packaging'];
-                $nestedData[]  = number_format($row['konversi']);
-                $nestedData[]  = number_format($row['qty_asli']);
-                $nestedData[]  = number_format($row['qty_asli'] / $row['konversi']);
-                $nestedData[]  = number_format($get_booking_stock->ttl_booking_stock);
-                $nestedData[]  = number_format(($row['qty_asli'] / $row['konversi']) - $get_booking_stock->ttl_booking_stock);
-                $nestedData[]  = number_format($row['min_stok']);
-                $nestedData[]  = $row['moq'];
-                $nestedData[]  = '<input type="number" class="form-control form-control-sm propose_val propose_' . $row['id_category3'] . '" value="' . $propose . '" readonly>';
-                $nestedData[]  = $buttons;
-                $data[] = $nestedData;
-                $urut1++;
-                $urut2++;
-                // $nomor++;
-            }
+            $nestedData   = array();
+            $nestedData[]  = '<input type="checkbox" name="finish_goods_nm_' . $row['id_category3'] . '" class="pilih pilih_' . $row['id_category3'] . '" value="' . $row['id_category3'] . '" data-id_category3="' . $row['id_category3'] . '" data-qty_asli="' . $row['qty_asli'] . '" data-moq="' . $row['moq'] . '" data-min_stok="' . $row['min_stok'] . '">';
+            $nestedData[]  = $nomor;
+            $nestedData[]  = $row['nama'];
+            $nestedData[]  = $row['nm_packaging'];
+            $nestedData[]  = number_format($row['konversi']);
+            $nestedData[]  = number_format($row['qty_asli']);
+            $nestedData[]  = number_format($row['qty_asli'] / $row['konversi']);
+            $nestedData[]  = number_format($get_booking_stock->ttl_booking_stock);
+            $nestedData[]  = number_format(($row['qty_asli'] / $row['konversi']) - $get_booking_stock->ttl_booking_stock);
+            $nestedData[]  = number_format($row['min_stok']);
+            $nestedData[]  = $row['moq'];
+            $nestedData[]  = '<input type="number" class="form-control form-control-sm propose_val propose_' . $row['id_category3'] . '" value="' . $propose . '" readonly>';
+            $nestedData[]  = $buttons;
+            $data[] = $nestedData;
+            $urut1++;
+            $urut2++;
+            // $nomor++;
         }
 
         $json_data = array(

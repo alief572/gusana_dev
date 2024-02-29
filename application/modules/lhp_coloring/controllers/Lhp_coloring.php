@@ -401,7 +401,7 @@ class Lhp_coloring extends Admin_Controller
             }
         endforeach;
 
-        if ($this->db->trans_status() === FALSE || $valid !== 1) {
+        if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();
             $msg = 'Maaf, ada material yang kurang dari aktual stock !';
 
@@ -587,6 +587,7 @@ class Lhp_coloring extends Admin_Controller
                     a.sisa_so LIKE '%" . $string . "%'
                 )
             GROUP BY a.id_so
+            ORDER BY a.id_so DESC
         ";
 
         $totalData = $this->db->query($sql)->num_rows();

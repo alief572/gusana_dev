@@ -106,6 +106,11 @@ class Delivery_do extends Admin_Controller
 
             $print_do = '<a href="' . base_url('delivery_do/print_do/' . $row['id_do']) . '" class="btn btn-sm btn-info" target="_blank"><div class="i fa fa-print"></div></a>';
 
+            $check_do = $this->db->get_where('ms_detail_do', ['id_do' => $row['id_do']])->num_rows();
+            if ($check_do < 1) {
+                $print_do = '';
+            }
+
 
 
             $this->db->select('IF(SUM(a.qty) > 0 AND SUM(a.qty) IS NOT NULL, SUM(a.qty), 0) AS all_qty, IF(SUM(a.weight) > 0 AND SUM(a.weight) IS NOT NULL, SUM(a.weight), 0) AS all_weight');
@@ -203,30 +208,83 @@ class Delivery_do extends Admin_Controller
             $qty = $post['deliver_' . $penawaran_detail->id];
             $weight = ($post['deliver_' . $penawaran_detail->id] * $penawaran_detail->konversi);
 
-            $this->db->select('IF(SUM(a.qty_asli) > 0 AND SUM(a.qty_asli) IS NOT NULL, SUM(a.qty_asli), 0) AS ttl_qty');
-            $this->db->from('ms_stock_product a');
-            $this->db->where('a.id_product', $penawaran_detail->id_product);
-            $get_ttl_stock_aktual = $this->db->get()->row();
+            $get_product_master = $this->db->get_where('ms_product_category3', ['id_category3' => $penawaran_detail->id_product])->row();
+            if ($get_product_master->curing_agent !== '') {
 
-            $this->db->select('SUM(a.weight) AS booking_stock');
-            $this->db->from('ms_penawaran_detail a');
-            $this->db->join('ms_penawaran b', 'b.id_penawaran = a.id_penawaran');
-            $this->db->where('a.id_product', $penawaran_detail->id_product);
-            $this->db->where('b.sts !=', 'loss');
-            $this->db->where('b.sts_close_do', '');
-            $this->db->where('b.id_do !=', $post['id_do']);
-            $get_booking_stock = $this->db->get()->row();
+                $this->db->select('IF(a.qty_asli IS NOT NULL, a.qty_asli, 0) AS ttl_stock_product');
+                $this->db->from('ms_stock_product a');
+                $this->db->where('a.id_product', $get_product_master->id_product_refer);
+                $get_ttl_stock_product = $this->db->get()->row();
+
+                $this->db->select('IF(a.qty_asli IS NOT NULL, a.qty_asli, 0) AS ttl_stock_curing');
+                $this->db->from('ms_stock_product a');
+                $this->db->where('a.id_product', $get_product_master->curing_agent);
+                $get_ttl_stock_curing = $this->db->get()->row();
+
+                $this->db->select('SUM(a.qty) AS ttl_booking_stock_product');
+                $this->db->from('ms_penawaran_detail a');
+                $this->db->join('ms_penawaran b', 'b.id_penawaran = a.id_penawaran', 'left');
+                $this->db->where('a.id_product', $penawaran_detail->id_product);
+                $this->db->where('b.sts =', 'so_created');
+                $this->db->where('b.sts_do !=', 'do_created');
+                $get_booking_stock = $this->db->get()->row();
+
+                $data_product_refer = $this->db->get_where('ms_product_category3', ['id_category3' => $get_product_master->id_product_refer])->row();
+
+                $data_product_curing = $this->db->get_where('ms_product_category3', ['id_category3' => $get_product_master->curing_agent])->row();
+
+                $stock_product = $get_ttl_stock_product->ttl_stock_product;
+                $stock_curing = $get_ttl_stock_curing->ttl_stock_curing;
+
+                $booking_stock_product = ($get_booking_stock->ttl_booking_stock_product * $data_product_refer->konversi);
+                $booking_stock_curing = ($get_booking_stock->ttl_booking_stock_product * $data_product_curing->konversi);
+
+                // print($stock_product . ' - ' . $booking_stock_product . ' | ' . $stock_curing . ' - ' . $booking_stock_curing);
+                // exit;
+
+                // $this->db->select('IF(SUM(a.qty_asli) > 0 AND SUM(a.qty_asli) IS NOT NULL, SUM(a.qty_asli), 0) AS ttl_qty');
+                // $this->db->from('ms_stock_product a');
+                // $this->db->where('a.id_product', $penawaran_detail->id_product);
+                // $get_ttl_stock_aktual = $this->db->get()->row();
+
+
+                if ((($stock_product - $booking_stock_product) / $data_product_refer->konversi) < $qty || (($stock_curing - $booking_stock_curing) / $data_product_curing->konversi) < $qty) {
+                    $stock_sts = 0;
+                }
+
+                // print_r($stock_sts);
+                // exit;
+            } else {
+                $this->db->select('IF(SUM(a.qty_asli) > 0 AND SUM(a.qty_asli) IS NOT NULL, SUM(a.qty_asli), 0) AS ttl_qty');
+                $this->db->from('ms_stock_product a');
+                $this->db->where('a.id_product', $penawaran_detail->id_product);
+                $get_ttl_stock_aktual = $this->db->get()->row();
+
+                $this->db->select('SUM(a.weight) AS booking_stock');
+                $this->db->from('ms_penawaran_detail a');
+                $this->db->join('ms_penawaran b', 'b.id_penawaran = a.id_penawaran');
+                $this->db->where('a.id_product', $penawaran_detail->id_product);
+                $this->db->where('b.sts =', 'so_created');
+                $this->db->where('b.sts_do !=', 'do_created');
+                $get_booking_stock = $this->db->get()->row();
+
+                $this->db->select('IF(SUM(a.qty) > 0 AND SUM(a.qty) IS NOT NULL, SUM(a.qty), 0) AS qty_delivered');
+                $this->db->from('ms_detail_do a');
+                $this->db->where('a.id_product', $penawaran_detail->id_product);
+                $this->db->where('a.id_do', $post['id_do']);
+                $get_delivered_qty = $this->db->get()->row();
+
+                $free_stock = ($get_ttl_stock_aktual->ttl_qty - $get_booking_stock->booking_stock);
+                if ($free_stock < $weight) {
+                    $stock_sts = 0;
+                }
+            }
 
             $this->db->select('IF(SUM(a.qty) > 0 AND SUM(a.qty) IS NOT NULL, SUM(a.qty), 0) AS qty_delivered');
             $this->db->from('ms_detail_do a');
             $this->db->where('a.id_product', $penawaran_detail->id_product);
             $this->db->where('a.id_do', $post['id_do']);
             $get_delivered_qty = $this->db->get()->row();
-
-            // $free_stock = ($get_ttl_stock_aktual->ttl_qty - $get_booking_stock->booking_stock);
-            // if ($free_stock < $weight) {
-            //     $stock_sts = 0;
-            // }
 
             if (($qty + $get_delivered_qty->qty_delivered) > $penawaran_detail->qty) {
                 $max_not = 0;
@@ -247,15 +305,46 @@ class Delivery_do extends Admin_Controller
                     'dibuat_tgl' => date('Y-m-d')
                 ]);
 
-                // $this->db->update(
-                //     'ms_stock_product',
-                //     [
-                //         'qty_asli' => ($get_ttl_stock_aktual->ttl_qty - $weight)
-                //     ],
-                //     [
-                //         'id_product' => $penawaran_detail->id_product
-                //     ]
-                // );
+                if ($get_product_master->curing_agent !== '') {
+
+                    $get_stock_product = $this->db->get_where('ms_stock_product', ['id_product' => $get_product_master->id_product_refer])->row();
+
+                    $get_stock_curing = $this->db->get_where('ms_stock_product', ['id_product' => $get_product_master->curing_agent])->row();
+
+                    $data_product_refer = $this->db->get_where('ms_product_category3', ['id_category3' => $get_product_master->id_product_refer])->row();
+
+                    $data_product_curing = $this->db->get_where('ms_product_category3', ['id_category3' => $get_product_master->curing_agent])->row();
+
+                    $this->db->update(
+                        'ms_stock_product',
+                        [
+                            'qty_asli' => ($get_stock_product->qty_asli - ($penawaran_detail->qty * $data_product_refer->konversi))
+                        ],
+                        [
+                            'id_product' => $data_product_refer->id_category3
+                        ]
+                    );
+
+                    $this->db->update(
+                        'ms_stock_product',
+                        [
+                            'qty_asli' => ($get_stock_curing->qty_asli - ($penawaran_detail->qty * $data_product_curing->konversi))
+                        ],
+                        [
+                            'id_product' => $data_product_curing->id_category3
+                        ]
+                    );
+                } else {
+                    $this->db->update(
+                        'ms_stock_product',
+                        [
+                            'qty_asli' => ($get_ttl_stock_aktual->ttl_qty - $weight)
+                        ],
+                        [
+                            'id_product' => $penawaran_detail->id_product
+                        ]
+                    );
+                }
             }
         endforeach;
 

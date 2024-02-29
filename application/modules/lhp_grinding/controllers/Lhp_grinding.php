@@ -394,14 +394,16 @@ class Lhp_grinding extends Admin_Controller
                 }
             }
 
-            if ($valid == 1) {
-                $qty_akhir = ($list_data_material_tambahan->stock_material - $list_data_material_tambahan->jumlah);
+        // if ($valid == 1) {
+        //     $qty_akhir = ($list_data_material_tambahan->stock_material - $list_data_material_tambahan->jumlah);
 
-                $this->db->update('ms_stock_material_production', ['qty_stock' => $qty_akhir], ['id_category1' => $list_data_material_tambahan->id_category1]);
-            }
+        //     $this->db->update('ms_stock_material_production', ['qty_stock' => $qty_akhir], ['id_category1' => $list_data_material_tambahan->id_category1]);
+        // }
         endforeach;
+        $valid = 1;
 
-        if ($this->db->trans_status() === FALSE || $valid !== 1) {
+        // if ($this->db->trans_status() === FALSE || $valid !== 1) {
+        if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();
             $msg = 'Maaf, ada material yang kurang dari aktual stock !';
 
@@ -587,6 +589,7 @@ class Lhp_grinding extends Admin_Controller
                     a.sisa_so LIKE '%" . $string . "%'
                 )
             GROUP BY a.id_so
+            ORDER BY a.id_so DESC
         ";
 
         $totalData = $this->db->query($sql)->num_rows();

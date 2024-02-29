@@ -587,6 +587,7 @@ class Lhp_mixing_2 extends Admin_Controller
                     a.sisa_so LIKE '%" . $string . "%'
                 )
             GROUP BY a.id_so
+            ORDER BY a.id_so DESC
         ";
 
         $totalData = $this->db->query($sql)->num_rows();

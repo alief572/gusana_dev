@@ -85,24 +85,54 @@
                     $ttl_harga = 0;
                     foreach ($data_penawaran_detail as $penawaran_detail) {
                         $x++;
-                        $this->db->select('IF(b.qty_asli / c.konversi > 0, (b.qty_asli / c.konversi), 0) AS qty_all');
-                        $this->db->from('ms_penawaran_detail a');
-                        $this->db->join('ms_stock_product b', 'b.id_product = a.id_product', 'left');
-                        $this->db->join('ms_product_category3 c', 'c.id_category3 = a.id_product', 'left');
-                        $this->db->where('a.id_product', $penawaran_detail->id_product);
-                        $this->db->where('a.id_penawaran !=', $penawaran_detail->id_product);
-                        $get_free_stock = $this->db->get()->row();
 
-                        $this->db->select('SUM(a.weight / b.konversi) AS stock_booking');
-                        $this->db->from('ms_penawaran_detail a');
-                        $this->db->join('ms_product_category3 b', 'b.id_category3 = a.id_product');
-                        $this->db->join('ms_penawaran c', 'c.id_penawaran = a.id_penawaran');
-                        $this->db->where('a.id_product', $penawaran_detail->id_product);
-                        $this->db->where('c.sts !=', 'loss');
-                        $this->db->where('c.sts !=', 'so_created');
-                        $get_stock_booking = $this->db->get()->row();
+                        $get_product_master = $this->db->get_where('ms_product_category3', ['id_category3' => $penawaran_detail->id_product])->row();
 
-                        $free_stock = ($get_free_stock->qty_all);
+                        if ($get_product_master->curing_agent !== '') {
+                            $get_free_stock = $this->db->query('
+                                SELECT
+                                    (a.qty_asli / b.konversi) AS ttl_all
+                                FROM
+                                    ms_stock_product a
+                                    LEFT JOIN ms_product_category3 b ON b.id_category3 = a.id_product
+                                WHERE
+                                    a.id_product = "' . $get_product_master->id_product_refer . '"
+                            ')->row();
+                            $get_booking_stock = $this->db->query('
+                                SELECT
+                                    SUM(a.qty) AS ttl_booking_stock
+                                FROM
+                                    ms_penawaran_detail a 
+                                    LEFT JOIN ms_penawaran b ON b.id_penawaran = a.id_penawaran
+                                WHERE
+                                    a.id_product = "' . $penawaran_detail->id_product . '" AND
+                                    b.sts = "so_created" AND
+                                    b.sts_do IS NULL
+                            ')->row();
+                        } else {
+                            $get_free_stock = $this->db->query('
+                                SELECT
+                                    (a.qty_asli / b.konversi) AS ttl_all
+                                FROM
+                                    ms_stock_product a
+                                    LEFT JOIN ms_product_category3 b ON b.id_category3 = a.id_product
+                                WHERE
+                                    a.id_product = "' . $penawaran_detail->id_product . '"
+                            ')->row();
+                            $get_booking_stock = $this->db->query('
+                                SELECT
+                                    SUM(a.qty) AS ttl_booking_stock
+                                FROM
+                                    ms_penawaran_detail a 
+                                    LEFT JOIN ms_penawaran b ON b.id_penawaran = a.id_penawaran
+                                WHERE
+                                    a.id_product = "' . $penawaran_detail->id_product . '" AND
+                                    b.sts "so_created" AND
+                                    b.sts_do IS NULL
+                            ')->row();
+                        }
+
+                        $free_stock = (($get_free_stock->ttl_all - $get_booking_stock->ttl_booking_stock));
                         $request_production = ($penawaran_detail->qty - $free_stock);
                         if ($free_stock > $penawaran_detail->qty) {
                             $request_production = 0;

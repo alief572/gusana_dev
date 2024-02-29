@@ -468,7 +468,7 @@ class Production_warehouse extends Admin_Controller
 			LEFT JOIN ms_lhp_aktual_qty g ON g.id_spk = b.id_spk AND g.id_material = c.id_category1
 			LEFT JOIN ms_inventory_category3 h ON h.id_category1 = c.id_category1
 		WHERE
-			c.id_category1 = '" . $id_category1 . "' AND d.sts = 'closing' AND d.id_spk IS NOT NULL AND DATE_FORMAT(d.dibuat_tgl, '%Y-%m-%d') >= '2024-02-26'
+			c.id_category1 = '" . $id_category1 . "' AND d.sts = 'closing' AND d.id_spk IS NOT NULL AND DATE_FORMAT(d.dibuat_tgl, '%Y-%m-%d') >= '2024-02-26' AND DATE_FORMAT(a.due_date, '%Y-%m-%d') >= '2024-02-01'
 		
         group by no_transaksi
         

@@ -269,7 +269,7 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
         $(document).on('click', '.closing_lhp_spk', function() {
             var id_spk = $('.id_spk').val();
             var id_so = $('.id_so').val();
-            var id_proses = 1;
+            var id_proses = 5;
 
             swal.fire({
                 title: "Are you sure?",

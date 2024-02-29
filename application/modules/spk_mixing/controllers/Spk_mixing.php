@@ -400,6 +400,7 @@ class Spk_mixing extends Admin_Controller
                     a.sisa_so LIKE '%" . $string . "%'
                 )
             GROUP BY a.id_so
+            ORDER BY a.id_so DESC
         ";
 
         $totalData = $this->db->query($sql)->num_rows();

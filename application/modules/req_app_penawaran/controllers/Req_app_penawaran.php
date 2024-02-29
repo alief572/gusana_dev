@@ -489,7 +489,7 @@ class Req_app_penawaran extends Admin_Controller
     {
         $produk = $this->input->post('produk');
 
-        $get_produk = $this->db->select('a.*, b.nm_packaging, c.nama as ral_code, d.nama curing_agent');
+        $get_produk = $this->db->select('a.*, a.curing_agent id_curing_agent, b.nm_packaging, c.nama as ral_code, d.nama curing_agent');
         $get_produk = $this->db->from('ms_product_category3 a');
         $get_produk = $this->db->join('master_packaging b', 'b.id = a.packaging', 'left');
         $get_produk = $this->db->join('ms_product_category2 c', 'c.id_category2 = a.id_category2', 'left');
@@ -518,36 +518,76 @@ class Req_app_penawaran extends Admin_Controller
             $list_lot_size[] = '<option value="' . $lot_size->id . '">' . $lot_size->qty_hopper . '</option>';
         endforeach;
 
-        $num_free_stock = $this->db->get_where('ms_stock_product', ['id_product' => $produk])->num_rows();
+        $check_product_set = $this->db->get_where('ms_product_category3', ['id_category3' => $produk])->row();
+
+        if ($check_product_set->curing_agent !== '') {
+            $num_free_stock = $this->db->get_where('ms_stock_product', ['id_product' => $check_product_set->id_product_refer])->num_rows();
+        } else {
+            $num_free_stock = $this->db->get_where('ms_stock_product', ['id_product' => $produk])->num_rows();
+        }
 
         if ($num_free_stock < 1) {
             $free_stock = 0;
         } else {
-            $get_free_stock = $this->db->get_where('ms_stock_product', ['id_product' => $produk])->row();
+            if ($check_product_set->curing_agent !== '') {
+                $get_free_stock = $this->db->get_where('ms_stock_product', ['id_product' => $check_product_set->id_product_refer])->row();
+                $get_booking_stock = $this->db->query('
+                    SELECT
+                        SUM(a.weight) AS ttl_booking_stock
+                    FROM
+                        ms_penawaran_detail a 
+                        LEFT JOIN ms_penawaran b ON b.id_penawaran = a.id_penawaran
+                    WHERE
+                        a.id_product = "' . $check_product_set->id_product_refer . '" AND
+                        b.sts = "so_created" AND
+                        b.sts_do IS NULL
+                ')->row();
+            } else {
+                $get_free_stock = $this->db->get_where('ms_stock_product', ['id_product' => $produk])->row();
+                $get_booking_stock = $this->db->query('
+                    SELECT
+                        SUM(a.weight) AS ttl_booking_stock
+                    FROM
+                        ms_penawaran_detail a 
+                        LEFT JOIN ms_penawaran b ON b.id_penawaran = a.id_penawaran
+                    WHERE
+                        a.id_product = "' . $produk . '" AND
+                        b.sts "so_created" AND
+                        b.sts_do IS NULL
+                ')->row();
+            }
 
-            $free_stock = ($get_free_stock->qty_asli / $get_produk->konversi);
+            $free_stock = (($get_free_stock->qty_asli - $get_booking_stock->ttl_booking_stock) / $get_produk->konversi);
         }
 
-        // echo '<pre>'; 
-        // print_r([
-        //     'list_lot_size' => $list_lot_size,
-        //     'kode_produk' => $get_produk->product_code,
-        //     'konversi' => $get_produk->konversi,
-        //     'spesifikasi_kemasan' => $get_produk->konversi.' '.$get_produk->unit_nm,
-        //     'ral_code' => $get_produk->ral_code,
-        //     'free_stock' => $free_stock
-        // ]);
-        // echo'</pre>';
-        // exit;
+        $this->db->select('SUM(a.qty) AS ttl_booking');
+        $this->db->from('ms_penawaran_detail a');
+        $this->db->join('ms_penawaran b', 'b.id_penawaran = a.id_penawaran');
+        $this->db->where('a.id_product', $produk);
+        $this->db->where('b.sts =', 'so_created');
+        $this->db->where('b.sts_do !=', 'do_created');
+        $booking_stock = $this->db->get()->row();
+
+        $free_stock -= $booking_stock->ttl_booking;
+
+        $konversi = $get_produk->konversi;
+        // if ($get_produk->id_curing_agent !== '') {
+        //     $get_curing_agent = $this->db->query('SELECT konversi FROM ms_product_category3 WHERE id_category3 = "' . $get_produk->id_curing_agent . '"')->row();
+
+        //     // print_r($get_produk->id_curing_agent);
+        //     // exit;
+
+        //     $konversi += $get_curing_agent->konversi;
+        // }
 
         echo json_encode([
             'list_lot_size' => $list_lot_size,
             'kode_produk' => $get_produk->product_code,
-            'konversi' => $get_produk->konversi,
-            'spesifikasi_kemasan' => $get_produk->konversi . ' ' . $get_produk->unit_nm,
+            'konversi' => $konversi,
+            'spesifikasi_kemasan' => $konversi . ' ' . $get_produk->unit_nm,
             'ral_code' => $get_produk->ral_code,
             'free_stock' => $free_stock,
-            'unit_nm' => $get_produk->unit_nm,
+            'unit_nm' => $get_produk->nm_packaging,
             'supporting_curing_agent' => $get_produk->curing_agent,
             'curing_agent_pack_spec' => $get_produk->curing_agent_konversi . ' Kg'
         ]);

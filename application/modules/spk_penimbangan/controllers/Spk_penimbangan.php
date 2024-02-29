@@ -400,14 +400,15 @@ class Spk_penimbangan extends Admin_Controller
                     a.sisa_so LIKE '%" . $string . "%'
                 )
             GROUP BY a.id_so
+            ORDER BY a.id_so DESC
         ";
 
         $totalData = $this->db->query($sql)->num_rows();
         $totalFiltered = $this->db->query($sql)->num_rows();
 
         $columns_order_by = array(
-            0 => 'id',
-            1 => 'id'
+            0 => 'id_so',
+            1 => 'id_so'
         );
 
         // $sql .= " ORDER BY " . $columns_order_by[$column] . " " . $dir . " ";

@@ -408,6 +408,7 @@ class Spk_filling extends Admin_Controller
                     a.sisa_so LIKE '%" . $string . "%'
                 )
             GROUP BY a.id_so
+            ORDER BY a.id_so DESC
         ";
 
         $totalData = $this->db->query($sql)->num_rows();
@@ -451,6 +452,16 @@ class Spk_filling extends Admin_Controller
 
             $get_bom = $this->db->get_where('ms_bom', ['id' => $row['id_bom']])->row();
 
+            $propose = 0;
+            if ($row['propose'] > 0) {
+                $propose = $row['propose'];
+            }
+
+            $qty_hopper = 0;
+            if (isset($get_bom) && $get_bom->qty_hopper > 0) {
+                $qty_hopper = $get_bom->qty_hopper;
+            }
+
             // $view         = '<button type="button" class="btn btn-primary btn-sm view" data-toggle="tooltip" title="View" data-id="' . $row['id'] . '"><i class="fa fa-eye"></i></button>';
             // $edit         = '<button type="button" class="btn btn-success btn-sm edit" data-toggle="tooltip" title="Edit" data-id="' . $row['id'] . '"><i class="fa fa-edit"></i></button>';
             $delete     = '<button type="button" class="btn btn-danger btn-sm delete" data-toggle="tooltip" title="Delete" data-id="' . $row['id_so'] . '"><i class="fa fa-trash"></i></button>';
@@ -458,8 +469,13 @@ class Spk_filling extends Admin_Controller
                 $delete     = '';
             }
             $create_spk_btn = '<button type="button" class="btn btn-primary btn-sm create_spk" data-id_so="' . $row['id_so'] . '" data-id_proses="-" data-batch_ke="' . ($get_create_spk->max_batch_ke + 1) . '">Create SPK</button>';
-            if (($get_create_spk->max_batch_ke) == (($row['propose'] / $get_bom->qty_hopper))) {
-                $create_spk_btn = '';
+
+            // print_r($get_create_spk->max_batch_ke . ' | ' . $propose . ' | ' . $qty_hopper . '<br>');
+
+            if ($propose > 0 && $qty_hopper > 0) {
+                if ($get_create_spk->max_batch_ke == ($propose / $qty_hopper)) {
+                    $create_spk_btn = '';
+                }
             }
             $btn_list_spk = '';
             if ($num_create_spk > 0) {
@@ -468,17 +484,20 @@ class Spk_filling extends Admin_Controller
             $buttons     = $delete . ' ' . $create_spk_btn . ' ' . $btn_list_spk;
             // $buttons = '';
 
-
+            $batch_num = 1;
+            if ($propose > 0 && $qty_hopper > 0) {
+                $batch_num = ($propose / $qty_hopper);
+            }
 
             $nestedData   = array();
             $nestedData[]  = $nomor;
             $nestedData[]  = $row['id_so'];
             $nestedData[]  = $row['nm_product'];
             $nestedData[]  = $row['nm_packaging'];
-            $nestedData[]  = $row['propose'];
-            $nestedData[]  = ($row['propose'] / $get_bom->qty_hopper);
+            $nestedData[]  = $propose;
+            $nestedData[]  = $batch_num;
             $nestedData[]  = ($get_create_spk->max_batch_ke);
-            $nestedData[]  = (($row['propose'] / $get_bom->qty_hopper) - $get_create_spk->max_batch_ke);
+            $nestedData[]  = (($batch_num) - $get_create_spk->max_batch_ke);
             $nestedData[]  = date('d/m/Y', strtotime($row['due_date']));
             $nestedData[]  = $buttons;
             $data[] = $nestedData;

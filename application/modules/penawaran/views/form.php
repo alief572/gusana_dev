@@ -98,7 +98,8 @@
                     <i class="fa fa-plus"></i>
                     Add Product
                 </button>
-                <span class="text-danger">添加成品</span>
+                <!-- <span class="text-danger">添加成品</span> -->
+                <button type="button" class="btn btn-sm btn-primary request_new_product" style="margin-top: 20px;"><i class="fa fa-plus"></i> Request New Product</button>
             </span>
             <table class="table table-striped" id="table-product">
                 <thead>
@@ -444,6 +445,20 @@
                     <button type="button" class="btn wd-100 btn btn-danger" data-dismiss="modal">
                         <span class="fa fa-times"></span> Close</button>
                 </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade effect-scale" id="request-new-product" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg mx-wd-md-90p-force mx-wd-lg-90p-force">
+        <form id="add-product-form" method="post" data-parsley-validate>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title tx-bold text-dark" id="myModalLabel">Request New Product</h4>
+                    <button type="button" class="btn btn-default close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                </div>
+                <div class="modal-body" id="ModalRNP"></div>
             </div>
         </form>
     </div>
@@ -1117,5 +1132,145 @@
             }
         })
 
+
+
     })
+
+    $(document).on('click', '.request_new_product', function() {
+        $.ajax({
+            type: "post",
+            url: siteurl + thisController + 'addInventory',
+            cache: false,
+            beforeSend: function(result) {
+                $('.request_new_product').html('<i class="fa fa-spin fa-spinner"></i>');
+            },
+            success: function(result) {
+                $('#ModalRNP').html(result);
+                $('#request-new-product').modal();
+
+                $('.request_new_product').html('<i class="fa fa-plus"></i> Request New Product');
+            },
+            error: function(result) {
+                $('.request_new_product').html('<i class="fa fa-plus"></i> Request New Product');
+            }
+        });
+    });
+
+    $(document).on("change", ".gabung_nama", function() {
+        var inv_lv_1 = $(".inv_lv_1").val();
+        var inv_lv_2 = $(".inv_lv_2").val();
+        var inv_lv_3 = $(".inv_lv_3").val();
+
+        if (inv_lv_1 !== "" || inv_lv_2 !== "" || inv_lv_3 !== "") {
+            $.ajax({
+                type: "POST",
+                url: siteurl + 'product_master/gabung_nama',
+                data: {
+                    "inv_lv_1": inv_lv_1,
+                    "inv_lv_2": inv_lv_2,
+                    "inv_lv_3": inv_lv_3
+                },
+                success: function(result) {
+                    $(".nm_lv_4").val(result);
+                }
+            });
+        } else {
+            $(".nm_lv_4").val("");
+        }
+    });
+
+    $(document).on("click", "#simpan-com", function(e) {
+        e.preventDefault();
+        var deskripsi = $('#deskripsi').val();
+        var image = $('#image').val();
+        var idtype = $('#product_master').val();
+
+        var data, xhr;
+        new swal({
+            title: "Are you sure?",
+            text: "You will not be able to process again this data!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Yes, Process it!",
+            cancelButtonText: "No, cancel process!",
+            closeOnConfirm: true,
+            closeOnCancel: false
+        }).then((hasil) => {
+            if (hasil.isConfirmed) {
+                var formData = new FormData($('#data-form-request')[0]);
+                var baseurl = siteurl + 'penawaran/saveNewInventory';
+                $.ajax({
+                    url: baseurl,
+                    type: "POST",
+                    data: formData,
+                    cache: false,
+                    dataType: 'json',
+                    processData: false,
+                    contentType: false,
+                    async: false,
+                    success: function(data) {
+                        // console.log(formData);
+                        if (data.status == 1) {
+                            new swal({
+                                title: "Save Success!",
+                                text: data.pesan,
+                                type: "success",
+                                timer: 1500,
+                                showCancelButton: false,
+                                showConfirmButton: false,
+                                allowOutsideClick: false
+                            });
+                            $("#request-new-product").modal('hide');
+                            location.reload(true);
+                        } else {
+                            if (data.status == 2) {
+                                new swal({
+                                    title: "Save Failed!",
+                                    text: data.pesan,
+                                    type: "warning",
+                                    timer: 1500,
+                                    showCancelButton: false,
+                                    showConfirmButton: false,
+                                    allowOutsideClick: false
+                                }).then((hasil3) => {
+                                    $("#request-new-product").modal('hide');
+                                    location.reload(true);
+                                });
+                            } else {
+                                new swal({
+                                    title: "Save Failed!",
+                                    text: data.pesan,
+                                    type: "warning",
+                                    timer: 1500,
+                                    showCancelButton: false,
+                                    showConfirmButton: false,
+                                    allowOutsideClick: false
+                                }).then((hasil4) => {
+                                    $("#request-new-product").modal('hide');
+                                    location.reload(true);
+                                });
+                            }
+
+                        }
+                    },
+                    error: function() {
+
+                        new swal({
+                            title: "Error Message !",
+                            text: 'An Error Occured During Process. Please try again..',
+                            type: "warning",
+                            timer: 1500,
+                            showCancelButton: false,
+                            showConfirmButton: false,
+                            allowOutsideClick: false
+                        });
+                    }
+                });
+            } else {
+                new swal("Cancelled", "Data can be process again :)", "error");
+                return false;
+            }
+        });
+    });
 </script>

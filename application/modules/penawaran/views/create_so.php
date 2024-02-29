@@ -108,24 +108,32 @@
                     $ttl_harga = 0;
                     foreach ($data_penawaran_detail as $penawaran_detail) {
                         $x++;
-                        $this->db->select('IF(b.qty_asli / c.konversi > 0, (b.qty_asli / c.konversi), 0) AS qty_all');
-                        $this->db->from('ms_penawaran_detail a');
-                        $this->db->join('ms_stock_product b', 'b.id_product = a.id_product', 'left');
-                        $this->db->join('ms_product_category3 c', 'c.id_category3 = a.id_product', 'left');
-                        $this->db->where('a.id_product', $penawaran_detail->id_product);
-                        $this->db->where('a.id_penawaran !=', $penawaran_detail->id_product);
-                        $get_free_stock = $this->db->get()->row();
 
-                        $this->db->select('SUM(a.weight / b.konversi) AS stock_booking');
+                        $get_product_master = $this->db->get_where('ms_product_category3', ['id_category3' => $penawaran_detail->id_product])->row();
+                        if ($get_product_master->curing_agent !== '') {
+                            $this->db->select('(a.qty_asli / b.konversi) as qty_all');
+                            $this->db->from('ms_stock_product a');
+                            $this->db->join('ms_product_category3 b', 'b.id_category3 = a.id_product', 'left');
+                            $this->db->where('id_product', $get_product_master->id_product_refer);
+                            $get_free_stock = $this->db->get()->row();
+                        } else {
+                            $this->db->select('(a.qty_asli / b.konversi) as qty_all');
+                            $this->db->from('ms_stock_product a');
+                            $this->db->join('ms_product_category3 b', 'b.id_category3 = a.id_product', 'left');
+                            $this->db->where('id_product', $get_product_master->id_product_refer);
+                            $get_free_stock = $this->db->get()->row();
+                        }
+
+                        $this->db->select('SUM(a.qty) AS stock_booking');
                         $this->db->from('ms_penawaran_detail a');
                         $this->db->join('ms_product_category3 b', 'b.id_category3 = a.id_product');
                         $this->db->join('ms_penawaran c', 'c.id_penawaran = a.id_penawaran');
                         $this->db->where('a.id_product', $penawaran_detail->id_product);
-                        $this->db->where('c.sts !=', 'loss');
-                        $this->db->where('c.sts !=', 'so_created');
+                        $this->db->where('c.sts =', 'so_created');
+                        $this->db->where('c.sts_do =', 'do_created');
                         $get_stock_booking = $this->db->get()->row();
 
-                        $free_stock = ($get_free_stock->qty_all);
+                        $free_stock = ($get_free_stock->qty_all - $get_stock_booking->stock_booking);
                         $request_production = ($penawaran_detail->qty - $free_stock);
                         if ($free_stock > $penawaran_detail->qty) {
                             $request_production = 0;

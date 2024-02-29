@@ -323,7 +323,7 @@ $ENABLE_DELETE  = has_permission('So_Invoice.Delete');
                                 <td class="text-center" style="font-weight: bold;border: 1px solid black;font-size: 20px;">' . $penawaran_detail->nm_packaging . '</td>
                                 <td class="text-center" style="font-weight: bold;border: 1px solid black;font-size: 20px;">' . number_format($get_qty_delivery->qty_delivery) . '</td>
                                 <td class="text-center" style="font-weight: bold;border: 1px solid black;font-size: 20px;">' . $penawaran_detail->mandarin_ral_code . '<br>' . $penawaran_detail->kode_warna . '</td>
-                                <td class="" style="border: 1px solid black;font-size: 20px;font-weight:bold;">' . $get_keterangan->keterangan . '</td>
+                                <td class="" style="border: 1px solid black;font-size: 20px;font-weight:bold;"></td>
                             </tr>
                         ';
                 $ttl_berat += ($penawaran_detail->qty * $penawaran_detail->konversi);
