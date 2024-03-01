@@ -1517,8 +1517,6 @@ class Warehouse_material extends Admin_Controller
 			'stock_awal' => $stock_awal,
 			'list_history' => $get_history
 		]);
-		// print_r($get_history);
-		// exit;
 		$this->template->render('view');
 	}
 
@@ -1671,5 +1669,108 @@ class Warehouse_material extends Admin_Controller
 		]);
 		$this->template->title('Print TTB');
 		$this->template->render('print_ttb');
+	}
+
+	public function search_history()
+	{
+		$post = $this->input->post();
+
+		$get_data_stock_material = $this->Warehouse_material_model->get_material_stock($post['id_category1']);
+
+		$stock_awal = 0;
+
+		$get_stock_awal_pr = $this->db->query('SELECT SUM(a.qty) AS stock_awal_pr FROM ms_pr_material_detail a JOIN ms_pr_material b ON b.id = a.id_pr WHERE a.id_category1 = "' . $post['id_category1'] . '" AND b.tgl < "' . date('Y-m-d') . '" AND b.sts = "1"')->row();
+
+		$get_stock_awal_outgoing = $this->db->query('SELECT SUM(a.request_qty) AS stock_awal_outgoing FROM ms_request_material_detail a JOIN ms_request_material b ON b.id = a.id_request WHERE a.id_category1 = "' . $post['id_category1'] . '" AND b.tgl_request < "' . date('Y-m-d') . '" AND b.status = "1" ')->row();
+
+		// $stock_awal = ($get_stock_awal_pr->stock_awal_pr - $get_stock_awal_outgoing->stock_awal_outgoing);
+		// print_r($get_stock_awal_pr->stock_awal_pr . ' - ' . $get_stock_awal_outgoing->stock_awal_outgoing);
+		// exit;
+
+		$get_history = $this->db->query("
+		
+        select
+        	'PR' as xx,
+            a.tgl AS history_date,
+            b.full_name AS nm_by,
+            'Pembelian Material' AS dari_gudang,
+            c.warehouse_nm AS ke_gudang,
+            SUM(d.qty) AS qty_up,
+            '0' AS qty_down,
+            a.id AS no_transaksi,
+            a.keterangan AS keterangan,
+            d.id_category1 AS id_category1,
+            a.sts AS status
+        FROM
+            ms_pr_material a
+            LEFT JOIN users b ON b.id_user = a.dibuat_oleh
+            LEFT JOIN m_warehouse c ON c.id = a.id_gudang_to
+            LEFT JOIN ms_pr_material_detail d ON d.id_pr = a.id
+        WHERE 
+            d.id_category1 = '" . $post['id_category1'] . "' AND a.sts = '1' AND a.id IS NOT NULL AND a.tgl BETWEEN '" . $post['from_tgl'] . "' AND '" . $post['to_tgl'] . "'
+
+        union all
+
+        select
+        	'Outgoing' as xx,
+            a.tgl_request AS history_date,
+            b.full_name AS nm_by,
+            e.warehouse_nm AS dari_gudang,
+            c.warehouse_nm AS ke_gudang,
+            '0' AS qty_up,
+            SUM(d.request_qty) AS qty_down,
+            a.id AS no_transaksi,
+            a.keterangan AS keterangan,
+            d.id_category1 AS id_category1,
+            a.status AS status
+        FROM
+            ms_request_material a
+            LEFT JOIN users b ON b.id_user = a.dibuat_oleh
+            LEFT JOIN m_warehouse c ON c.id = a.id_gudang_to
+            LEFT JOIN ms_request_material_detail d ON d.id_request = a.id
+            LEFT JOIN m_warehouse e ON e.id = a.id_gudang_from
+        WHERE
+             d.id_category1 = '" . $post['id_category1'] . "' AND a.status = '1' AND a.id IS NOT NULL AND a.tgl_request BETWEEN '" . $post['from_tgl'] . "' AND '" . $post['to_tgl'] . "'
+         group by no_transaksi
+        
+		")->result();
+
+		$hasil = '';
+
+		$no = 1;
+		foreach ($get_history as $history) {
+			if ($history->no_transaksi !== NULL) {
+				$stock_akhir = ($stock_awal + $history->qty_up - $history->qty_down);
+
+				if ($history->qty_up > 0) {
+					$qty = $history->qty_up;
+				} else {
+					$qty = $history->qty_down;
+				}
+
+				$hasil .= '
+					<tr>
+						<td class="text-center">' . $no . '</td>
+						<td class="text-center">' . date('d F Y', strtotime($history->history_date)) . '</td>
+						<td class="text-center">' . $history->nm_by . '</td>
+						<td class="text-center">' . $history->dari_gudang . '</td>
+						<td class="text-center">' . $history->ke_gudang . '</td>
+						<td class="text-center">' . number_format($stock_awal) . '</td>
+						<td class="text-center">' . number_format($history->qty_up) . '</td>
+						<td class="text-center">' . number_format($history->qty_down) . '</td>
+						<td class="text-center">' . number_format($stock_akhir) . '</td>
+						<td class="text-center">' . $history->no_transaksi . '</td>
+						<td class="text-center">' . $history->keterangan . '</td>
+					</tr>
+				';
+				$stock_awal += $history->qty_up;
+				$stock_awal -= $history->qty_down;
+				$no++;
+			}
+		}
+
+		echo json_encode([
+			'hasil' => $hasil
+		]);
 	}
 }

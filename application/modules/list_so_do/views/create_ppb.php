@@ -127,7 +127,7 @@
                                     LEFT JOIN ms_penawaran b ON b.id_penawaran = a.id_penawaran
                                 WHERE
                                     a.id_product = "' . $penawaran_detail->id_product . '" AND
-                                    b.sts "so_created" AND
+                                    b.sts = "so_created" AND
                                     b.sts_do IS NULL
                             ')->row();
                         }

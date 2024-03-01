@@ -11,13 +11,21 @@ class List_so_do_model extends BF_Model
 {
     function generate_id($kode = '')
     {
-        $ppb = $this->db->query("SELECT MAX(id_ppb) AS max_id FROM ms_penawaran WHERE id_ppb LIKE '%PPB-" . date('Ymd') . "-%'")->row();
+        // $ppb = $this->db->query("SELECT MAX(id_ppb) AS max_id FROM ms_penawaran WHERE id_ppb LIKE '%PPB-" . date('Ymd') . "-%'")->row();
+        // $kodeBarang = $ppb->max_id;
+        // $urutan = (int) substr($kodeBarang, 13, 5);
+        // $urutan++;
+        // $tahun = date('Ymd');
+        // $huruf = "PPB-";
+        // $kodecollect = $huruf . $tahun . '-' . sprintf("%05s", $urutan);
+        // return $kodecollect;
+
+        $ppb = $this->db->query("SELECT MAX(id_ppb) AS max_id FROM ms_penawaran WHERE id_ppb LIKE '%GD" . date('m') . "-%'")->row();
         $kodeBarang = $ppb->max_id;
-        $urutan = (int) substr($kodeBarang, 13, 5);
+        $urutan = (int) substr($kodeBarang, 4, 3);
         $urutan++;
-        $tahun = date('Ymd');
-        $huruf = "PPB-";
-        $kodecollect = $huruf . $tahun . '-' . sprintf("%05s", $urutan);
+        $kodecollect = 'GD' . date('m') . sprintf("%03s", $urutan);
+
         return $kodecollect;
     }
 }

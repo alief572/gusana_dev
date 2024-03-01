@@ -11,109 +11,75 @@ $ENABLE_DELETE  = has_permission('Production_Warehouse.Delete');
             <div class="col-6">
                 <table class="w-100">
                     <tr>
-                        <th>Material Code</th>
-                        <th class="text-center">:</th>
-                        <th><?= $results['data_stock_material']->category_nm; ?></th>
-                        <th colspan="3"></th>
+                        <th style="vertical-align: top;">Material Code</th>
+                        <th style="vertical-align: top;" class="text-center">:</th>
+                        <th style="vertical-align: top;"><?= $results['data_stock_material']->category_nm; ?></th>
+                        <th style="vertical-align: top;" colspan="3"></th>
                     </tr>
                     <tr>
-                        <th>Material Name</th>
-                        <th class="text-center">:</th>
-                        <th><?= $results['data_stock_material']->nama; ?></th>
-                        <th colspan="3"></th>
+                        <th style="vertical-align: top;">Material Name</th>
+                        <th style="vertical-align: top;" class="text-center">:</th>
+                        <th style="vertical-align: top;"><?= $results['data_stock_material']->nama; ?></th>
+                        <th style="vertical-align: top;" colspan="3"></th>
                     </tr>
                     <tr>
-                        <th>Packing</th>
-                        <th class="text-center">:</th>
-                        <th><?= $results['data_stock_material']->nm_packaging; ?></th>
-                        <th colspan="3"></th>
+                        <th style="vertical-align: top;">Packing</th>
+                        <th style="vertical-align: top;" class="text-center">:</th>
+                        <th style="vertical-align: top;"><?= $results['data_stock_material']->nm_packaging; ?></th>
+                        <th style="vertical-align: top;" colspan="3"></th>
                     </tr>
                     <tr>
-                        <th>Conversion</th>
-                        <th class="text-center">:</th>
-                        <th><?= number_format($results['data_stock_material']->konversi); ?></th>
-                        <th>Satuan</th>
-                        <th class="text-center">:</th>
-                        <th><?= $results['data_stock_material']->nm_unit; ?></th>
+                        <th style="vertical-align: top;">Conversion</th>
+                        <th style="vertical-align: top;" class="text-center">:</th>
+                        <th style="vertical-align: top;"><?= number_format($results['data_stock_material']->konversi); ?></th>
+                        <th style="vertical-align: top;">Satuan</th>
+                        <th style="vertical-align: top;" class="text-center">:</th>
+                        <th style="vertical-align: top;"><?= $results['data_stock_material']->nm_unit; ?></th>
                     </tr>
                 </table>
             </div>
             <div class="row">
-                <div class="col-3"></div>
+                <div class="col-1 mt-5">
+                    <span>From</span>
+                </div>
+                <div class="col-3 mt-5">
+                    <input type="date" name="" id="" class="form-control form-control-sm from_tgl">
+                </div>
+                <div class="col-1 mt-5">
+                    <span>To</span>
+                </div>
+                <div class="col-3 mt-5">
+                    <input type="date" name="" id="" class="form-control form-control-sm to_tgl">
+                </div>
+                <div class="col-3 mt-5">
+                    <button type="button" class="btn btn-sm btn-primary search_history" data-id="<?= $results['data_stock_material']->id_category1 ?>"><i class="fa fa-search"></i> Search</button>
+                </div>
             </div>
-            <table class="table table-striped mt-15">
-                <thead>
-                    <tr>
-                        <th class="text-center">No</th>
-                        <th class="text-center">History Date</th>
-                        <th class="text-center">By</th>
-                        <th class="text-center">Dari Gudang</th>
-                        <th class="text-center">Ke Gudang</th>
-                        <th class="text-center">Qty</th>
-                        <th class="text-center">Conversion (Kg)</th>
-                        <th class="text-center">Total Conversion (Kg)</th>
-                        <th class="text-center">Stock Awal (Kg)</th>
-                        <th class="text-center">Stock Akhir</th>
-                        <th class="text-center">No Transaksi</th>
-                        <th class="text-center">Keterangan</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
+            <div class="table-responsive">
+                <table class="table table-striped mt-15">
+                    <thead>
+                        <tr>
+                            <th class="text-center">No</th>
+                            <th class="text-center">History Date</th>
+                            <th class="text-center">By</th>
+                            <th class="text-center">Dari Gudang</th>
+                            <th class="text-center">Ke Gudang</th>
+                            <th class="text-center">Qty</th>
+                            <th class="text-center">Conversion (Kg)</th>
+                            <th class="text-center">Total Conversion (Kg)</th>
+                            <th class="text-center">Stock Awal (Kg)</th>
+                            <th class="text-center">Qty Converstion (+)</th>
+                            <th class="text-center">Qty Converstion (-)</th>
+                            <th class="text-center">Stock Akhir</th>
+                            <th class="text-center">No Transaksi</th>
+                            <th class="text-center">Keterangan</th>
+                        </tr>
+                    </thead>
+                    <tbody class="list_history">
 
-                    $no = 1;
-                    $stock_awal = 0;
-                    // print_r($results['list_history']);
-                    // exit;
-                    if (count($results['list_history']) > 0) {
-                        foreach ($results['list_history'] as $history) {
-                            // print_r($history->no_transaksi);
-                            // exit;
-                            if ($history->no_transaksi !== NULL) {
-                                $stock_akhir = ($stock_awal + $history->qty_down - $history->qty_up);
-
-                                $qty = $history->qty_down;
-                                if ($history->qty_up > 0) {
-                                    $qty = ($history->qty_up / $history->konversi);
-                                }
-
-                                $pen_stock_awal = $stock_awal;
-                                $pen_stock_akhir = $stock_akhir;
-                                if ($history->xx !== 'LHP') {
-                                    $pen_stock_awal = ($stock_awal * $history->konversi);
-                                    $pen_stock_akhir = ($stock_akhir * $history->konversi);
-                                }
-
-                                echo '
-                                    <tr>
-                                        <td class="text-center">' . $no . '</td>
-                                        <td class="text-center">' . date('d F Y', strtotime($history->history_date)) . '</td>
-                                        <td class="text-center">' . $history->nm_by . '</td>
-                                        <td class="text-center">' . $history->dari_gudang . '</td>
-                                        <td class="text-center">' . $history->ke_gudang . '</td>
-                                        <td class="text-center">' . number_format($qty, 2) . '</td>
-                                        <td class="text-center">' . number_format($history->konversi) . '</td>
-                                        <td class="text-center">' . number_format($qty * $history->konversi) . '</td>
-                                        <td class="text-center">' . number_format($pen_stock_awal) . '</td>
-                                        <td class="text-center">' . number_format($pen_stock_akhir) . '</td>
-                                        <td class="text-center">' . $history->no_transaksi . '</td>
-                                        <td class="text-center">' . $history->keterangan . '</td>
-                                    </tr>
-                                ';
-                                if ($history->xx !== 'LHP') {
-                                    $stock_awal += ($history->qty_down * $history->konversi);
-                                    $stock_awal -= ($history->qty_up * $history->konversi);
-                                } else {
-                                    $stock_awal += $history->qty_down;
-                                    $stock_awal -= $history->qty_up;
-                                }
-                                $no++;
-                            }
-                        }
-                    }
-                    ?>
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </form>
     </div>
 </div>
@@ -121,4 +87,46 @@ $ENABLE_DELETE  = has_permission('Production_Warehouse.Delete');
 
 
 
-<script></script>
+<script>
+    $(document).on('click', '.search_history', function() {
+        var id = $(this).data('id');
+
+        var from_tgl = $('.from_tgl').val();
+        var to_tgl = $('.to_tgl').val();
+
+        if (from_tgl == '' || to_tgl == '') {
+            Swal.fire({
+                title: 'Warning !',
+                text: 'Please input From and To Date properly !',
+                icon: 'warning'
+            });
+        } else {
+            $.ajax({
+                type: 'POST',
+                url: siteurl + thisController + 'search_history',
+                data: {
+                    'id_category1': id,
+                    'from_tgl': from_tgl,
+                    'to_tgl': to_tgl
+                },
+                cache: false,
+                dataType: 'json',
+                beforeSend: function(result) {
+                    $('.search_history').html('<i class="fa fa-spin fa-spinner"></i>');
+                },
+                success: function(result) {
+                    $('.search_history').html('<i class="fa fa-search"></i> Search');
+
+                    $('.list_history').html(result.hasil);
+                },
+                error: function(result) {
+                    swal.fire({
+                        title: 'Warning !',
+                        text: 'Sorry, please try again !',
+                        icon: 'warning'
+                    });
+                }
+            });
+        }
+    });
+</script>

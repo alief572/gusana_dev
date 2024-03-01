@@ -44,7 +44,7 @@
                         </span>
                     </th>
                     <th style="vertical-align:top;">:</th>
-                    <th style="vertical-align:top;"><?= $penawaran->id_ppb ?></th>
+                    <th style="vertical-align:top;">GD<?= substr($penawaran->id_ppb, 14, 2) . substr($penawaran->id_ppb, 3, 3) ?></th>
                 </tr>
                 <?php
                 if ($penawaran->tgl_create_do !== null) {
@@ -257,7 +257,7 @@
                         </span>
                     </th>
                     <th style="vertical-align:top;">:</th>
-                    <th style="vertical-align:top;"><?= $penawaran->id_ppb ?></th>
+                    <th style="vertical-align:top;">GD<?= substr($penawaran->id_ppb, 14, 2) . substr($penawaran->id_ppb, 3, 3) ?></th>
                 </tr>
                 <?php
                 if ($penawaran->tgl_create_do !== null) {
