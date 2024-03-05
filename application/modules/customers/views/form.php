@@ -195,6 +195,21 @@
                     <div id="cbErrorContainerStatus"></div>
                 </div>
             </div>
+            <div class="form-group row">
+                <div class="col-md-3 tx-dark tx-bold">
+                    <label for="kode_customer">Kode Customer</label>
+                </div>
+                <div class="col-md-8">
+                    <!-- <select id="category_customer" name="category_customer" class="form-control select" required>
+                        <option value=""></option>
+                        <?php if ($kategori_customer) foreach ($kategori_customer as $sType) : ?>
+                            <option value="<?= $sType->id_kategori_customer; ?>" <?= (isset($customer) && $sType->id_kategori_customer == $customer->category_customer) ? 'selected' : ''; ?>><?= $sType->nm_kategori_customer; ?></option>
+                        <?php endforeach; ?>
+                    </select> -->
+
+                    <input type="text" name="kode_customer" id="" class="form-control" value="<?= (isset($customer)) ? $customer->kode_customer : null ?>" required>
+                </div>
+            </div>
         </div>
     </div>
 </div>

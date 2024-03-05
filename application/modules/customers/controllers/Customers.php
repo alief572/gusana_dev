@@ -286,6 +286,7 @@ class Customers extends Admin_Controller
 		$data['cooperation_date'] 				= ($post['cooperation_date']) ?: null;
 		$data['category_customer'] 				= ($post['category_customer']) ?: null;
 		$data['status'] = ($post['status']) ?: null;
+		$data['kode_customer'] = ($post['kode_customer']) ?: null;
 
 		$dataPIC = isset($post['PIC']) ? $post['PIC'] : [];
 		unset($data['PIC']);

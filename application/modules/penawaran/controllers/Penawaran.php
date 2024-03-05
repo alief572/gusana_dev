@@ -610,6 +610,7 @@ class Penawaran extends Admin_Controller
                     $this->db->select('a.*');
                     $this->db->from('ms_penawaran a');
                     $this->db->where('id_cust', $post['customer']);
+                    $this->db->where('id_marketing', $post['sales_marketing']);
                     $this->db->where('id_penawaran LIKE', '%' . date('Ymd', strtotime($post['tgl_penawaran'])) . '%');
                     $num_pesanan = $this->db->get()->num_rows();
 
@@ -905,7 +906,7 @@ class Penawaran extends Admin_Controller
                         LEFT JOIN ms_penawaran b ON b.id_penawaran = a.id_penawaran
                     WHERE
                         a.id_product = "' . $produk . '" AND
-                        b.sts "so_created" AND
+                        b.sts = "so_created" AND
                         b.sts_do IS NULL
                 ')->row();
             }
@@ -1609,7 +1610,7 @@ class Penawaran extends Admin_Controller
                         LEFT JOIN ms_penawaran b ON b.id_penawaran = a.id_penawaran
                     WHERE
                         a.id_product = "' . $id_product . '" AND
-                        b.sts "so_created" AND
+                        b.sts = "so_created" AND
                         b.sts_do IS NULL
                 ')->row();
             }

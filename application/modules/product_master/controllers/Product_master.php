@@ -558,22 +558,29 @@ class Product_master extends Admin_Controller
 
 		$get_same_product = $this->db->query('
 			SELECT 
-				LOWER(REPLACE(nama," ", "")) AS product_nm
+				count(id_category3) as hitung
 			FROM
 				ms_product_category3
 			WHERE
-				LOWER(REPLACE(nama," ", "")) = "' . str_replace(strtolower($this->input->post('nm_lv_4')), " ", "") . '"
-		')->num_rows();
+				nama = "' . $this->input->post('nm_lv_4') . '"
+		')->row();
+		// 	print_r('SELECT 
+		// 	nama
+		// FROM
+		// 	ms_product_category3
+		// WHERE
+		// 	nama = "' . $this->input->post('nm_lv_4') . '"');
+		// 	exit;
 
 		$product_same = 0;
-		if ($get_same_product > 0) {
+		if ($get_same_product->hitung > 0) {
 			$product_same = 1;
 		}
 
 		$this->db->trans_begin();
 		$numb1 = 0;
 		//$head = $_POST['hd1'];
-		if ($product_same = 0) {
+		if ($product_same < 1) {
 			$this->db->update('ms_product_category3_competitor', ['id_category3' => $code], ['id_category3' => $this->auth->user_id()]);
 			$this->db->insert('ms_product_category3', [
 				'id_category3' => $code,
@@ -623,7 +630,7 @@ class Product_master extends Admin_Controller
 			]);
 		}
 
-		if ($this->db->trans_status() === FALSE || $product_same = 1) {
+		if ($this->db->trans_status() === FALSE || $product_same > 0) {
 			$this->db->trans_rollback();
 			$pesan = 'Gagal Save Item. Thanks ...';
 			if ($product_same = 1) {
