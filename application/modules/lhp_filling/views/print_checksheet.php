@@ -86,18 +86,51 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
                         <th class="text-center pd-10">Total Qty (Kaleng)</th>
                         <th class="text-center pd-10">Aktual Qty (Kaleng)</th>
                         <th class="text-center pd-10">Sisa Produk (Kg)</th>
+                        <th class="text-center pd-10">Packaging Use</th>
                     </tr>
                 </thead>
                 <tbody>
                     <td class="text-center">1</td>
                     <td class="text-center"><?= $results['data_product_so']->konversi . ' ' . $results['data_product_so']->packaging ?></td>
                     <td class="text-center"><?= $results['data_product_so']->packaging ?></td>
-                    <td class="text-center"><?= number_format(($results['data_product_so']->propose / $results['data_product_so']->konversi / ($results['data_product_so']->propose / $results['data_bom']->qty_hopper)), 2).' '.$results['data_product_so']->packaging ?></td>
+                    <td class="text-center"><?= number_format(($results['data_product_so']->propose / $results['data_product_so']->konversi / ($results['data_product_so']->propose / $results['data_bom']->qty_hopper)), 2) . ' ' . $results['data_product_so']->packaging ?></td>
                     <td class="text-center">
                         <input type="number" name="aktual_qty" id="" class="form-control form-control-sm text-right aktual_qty" step="0.01" value="<?= $results['data_spk']->product_aktual_qty ?>" <?= ($results['closing_spk'] == 1) ? 'readonly' : null ?>>
                     </td>
                     <td class="text-center">
                         <input type="number" name="sisa_produk" id="" class="form-control form-control-sm text-right" step="0.01" min="0" value="<?= $results['data_spk']->sisa_produk ?>" <?= ($results['closing_spk'] == 1) ? 'readonly' : null ?>>
+                    </td>
+                    <td>
+                        <span>
+                            Packaging Body <br>
+                            <select name="packaging_body" id="" class="form-control chosen-select">
+                                <option value="">- Packaging Body -</option>
+                                <?php
+                                foreach ($results['packaging_list'] as $packaging) {
+                                    $selected = '';
+                                    if ($packaging->id_category3 == $results['data_spk']->id_pack_body) {
+                                        $selected = 'selected';
+                                    }
+                                    echo '<option value="' . $packaging->id_category3 . '" ' . $selected . '>' . $packaging->nama . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </span> <br>
+                        <span>
+                            Packaging Cover <br>
+                            <select name="packaging_cover" id="" class="form-control chosen-select">
+                                <option value="">- Packaging Cover -</option>
+                                <?php
+                                foreach ($results['packaging_cover_list'] as $packaging) {
+                                    $selected = '';
+                                    if ($packaging->id_category3 == $results['data_spk']->id_pack_cover) {
+                                        $selected = 'selected';
+                                    }
+                                    echo '<option value="' . $packaging->id_category3 . '" ' . $selected . '>' . $packaging->nama . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </span>
                     </td>
                 </tbody>
             </table>
@@ -140,7 +173,9 @@ $ENABLE_DELETE  = has_permission('Menu_SPK.Delete');
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
     $(document).ready(function() {
-        $(".chosen-select").select2();
+        $(".chosen-select").select2({
+            width: '100%'
+        });
         $(".autonum").autoNumeric();
 
         function get_free_material(id_spk) {

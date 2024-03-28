@@ -225,6 +225,9 @@ class Lhp_filling extends Admin_Controller
         $berat_aktual4 = $this->input->post('berat_aktual4');
         $berat_aktual5 = $this->input->post('berat_aktual5');
 
+        $packaging_body = $this->input->post('packaging_body');
+        $packaging_cover = $this->input->post('packaging_cover');
+
         $this->db->trans_begin();
 
         $this->db->update('ms_create_spk', [
@@ -234,7 +237,9 @@ class Lhp_filling extends Admin_Controller
             'berat_aktual_2' => $berat_aktual2,
             'berat_aktual_3' => $berat_aktual3,
             'berat_aktual_4' => $berat_aktual4,
-            'berat_aktual_5' => $berat_aktual5
+            'berat_aktual_5' => $berat_aktual5,
+            'id_pack_body' => $packaging_body,
+            'id_pack_cover' => $packaging_cover
         ], [
             'id_spk' => $id_spk,
             'id_so' => $id_so,
@@ -250,6 +255,8 @@ class Lhp_filling extends Admin_Controller
 
     public function closing_spk()
     {
+        $valid = 1;
+
         $id_spk = $this->input->post('id_spk');
         $id_so = $this->input->post('id_so');
         $id_proses = $this->input->post('id_proses');
@@ -281,51 +288,137 @@ class Lhp_filling extends Admin_Controller
             'a.id_proses' => $id_proses
         ]);
         $this->db->group_by('a.id_category1');
-
         $get_data_material_tambahan = $this->db->get()->result();
-
-        $this->db->trans_begin();
-
-        $valid = 1;
 
         $get_so = $this->db->get_where('ms_so', ['id_so' => $id_so])->row();
 
-        $get_product = $this->db->get_where('ms_product_category3', ['id_category3' => $get_so->id_product])->row();
 
-        $check_stock_product = $this->db->get_where('ms_stock_product', ['id_product' => $get_so->id_product])->num_rows();
-        if ($check_stock_product < 1) {
-            $this->db->insert('ms_stock_product', [
-                'id_product' => $get_so->id_product,
-                'qty_asli' => ($aktual_qty * $get_product->konversi),
-                'dibuat_oleh' => $this->auth->user_id(),
-                'dibuat_tgl' => date('Y-m-d H:i:s')
-            ]);
-        } else {
-            $get_stock = $this->db->get_where('ms_stock_product', ['id_product' => $get_so->id_product])->row();
+        $get_material = $this->db->get_where('ms_bom_detail_material', ['id_bom' => $get_so->id_bom])->result();
 
-            $this->db->update('ms_stock_product', [
-                'qty_asli' => ($get_stock->qty_asli + ($aktual_qty * $get_product->konversi)),
-                'diubah_oleh' => $this->auth->user_id(),
-                'diubah_tgl' => date('Y-m-d H:i:s')
-            ], [
-                'id_product' => $get_so->id_product
-            ]);
+        $get_create_spk = $this->db->get_where('ms_create_spk', ['id_spk' => $id_spk, 'id_so' => $id_so, 'id_proses' => $id_proses])->row();
+
+        foreach ($get_material as $material_bom) {
+            if ($valid > 0) {
+                $qty_material = $material_bom->weight;
+
+                $get_custom_weight = $this->db->get_where('ms_spk_weight_custom', ['id_spk' => $id_spk, 'id_so' => $id_so, 'id_material' => $material_bom->id_category1])->row();
+                if (count($get_custom_weight) > 0) {
+                    $qty_material = $get_custom_weight->custom_weight;
+                }
+
+                $check_material_stock = $this->db->get_where('ms_stock_material_production', ['id_category1' => $material_bom->id_category1])->row();
+                if (count($check_material_stock) < 1 || ($check_material_stock->qty_stock - $material_bom->weight) <= 0) {
+                    $valid = 0;
+                }
+            }
         }
 
-        $msg = 'Selamat, LHP telah di closing !';
+        if ($get_create_spk->id_pack_body !== '') {
+            $get_stock_pack_body = $this->db->get_where('ms_stock_material_production', ['id_category3' => $get_create_spk->id_pack_body])->row();
+            if (count($get_stock_pack_body) <= 0 || $get_stock_pack_body->qty_stock <= 0) {
+                $valid = 0;
+            }
+        }
+        if ($get_create_spk->id_pack_cover !== '') {
+            $get_stock_pack_cover = $this->db->get_where('ms_stock_material_production', ['id_category3' => $get_create_spk->id_pack_cover])->row();
+            if (count($get_stock_pack_cover) <= 0 || $get_stock_pack_cover->qty_stock <= 0) {
+                $valid = 0;
+            }
+        }
 
-        $this->db->insert('ms_closing_lhp', [
-            'id_spk' => $id_spk,
-            'id_so' => $id_so,
-            'id_proses' => '-',
-            'sts' => 'closing',
-            'dibuat_oleh' => $this->auth->user_id(),
-            'dibuat_tgl' => date("Y-m-d H:i:s")
-        ]);
+        if (count($get_data_material_tambahan) > 0) {
+            foreach ($get_data_material_tambahan as $material_tambahan) {
+                if ($valid > 0) {
+                    $qty_material = $material_tambahan->jumlah;
 
-        if ($this->db->trans_status() === FALSE || $valid !== 1) {
+                    $check_material_stock = $this->db->get_where('ms_stock_material_production', ['id_category1' => $material_tambahan->id_category1])->row();
+                    if (count($check_material_stock) < 1 || ($check_material_stock->qty_stock - $material_tambahan->jumlah) <= 0) {
+                        $valid = 0;
+                    }
+                }
+            }
+        }
+
+        $this->db->trans_begin();
+
+        if ($valid > 0) {
+            $get_so = $this->db->get_where('ms_so', ['id_so' => $id_so])->row();
+
+            $get_product = $this->db->get_where('ms_product_category3', ['id_category3' => $get_so->id_product])->row();
+
+            $check_stock_product = $this->db->get_where('ms_stock_product', ['id_product' => $get_so->id_product])->num_rows();
+            if ($check_stock_product < 1) {
+                $this->db->insert('ms_stock_product', [
+                    'id_product' => $get_so->id_product,
+                    'qty_asli' => ($aktual_qty * $get_product->konversi),
+                    'dibuat_oleh' => $this->auth->user_id(),
+                    'dibuat_tgl' => date('Y-m-d H:i:s')
+                ]);
+            } else {
+                $get_stock = $this->db->get_where('ms_stock_product', ['id_product' => $get_so->id_product])->row();
+
+                $this->db->update('ms_stock_product', [
+                    'qty_asli' => ($get_stock->qty_asli + ($aktual_qty * $get_product->konversi)),
+                    'diubah_oleh' => $this->auth->user_id(),
+                    'diubah_tgl' => date('Y-m-d H:i:s')
+                ], [
+                    'id_product' => $get_so->id_product
+                ]);
+            }
+
+            foreach ($get_material as $material_bom) {
+                if ($valid > 0) {
+                    $qty_material = $material_bom->weight;
+
+                    $get_custom_weight = $this->db->get_where('ms_spk_weight_custom', ['id_spk' => $id_spk, 'id_so' => $id_so, 'id_material' => $material_bom->id_category1])->row();
+                    if (count($get_custom_weight) > 0) {
+                        $qty_material = $get_custom_weight->custom_weight;
+                    }
+
+                    $get_material_stock = $this->db->get_where('ms_material_stock_production', ['id_category1' => $material_bom->id_category1])->row();
+
+                    $this->db->update('ms_stock_material_production', ['qty_stock' => ($get_material_stock->qty_stock - $qty_material)], ['id_category1' => $material_bom->id_category1]);
+                }
+            }
+
+            // Pengurangan Packing Body
+            $get_pack_body_stock = $this->db->get_where('ms_material_stock_production', ['id_category1' => $get_create_spk->id_pack_body])->row();
+            $this->db->update('ms_stock_material_production', ['qty_stock' => ($get_pack_body_stock->qty_stock - 1)], ['id_category1' => $get_create_spk->id_pack_body]);
+
+            // Pengurangan Packing Cover
+            $get_pack_cover_stock = $this->db->get_where('ms_material_stock_production', ['id_category1' => $get_create_spk->id_pack_cover])->row();
+            $this->db->update('ms_stock_material_production', ['qty_stock' => ($get_pack_cover_stock->qty_stock - 1)], ['id_category1' => $get_create_spk->id_pack_cover]);
+
+            if (count($get_data_material_tambahan) > 0) {
+                foreach ($get_data_material_tambahan as $material_tambahan) {
+                    if ($valid > 0) {
+                        $qty_material = $material_tambahan->jumlah;
+
+                        $get_material_stock = $this->db->get_where('ms_stock_material_production', ['id_category1' => $material_tambahan->id_category1])->row();
+
+                        $this->db->update('ms_stock_material_production', ['qty_stock' => ($get_material_stock->qty_stock - $qty_material)], ['id_category1' => $material_tambahan->id_category1]);
+                    }
+                }
+            }
+
+            $this->db->insert('ms_closing_lhp', [
+                'id_spk' => $id_spk,
+                'id_so' => $id_so,
+                'id_proses' => '-',
+                'sts' => 'closing',
+                'dibuat_oleh' => $this->auth->user_id(),
+                'dibuat_tgl' => date("Y-m-d H:i:s")
+            ]);
+
+            $msg = 'Selamat, LHP telah di closing !';
+        } else {
+            $msg = 'Sorry, there are less materials than actual stock !';
+        }
+
+
+        if ($this->db->trans_status() === FALSE || $valid < 0) {
             $this->db->trans_rollback();
-            $msg = 'Maaf, ada material yang kurang dari aktual stock !';
+
 
             $hasil = [
                 'status' => $valid,
@@ -377,6 +470,9 @@ class Lhp_filling extends Admin_Controller
             $closing_spk = 1;
         }
 
+        $get_packaging_list = $this->db->get_where('ms_inventory_category3', ['id_type' => 'I2400010', 'id_category1' => 'I2400213'])->result();
+        $get_packaging_cover_list = $this->db->get_where('ms_inventory_category3', ['id_type' => 'I2400010', 'id_category1' => 'I2400214'])->result();
+
         $data = [
             'data_spk' => $get_data_spk,
             'data_product' => $get_product,
@@ -386,7 +482,9 @@ class Lhp_filling extends Admin_Controller
             'list_material_category' => $get_material_category1,
             'data_material_tambahan' => $get_material_tambahan,
             'data_product_so' => $get_product_so,
-            'closing_spk' => $closing_spk
+            'closing_spk' => $closing_spk,
+            'packaging_list' => $get_packaging_list,
+            'packaging_cover_list' => $get_packaging_cover_list
         ];
 
         // echo '<pre>';  

@@ -118,7 +118,7 @@
                             <select id="state_id" name="state_id" class="form-control select" data-parsley-inputs data-parsley-class-handler="#slWrapperProv" data-parsley-errors-container="#slErrorContainerProv">
                                 <option value=""></option>
                                 <?php if (isset($customer) && $customer->state_id) foreach ($states as $state) : ?>
-                                    <option value="<?= $customer->state_id; ?>" <?= (isset($customer) && $customer->state_id == $state->id) ? 'selected' : ''; ?>><?= $state->name; ?></option>
+                                    <option value="<?= $state->id; ?>" <?= (isset($customer) && $customer->state_id == $state->id) ? 'selected' : ''; ?>><?= $state->name; ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -519,8 +519,8 @@
             })
         })
 
-        $(document).on('change.select2', '#state_id', function() {
-            let state_id = $('#state_id').val();
+        $(document).on('change', '#state_id', function() {
+            var state_id = $('#state_id').val();
             $('#city_id').val('null').trigger('change')
             $('#city_id').select2({
                 ajax: {

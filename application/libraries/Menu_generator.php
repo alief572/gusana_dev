@@ -57,6 +57,12 @@ class Menu_generator
 			// print_r($auth);
 			// echo'</pre>';
 			// exit;
+			// if (!$this->is_admin) {
+			// 	print_r('0');
+			// } else {
+			// 	print_r('1');
+			// }
+			// exit;
 			if (is_array($menu) && count($menu)) {
 				foreach ($menu as $rw) {
 					$id         = $rw->id;

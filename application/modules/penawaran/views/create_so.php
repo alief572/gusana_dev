@@ -19,8 +19,8 @@
                 <tr>
                     <th class="text-left">Contact Person</th>
                     <th class="text-left">: <?= $data_penawaran->nm_pic_cust ?></th>
-                    <th class="text-left">Delivery Date</th>
-                    <th class="text-left">: <?= date('d F Y', strtotime($data_penawaran->deliver_date)) ?></th>
+                    <th></th>
+                    <th></th>
                 </tr>
                 <tr>
                     <th class="text-left">Delivery Type</th>
@@ -111,20 +111,20 @@
 
                         $get_product_master = $this->db->get_where('ms_product_category3', ['id_category3' => $penawaran_detail->id_product])->row();
                         if ($get_product_master->curing_agent !== '') {
-                            $this->db->select('(a.qty_asli / b.konversi) as qty_all');
+                            $this->db->select('IF(a.qty_asli > 0 AND a.qty_asli IS NOT NULL, (a.qty_asli / b.konversi), 0) as qty_all');
                             $this->db->from('ms_stock_product a');
                             $this->db->join('ms_product_category3 b', 'b.id_category3 = a.id_product', 'left');
                             $this->db->where('id_product', $get_product_master->id_product_refer);
                             $get_free_stock = $this->db->get()->row();
                         } else {
-                            $this->db->select('(a.qty_asli / b.konversi) as qty_all');
+                            $this->db->select('IF(a.qty_asli > 0 AND a.qty_asli IS NOT NULL, (a.qty_asli / b.konversi), 0) as qty_all');
                             $this->db->from('ms_stock_product a');
                             $this->db->join('ms_product_category3 b', 'b.id_category3 = a.id_product', 'left');
                             $this->db->where('id_product', $get_product_master->id_product_refer);
                             $get_free_stock = $this->db->get()->row();
                         }
 
-                        $this->db->select('SUM(a.qty) AS stock_booking');
+                        $this->db->select('IF(SUM(a.qty) IS NULL, 0, SUM(a.qty)) AS stock_booking');
                         $this->db->from('ms_penawaran_detail a');
                         $this->db->join('ms_product_category3 b', 'b.id_category3 = a.id_product');
                         $this->db->join('ms_penawaran c', 'c.id_penawaran = a.id_penawaran');
@@ -133,7 +133,17 @@
                         $this->db->where('c.sts_do =', 'do_created');
                         $get_stock_booking = $this->db->get()->row();
 
-                        $free_stock = ($get_free_stock->qty_all - $get_stock_booking->stock_booking);
+                        $qty_all = 0;
+                        if (!empty($get_free_stock->qty_all)) {
+                            $qty_all = $get_free_stock->qty_all;
+                        }
+
+                        $stock_booking = 0;
+                        if (!empty($get_stock_booking->stock_booking)) {
+                            $stock_booking = $get_free_stock->qty_all;
+                        }
+
+                        $free_stock = ($qty_all - $stock_booking);
                         $request_production = ($penawaran_detail->qty - $free_stock);
                         if ($free_stock > $penawaran_detail->qty) {
                             $request_production = 0;
