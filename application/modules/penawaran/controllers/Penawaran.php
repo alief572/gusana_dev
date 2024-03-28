@@ -114,19 +114,21 @@ class Penawaran extends Admin_Controller
 
             $create_so =  '<button type="button" class="btn btn-warning btn-sm btn-sm create_so" data-toggle="tooltip" title="Create SO" data-id="' . str_replace('/', '-', $row['id_penawaran']) . '"><i class="fa fa-plus"></i></button>';
 
-            $buttons     = $view . "&nbsp;" . $edit . "&nbsp;" . $delete . "&nbsp;" . $print . "&nbsp;" . $send . "&nbsp;" . $request;
+            $print_po = '<button type="button" class="btn btn-sm btn-warning print_po" data-toggle="tooltip" title="Print PO" data-id="' . str_replace('/', '-', $row['id_penawaran']) . '"><i class="fa fa-print"></i></button>';
+
+            $buttons     = $view . "&nbsp;" . $edit . "&nbsp;" . $delete . "&nbsp;" . $print . "&nbsp;" . $send . "&nbsp;" . $request . "&nbsp;" . $print_po;
 
             if ($row['sts'] == '' || $row['sts'] == null || $row['sts'] == 'rejected') {
-                $buttons = $edit . ' ' . $request . ' ' . $print;
+                $buttons = $edit . ' ' . $request . ' ' . $print . ' ' . $print_po;
             }
             if ($row['sts'] == 'approved') {
-                $buttons = $print . ' ' . $view . ' ' . $send;
+                $buttons = $print . ' ' . $view . ' ' . $send . ' ' . $print_po;
             }
             if ($row['sts'] == 'request_approval') {
                 $buttons = $view;
             }
             if ($row['sts'] == 'send') {
-                $buttons = $revisi . ' ' . $print . ' ' . $create_so . ' ' . $loss;
+                $buttons = $revisi . ' ' . $print . ' ' . $create_so . ' ' . $loss . ' ' . $print_po;
             }
 
             $status = '';
@@ -153,7 +155,7 @@ class Penawaran extends Admin_Controller
             $nestedData[]  = $id;
             $nestedData[]  = $row['nm_cust'];
             $nestedData[]  = $row['nm_marketing'];
-            $nestedData[]  = number_format($row['nilai_penawaran'], 2);
+            $nestedData[]  = number_format($row['nilai_penawaran']);
             $nestedData[]  = date('d F Y', strtotime($row['tgl_penawaran']));
             $nestedData[]  = ($row['sts'] == 'approved' || $row['sts'] == 'rejected' || $row['sts'] == 'send') ? $row['keterangan_app'] : $row['keterangan'];
             $nestedData[]  = $row['revisi'];
@@ -960,7 +962,7 @@ class Penawaran extends Admin_Controller
             $price_list = $get_biaya_bom->price_list;
         }
 
-        echo json_encode(['price_list' => number_format($price_list, 2)]);
+        echo json_encode(['price_list' => number_format($price_list)]);
     }
 
     public function get_harga_satuan()
@@ -976,7 +978,7 @@ class Penawaran extends Admin_Controller
         }
 
         echo json_encode([
-            'harga_satuan' => number_format($harga_satuan, 2)
+            'harga_satuan' => number_format($harga_satuan)
         ]);
     }
 
@@ -999,7 +1001,7 @@ class Penawaran extends Admin_Controller
 
         $weight = ($qty_detail * $konversi);
 
-        echo json_encode(['weight' => $weight, 'weight_form' => number_format($weight, 2)]);
+        echo json_encode(['weight' => $weight, 'weight_form' => number_format($weight)]);
     }
 
     public function hitung_total_harga()
@@ -1023,7 +1025,7 @@ class Penawaran extends Admin_Controller
 
         $total_harga = ($harga_satuan * ($qty_detail * $konversi));
 
-        echo json_encode(['total_harga' => $total_harga, 'total_harga2' => number_format($total_harga, 2)]);
+        echo json_encode(['total_harga' => $total_harga, 'total_harga2' => number_format($total_harga)]);
     }
 
     public function add_penawaran_detail()
@@ -1123,13 +1125,13 @@ class Penawaran extends Admin_Controller
                     <td>' . $penawaran_detail->kode_product . '</td>
                     <td>' . $penawaran_detail->konversi . ' ' . $penawaran_detail->packaging . '</td>
                     <td>' . $penawaran_detail->ral_code . '</td>
-                    <td class="text-right">' . number_format($penawaran_detail->qty, 2) . '</td>
-                    <td class="text-right">' . number_format($penawaran_detail->weight, 2) . '</td>
+                    <td class="text-right">' . number_format($penawaran_detail->qty) . '</td>
+                    <td class="text-right">' . number_format($penawaran_detail->weight) . '</td>
                     <td class="text-right">
-                        <input type="text" name="harga_satuan_' . str_replace('/', '-', $penawaran_detail->id) . '" id="" class="form-control form-control-sm autonum harga_satuan" data-id="' . str_replace('/', '-', $penawaran_detail->id) . '" value="' . number_format($penawaran_detail->harga_satuan, 2) . '">
+                        <input type="text" name="harga_satuan_' . str_replace('/', '-', $penawaran_detail->id) . '" id="" class="form-control form-control-sm autonum harga_satuan" data-id="' . str_replace('/', '-', $penawaran_detail->id) . '" value="' . number_format($penawaran_detail->harga_satuan) . '">
                     </td>
-                    <td class="text-right">' . number_format($penawaran_detail->free_stock, 2) . '</td>
-                    <td class="text-right">' . number_format($penawaran_detail->total_harga, 2) . '</td>
+                    <td class="text-right">' . number_format($penawaran_detail->free_stock) . '</td>
+                    <td class="text-right">' . number_format($penawaran_detail->total_harga) . '</td>
                     <td class="text-center">
                         <button type="button" class="btn btn-danger btn-sm del_detail" data-id="' . str_replace('/', '-', $penawaran_detail->id) . '">
                             <i class="fa fa-trash"></i>
@@ -1170,7 +1172,7 @@ class Penawaran extends Admin_Controller
             $nilai_disc = ($get_ttl_harga->ttl_harga * $disc_val / 100);
         }
 
-        echo json_encode(['nilai_disc' => $nilai_disc, 'nilai_disc2' => number_format($nilai_disc, 2)]);
+        echo json_encode(['nilai_disc' => $nilai_disc, 'nilai_disc2' => number_format($nilai_disc)]);
     }
 
     public function hitung_all()
@@ -1209,15 +1211,15 @@ class Penawaran extends Admin_Controller
 
         echo json_encode([
             'total_harga' => $total_harga,
-            'total_harga2' => number_format($total_harga, 2),
+            'total_harga2' => number_format($total_harga),
             'nilai_disc' => $nilai_disc,
-            'nilai_disc2' => number_format($nilai_disc, 2),
+            'nilai_disc2' => number_format($nilai_disc),
             'total_after_disc' => $total_after_disc,
-            'total_after_disc2' => number_format($total_after_disc, 2),
+            'total_after_disc2' => number_format($total_after_disc),
             'nilai_ppn' => $nilai_ppn,
-            'nilai_ppn2' => number_format($nilai_ppn, 2),
+            'nilai_ppn2' => number_format($nilai_ppn),
             'total_grand_total' => $total_grand_total,
-            'total_grand_total2' => number_format($total_grand_total, 2)
+            'total_grand_total2' => number_format($total_grand_total)
         ]);
     }
 
@@ -1257,13 +1259,13 @@ class Penawaran extends Admin_Controller
                     <td>' . $penawaran_detail->kode_product . '</td>
                     <td>' . $penawaran_detail->konversi . ' ' . $penawaran_detail->packaging . '</td>
                     <td>' . $penawaran_detail->ral_code . '</td>
-                    <td class="text-right">' . number_format($penawaran_detail->qty, 2) . '</td>
-                    <td class="text-right">' . number_format($penawaran_detail->weight, 2) . '</td>
+                    <td class="text-right">' . number_format($penawaran_detail->qty) . '</td>
+                    <td class="text-right">' . number_format($penawaran_detail->weight) . '</td>
                     <td class="text-right">
-                        <input type="text" name="harga_satuan_' . str_replace('/', '-', $penawaran_detail->id) . '" id="" class="form-control form-control-sm autonum harga_satuan" data-id="' . str_replace('/', '-', $penawaran_detail->id) . '" value="' . number_format($penawaran_detail->harga_satuan, 2) . '">
+                        <input type="text" name="harga_satuan_' . str_replace('/', '-', $penawaran_detail->id) . '" id="" class="form-control form-control-sm autonum harga_satuan" data-id="' . str_replace('/', '-', $penawaran_detail->id) . '" value="' . number_format($penawaran_detail->harga_satuan) . '">
                     </td>
-                    <td class="text-right">' . number_format($penawaran_detail->free_stock, 2) . '</td>
-                    <td class="text-right">' . number_format($penawaran_detail->total_harga, 2) . '</td>
+                    <td class="text-right">' . number_format($penawaran_detail->free_stock) . '</td>
+                    <td class="text-right">' . number_format($penawaran_detail->total_harga) . '</td>
                     <td class="text-center">
                         <button type="button" class="btn btn-sm btn-danger del_detail" data-id="' . str_replace('/', '-', $penawaran_detail->id) . '">
                             <i class="fa fa-trash"></i>
@@ -1735,12 +1737,12 @@ class Penawaran extends Admin_Controller
                         <span class="text-danger">' . $get_nama_mandarin->nama_mandarin . '</span> <br> ' . $penawaran_detail->nm_product . '
                     </td>
                     <td class="text-center">' . $penawaran_detail->kode_product . '</td>
-                    <td class="text-center">' . number_format($penawaran_detail->qty, 2) . '</td>
-                    <td class="text-center">' . number_format($penawaran_detail->weight, 2) . '</td>
+                    <td class="text-center">' . number_format($penawaran_detail->qty) . '</td>
+                    <td class="text-center">' . number_format($penawaran_detail->weight) . '</td>
                     <td class="text-center">
-                        ' . number_format($penawaran_detail->harga_satuan, 2) . '
+                        ' . number_format($penawaran_detail->harga_satuan) . '
                     </td>
-                    <td class="text-center">' . number_format($penawaran_detail->total_harga, 2) . '</td>
+                    <td class="text-center">' . number_format($penawaran_detail->total_harga) . '</td>
                     <td class="text-center">
                         <button type="button" class="btn btn-sm btn-warning text-light edit_detail" data-id="' . str_replace('/', '-', $penawaran_detail->id) . '">
                             <i class="fa fa-edit"></i>
@@ -1806,7 +1808,7 @@ class Penawaran extends Admin_Controller
                 <tr>
                     <td colspan="4"></td>
                     <td class="text-left" colspan="3">Subtotal <span class="text-danger">(小计)</span></td>
-                    <td class="text-right total_all_harga">' . number_format($ttl_harga, 2) . '</td>
+                    <td class="text-right total_all_harga">' . number_format($ttl_harga) . '</td>
                 </tr>
                 <tr>
                     <td colspan="4"></td>
@@ -1853,7 +1855,7 @@ class Penawaran extends Admin_Controller
                     <td colspan="4"></td>
                     <td class="" colspan="3">Price After Discount <span class="text-danger">(折扣后价格)</span></td>
                     <td class="text-right total_after_disc">
-                        ' . number_format($nilai_after_disc, 2) . '
+                        ' . number_format($nilai_after_disc) . '
                     </td>
                 </tr>
                 <tr>
@@ -1863,7 +1865,7 @@ class Penawaran extends Admin_Controller
                         <input type="number" name="persen_ppn" id="" class="form-control  text-right persen_ppn" placeholder="Input PPN Percent" value="11" readonly>
                     </td>
                     <td class="text-right nilai_ppn">
-                        ' . number_format($nilai_ppn, 2) . '
+                        ' . number_format($nilai_ppn) . '
                     </td>
                 </tr>
                 <tr>
@@ -1872,7 +1874,7 @@ class Penawaran extends Admin_Controller
                         <span style="font-weight:bold;">Grand Total <span class="text-danger">(总计)</span></span>
                     </td>
                     <td class="text-right total_grand_total">
-                        ' . number_format($ttl_harga - $nilai_disc + $nilai_ppn + $biaya_pengiriman, 2) . '
+                        ' . number_format($ttl_harga - $nilai_disc + $nilai_ppn + $biaya_pengiriman) . '
                     </td>
                 </tr>
             </tbody>
@@ -2053,6 +2055,48 @@ class Penawaran extends Admin_Controller
             'pic_phone' => $pic_phone
         ]);
         $this->template->render('print_penawaran');
+    }
+
+    public function print_po_cust($id_penawaran){
+        // $id_penawaran = str_replace('-', '/', $id_penawaran);
+        // $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+
+        $get_penawaran = $this->db->query("SELECT * FROM ms_penawaran WHERE id_penawaran = '" . $id_penawaran . "' OR id_quote = '" . $id_penawaran . "'")->row();
+        // $get_penawaran_detail = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id_penawaran])->result();
+
+        $this->db->select('a.*, c.nama_mandarin, c.unit_nm, d.nm_packaging, e.nama_mandarin as mandarin_ral_code');
+        $this->db->from('ms_penawaran_detail a');
+        $this->db->join('ms_product_category3 b', 'b.curing_agent = a.id_product', 'left');
+        $this->db->join('ms_product_category3 c', 'c.id_category3 = a.id_product', 'left');
+        $this->db->join('master_packaging d', 'd.id = c.packaging', 'left');
+        $this->db->join('ms_product_category2 e', 'e.id_category2 = c.id_category2', 'left');
+        $this->db->where('a.id_penawaran =', $id_penawaran);
+        $this->db->group_by('a.id_product');
+        $get_penawaran_detail = $this->db->get()->result();
+
+        $pic_phone = '';
+        $this->db->select('a.phone_number');
+        $this->db->from('customer_pic a');
+        $this->db->where('a.id =', $get_penawaran->id_pic_cust);
+        $check_pic_phone = $this->db->get()->num_rows();
+        if ($check_pic_phone > 0) {
+            $this->db->select('a.phone_number');
+            $this->db->from('customer_pic a');
+            $this->db->where('a.id =', $get_penawaran->id_pic_cust);
+            $get_pic_phone = $this->db->get()->row();
+            $pic_phone = $get_pic_phone->phone_number;
+        }
+
+
+
+        $this->auth->restrict($this->viewPermission);
+        $this->template->title('Print Penawaran');
+        $this->template->set([
+            'data_penawaran' => $get_penawaran,
+            'data_penawaran_detail' => $get_penawaran_detail,
+            'pic_phone' => $pic_phone
+        ]);
+        $this->template->render('print_po_cust');
     }
 
     public function send_penawaran()

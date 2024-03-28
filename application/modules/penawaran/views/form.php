@@ -158,13 +158,13 @@
                             <td class="text-center"><?= $x ?></td>
                             <td class="text-center"><span class="text-danger"><?= $penawaran_detail->nama_mandarin ?></span> <br><?= $penawaran_detail->nm_product; ?></td>
                             <td class="text-center"><?= $penawaran_detail->kode_product ?></td>
-                            <td class="text-center"><?= number_format($penawaran_detail->qty, 2) ?></td>
-                            <td class="text-center"><?= number_format($penawaran_detail->weight, 2) ?></td>
+                            <td class="text-center"><?= number_format($penawaran_detail->qty) ?></td>
+                            <td class="text-center"><?= number_format($penawaran_detail->weight) ?></td>
                             <td class="text-center">
                                 <!-- <input type="text" name="harga_satuan_<?= str_replace('/', '-', $penawaran_detail->id) ?>" id="" class="form-control  autonum harga_satuan" data-id="<?= str_replace('/', '-', $penawaran_detail->id) ?>" value="<?= $penawaran_detail->harga_satuan ?>"> -->
-                                <?= number_format($penawaran_detail->harga_satuan, 2) ?>
+                                <?= number_format($penawaran_detail->harga_satuan) ?>
                             </td>
-                            <td class="text-center"><?= number_format($penawaran_detail->total_harga, 2) ?></td>
+                            <td class="text-center"><?= number_format($penawaran_detail->total_harga) ?></td>
                             <td class="text-center">
                                 <button type="button" class="btn btn-sm btn-warning text-light edit_detail" data-id="<?= str_replace('/', '-', $penawaran_detail->id) ?>">
                                     <i class="fa fa-edit"></i>
@@ -180,13 +180,13 @@
                     <tr>
                         <td colspan="4"></td>
                         <td class="text-left" colspan="3">Subtotal <span class="text-danger"> <br> 合计</span></td>
-                        <td class="text-right total_all_harga"><?= number_format($total_harga, 2) ?></td>
+                        <td class="text-right total_all_harga"><?= number_format($total_harga) ?></td>
                     </tr>
                     <tr>
                         <td colspan="4"></td>
                         <td class="">Delivery Fee <span class="text-danger"> <br> 运输费</span></td>
                         <td class="">
-                            <input type="text" name="biaya_pengiriman" id="" class="form-control  text-right biaya_pengiriman autonum" placeholder="Input Biaya Pengiriman" value="<?= (isset($data_penawaran)) ? number_format($data_penawaran->biaya_pengiriman, 2) : null ?>">
+                            <input type="text" name="biaya_pengiriman" id="" class="form-control  text-right biaya_pengiriman autonum" placeholder="Input Biaya Pengiriman" value="<?= (isset($data_penawaran)) ? number_format($data_penawaran->biaya_pengiriman) : null ?>">
                         </td>
                         <th>
                             <input type="text" name="dari_tmp" id="" class="form-control" value="<?= (isset($data_penawaran)) ? $data_penawaran->dari_tmp : null ?>" placeholder="- Dari -">
@@ -220,14 +220,14 @@
 
                         </td>
                         <td class="text-right disc_harga">
-                            <?= (isset($data_penawaran) ? number_format($data_penawaran->nilai_disc, 2) : null) ?>
+                            <?= (isset($data_penawaran) ? number_format($data_penawaran->nilai_disc) : null) ?>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="4"></td>
                         <td class="" colspan="3">Price After Discount <span class="text-danger"> <br> 折扣后价格</span></td>
                         <td class="text-right total_after_disc">
-                            <?= (isset($data_penawaran)) ? number_format($total_harga + $data_penawaran->biaya_pengiriman - $data_penawaran->nilai_disc, 2) : null ?>
+                            <?= (isset($data_penawaran)) ? number_format($total_harga + $data_penawaran->biaya_pengiriman - $data_penawaran->nilai_disc) : null ?>
                         </td>
                     </tr>
                     <tr>
@@ -237,7 +237,7 @@
                             <input type="number" name="persen_ppn" id="" class="form-control  text-right persen_ppn" placeholder="Input PPN Percent" value="11" readonly>
                         </td>
                         <td class="text-right nilai_ppn">
-                            <?= (isset($data_penawaran)) ? number_format($data_penawaran->ppn_num, 2) : null ?>
+                            <?= (isset($data_penawaran)) ? number_format($data_penawaran->ppn_num) : null ?>
                         </td>
                     </tr>
                     <tr>
@@ -246,7 +246,7 @@
                             <span style="font-weight:bold;">Total Amount <span class="text-danger"> <br> 总金额</span></span>
                         </td>
                         <td class="text-right total_grand_total">
-                            <?= (isset($data_penawaran)) ? number_format($total_harga - $data_penawaran->nilai_disc + $data_penawaran->ppn_num + $data_penawaran->biaya_pengiriman, 2) : null ?>
+                            <?= (isset($data_penawaran)) ? number_format($total_harga - $data_penawaran->nilai_disc + $data_penawaran->ppn_num + $data_penawaran->biaya_pengiriman) : null ?>
                         </td>
                     </tr>
                 </tbody>
@@ -628,11 +628,31 @@
             success: function(result) {
                 $('#table-product').html(result.hasil);
 
-                $('.autonum').autoNumeric();
-                $('.harga_satuan').autoNumeric();
-                $('.total_harga').autoNumeric();
-                $('.qty').autoNumeric();
-                $('.weight').autoNumeric();
+                $('.autonum').autoNumeric('init', {
+                    aSep: ',',
+                    aDec: '.',
+                    mDec: '0'
+                });
+                $('.harga_satuan').autoNumeric('init', {
+                    aSep: ',',
+                    aDec: '.',
+                    mDec: '0'
+                });
+                $('.total_harga').autoNumeric('init', {
+                    aSep: ',',
+                    aDec: '.',
+                    mDec: '0'
+                });
+                $('.qty').autoNumeric('init', {
+                    aSep: ',',
+                    aDec: '.',
+                    mDec: '0'
+                });
+                $('.weight').autoNumeric('init', {
+                    aSep: ',',
+                    aDec: '.',
+                    mDec: '0'
+                });
             }
         });
     }
@@ -651,12 +671,32 @@
             dropdownParent: $("#add-product")
         });
 
-        $('.autonum').autoNumeric();
+        $('.autonum').autoNumeric('init', {
+            aSep: ',',
+            aDec: '.',
+            mDec: '0'
+        });
 
-        $('.harga_satuan').autoNumeric();
-        $('.total_harga').autoNumeric();
-        $('.qty').autoNumeric();
-        $('.weight').autoNumeric();
+        $('.harga_satuan').autoNumeric('init', {
+            aSep: ',',
+            aDec: '.',
+            mDec: '0'
+        });
+        $('.total_harga').autoNumeric('init', {
+            aSep: ',',
+            aDec: '.',
+            mDec: '0'
+        });
+        $('.qty').autoNumeric('init', {
+            aSep: ',',
+            aDec: '.',
+            mDec: '0'
+        });
+        $('.weight').autoNumeric('init', {
+            aSep: ',',
+            aDec: '.',
+            mDec: '0'
+        });
     });
 
     $(document).on('click', '.add_product', function() {
