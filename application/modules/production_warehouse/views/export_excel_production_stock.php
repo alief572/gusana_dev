@@ -1,4 +1,7 @@
-
+<?php 
+    header('Content-Type: application/vnd.ms-excel');
+    header('Content-Disposition: attachment; filename="Production Material Stock Report - '.date('d F Y').'.xls"');
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,7 +14,7 @@
 
 <body>
     <div style="text-align: center;">
-        <h2>PT. GUNUNG SAGARA BUANA - Production Stock Report</h2>
+        <h2>PT. GUNUNG SAGARA BUANA - Production Material Stock Report</h2>
         <h4>Per <?= date('d F Y') ?></h4>
     </div>
     <div class="mt-5">

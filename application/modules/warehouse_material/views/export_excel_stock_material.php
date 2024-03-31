@@ -1,6 +1,6 @@
 <?php 
     header('Content-Type: application/vnd.ms-excel');
-    header('Content-Disposition: attachment; filename="Laporan Stok Material - '.date('d F Y').'.xls"');
+    header('Content-Disposition: attachment; filename="Material Stock Report - '.date('d F Y').'.xls"');
 ?>
 <!DOCTYPE html>
 <html lang="en">
