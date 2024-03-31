@@ -139,8 +139,8 @@
                         }
 
                         $stock_booking = 0;
-                        if (!empty($get_stock_booking->stock_booking)) {
-                            $stock_booking = $get_free_stock->qty_all;
+                        if (!empty($get_stock_booking)) {
+                            $stock_booking = $get_stock_booking->stock_booking;
                         }
 
                         $free_stock = ($qty_all - $stock_booking);

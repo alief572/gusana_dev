@@ -33,6 +33,48 @@ class So_Invoice extends Admin_Controller
         date_default_timezone_set('Asia/Bangkok');
     }
 
+    public function print_po_cust($id_penawaran){
+        // $id_penawaran = str_replace('-', '/', $id_penawaran);
+        // $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
+
+        $get_penawaran = $this->db->query("SELECT * FROM ms_penawaran WHERE id_penawaran = '" . $id_penawaran . "' OR id_quote = '" . $id_penawaran . "'")->row();
+        // $get_penawaran_detail = $this->db->get_where('ms_penawaran', ['id_penawaran' => $id_penawaran])->result();
+
+        $this->db->select('a.*, c.nama_mandarin, c.unit_nm, d.nm_packaging, e.nama_mandarin as mandarin_ral_code');
+        $this->db->from('ms_penawaran_detail a');
+        $this->db->join('ms_product_category3 b', 'b.curing_agent = a.id_product', 'left');
+        $this->db->join('ms_product_category3 c', 'c.id_category3 = a.id_product', 'left');
+        $this->db->join('master_packaging d', 'd.id = c.packaging', 'left');
+        $this->db->join('ms_product_category2 e', 'e.id_category2 = c.id_category2', 'left');
+        $this->db->where('a.id_penawaran =', $id_penawaran);
+        $this->db->group_by('a.id_product');
+        $get_penawaran_detail = $this->db->get()->result();
+
+        $pic_phone = '';
+        $this->db->select('a.phone_number');
+        $this->db->from('customer_pic a');
+        $this->db->where('a.id =', $get_penawaran->id_pic_cust);
+        $check_pic_phone = $this->db->get()->num_rows();
+        if ($check_pic_phone > 0) {
+            $this->db->select('a.phone_number');
+            $this->db->from('customer_pic a');
+            $this->db->where('a.id =', $get_penawaran->id_pic_cust);
+            $get_pic_phone = $this->db->get()->row();
+            $pic_phone = $get_pic_phone->phone_number;
+        }
+
+
+
+        $this->auth->restrict($this->viewPermission);
+        $this->template->title('Print Penawaran');
+        $this->template->set([
+            'data_penawaran' => $get_penawaran,
+            'data_penawaran_detail' => $get_penawaran_detail,
+            'pic_phone' => $pic_phone
+        ]);
+        $this->template->render('print_po_cust');
+    }
+
     public function getData()
     {
         $requestData    = $_REQUEST;
@@ -103,7 +145,9 @@ class So_Invoice extends Admin_Controller
 
             $request = '<a href="penawaran/request_approval/' . str_replace('/', '-', $row['id_penawaran']) . '" class="btn btn-warning btn-sm request_approval" data-toggle="tooltip" title="Request Approval" data-id="' . str_replace('/', '-', $row['id_penawaran']) . '"><i class="fa fa-user"></i></a>';
 
-            $buttons     = $view;
+            $print_po = '<button type="button" class="btn btn-sm btn-warning print_po" data-toggle="tooltip" title="Print PO" data-id="' . str_replace('/', '-', $row['id_penawaran']) . '"><i class="fa fa-print"></i></button>';
+
+            $buttons     = $view. ' '. $print_po;
 
             // if ($row['sts'] == '' || $row['sts'] == null) {
             //     $buttons = $edit . ' ' . $request . ' ' . $print;
@@ -140,7 +184,7 @@ class So_Invoice extends Admin_Controller
             $nestedData[]  = 'Rp. ' . number_format($row['nilai_penawaran'], 2);
             $nestedData[]  = $view_po;
             $nestedData[]  = $view_penawaran_deal;
-            $nestedData[]  = '<button type="button" class="btn btn-sm btn-primary print_so" data-id="' . str_replace('/', '-', $row['id_penawaran']) . '">Print SO</button>';
+            $nestedData[]  = '<button type="button" class="btn btn-sm btn-primary print_so" data-id="' . str_replace('/', '-', $row['id_penawaran']) . '">Print SO</button> '.'<button type="button" class="btn btn-sm btn-warning print_po" data-toggle="tooltip" title="Print PO" data-id="' . str_replace('/', '-', $row['id_penawaran']) . '">Print PO</button>';
             $data[] = $nestedData;
             $urut1++;
             $urut2++;

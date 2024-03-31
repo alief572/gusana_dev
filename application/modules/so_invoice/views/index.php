@@ -307,6 +307,12 @@ $ENABLE_DELETE  = has_permission('So_Invoice.Delete');
         // window.location.href = siteurl + thisController + 'print_penawaran/' + id;
     });
 
+    $(document).on('click', '.print_po', function(){
+        var id = $(this).data('id');
+
+        window.open(siteurl + thisController + 'print_po_cust/' + id, '_blank');
+    });
+
     function loadData() {
 
         var oTable = $('#dataTable').DataTable({

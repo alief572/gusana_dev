@@ -119,16 +119,16 @@ class Penawaran extends Admin_Controller
             $buttons     = $view . "&nbsp;" . $edit . "&nbsp;" . $delete . "&nbsp;" . $print . "&nbsp;" . $send . "&nbsp;" . $request . "&nbsp;" . $print_po;
 
             if ($row['sts'] == '' || $row['sts'] == null || $row['sts'] == 'rejected') {
-                $buttons = $edit . ' ' . $request . ' ' . $print . ' ' . $print_po;
+                $buttons = $edit . ' ' . $request . ' ' . $print;
             }
             if ($row['sts'] == 'approved') {
-                $buttons = $print . ' ' . $view . ' ' . $send . ' ' . $print_po;
+                $buttons = $print . ' ' . $view . ' ' . $send;
             }
             if ($row['sts'] == 'request_approval') {
                 $buttons = $view;
             }
             if ($row['sts'] == 'send') {
-                $buttons = $revisi . ' ' . $print . ' ' . $create_so . ' ' . $loss . ' ' . $print_po;
+                $buttons = $revisi . ' ' . $print . ' ' . $create_so . ' ' . $loss;
             }
 
             $status = '';
