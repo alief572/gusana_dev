@@ -1773,4 +1773,15 @@ class Warehouse_material extends Admin_Controller
 			'hasil' => $hasil
 		]);
 	}
+
+	public function export_excel_stock_material(){
+		$data = $this->Warehouse_material_model->get_material_stock();
+		// $this->template->set('results', [
+		// 	'list_material_stock' => $data
+		// ]);
+		// $this->template->title('Stock Material');
+		$this->load->view('export_excel_stock_material', ['results' => [
+			'list_material_stock' => $data
+		]]);
+	}
 }

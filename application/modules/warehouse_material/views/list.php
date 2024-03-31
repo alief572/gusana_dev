@@ -19,6 +19,9 @@ $id_bentuk = $this->uri->segment(3);
 		<span class="pull-right">
 		</span>
 	</div>
+	<button type="button" class="btn btn-sm btn-success export_excel_stock_material">
+		<i class="fa fa-download"></i> Export Excel
+	</button>
 	<!-- /.box-header -->
 	<!-- /.box-header -->
 	<div class="box-body" style="padding: 10px;">
@@ -124,6 +127,10 @@ $id_bentuk = $this->uri->segment(3);
 				$('.history_material_' + id_category1).html('<i class="fa fa-eye"></i>');
 			}
 		});
+	});
+
+	$(document).on('click', '.export_excel_stock_material', function(){
+		window.open(siteurl + thisController + 'export_excel_stock_material', '_blank');
 	});
 
 	// function loadData() {

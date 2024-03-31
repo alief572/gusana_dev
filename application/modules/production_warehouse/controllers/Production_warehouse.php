@@ -614,4 +614,15 @@ class Production_warehouse extends Admin_Controller
 			'hasil' => $hasil
 		]);
 	}
+
+	public function export_excel_production_stock(){
+		$data = $this->Production_warehouse_model->get_material_stock();
+		// $this->template->set('results', [
+		// 	'list_material_stock' => $data
+		// ]);
+		// $this->template->title('Production Warehouse Stock');
+		$this->load->view('export_excel_production_stock', ['results' => [
+			'list_material_stock' => $data
+		]]);
+	}
 }
