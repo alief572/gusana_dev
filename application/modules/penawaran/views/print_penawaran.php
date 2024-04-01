@@ -185,8 +185,8 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                                 <td class="text-center">' . $penawaran_detail->nm_packaging . '</td>
                                 <td class="text-center">' . $penawaran_detail->qty . '</td>
                                 <td class="text-center">' . $penawaran_detail->weight . '</td>
-                                <td class="text-right">Rp. ' . number_format($penawaran_detail->harga_satuan, 2) . '</td>
-                                <td class="text-right">Rp. ' . number_format($penawaran_detail->total_harga, 2) . '</td>
+                                <td class="text-right">Rp. ' . number_format($penawaran_detail->harga_satuan) . '</td>
+                                <td class="text-right">Rp. ' . number_format($penawaran_detail->total_harga) . '</td>
                                 <td class="text-left">' . $penawaran_detail->keterangan . '</td>
                             </tr>
                         ';
@@ -202,13 +202,13 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             Shipping Fee
                         </span>
                     </th>
-                    <td class="text-right">Rp. <?= number_format($data_penawaran->biaya_pengiriman, 2) ?></td>
+                    <td class="text-right">Rp. <?= number_format($data_penawaran->biaya_pengiriman) ?></td>
                 </tr>
                 <tr class="non-bordered">
                     <th colspan="10" class="text-right">
                         <span>打折扣 <br> Discount <?= ($data_penawaran->disc_persen > 0) ? $data_penawaran->disc_persen . '%' : null ?></span>
                     </th>
-                    <td class="text-right">Rp. <?= number_format($data_penawaran->nilai_disc, 2) ?></td>
+                    <td class="text-right">Rp. <?= number_format($data_penawaran->nilai_disc) ?></td>
                 </tr>
                 <tr class="non-bordered">
                     <th colspan="10" class="text-right">
@@ -217,13 +217,13 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             Subtotal
                         </span>
                     </th>
-                    <td class="text-right">Rp. <?= number_format($ttl_harga + $data_penawaran->biaya_pengiriman - $data_penawaran->nilai_disc, 2) ?></td>
+                    <td class="text-right">Rp. <?= number_format($ttl_harga + $data_penawaran->biaya_pengiriman - $data_penawaran->nilai_disc) ?></td>
                 </tr>
                 <tr class="non-bordered">
                     <th colspan="10" class="text-right">
                         增值税PPN11%<br>Value added tax
                     </th>
-                    <td class="text-right">Rp. <?= number_format($data_penawaran->ppn_num, 2) ?></td>
+                    <td class="text-right">Rp. <?= number_format($data_penawaran->ppn_num) ?></td>
                 </tr>
                 <tr class="non-bordered">
                     <th colspan="10" class="text-right">
@@ -232,7 +232,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             Total Amount
                         </span>
                     </th>
-                    <td class="text-right">Rp. <?= number_format($ttl_harga - $data_penawaran->nilai_disc + $data_penawaran->ppn_num + $data_penawaran->biaya_pengiriman, 2) ?></td>
+                    <td class="text-right">Rp. <?= number_format($ttl_harga - $data_penawaran->nilai_disc + $data_penawaran->ppn_num + $data_penawaran->biaya_pengiriman) ?></td>
                 </tr>
             </tbody>
         </table>
