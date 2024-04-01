@@ -34,12 +34,22 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                             <th class="non-bordered">PT. GUNUNG SAGARA BUANA</th>
                         </tr>
                         <tr class="non-bordered">
+                            <th class="non-bordered">ADDRESS</th>
+                            <th class="non-bordered">:</th>
+                            <th class="non-bordered">Jl. Gusana, RT.015/RW.005, Jatiasih, Kota Bekasi, Jawa Barat 17426</th>
+                        </tr>
+                        <tr class="non-bordered">
                             <th class="non-bordered">AFTER SALES</th>
                             <th class="non-bordered">:</th>
                             <th class="non-bordered">(021)-48675810</th>
                         </tr>
                         <tr class="non-bordered">
-                            <th class="non-bordered">SERVICE E-MAIL</th>
+                            <th class="non-bordered">WEBSITE</th>
+                            <th class="non-bordered">:</th>
+                            <th class="non-bordered">https://www.gusanacoating.com</th>
+                        </tr>
+                        <tr class="non-bordered">
+                            <th class="non-bordered">EMAIL</th>
                             <th class="non-bordered">:</th>
                             <th class="non-bordered">Gusanaservices@gmail.com</th>
                         </tr>
@@ -56,20 +66,20 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         <table class="w-100 top_table">
             <tr class="non-bordered">
                 <th class="non-bordered text-center" colspan="6">
-                    <h2><span style="font-weight: bold;">GUSANA 订单</span></h2>
+                    <h2><span style="font-weight: bold;">报  价  单 <br> Q U O T A T I O N</span></h2>
                 </th>
             </tr>
             <tr class="non-bordered">
                 <th class="non-bordered">
                     <span style="font-weight:bold;">
-                        Customer Name (客户名称)
+                    客户名称 <br> Customer Name
                     </span>
                 </th>
                 <th class="non-bordered font-bold">:</th>
                 <th class="non-bordered font-bold"><?= $data_penawaran->nm_cust ?></th>
                 <th class="non-bordered">
                     <span class="font-bold">
-                        Quote No (报价编号)
+                        报价编号 <br> Quote Number
                     </span>
                 </th>
                 <th class="non-bordered font-bold">:</th>
@@ -78,14 +88,14 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             <tr class="non-bordered">
                 <th class="non-bordered">
                     <span class="font-bold">
-                        Customer Address (收货地址 )
+                        收货地址 <br> Shipping Address
                     </span>
                 </th>
                 <th class="non-bordered">:</th>
                 <th class="non-bordered" style="min-width: 300px; max-width: 300px;"><?= $data_penawaran->address_cust ?></th>
                 <th class="non-bordered">
                     <span>
-                        Quote Date (报价日期)
+                        报价日期 <br> Quote Date
                     </span>
                 </th>
                 <th class="non-bordered">:</th>
@@ -94,27 +104,26 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
             <tr class="non-bordered">
                 <th class="non-bordered">
                     <span>
-                        Contact Person (联系人 )
+                        联系人 <br> Contact Person
                     </span>
                 </th>
                 <th class="non-bordered">:</th>
                 <th class="non-bordered" style="min-width: 300px; max-width: 300px;"><?= $data_penawaran->nm_pic_cust ?></th>
-                <?php
-                if ($data_penawaran->deliver_date !== null) {
-                    echo '
-                        <th class="non-bordered">
-                            <span>
-                                Delivery Date (交货日期)
-                            </span>
-                        </th>
-                        <th class="non-bordered">:</th>
-                        <th class="non-bordered" style="min-width: 300px; max-width: 300px;">' . $data_penawaran->deliver_date . '</th>
-                ';
-                }
-                ?>
+                <th class="non-bordered">
+                    <span>
+                        报价人 <br> Sales
+                    </span>
+                </th>
+                <th class="non-bordered">:</th>
+                <th class="non-bordered" style="min-width: 300px; max-width: 300px;"><?= $data_penawaran->nm_marketing ?></th>
             </tr>
             <tr>
-                <th class="non-bordered text-right" colspan="2">:</th>
+                <th class="non-bordered">
+                    <span>
+                        电话 <br> Phone
+                    </span>
+                </th>
+                <th class="non-bordered text-right" >:</th>
                 <th class="non-bordered" style="min-width: 300px; max-width: 300px;"><?= $pic_phone ?></th>
             </tr>
         </table>
@@ -152,7 +161,7 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
                         <span>单价<br>Unit Price (Rp/kg)</span>
                     </th>
                     <th class="text-center">
-                        <span> 金额<br>Total Amount</span>
+                        <span> 金额<br>Total Price</span>
                     </th>
                     <th class="text-center">
                         <span>备注<br>Remark</span>
@@ -229,35 +238,42 @@ $ENABLE_DELETE  = has_permission('Penawaran.Delete');
         </table>
         <table class=" w-100" border="1">
             <tr class="non-bordered">
-                <th class="text-center">
+                <td class="text-center" width="220px">
                     <span>备注<br>Remark
                     </span>
-                </th>
-                <th class="">
+            </td>
+                <td class="">
                     <span>
                         <?php
-                        if ($data_penawaran->deliver_type == '2') {
-                            echo '
-                            1.以上价格不含税<span style="color: red;">不含运费</span>(增值税 VAT 11%) <br>
-                            1. The above prices do not include tax and shipping fees (value-added tax VAT 11%) <br>
-                            2.以上产品价格有效期为15天。产品价格可能随时变化，根据原材料价格 <br>
-                            2. The above product prices are valid for 15 days. The product price may change at any time, depending on the raw material costs. <br>
-                            3.付款方式: 订单盖章确认后付50%，出厂前支付尾款。<br>
-                            3. Payment method: 50% will be paid after the order is stamped and confirmed, and the remaining balance is to be paid before the factory delivery.
-                        ';
-                        } else {
-                            echo '
-                            1.以上价格含税含运费(增值税 VAT 11%) <br>
-                            1. The above prices include tax and shipping fees (value-added tax VAT 11%) <br>
-                            2.以上产品价格有效期为15天。产品价格可能随时变化，根据原材料价格 <br>
-                            2. The above product prices are valid for 15 days. The product price may change at any time, depending on the raw material costs. <br>
-                            3.付款方式：付款方式是在商品发货前需提前支付。<br>
-                            3. Payment method: The payment method requires advance payment before the goods are shipped.
-                        ';
-                        }
+                        // if ($data_penawaran->deliver_type == '2') {
+                        //     echo '
+                        //     1.以上价格不含税<span style="color: red;">不含运费</span>(增值税 VAT 11%) <br>
+                        //     1. The above prices do not include tax and shipping fees (value-added tax VAT 11%) <br>
+                        //     2.以上产品价格有效期为15天。产品价格可能随时变化，根据原材料价格 <br>
+                        //     2. The above product prices are valid for 15 days. The product price may change at any time, depending on the raw material costs. <br>
+                        //     3.付款方式: 订单盖章确认后付50%，出厂前支付尾款。<br>
+                        //     3. Payment method: 50% will be paid after the order is stamped and confirmed, and the remaining balance is to be paid before the factory delivery.
+                        // ';
+                        // } else {
+                        //     echo '
+                        //     1.以上价格含税含运费(增值税 VAT 11%) <br>
+                        //     1. The above prices include tax and shipping fees (value-added tax VAT 11%) <br>
+                        //     2.以上产品价格有效期为15天。产品价格可能随时变化，根据原材料价格 <br>
+                        //     2. The above product prices are valid for 15 days. The product price may change at any time, depending on the raw material costs. <br>
+                        //     3.付款方式：付款方式是在商品发货前需提前支付。<br>
+                        //     3. Payment method: The payment method requires advance payment before the goods are shipped.
+                        // ';
+                        // }
                         ?>
+
+                            <b style="font-weight: bold;">1. 以上价格含税(增值税 PPN 11%)，订单数量在1000Kg以下运费客户自费，超过1000Kg工厂负责送至雅加达指定的码头仓库。</b><br>
+                            The above prices include tax (Value Added Tax VAT 11%). Shipping costs for order quantities below 1000Kg are to be covered by the customer. For orders exceeding 1000kg, the factory will arrange delivery to the specified port warehouse in Jakarta. <br>
+                            <b style="font-weight: bold;">2. 以上产品价格有效期为10天。产品价格可能随时变化，根据市场原材料价格的涨跌。</b><br>
+                            The validity period for the above product prices is 10 days. Product prices are subject to change at any time based on fluctuations in raw material prices. <br>
+                            <b style="font-weight: bold;">3. 付款方式：订单签字或盖章后支付50%货款开始生产，出厂前支付余款50%。特殊订单面议。</b><br>
+                            Payment Terms: Commencement of production requires a 50% payment of the total invoice upon signing or stamping the order. The remaining 50% balance is due prior to shipment. Special orders are subject to negotiation. <br>
                     </span>
-                </th>
+                </td>
             </tr>
         </table>
     </div>
