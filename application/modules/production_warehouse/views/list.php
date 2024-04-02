@@ -20,9 +20,14 @@ $id_bentuk = $this->uri->segment(3);
 		</span>
 	</div>
 
-	<button type="button" class="btn btn-sm btn-success export_excel_production_stock">
-		<i class="fa fa-download"></i> Export Excel Production Stock
-	</button>
+	<div class="form-inline">
+		<input type="date" name="tgl_from" id="" class="form-control tgl_from">
+		<spanc class="ml-2">S/D</span>
+		<input type="date" name="tgl_to" id="" class="form-control ml-2 tgl_to">
+		<button type="button" class="btn btn-sm btn-success export_excel_production_stock">
+			<i class="fa fa-download"></i> Export Excel Production Stock
+		</button>
+	</div>
 	<!-- /.box-header -->
 	<!-- /.box-header -->
 	<div class="box-body" style="padding: 10px;">
@@ -133,7 +138,18 @@ $id_bentuk = $this->uri->segment(3);
 	});
 
 	$(document).on('click', '.export_excel_production_stock', function(){
-		window.open(siteurl + thisController + 'export_excel_production_stock', '_blank');
+		var tgl_from = $('.tgl_from').val();
+		var tgl_to = $('.tgl_to').val();
+
+		if(tgl_from == null || tgl_to == null || tgl_from == '' || tgl_to == ''){
+			Swal.fire({
+				title: 'Warning !',
+				text: 'Please make sure from and to date is not empty !',
+				icon: 'error'
+			});
+		}else{
+			window.open(siteurl + thisController + 'export_excel_production_stock/' + tgl_from + '/' + tgl_to, '_blank');
+		}
 	});
 
 	// function loadData() {

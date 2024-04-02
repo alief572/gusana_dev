@@ -19,9 +19,17 @@ $id_bentuk = $this->uri->segment(3);
 		<span class="pull-right">
 		</span>
 	</div>
-	<button type="button" class="btn btn-sm btn-success export_excel_stock_material">
-		<i class="fa fa-download"></i> Export Excel
-	</button>
+
+	<div class="col-12">
+		<div class="form-inline">
+			<input type="date" name="tgl_from" id="" class="form-control form-control-sm tgl_from">
+			<span class="ml-5">S/D</span>
+			<input type="date" name="tgl_to" id="" class="form-control form-control-sm ml-5 tgl_to">
+			<button type="button" class="btn btn-sm btn-success ml-5 export_excel_stock_material">
+				<i class="fa fa-download"></i> Export Excel
+			</button>
+		</div>
+	</div>
 	<!-- /.box-header -->
 	<!-- /.box-header -->
 	<div class="box-body" style="padding: 10px;">
@@ -129,8 +137,17 @@ $id_bentuk = $this->uri->segment(3);
 		});
 	});
 
-	$(document).on('click', '.export_excel_stock_material', function(){
-		window.open(siteurl + thisController + 'export_excel_stock_material', '_blank');
+	$(document).on('click', '.export_excel_stock_material', function() {
+		var tgl_from = $('.tgl_from').val();
+		var tgl_to = $('.tgl_to').val();
+
+		// alert(siteurl + thisController + 'export_excel_stock_material/' + tgl_from + '/' + tgl_to);
+		
+		if(tgl_from == null || tgl_to == null || tgl_from == '' || tgl_to == ''){
+			alert('Please make sure from and to date is filled !');
+		}else{
+			window.open(siteurl + thisController + 'export_excel_stock_material/' + tgl_from + '/' + tgl_to, '_blank');
+		}
 	});
 
 	// function loadData() {

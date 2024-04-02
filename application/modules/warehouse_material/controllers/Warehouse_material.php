@@ -1774,14 +1774,34 @@ class Warehouse_material extends Admin_Controller
 		]);
 	}
 
-	public function export_excel_stock_material(){
-		$data = $this->Warehouse_material_model->get_material_stock();
+	public function export_excel_stock_material($tgl_from = null, $tgl_to = null){
+		$data = $this->db->query("
+		SELECT
+			a.*,
+			b.nama as category_nm,
+			c.nm_packaging,
+			d.nm_unit,
+			f.konversi,
+			((e.qty_stock) / e.konversi) AS stock_unit
+		FROM
+			ms_inventory_category2 a
+			LEFT JOIN ms_inventory_category1 b ON b.id_category1 = a.id_category1
+			LEFT JOIN ms_inventory_category3 f ON f.id_category2 = a.id_category2
+			LEFT JOIN m_unit d ON d.id_unit = f.unit
+			LEFT JOIN master_packaging c ON c.id = f.packaging
+			LEFT JOIN ms_stock_material e ON e.id_category1 = b.id_category1
+		WHERE
+			1=1 AND a.deleted = '0'
+		GROUP BY a.id_category2
+		")->result();
 		// $this->template->set('results', [
 		// 	'list_material_stock' => $data
 		// ]);
 		// $this->template->title('Stock Material');
 		$this->load->view('export_excel_stock_material', ['results' => [
-			'list_material_stock' => $data
+			'list_material_stock' => $data,
+			'tgl_from' => $tgl_from,
+			'tgl_to' => $tgl_to
 		]]);
 	}
 }

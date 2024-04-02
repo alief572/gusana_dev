@@ -615,14 +615,34 @@ class Production_warehouse extends Admin_Controller
 		]);
 	}
 
-	public function export_excel_production_stock(){
-		$data = $this->Production_warehouse_model->get_material_stock();
+	public function export_excel_production_stock($tgl_from, $tgl_to){
+		$data = $this->db->query('
+			SELECT
+				a.*,
+				b.nama as category_nm,
+				c.nm_packaging,
+				d.nm_unit,
+				f.konversi,
+				(SUM(e.qty_stock) / f.konversi) AS stock_unit
+			FROM
+				ms_inventory_category2 a
+				LEFT JOIN ms_inventory_category1 b ON b.id_category1 = a.id_category1
+				LEFT JOIN ms_inventory_category3 f ON f.id_category2 = a.id_category2
+				LEFT JOIN m_unit d ON d.id_unit = f.unit
+				LEFT JOIN master_packaging c ON c.id = f.packaging
+				LEFT JOIN ms_stock_material_production e ON e.id_category1 = b.id_category1
+			WHERE
+				1=1 AND a.deleted = "0"
+			GROUP BY a.id_category2
+		')->result();
 		// $this->template->set('results', [
 		// 	'list_material_stock' => $data
 		// ]);
 		// $this->template->title('Production Warehouse Stock');
 		$this->load->view('export_excel_production_stock', ['results' => [
-			'list_material_stock' => $data
+			'list_material_stock' => $data,
+			'tgl_from' => $tgl_from,
+			'tgl_to' => $tgl_to
 		]]);
 	}
 }
