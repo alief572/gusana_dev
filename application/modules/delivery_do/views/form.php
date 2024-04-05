@@ -17,7 +17,7 @@
                     <th>Delivery Date</th>
                     <th>:</th>
                     <td>
-                        <input type="date" name="deliver_date" id="" class="form-control form-control-sm" min="<?= date('Y-m-d') ?>" required>
+                        <input type="date" name="deliver_date" id="" class="form-control form-control-sm" required>
                     </td>
                 </tr>
             </table>
