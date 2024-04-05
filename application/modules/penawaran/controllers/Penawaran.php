@@ -612,14 +612,8 @@ class Penawaran extends Admin_Controller
                     // print_r($jum_pesanan);
                     // exit;
 
-                    $kode_cust = '';
-                    $x = 1;
-                    foreach ($get_customer as $customer) :
-                        if ($customer->id_customer == $post['customer']) {
-                            $kode_cust = $x;
-                        }
-                        $x++;
-                    endforeach;
+                    $kode_cust = $get_customer->kode_customer;
+                   
 
 
                     $id_quote = 'G' . $get_kode_sales->kode_angka . '-' . sprintf('%03s', $kode_cust) . '-' . $jum_pesanan . '-' . date('Ymd', strtotime($post['tgl_penawaran']));
