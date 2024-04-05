@@ -403,12 +403,12 @@ class Penawaran extends Admin_Controller
             $get_total_harga = $this->db->get()->row();
 
             $nilai_disc = 0;
-            if ($post['disc_val'] > 0 && $post['disc_val'] !== '') {
-                $nilai_disc = $post['disc_val'];
-            }
-            if ($post['disc_per'] > 0 && $post['disc_per'] !== '') {
-                $nilai_disc = ($get_total_harga->ttl_harga * $post['disc_per'] / 100);
-            }
+            // if ($post['disc_val'] > 0 && $post['disc_val'] !== '') {
+            //     $nilai_disc = $post['disc_val'];
+            // }
+            // if ($post['disc_per'] > 0 && $post['disc_per'] !== '') {
+            //     $nilai_disc = ($get_total_harga->ttl_harga * $post['disc_per'] / 100);
+            // }
 
             $ppn_num = (($get_total_harga->ttl_harga + str_replace(',', '', $post['biaya_pengiriman']) - ($nilai_disc)) * $post['persen_ppn'] / 100);
 
@@ -432,9 +432,6 @@ class Penawaran extends Admin_Controller
                         'tgl_penawaran' => $post['tgl_penawaran'],
                         'ppn_type' => $post['ppn_type'],
                         'total' => $get_total_harga->ttl_harga,
-                        'disc_num' => $post['disc_val'],
-                        'disc_persen' => $post['disc_per'],
-                        'nilai_disc' => $nilai_disc,
                         'ppn_persen' => $post['persen_ppn'],
                         'ppn_num' => $ppn_num,
                         'biaya_pengiriman' => str_replace(',', '', $post['biaya_pengiriman']),
@@ -495,9 +492,6 @@ class Penawaran extends Admin_Controller
                                 'tgl_penawaran' => $post['tgl_penawaran'],
                                 'ppn_type' => $post['ppn_type'],
                                 'total' => $get_total_harga->ttl_harga,
-                                'disc_num' => $post['disc_val'],
-                                'disc_persen' => $post['disc_per'],
-                                'nilai_disc' => $nilai_disc,
                                 'ppn_persen' => $post['persen_ppn'],
                                 'ppn_num' => $ppn_num,
                                 'biaya_pengiriman' => str_replace(',', '', $post['biaya_pengiriman']),
@@ -525,9 +519,6 @@ class Penawaran extends Admin_Controller
                                 'tgl_penawaran' => $post['tgl_penawaran'],
                                 'ppn_type' => $post['ppn_type'],
                                 'total' => $get_total_harga->ttl_harga,
-                                'disc_num' => $post['disc_val'],
-                                'disc_persen' => $post['disc_per'],
-                                'nilai_disc' => $nilai_disc,
                                 'ppn_persen' => $post['persen_ppn'],
                                 'ppn_num' => $ppn_num,
                                 'biaya_pengiriman' => str_replace(',', '', $post['biaya_pengiriman']),
@@ -648,9 +639,6 @@ class Penawaran extends Admin_Controller
                         'tgl_penawaran' => $post['tgl_penawaran'],
                         'ppn_type' => $post['ppn_type'],
                         'total' => $get_total_harga->ttl_harga,
-                        'disc_num' => $post['disc_val'],
-                        'disc_persen' => $post['disc_per'],
-                        'nilai_disc' => $nilai_disc,
                         'ppn_persen' => $post['persen_ppn'],
                         'ppn_num' => $ppn_num,
                         'grand_total' => $grand_total,
@@ -1156,8 +1144,8 @@ class Penawaran extends Admin_Controller
         $id_penawaran = $this->input->post('id_penawaran');
         // $id_penawaran = str_replace('-', '/', $id_penawaran);
         // $id_penawaran = str_replace('SP/', 'SP-', $id_penawaran);
-        $disc_val = $this->input->post('disc_val');
-        $disc_type = $this->input->post('disc_type');
+        // $disc_val = $this->input->post('disc_val');
+        // $disc_type = $this->input->post('disc_type');
 
         $this->db->select('SUM(a.total_harga) AS ttl_harga');
         $this->db->from('ms_penawaran_detail a');
@@ -1165,12 +1153,12 @@ class Penawaran extends Admin_Controller
         $get_ttl_harga = $this->db->get()->row();
 
         $nilai_disc = 0;
-        if ($disc_type == "val") {
-            $nilai_disc = $disc_val;
-        }
-        if ($disc_type == "per") {
-            $nilai_disc = ($get_ttl_harga->ttl_harga * $disc_val / 100);
-        }
+        // if ($disc_type == "val") {
+        //     $nilai_disc = $disc_val;
+        // }
+        // if ($disc_type == "per") {
+        //     $nilai_disc = ($get_ttl_harga->ttl_harga * $disc_val / 100);
+        // }
 
         echo json_encode(['nilai_disc' => $nilai_disc, 'nilai_disc2' => number_format($nilai_disc)]);
     }
@@ -1179,8 +1167,8 @@ class Penawaran extends Admin_Controller
     {
         $id_penawaran = $this->input->post('id_penawaran');
         // $id_penawaran = str_replace('-', '/', $id_penawaran);
-        $disc_val = $this->input->post('disc_val');
-        $disc_per = $this->input->post('disc_per');
+        // $disc_val = $this->input->post('disc_val');
+        // $disc_per = $this->input->post('disc_per');
         $persen_ppn = $this->input->post('persen_ppn');
         $ppn_type = $this->input->post('ppn_type');
         $biaya_pengiriman = $this->input->post('biaya_pengiriman');
@@ -1193,12 +1181,12 @@ class Penawaran extends Admin_Controller
         $total_harga = $get_ttl_harga->ttl_harga;
 
         $nilai_disc = 0;
-        if ($disc_val > 0 && $disc_val !== '') {
-            $nilai_disc = $disc_val;
-        }
-        if ($disc_per > 0 && $disc_per !== '') {
-            $nilai_disc = ($get_ttl_harga->ttl_harga * $disc_per / 100);
-        }
+        // if ($disc_val > 0 && $disc_val !== '') {
+        //     $nilai_disc = $disc_val;
+        // }
+        // if ($disc_per > 0 && $disc_per !== '') {
+        //     $nilai_disc = ($get_ttl_harga->ttl_harga * $disc_per / 100);
+        // }
 
         $total_after_disc = ($get_ttl_harga->ttl_harga + $biaya_pengiriman - $nilai_disc);
 

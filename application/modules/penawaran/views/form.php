@@ -186,7 +186,7 @@
                         <td colspan="4"></td>
                         <td class="">Delivery Fee <span class="text-danger"> <br> 运输费</span></td>
                         <td class="">
-                            <input type="text" name="biaya_pengiriman" id="" class="form-control  text-right biaya_pengiriman autonum" placeholder="Input Biaya Pengiriman" value="<?= (isset($data_penawaran)) ? number_format($data_penawaran->biaya_pengiriman) : null ?>">
+                            <input type="text" name="biaya_pengiriman" id="" class="form-control  text-right biaya_pengiriman autonum" placeholder="Input Biaya Pengiriman" value="<?= (isset($data_penawaran)) ? $data_penawaran->biaya_pengiriman : null ?>">
                         </td>
                         <th>
                             <input type="text" name="dari_tmp" id="" class="form-control" value="<?= (isset($data_penawaran)) ? $data_penawaran->dari_tmp : null ?>" placeholder="- Dari -">
@@ -195,7 +195,7 @@
                             <input type="text" name="ke_tmp" id="" class="form-control" value="<?= (isset($data_penawaran)) ? $data_penawaran->ke_tmp : null ?>" placeholder="- Ke -">
                         </th>
                     </tr>
-                    <tr>
+                    <!-- <tr>
                         <td colspan="4"></td>
                         <td class="text-center">Discount <span class="text-danger"> <br> 打折扣</span></td>
                         <td>
@@ -222,7 +222,7 @@
                         <td class="text-right disc_harga">
                             <?= (isset($data_penawaran) ? number_format($data_penawaran->nilai_disc) : null) ?>
                         </td>
-                    </tr>
+                    </tr> -->
                     <tr>
                         <td colspan="4"></td>
                         <td class="" colspan="3">Price After Discount <span class="text-danger"> <br> 折扣后价格</span></td>
@@ -606,7 +606,7 @@
             success: function(result) {
 
                 $('.total_all_harga').html(result.total_harga2);
-                $('.disc_harga').html(result.nilai_disc2);
+                // $('.disc_harga').html(result.nilai_disc2);
                 $('.total_after_disc').html(result.total_after_disc2);
                 $('.nilai_ppn').html(result.nilai_ppn2);
                 $('.total_grand_total').html(result.total_grand_total2);
@@ -864,7 +864,7 @@
             cache: false,
             dataType: 'json',
             success: function(result) {
-                $('.disc_harga').html(result.nilai_disc2);
+                // $('.disc_harga').html(result.nilai_disc2);
                 hitung_all();
             }
         });

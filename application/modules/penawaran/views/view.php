@@ -127,11 +127,6 @@
                     </tr>
                     <tr>
                         <td colspan="3"></td>
-                        <td class="" colspan="3">Discount <?= ($data_penawaran->disc_persen > 0) ? $data_penawaran->disc_persen . '%' : null ?> <span class="text-danger">折扣</span></td>
-                        <td class="text-right"><?= number_format($data_penawaran->nilai_disc, 2) ?></td>
-                    </tr>
-                    <tr>
-                        <td colspan="3"></td>
                         <td class="" colspan="3">Price After Discount <span class="text-danger">折扣后价格</span></td>
                         <td class="text-right"><?= number_format($ttl_harga + $data_penawaran->biaya_pengiriman - $data_penawaran->nilai_disc, 2) ?></td>
                     </tr>
