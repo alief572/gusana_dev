@@ -219,13 +219,13 @@
                             <?= (isset($data_penawaran) ? number_format($data_penawaran->nilai_disc, 2) : null) ?>
                         </td>
                     </tr> -->
-                    <tr>
+                    <!-- <tr>
                         <td colspan="4"></td>
                         <td class="" colspan="3">Price After Discount <span class="text-danger">折扣后价格</span></td>
                         <td class="text-right total_after_disc">
                             <?= (isset($data_penawaran)) ? number_format($total_harga + $data_penawaran->biaya_pengiriman - $data_penawaran->nilai_disc, 2) : null ?>
                         </td>
-                    </tr>
+                    </tr> -->
                     <tr>
                         <td colspan="4"></td>
                         <td class="">PPN</td>
@@ -589,7 +589,7 @@
 
                 $('.total_all_harga').html(result.total_harga2);
                 // $('.disc_harga').html(result.nilai_disc2);
-                $('.total_after_disc').html(result.total_after_disc2);
+                // $('.total_after_disc').html(result.total_after_disc2);
                 $('.nilai_ppn').html(result.nilai_ppn2);
                 $('.total_grand_total').html(result.total_grand_total2);
             }
