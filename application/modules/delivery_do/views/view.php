@@ -93,7 +93,7 @@ $ENABLE_DELETE  = has_permission('So_Invoice.Delete');
     @media print {
 
         @page {
-            size: 22.9cm 16.2cm;
+            size: 8.5in 5.5in;
             margin-top: 0.62in;
             margin-left: 0.22in;
             margin-right: 0.22in;
@@ -375,11 +375,11 @@ $ENABLE_DELETE  = has_permission('So_Invoice.Delete');
                 </th>
             </tr>
             <tr>
-                <th style="height:100px;border: 1px solid black;" colspan="2"></th>
-                <th style="height:100px;border: 1px solid black;"></th>
-                <th style="height:100px;border: 1px solid black;"></th>
-                <th style="height:100px;border: 1px solid black;" colspan="3"></th>
-                <th style="height:100px;border: 1px solid black;"></th>
+                <th style="height:80px;border: 1px solid black;" colspan="2"></th>
+                <th style="height:80px;border: 1px solid black;"></th>
+                <th style="height:80px;border: 1px solid black;"></th>
+                <th style="height:80px;border: 1px solid black;" colspan="3"></th>
+                <th style="height:80px;border: 1px solid black;"></th>
             </tr>
         </tbody>
     </table>
