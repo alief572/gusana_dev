@@ -93,12 +93,11 @@ $ENABLE_DELETE  = has_permission('So_Invoice.Delete');
     @media print {
 
         @page {
-            size: 8.5in 5.5in;
-            margin-top: 0.62in;
-            margin-left: 0.22in;
-            margin-right: 0.22in;
-            margin-bottom: 0.22in;
-            font-size: 5px !important;
+            size: 21.7cm 16.5cm;
+            margin-top: 0.19in;
+            /* margin-left: 0.5cm; */
+            /* margin-right: 0.5cm; */
+            margin-bottom: 0.19in;
         }
 
         footer * {
