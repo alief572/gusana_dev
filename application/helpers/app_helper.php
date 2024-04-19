@@ -844,3 +844,17 @@ function get_last_costcenter_warehouse($product)
 
     return $bef_costcenter;
 }
+
+function generateNoPR()
+{
+	$CI =& get_instance();
+	$Ym         = date('ym');
+	$qIPP       = "SELECT MAX(no_pr) as maxP FROM material_planning_base_on_produksi WHERE no_pr LIKE 'PR" . $Ym . "%' ";
+	$resultIPP  = $CI->db->query($qIPP)->result_array();
+	$angkaUrut2 = $resultIPP[0]['maxP'];
+	$urutan2    = (int)substr($angkaUrut2, 6, 5);
+	$urutan2++;
+	$urut2      = sprintf('%05s', $urutan2);
+	$no_pr      = "PR" . $Ym . $urut2;
+	return $no_pr;
+}

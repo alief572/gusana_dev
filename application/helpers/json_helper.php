@@ -455,3 +455,28 @@ function get_rate_mold()
 	}
 	return $ArrGetCategory;
 }
+
+function get_list_user()
+{
+	$CI = &get_instance();
+	$listGetCategory = $CI->db->get('users')->result_array();
+	$ArrGetCategory = [];
+	foreach ($listGetCategory as $key => $value) {
+		$ArrGetCategory[$value['id_user']]['username'] 	= $value['username'];
+		$ArrGetCategory[$value['id_user']]['nama'] 		= $value['full_name'];
+	}
+	return $ArrGetCategory;
+}
+
+function get_pr_on_progress()
+{
+	$CI = &get_instance();
+	$listGetCategory = $CI->db->select('id_material, SUM(qty_pr) AS qty_pr, SUM(qty_po) AS qty_po')->group_by('id_material')->get('pr_on_progress')->result_array();
+	$ArrGetCategory = [];
+	foreach ($listGetCategory as $key => $value) {
+		$ArrGetCategory[$value['id_material']] 	= $value['qty_pr'] - $value['qty_po'];
+	}
+	return $ArrGetCategory;
+}
+
+
