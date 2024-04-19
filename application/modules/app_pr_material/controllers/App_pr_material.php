@@ -104,9 +104,9 @@ class App_pr_material extends Admin_Controller
       echo json_encode($Arr_Data);
     } else {
       $header     = $this->db
-        ->select('a.*, b.due_date, c.nm_customer')
+        ->select('a.*, b.due_date, c.customer_name')
         ->join('so_internal b', 'a.so_number=b.so_number', 'left')
-        ->join('customer c', 'a.id_customer=c.id_customer', 'left')
+        ->join('customers c', 'a.id_customer=c.id_customer', 'left')
         ->get_where(
           'material_planning_base_on_produksi a',
           array(
@@ -116,8 +116,8 @@ class App_pr_material extends Admin_Controller
         ->result_array();
       if ($header[0]['category'] == 'pr stok') {
         $detail     = $this->db
-          ->select('a.*, b.max_stok, b.min_stok, b.stock_name AS nm_material')
-          ->join('accessories b', 'a.id_material=b.id', 'left')
+          ->select('a.*, b.max_stok, b.min_stok, b.nm_barang_stok AS nm_material')
+          ->join('ms_barang_stok b', 'a.id_material = b.id_barang_stok', 'left')
           ->get_where(
             'material_planning_base_on_produksi_detail a',
             array(
@@ -128,7 +128,7 @@ class App_pr_material extends Admin_Controller
       } else {
         $detail     = $this->db
           ->select('a.*, b.max_stok, b.min_stok, b.nama AS nm_material')
-          ->join('new_inventory_4 b', 'a.id_material=b.code_lv4', 'left')
+          ->join('ms_inventory_category3 b', 'a.id_material = b.id_category3', 'left')
           ->get_where(
             'material_planning_base_on_produksi_detail a',
             array(
