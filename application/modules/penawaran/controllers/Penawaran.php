@@ -596,7 +596,7 @@ class Penawaran extends Admin_Controller
 
 
                     $get_kode_sales = $this->db->get_where('ms_kode_sales', ['id_sales' => $post['sales_marketing']])->row();
-                    $get_customer = $this->db->query('SELECT * FROM customers ORDER BY id_customer ASC')->result();
+                    $get_customer = $this->db->query('SELECT * FROM customers WHERE id_customer = "'.$post['customer'].'" ORDER BY id_customer ASC')->row_array();
 
                     $get_nm_customer = $this->db->get_where('customers', ['id_customer' => $post['customer']])->row();
 
@@ -612,7 +612,7 @@ class Penawaran extends Admin_Controller
                     // print_r($jum_pesanan);
                     // exit;
 
-                    $kode_cust = $get_customer->kode_customer;
+                    $kode_cust = $get_customer['kode_customer'];
                    
 
 
